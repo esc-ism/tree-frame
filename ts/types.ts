@@ -1,54 +1,80 @@
-// Node property types
+// Value types
 
 export const VALUE_TYPES = ['boolean', 'number', 'string'] as const;
+export type Value = boolean | string | number;
 
-export type Value = typeof VALUE_TYPES[number];
+export type FunctionPredicate = (input: any) => boolean;
 
-export type Predicate = string[] | ((input: any) => boolean);
+export type Predicate = string[] | FunctionPredicate;
 
-// Node types
+export type Seed = InnerMValue | OuterMValue;
 
-// Not editable
-export interface FixedNode {
+// Group types
+
+export interface IValue {
     label: string;
     value: Value;
 }
 
-// Has a children array of non-fixed size
-export interface DynamicNode {
-    children: unknown[];
-    seed?: DynamicNode;
-}
-
-export interface Leaf extends FixedNode {
+export interface MValue extends IValue {
     predicate: Predicate;
 }
 
-export interface FixedInnerNode extends FixedNode, DynamicNode {
-    children: InternalNode[];
+export interface IDegree {
+    children: Child[];
 }
 
-export interface FixedOuterNode extends FixedNode {
+export interface MDegree extends IDegree {
+    seed: Seed;
+}
+
+// Node types
+
+export interface Leaf extends MValue {
+}
+
+export interface OuterIValue extends IValue {
     children: Leaf[];
 }
 
-export interface InnerNode extends Leaf, FixedInnerNode {
+export interface OuterMValue extends MValue, OuterIValue {
+    children: Leaf[];
 }
 
-export interface OuterNode extends Leaf, FixedOuterNode {
+export interface InnerIDegreeIValue extends IDegree, IValue {
+    children: Middle[];
 }
 
-export interface Root extends DynamicNode {
-    children: InternalNode[];
+export interface InnerMDegreeIValue extends MDegree, IValue {
+    children: Middle[];
 }
 
-// Node category unions
+export interface InnerIDegreeMValue extends IDegree, MValue {
+    children: Middle[];
+}
 
-export type InternalNode = InnerNode | OuterNode | FixedInnerNode | FixedOuterNode;
+export interface InnerMDegreeMValue extends MDegree, MValue {
+    children: Middle[];
+}
 
-export type ChildNode = InnerNode | OuterNode | FixedInnerNode | FixedOuterNode | Leaf;
+export interface Root extends MDegree {
+    children: Middle[];
+}
 
-export type Node = Root | ChildNode;
+// Position groups
+
+export type InnerIValue = InnerIDegreeIValue | InnerMDegreeIValue;
+export type InnerMValue = InnerIDegreeMValue | InnerMDegreeMValue;
+
+export type Inner = InnerIDegreeIValue | InnerIDegreeMValue | InnerMDegreeIValue | InnerMDegreeMValue;
+
+export type Outer = OuterIValue | OuterMValue;
+
+export type Middle = Inner | Outer;
+
+export type Child = Middle | Leaf;
+
+export type Node = Root | Child;
 
 // Config type
 

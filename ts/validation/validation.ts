@@ -1,10 +1,14 @@
 import * as errors from './validationErrors';
 
 import {
-    Config,
+    // Property types
     VALUE_TYPES, Value, Predicate,
-    Root, InnerNode, FixedInnerNode, OuterNode, FixedOuterNode, Leaf,
-    Node, InternalNode, ChildNode
+    // Node types
+    Leaf, Root, OuterIValue, OuterMValue,
+    // Node groups
+    Node, Middle, Child, InnerIValue, InnerMValue,
+    // API argument type
+    Config
 } from '../types';
 
 // Type predicate helpers
@@ -23,11 +27,11 @@ function hasChildren<X extends {}>(breadcrumbs: string[], candidate: X): candida
     return true;
 }
 
-function isFixed(node: InternalNode): boolean {
+function isFrozen(node: Middle): boolean {
     return hasOwnProperty(node, 'predicate');
 }
 
-function isInner(node: ChildNode): boolean {
+export function isInner(node: Child): boolean {
     return 'children' in node && node.children.length > 0 && hasOwnProperty(node.children[0], 'children');
 }
 
@@ -113,21 +117,21 @@ function isLeaf(breadcrumbs: string[], candidate: unknown): candidate is Leaf {
     return true;
 }
 
-function isInternalNode(breadcrumbs: string[], candidate: unknown): candidate is InternalNode {
+function isMiddleNode(breadcrumbs: string[], candidate: unknown): candidate is Middle {
     if (typeof candidate !== 'object')
         throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
 
     if (!hasChildren(breadcrumbs, candidate))
         throw new errors.UnexpectedStateError();
 
-    if (isInner(candidate as InternalNode)) {
-        return (isFixed(candidate as InternalNode) ? isFixedInnerNode : isInnerNode)(breadcrumbs, candidate);
+    if (isInner(candidate as Middle)) {
+        return (isFrozen(candidate as Middle) ? isFrozenInnerNode : isMeltedInnerNode)(breadcrumbs, candidate);
     } else {
-        return (isFixed(candidate as InternalNode) ? isFixedOuterNode : isOuterNode)(breadcrumbs, candidate);
+        return (isFrozen(candidate as Middle) ? isFrozenOuterNode : isMeltedOuterNode)(breadcrumbs, candidate);
     }
 }
 
-function isFixedOuterNode(breadcrumbs: string[], candidate: unknown): candidate is FixedOuterNode {
+function isFrozenOuterNode(breadcrumbs: string[], candidate: unknown): candidate is OuterIValue {
     if (typeof candidate !== 'object')
         throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
 
@@ -147,34 +151,7 @@ function isFixedOuterNode(breadcrumbs: string[], candidate: unknown): candidate 
     return true;
 }
 
-function isFixedInnerNode(breadcrumbs: string[], candidate: unknown): candidate is FixedInnerNode {
-    if (typeof candidate !== 'object')
-        throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
-
-    if (!hasLabel(breadcrumbs, candidate))
-        throw new errors.UnexpectedStateError();
-
-    if (!hasValue(breadcrumbs, candidate))
-        throw new errors.UnexpectedStateError();
-
-    if (!hasPredicate(breadcrumbs, candidate))
-        throw new errors.UnexpectedStateError();
-
-    if (!hasOwnProperty(candidate, 'children'))
-        throw new errors.PropertyError(breadcrumbs, 'children', true);
-    if (!isArrayOf<InternalNode>([...breadcrumbs, 'children'], candidate.children, isInternalNode))
-        throw new errors.UnexpectedStateError();
-
-    if (hasOwnProperty(candidate, 'seed'))
-        if (!isInternalNode([...breadcrumbs, 'seed'], candidate.seed))
-            throw new errors.UnexpectedStateError();
-
-    validateUnexpectedKeys(breadcrumbs, candidate, ['label', 'value', 'children', 'seed']);
-
-    return true;
-}
-
-function isOuterNode(breadcrumbs: string[], candidate: unknown): candidate is OuterNode {
+function isMeltedOuterNode(breadcrumbs: string[], candidate: unknown): candidate is OuterMValue {
     if (typeof candidate !== 'object')
         throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
 
@@ -197,7 +174,7 @@ function isOuterNode(breadcrumbs: string[], candidate: unknown): candidate is Ou
     return true;
 }
 
-function isInnerNode(breadcrumbs: string[], candidate: unknown): candidate is InnerNode {
+function isFrozenInnerNode(breadcrumbs: string[], candidate: unknown): candidate is InnerIValue {
     if (typeof candidate !== 'object')
         throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
 
@@ -212,11 +189,38 @@ function isInnerNode(breadcrumbs: string[], candidate: unknown): candidate is In
 
     if (!hasOwnProperty(candidate, 'children'))
         throw new errors.PropertyError(breadcrumbs, 'children', true);
-    if (!isArrayOf<InternalNode>([...breadcrumbs, 'children'], candidate.children, isInternalNode))
+    if (!isArrayOf<Middle>([...breadcrumbs, 'children'], candidate.children, isMiddleNode))
         throw new errors.UnexpectedStateError();
 
     if (hasOwnProperty(candidate, 'seed'))
-        if (!isInternalNode([...breadcrumbs, 'seed'], candidate.seed))
+        if (!isMiddleNode([...breadcrumbs, 'seed'], candidate.seed))
+            throw new errors.UnexpectedStateError();
+
+    validateUnexpectedKeys(breadcrumbs, candidate, ['label', 'value', 'children', 'seed']);
+
+    return true;
+}
+
+function isMeltedInnerNode(breadcrumbs: string[], candidate: unknown): candidate is InnerMValue {
+    if (typeof candidate !== 'object')
+        throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
+
+    if (!hasLabel(breadcrumbs, candidate))
+        throw new errors.UnexpectedStateError();
+
+    if (!hasValue(breadcrumbs, candidate))
+        throw new errors.UnexpectedStateError();
+
+    if (!hasPredicate(breadcrumbs, candidate))
+        throw new errors.UnexpectedStateError();
+
+    if (!hasOwnProperty(candidate, 'children'))
+        throw new errors.PropertyError(breadcrumbs, 'children', true);
+    if (!isArrayOf<Middle>([...breadcrumbs, 'children'], candidate.children, isMiddleNode))
+        throw new errors.UnexpectedStateError();
+
+    if (hasOwnProperty(candidate, 'seed'))
+        if (!isMiddleNode([...breadcrumbs, 'seed'], candidate.seed))
             throw new errors.UnexpectedStateError();
 
     validateUnexpectedKeys(breadcrumbs, candidate, ['label', 'value', 'predicate', 'children', 'seed']);
@@ -230,11 +234,11 @@ function isRoot(candidate: unknown): candidate is Root {
 
     if (!hasOwnProperty(candidate, 'children'))
         throw new errors.PropertyError([], 'children', true);
-    if (!isArrayOf<InternalNode>(['children'], candidate.children, isInternalNode))
+    if (!isArrayOf<Middle>(['children'], candidate.children, isMiddleNode))
         throw new errors.UnexpectedStateError();
 
     if (hasOwnProperty(candidate, 'seed'))
-        if (!isInternalNode(['seed'], candidate.seed))
+        if (!isMiddleNode(['seed'], candidate.seed))
             throw new errors.UnexpectedStateError();
 
     validateUnexpectedKeys([], candidate, ['children', 'seed']);
@@ -244,9 +248,9 @@ function isRoot(candidate: unknown): candidate is Root {
 
 // Validation helpers
 
-type Validator = (breadcrumbs: string[], node: ChildNode, ...args: any[]) => void;
+type Validator = (breadcrumbs: string[], node: Child, ...args: any[]) => void;
 
-function validateForest(breadcrumbs: string[], doValidation: Validator, forest: ChildNode[], ...args: any[]) {
+function validateForest(breadcrumbs: string[], doValidation: Validator, forest: Child[], ...args: any[]) {
     for (const [i, node] of forest.entries()) {
         doValidation([...breadcrumbs, i.toString()], node, ...args);
 
@@ -258,7 +262,7 @@ function validateForest(breadcrumbs: string[], doValidation: Validator, forest: 
 
 // Tree validators
 
-function validateValidator(breadcrumbs: string[], node: ChildNode): void {
+function validateValidator(breadcrumbs: string[], node: Child): void {
     if ('predicate' in node) {
         if (Array.isArray(node.predicate)) {
             const options = node.predicate;
@@ -269,7 +273,7 @@ function validateValidator(breadcrumbs: string[], node: ChildNode): void {
                     new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
                 );
 
-            if (options.indexOf(node.value) === -1)
+            if (typeof node.value === 'string' && options.indexOf(node.value) === -1)
                 throw new errors.JoinedError(
                     new errors.ValueValidationError(),
                     new errors.ValueError([...breadcrumbs, 'value'], node.value, options)
@@ -284,7 +288,7 @@ function validateValidator(breadcrumbs: string[], node: ChildNode): void {
     }
 }
 
-function validateSeedMatch(breadcrumbs: string[], target: ChildNode, seed: ChildNode): void {
+function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Child): void {
     for (const property of ['label', 'value'] as const) {
         if (seed[property] !== target[property])
             throw new errors.JoinedError(
@@ -357,7 +361,7 @@ function validateSeeds(breadcrumbs: string[], node: Node): void {
     }
 }
 
-function validateDuplicates(breadcrumbs: string[], siblings: ChildNode[]) {
+function validateDuplicates(breadcrumbs: string[], siblings: Child[]) {
     for (const [i, node] of siblings.entries()) {
         if (!('children' in node))
             return;
