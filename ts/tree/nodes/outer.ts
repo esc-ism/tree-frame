@@ -1,17 +1,15 @@
 import type * as dataTypes from '../../types';
-import type * as nodeTypes from './types';
+import type * as unions from './unions';
 
 import Middle from './middle';
 
 import Leaf from './leaf';
-import type Inner from './inner';
-import type Root from './root';
 
-export default class Outer extends Middle implements nodeTypes.Outer {
-    parent: Inner | Root;
+export default class Outer extends Middle {
+    parent: unions.Upper;
     children: Leaf[];
 
-    constructor(data: dataTypes.Middle, parent?: Inner | Root) {
+    constructor(data: dataTypes.Middle, parent?: unions.Upper) {
         super(data, parent);
 
         const {children} = data;

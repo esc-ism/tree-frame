@@ -1,123 +1,38 @@
-import {Config} from './types';
-import stop from './stop';
+import {PASSWORD, EVENTS} from './consts';
 
-function setTitle(title: string) {
-    const titleElement = document.getElementById('title');
+import validate from './validation';
+import getExampleConfig from './example';
 
-    titleElement.innerText = title;
-}
+import start from './start';
 
-function loadClosers(root) {
-    const closeButton = document.getElementById('close');
-    const backgroundElement = document.getElementById('modal-background');
-    const stopBound = () => stop(root.sub.map(tree => tree.getValueTree()));
+export function onInit({data}) {
+    const {password, ...config} = data;
 
-    closeButton.addEventListener('click', stopBound);
+    if (password === PASSWORD) {
+        try {
+            validate(config);
 
-    window.addEventListener('click', (event) => {
-        if (event.target === backgroundElement) {
-            stopBound();
+            start(config);
+        } catch (error) {
+            window.parent.postMessage({
+                'event': EVENTS.ERROR,
+                'reason': error.message
+            }, '*');
         }
-    });
-}
-
-function setupNodeCreation(root) {
-    objectCreator.parentElement.ondragstart = function (event) {
-        event.stopPropagation();
-
-        objectCreator.classList.add('empty');
-
-        root.forEach()
-
-        objectCreator.parentElement.ondragend = () => {
-            objectCreator.classList.remove('empty');
-        };
-    };
-}
-
-function setupNodeDestruction() {
-    const destroyedFile = objectDestroyer.querySelector('#recycled-file');
-    let enterCount = 0;
-
-    objectDestroyer.addEventListener('drop', function () {
-        enterCount = 0;
-
-        destroyedFile.classList.add('empty');
-    });
-
-    objectDestroyer.ondragenter = (event) => {
-        handleEnter(event, true);
-
-        enterCount++;
-
-        destroyedFile.classList.remove('empty');
-
-        objectDestroyer.ondragleave = () => {
-            enterCount--;
-
-            if (enterCount === 0) {
-                destroyedFile.classList.add('empty');
-            }
-        };
-    };
-
-    objectDestroyer.ondragover = (event) => handleEnter(event, true);
-}
-
-function setupDragScrolling(trackerCount = 20) {
-    const scroller = RootNode.instance.element.parentElement.parentElement;
-
-    const getTrackers = () => {
-        const trackerHeight = 100 / trackerCount;
-        const trackers = [];
-
-        for (let i = 0; i < trackerCount; i++) {
-            const yVector = (trackerCount - 1) / 2 - i;
-            const dragVector = (yVector * Math.pow(Math.abs(yVector), 2)) / (trackerCount * 2);
-            const tracker = document.createElement('section');
-
-            // Store data
-            tracker.setAttribute('top', `${trackerHeight * i}`);
-            tracker.setAttribute('yVector', `${yVector}`);
-
-            // Size and position
-            tracker.style.position = 'absolute';
-            tracker.style.height = `${trackerHeight}%`;
-            tracker.style.width = '100%';
-            tracker.style.top = `${tracker.getAttribute('top')}%`;
-
-            tracker.ondragenter = function () {
-                const scroll = setInterval(() => {
-                    scroller.scrollTop -= dragVector;
-                }, 5);
-
-                tracker.ondragleave = () => clearInterval(scroll);
-            };
-
-            trackers.push(tracker);
-        }
-
-        return trackers;
-    };
-
-    const parent = document.querySelector('#object-scroll-area');
-
-    for (let tracker of getTrackers()) {
-        parent.appendChild(tracker);
     }
 }
 
-export default function start(config: Config) {
-    const root = new RootNode(config.tree);
+if (window.parent === window) {
+    const config = getExampleConfig();
 
-    setTitle(title);
-    loadClosers(root);
+    validate(config);
 
-    if (defaultTrees) {
-        setupNodeCreation(defaultTrees);
-        setupNodeDestruction();
-        setupDragScrolling();
-    } else {
-        document.getElementById('object-page').classList.add('fixed');
-    }
+    start(config);
+} else {
+    window.parent.postMessage({
+        'event': EVENTS.START,
+        'password': PASSWORD
+    }, '*');
+
+    window.addEventListener('message', onInit);
 }

@@ -1,24 +1,22 @@
 import type * as dataTypes from '../../types';
-import type * as nodeTypes from './types';
 
 import type Outer from './outer';
+import ValueHolder from './valueHolder';
 
-export default class Leaf implements nodeTypes.ValueHolder {
-    label: string;
-    value: dataTypes.Value;
-    predicate: dataTypes.FunctionPredicate;
-
+export default class Leaf extends ValueHolder {
+    predicate: dataTypes.Predicate;
     parent: Outer;
 
     constructor({label, value, predicate}: dataTypes.Leaf, parent: Outer) {
-        this.label = label;
-        this.value = value;
-        this.predicate = Array.isArray(predicate) ? (value) => predicate.indexOf(value) !== -1 : predicate;
+        super(label, value);
 
+        this.predicate = predicate;
         this.parent = parent;
     }
 
-    setValue(value: dataTypes.Value): void {
-        this.value = value;
+    getDataTree() {
+        const {label, value, predicate} = this;
+
+        return {label, value, predicate};
     }
 }

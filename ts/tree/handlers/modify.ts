@@ -1,56 +1,67 @@
-import type * as dataTypes from '../../types';
+import {FunctionPredicate, Predicate, Value} from '../../types';
 
-import type {Handler} from './utils';
 import {Listeners} from './utils';
 
 import type Leaf from '../nodes/leaf';
 import Middle from '../nodes/middle';
 
-type ModifiableNode = (Leaf | Middle) & {predicate: dataTypes.FunctionPredicate};
+type ModifiableNode = Leaf | Middle;
 
-class Acceptor implements Handler {
-    private static wrapperElement = document.getElementById('form-page-wrapper');
-    private static parentElement = document.getElementById('form-page');
+class Form {
+    static readonly elements = {
+        'form': document.getElementById('form-page'),
+        'wrapper': document.getElementById('form-page-wrapper')
+    };
 
-    listeners = new Listeners();
+    static getFunctionPredicate(predicate: Predicate): FunctionPredicate {
+        switch (typeof predicate) {
+            case 'boolean':
+                return () => predicate;
 
-    node: Middle
-    element: HTMLElement;
-    predicate: dataTypes.FunctionPredicate;
+            case 'function':
+                return predicate;
 
-    isOpen: boolean = false;
-
-    constructor(node: Middle, predicate?: dataTypes.Predicate) {
-        this.node = node;
-        this.element = node.element;
-
-        if (predicate) {
-            this.predicate = Array.isArray(predicate) ? (value) => predicate.indexOf(value) !== -1 : predicate;
+            default:
+                return (value) => predicate.indexOf(value) !== -1;
         }
     }
 
-    close() {
-        Acceptor.parentElement.innerHTML = '';
+    private readonly node;
+    private isOpen: boolean = false;
 
-        Acceptor.wrapperElement.classList.remove('selected');
+    constructor(node: Middle) {
+        this.node = node;
+    }
+
+    close() {
+        this.isOpen = false;
+
+        Form.elements.form.innerHTML = '';
+
+        Form.elements.wrapper.classList.remove('selected');
     }
 
     open() {
-        Acceptor.wrapperElement.classList.add('selected');
+        this.isOpen = true;
 
-        const isValid = (value: dataTypes.Value, node: ModifiableNode) => {
-            if (node instanceof Middle) {
-                for (const sibling of node.parent.children) {
-                    if (sibling.value === value) {
-                        return false;
-                    }
-                }
+        Form.elements.wrapper.classList.add('selected');
+
+        const isValid = (value: Value, node: ModifiableNode) => {
+            if (node instanceof Middle && node.hasSibling(value)) {
+                return false;
             }
 
-            return node.predicate(value);
+            const {predicate} = node;
+
+            switch (typeof predicate) {
+                case 'undefined':
+                    return false;
+            }
+
+            return Form.getFunctionPredicate(node.predicate)(value);
         };
 
-        const handleInput = (value: dataTypes.Value, inputElement: HTMLInputElement, node: ModifiableNode) => {
+        const handleInput = (value: Value, inputElement: HTMLInputElement, node: ModifiableNode) => {
             if (isValid(value, node)) {
                 node.setValue(value);
             } else {
@@ -59,6 +70,8 @@ class Acceptor implements Handler {
         };
 
         const getInputRow = (node: Middle | Leaf) => {
+            const value = node.getValue();
+
             const row = document.createElement('tr');
             const labelCell = document.createElement('td');
             const inputCell = document.createElement('td');
@@ -68,21 +81,21 @@ class Acceptor implements Handler {
 
             inputElement.classList.add('config-input');
 
-            switch (typeof node.value) {
+            switch (typeof value) {
                 case 'boolean':
                     inputElement.type = 'checkbox';
                     inputElement.oninput = () => handleInput(inputElement.checked, inputElement, node);
-                    inputElement.checked = node.value;
+                    inputElement.checked = value;
                     break;
                 case 'number':
                     inputElement.type = 'number';
                     inputElement.oninput = () => handleInput(Number(inputElement.value), inputElement, node);
-                    inputElement.value = node.value.toString();
+                    inputElement.value = value.toString();
                     break;
                 case 'string':
                     inputElement.type = 'text';
                     inputElement.oninput = () => handleInput(inputElement.value, inputElement, node);
-                    inputElement.value = node.value;
+                    inputElement.value = value;
             }
 
             row.appendChild(labelCell);
@@ -104,7 +117,7 @@ class Acceptor implements Handler {
                 table.appendChild(row);
             }
 
-            Acceptor.parentElement.appendChild(table);
+            Form.elements.form.appendChild(table);
         };
 
         const getRows = () => {
@@ -114,7 +127,7 @@ class Acceptor implements Handler {
                 const [modelChild] = this.node.children;
 
                 if (!(modelChild instanceof Middle)) {
-                    rows.push(...this.node.children.map(getInputRow))
+                    rows.push(...this.node.children.map(getInputRow));
                 }
             }
 
@@ -124,43 +137,42 @@ class Acceptor implements Handler {
         loadForm(getRows());
     }
 
-    toggle() {
+    public toggle() {
         if (this.isOpen) {
-            this.close();
+            close();
         } else {
-            this.open();
-        }
-    }
-
-    unhighlight(event) {
-        event.stopPropagation();
-
-        this.element.classList.add('hovered');
-    }
-
-    highlight(event) {
-        event.stopPropagation();
-
-        this.element.classList.remove('hovered');
-    }
-
-    listen(doListen = true) {
-        if (doListen) {
-            this.listeners.add(this.element, 'mouseenter', this.highlight.bind(this));
-            this.listeners.add(this.element, 'click', this.toggle.bind(this));
-            this.listeners.add(this.element, 'mouseleave', this.unhighlight.bind(this));
-        } else {
-            this.listeners.clear();
+            open();
         }
     }
 }
 
-interface Data {
-    predicate?: dataTypes.Predicate;
+function accept(node: Middle): Listeners {
+    const {element} = node;
 
-    [prop: string]: any;
+    function unhighlight(event) {
+        event.stopPropagation();
+
+        element.classList.add('hovered');
+    }
+
+    function highlight(event) {
+        event.stopPropagation();
+
+        element.classList.remove('hovered');
+    }
+
+    return (() => {
+        const form = new Form(node);
+        const listeners = new Listeners();
+
+        listeners.add(element, 'mouseenter', highlight.bind(this));
+        listeners.add(element, 'click', form.toggle.bind(this));
+        listeners.add(element, 'mouseleave', unhighlight.bind(this));
+
+        return listeners;
+    })();
 }
 
-export default function getModificationHandler(node: Middle, data: Data): Handler {
-    return new Acceptor(node, data.predicate);
+export default function getListeners(node: Middle): Listeners {
+    return accept(node);
 }

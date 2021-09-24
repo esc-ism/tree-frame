@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
       "target": "es6",
-      "outDir": "out"
+      "outDir": "out/js",
+      "moduleResolution": "node"
     },
     "include": [
       "ts/**/*"
-    ]
+    ],
 }

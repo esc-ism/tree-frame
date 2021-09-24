@@ -52,7 +52,7 @@ export class ValueError extends Error {
 
 export class SeedMatchError extends Error {
     constructor() {
-        super('All children of nodes with a seed property must match the structure of the seed tree.');
+        super('All children of nodes with a seed property must creatable from the seed tree.');
     }
 }
 
@@ -62,7 +62,7 @@ export class NoOptionsError extends Error {
     }
 }
 
-export class ValueValidationError extends Error {
+export class ValuePredicateError extends Error {
     constructor() {
         super('If a node is given a validator, its value must be accepted.');
     }

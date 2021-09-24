@@ -1,74 +1,93 @@
-import type {Seed} from '../../types';
-
-import type {Handler} from './utils';
 import {handleDragOver, Listeners} from './utils';
 
-import Inner from '../nodes/inner';
-import Outer from '../nodes/outer';
-import Root from '../nodes/root';
+import type {Upper} from '../nodes/unions';
+import type Middle from '../nodes/middle';
 
-class Rejector implements Handler {
-    listeners = new Listeners();
+import {LIFECYCLE_SVGS} from '../../consts';
 
-    element: HTMLElement;
+//TODO you were listening to creator.parentElement for drags before; if buggy return to that
 
-    constructor(node: Middle | Root) {
-        this.element = node.element;
-    }
+(function setup() {
+    const {creator} = LIFECYCLE_SVGS;
 
-    listen(doListen = true) {
-        if (doListen) {
-            this.listeners.add(this.element, 'dragenter', handleDragOver.bind(null, false));
-            this.listeners.add(this.element, 'dragover', handleDragOver.bind(null, false));
-        } else {
-            this.listeners.clear();
-        }
-    }
-}
-
-class Acceptor implements Handler {
-    parent: Inner | Root;
-    child: Inner | Outer;
-    listeners = new Listeners();
-
-    constructor(node: Inner, seed: Seed) {
-        this.parent = node;
-        this.child = new node.childType(seed);
-    }
-
-    destroy(event) {
+    creator.addEventListener('dragstart', (event) => {
         event.stopPropagation();
 
-        this.parent.removeChild(this.child);
+        creator.classList.add('empty');
+    });
+
+    creator.addEventListener('dragend', (event) => {
+        event.stopPropagation();
+
+        creator.classList.remove('empty');
+    });
+})();
+
+function reject(node: Upper): Listeners {
+    const {element} = node;
+    const {creator} = LIFECYCLE_SVGS;
+    const listeners = {
+        'top': new Listeners(),
+        'bottom': new Listeners()
+    };
+
+    listeners.top.add(creator, 'dragstart', (event) => {
+        event.stopPropagation();
+
+        listeners.bottom.add(element, 'dragenter', handleDragOver.bind(null, false));
+        listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, false));
+    });
+
+    listeners.top.add(creator, 'dragend', (event) => {
+        event.stopPropagation();
+
+        listeners.bottom.clear();
+    });
+
+    return listeners.top;
+}
+
+function accept(node: Upper): Listeners {
+    function disconnect(sapling: Middle, event) {
+        event.stopPropagation();
+
+        sapling.disconnect();
     }
 
-    create(event) {
+    function attach(sapling: Middle, event) {
         handleDragOver(true, event);
 
-        this.parent.addChild(this.child);
+        sapling.attach(node);
     }
 
-    listen(doListen = true) {
-        if (doListen) {
-            this.listeners.add(this.parent.element, 'dragenter', this.create.bind(this));
-            this.listeners.add(this.parent.element, 'dragover', handleDragOver.bind(null, true));
-            this.listeners.add(this.parent.element, 'dragleave', this.destroy.bind(this));
-        } else {
+    return (() => {
+        const {creator} = LIFECYCLE_SVGS;
+        const listeners = {
+            'top': new Listeners(),
+            'bottom': new Listeners()
+        };
+
+        listeners.top.add(creator, 'dragstart', (event) => {
+            event.stopPropagation();
+
+            const {seed, element} = node;
+            const sapling = new this.node.childType(seed);
+
+            this.listeners.add(element, 'dragenter', this.attach.bind(this, sapling));
+            this.listeners.add(element, 'dragover', handleDragOver.bind(null, true));
+            this.listeners.add(element, 'dragleave', this.disconnect.bind(this, sapling));
+        });
+
+        listeners.top.add(creator, 'dragend', (event) => {
+            event.stopPropagation();
+
             this.listeners.clear();
-        }
-    }
+        });
+
+        return listeners.top;
+    })();
 }
 
-interface Data {
-    seed?: Seed;
-
-    [prop: string]: any;
-}
-
-export default function getCreationHandler(node: Middle | Root, data: Data): Handler {
-    if ('seed' in data) {
-        return new Acceptor(node, data.seed);
-    }
-
-    return new Rejector(node);
+export default function getListeners(node: Upper): Listeners {
+    return (node.seed ? accept : reject)(node);
 }

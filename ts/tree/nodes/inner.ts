@@ -1,32 +1,50 @@
 import type * as dataTypes from '../../types';
-import type * as nodeTypes from './types';
+import type * as unions from './unions';
 
-import {isInner} from '../../validation/validation';
+import {isUpper} from '../../validation';
 
-import Outer from './outer';
 import Middle from './middle';
-import Root from './root';
+import Outer from './outer';
 
-import {Handler} from '../handlers/utils';
-import getCreationHandler from '../handlers/create';
+import getCreationListeners from '../handlers/create';
 
-export default class Inner extends Middle implements nodeTypes.Inner {
-    parent: Inner | Root;
+export default class Inner extends Middle {
+    parent: unions.Upper;
     children: Array<Middle>;
-
-    creationHandler: Handler;
+    seed: dataTypes.Middle;
 
     childType: typeof Inner | typeof Outer;
 
-    constructor(data: dataTypes.Middle, parent?: Inner | Root) {
+    constructor(data: dataTypes.Middle, parent?: unions.Upper) {
         super(data, parent);
 
         const {children} = data;
 
-        this.childType = isInner(children[0]) ? Inner : Outer;
+        this.childType = isUpper(children[0]) ? Inner : Outer;
 
         this.children = children.map(child => new this.childType(child, this));
 
-        this.creationHandler = getCreationHandler(this, data);
+        if ('seed' in data) {
+            this.seed = data.seed;
+        }
+
+        this.listeners.push(getCreationListeners(this));
+    }
+
+    disconnectHandlers() {
+        super.disconnectHandlers();
+
+        for (const child of this.children) {
+            child.disconnectHandlers();
+        }
+    }
+
+    getDataTree() {
+        const {seed} = this;
+
+        return {
+            ...(seed ? {seed} : {}),
+            ...super.getDataTree()
+        };
     }
 }

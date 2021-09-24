@@ -44,9 +44,3 @@ export class Listeners {
         this.listeners.length = 0;
     }
 }
-
-export interface Handler {
-    listeners: Listeners;
-
-    listen: (doListen: boolean) => void;
-}

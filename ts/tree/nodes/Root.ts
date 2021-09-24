@@ -1,26 +1,23 @@
 import type * as dataTypes from '../../types';
-import type * as nodeTypes from './types';
 
-import {isInner} from '../../validation/validation';
+import {isUpper} from '../../validation';
 
 import Inner from './inner';
 import Outer from './outer';
 import type Middle from './middle';
 
-import type {Handler} from '../handlers/utils';
-import getCreationHandler from '../handlers/create';
+import getCreationListeners from '../handlers/create';
 
-export default class Root implements nodeTypes.Root {
+export default class Root {
     static instance: Root;
 
-    children: Array<Middle>;
+    readonly children: Array<Middle>;
+    readonly seed: dataTypes.Middle;
 
-    element = document.getElementById('root');
-    valueElement = document.getElementById('adviser');
+    readonly element = document.getElementById('root');
+    private readonly valueElement = document.getElementById('adviser');
 
-    creationHandler: Handler;
-
-    childType: typeof Inner | typeof Outer;
+    readonly childType: typeof Inner | typeof Outer;
 
     constructor({children, ...optional}: dataTypes.Root) {
         if (Root.instance) {
@@ -29,16 +26,23 @@ export default class Root implements nodeTypes.Root {
 
         Root.instance = this;
 
-        this.childType = isInner(children[0]) ? Inner : Outer;
+        this.childType = isUpper(children[0]) ? Inner : Outer;
 
         this.children = children.map(child => new this.childType(child, this));
 
-        this.creationHandler = getCreationHandler(this, optional);
+        if ('seed' in optional) {
+            this.seed = optional.seed;
+        }
+
+        getCreationListeners(this);
     }
 
-    forEach(process: (node: unknown, index: number, siblings: unknown[]) => void) {
-        for (const [i, child] of this.children.entries()) {
-            process(child, i, this.children);
-        }
+    getDataTree() {
+        const {seed} = this;
+
+        return {
+            ...(seed ? {seed} : {}),
+            'children': this.children.map((child) => child.getDataTree())
+        };
     }
 }

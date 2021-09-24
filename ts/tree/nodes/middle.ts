@@ -1,45 +1,48 @@
 import type * as dataTypes from '../../types';
-import type * as nodeTypes from './types';
+import type * as unions from './unions';
 
 import getPin from '../elements/pin';
 
-import {Handler} from '../handlers/utils';
-import getModificationHandler from '../handlers/modify';
-import getCreationHandler from '../handlers/create';
-
 import type Leaf from './leaf';
-import type Inner from './inner';
-import Root from './root';
 
-export default abstract class Middle implements nodeTypes.Middle {
-    label: string;
-    value: dataTypes.Value;
-    predicate: dataTypes.FunctionPredicate;
+import type {Listeners} from '../handlers/utils';
+import getModificationListeners from '../handlers/modify';
+import getRelocationListeners from '../handlers/relocate';
+import getDeletionListeners from '../handlers/delete';
 
-    parent: Inner | Root;
+import ValueHolder from './valueHolder';
+
+export default abstract class Middle extends ValueHolder {
+    predicate: dataTypes.Predicate;
+
+    parent: unions.Upper;
     children: Array<Middle | Leaf>;
 
     element: HTMLElement = document.createElement('div');
     valueElement: HTMLElement = document.createElement('span');
 
-    modificationHandler: Handler;
-    relocationHandler: Handler;
-    deletionHandler: Handler;
+    listeners: Array<Listeners>;
 
-    protected constructor({label, value, children, ...optional}: dataTypes.Middle, parent?: Inner | Root) {
-        this.label = label;
-        this.value = value;
+    protected constructor({label, value, children, ...optional}: dataTypes.Middle, parent?: unions.Upper) {
+        super(label, value);
+
         this.parent = parent;
 
-        this.element.classList.add('draggable-object', 'middle');
+        if ('predicate' in optional) {
+            this.predicate = optional.predicate;
+        }
 
+        this.element.draggable = true;
+        this.element.classList.add('draggable-object', 'middle');
         this.element.appendChild(this.valueElement);
 
         this.render();
 
-        this.modificationHandler = getModificationHandler(this, optional);
-        this.relocationHandler = getCreationHandler(this, optional);
-        this.deletionHandler = getCreationHandler(this, optional);
+        this.listeners.push(
+            getModificationListeners(this),
+            getRelocationListeners(this),
+            getDeletionListeners(this)
+        );
     }
 
     render() {
@@ -47,18 +50,36 @@ export default abstract class Middle implements nodeTypes.Middle {
     }
 
     setValue(value: dataTypes.Value): void {
-        this.value = value;
+        super.setValue(value);
 
         this.render();
     }
 
-    attach(parent: Root | Inner, index: number = parent.children.length) {
+    hasSibling(value: dataTypes.Value) {
+        for (const sibling of this.parent.children) {
+            if (sibling !== this && sibling.getValue() === value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    attach(parent: unions.Upper, index: number = parent.children.length) {
         this.parent = parent;
 
-        if (parent.children.length === 1) {
-            const [sibling] = parent.children;
+        switch (parent.children.length) {
+            case 0:
+                this.pin();
 
-            sibling.unpin();
+                break;
+            case 1:
+                const [sibling] = parent.children;
+
+                sibling.unpin();
+
+                break;
+            default:
         }
 
         parent.children.splice(index, 0, this);
@@ -80,6 +101,16 @@ export default abstract class Middle implements nodeTypes.Middle {
         this.element.remove();
 
         this.parent = undefined;
+
+        for (const listener of this.listeners) {
+            listener.clear();
+        }
+    }
+
+    disconnectHandlers() {
+        for (const listener of this.listeners) {
+            listener.clear();
+        }
     }
 
     unpin() {
@@ -99,10 +130,17 @@ export default abstract class Middle implements nodeTypes.Middle {
     pin() {
         this.element.draggable = false;
 
-        if (this.parent instanceof Root) {
+        if (!(this.parent instanceof Middle)) {
             return;
         }
 
         this.element.insertBefore(getPin(), this.element.firstChild);
+    }
+
+    getDataTree() {
+        const {label, value, predicate} = this;
+        const children = this.children.map(child => child.getDataTree());
+
+        return {label, value, predicate, children};
     }
 }
