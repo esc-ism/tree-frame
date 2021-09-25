@@ -35,7 +35,6 @@
 
 /* The Close Button */
 #close {
-    content: ' &times; ';
     color: white;
     float: right;
     font-weight: bold;

@@ -28,6 +28,8 @@ function hasChildren<X extends {}>(breadcrumbs: string[], candidate: X): candida
 }
 
 export function isUpper(node: Node): boolean {
+    if ('seed' in node) return true;
+
     return 'children' in node && node.children.length > 0 && hasOwnProperty(node.children[0], 'children');
 }
 
@@ -302,7 +304,7 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
                     new errors.ValueError([...breadcrumbs, 'predicate', 'length'], length, [seed.predicate.length])
                 );
 
-            for (const [i, option] of seed.predicate) {
+            for (const [i, option] of seed.predicate.entries()) {
                 if (target.predicate[i] !== option)
                     throw new errors.JoinedError(
                         new errors.SeedMatchError(),
@@ -311,6 +313,15 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
             }
     }
 
+    if ('seed' in seed !== 'seed' in target)
+        throw new errors.JoinedError(
+            new errors.SeedMatchError(),
+            new errors.PropertyError(breadcrumbs, 'seed', 'seed' in seed)
+        );
+
+    if ('seed' in seed && 'seed' in target) {
+        validateSeedMatch([...breadcrumbs, 'seed'], seed.seed, target.seed);
+    }
 
     if ('children' in seed !== 'children' in target)
         throw new errors.JoinedError(
@@ -319,30 +330,37 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
         );
 
     if ('children' in seed && 'children' in target) {
-        if (seed.children.length !== target.children.length)
-            throw new errors.JoinedError(
-                new errors.SeedMatchError(),
-                new errors.ValueError([...breadcrumbs, 'children', 'length'], target.children.length, [seed.children.length])
-            );
+        if ('seed' in seed) {
+            const childSeed = seed.seed;
 
-        for (const [i, child] of seed.children.entries()) {
-            validateSeedMatch([...breadcrumbs, 'children', i.toString()], target.children[i], child);
+            for (const [i, child] of target.children.entries()) {
+                validateSeedMatch([...breadcrumbs, 'children', i.toString()], child, childSeed);
+            }
+
+            for (const [i, child] of seed.children.entries()) {
+                validateSeedMatch([...breadcrumbs, 'children', i.toString()], child, childSeed);
+            }
+        } else {
+            if (seed.children.length !== target.children.length)
+                throw new errors.JoinedError(
+                    new errors.SeedMatchError(),
+                    new errors.ValueError([...breadcrumbs, 'children', 'length'], target.children.length, [seed.children.length])
+                );
+
+            for (const [i, child] of seed.children.entries()) {
+                validateSeedMatch([...breadcrumbs, 'children', i.toString()], target.children[i], child);
+            }
         }
     }
-
-    if ('seed' in seed !== 'seed' in target)
-        throw new errors.JoinedError(
-            new errors.SeedMatchError(),
-            new errors.PropertyError(breadcrumbs, 'seed', 'seed' in seed)
-        );
-
-    if ('seed' in seed && 'seed' in target)
-        validateSeedMatch([...breadcrumbs, 'seed'], seed.seed, target.seed);
 }
 
 function validateSeeds(breadcrumbs: string[], node: Node): void {
     if ('seed' in node) {
-        validateForest([...breadcrumbs, 'seed'], validateSeedMatch, node.children, node.seed);
+        const {seed} = node;
+
+        for (const child of node.children) {
+            validateSeedMatch([...breadcrumbs, 'seed'], child, seed);
+        }
     }
 }
 

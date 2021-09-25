@@ -2,21 +2,23 @@ import {handleDragOver, Listeners} from './utils';
 
 import type {Upper} from '../nodes/unions';
 import type Middle from '../nodes/middle';
+import  Inner from '../nodes/inner';
+import  Outer from '../nodes/outer';
 
 import {LIFECYCLE_SVGS} from '../../consts';
 
 //TODO you were listening to creator.parentElement for drags before; if buggy return to that
 
 (function setup() {
-    const {creator} = LIFECYCLE_SVGS;
+    const {creator, parent} = LIFECYCLE_SVGS;
 
-    creator.addEventListener('dragstart', (event) => {
+    parent.addEventListener('dragstart', (event) => {
         event.stopPropagation();
 
         creator.classList.add('empty');
     });
 
-    creator.addEventListener('dragend', (event) => {
+    parent.addEventListener('dragend', (event) => {
         event.stopPropagation();
 
         creator.classList.remove('empty');
@@ -25,20 +27,20 @@ import {LIFECYCLE_SVGS} from '../../consts';
 
 function reject(node: Upper): Listeners {
     const {element} = node;
-    const {creator} = LIFECYCLE_SVGS;
+    const {parent} = LIFECYCLE_SVGS;
     const listeners = {
         'top': new Listeners(),
         'bottom': new Listeners()
     };
 
-    listeners.top.add(creator, 'dragstart', (event) => {
+    listeners.top.add(parent, 'dragstart', (event) => {
         event.stopPropagation();
 
         listeners.bottom.add(element, 'dragenter', handleDragOver.bind(null, false));
         listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, false));
     });
 
-    listeners.top.add(creator, 'dragend', (event) => {
+    listeners.top.add(parent, 'dragend', (event) => {
         event.stopPropagation();
 
         listeners.bottom.clear();
@@ -61,27 +63,27 @@ function accept(node: Upper): Listeners {
     }
 
     return (() => {
-        const {creator} = LIFECYCLE_SVGS;
+        const {parent} = LIFECYCLE_SVGS;
         const listeners = {
             'top': new Listeners(),
             'bottom': new Listeners()
         };
 
-        listeners.top.add(creator, 'dragstart', (event) => {
+        listeners.top.add(parent, 'dragstart', (event) => {
             event.stopPropagation();
 
             const {seed, element} = node;
-            const sapling = new this.node.childType(seed);
+            const sapling = Inner.isInner(seed) ? new Inner(seed, node) : new Outer(seed, node);
 
-            this.listeners.add(element, 'dragenter', this.attach.bind(this, sapling));
-            this.listeners.add(element, 'dragover', handleDragOver.bind(null, true));
-            this.listeners.add(element, 'dragleave', this.disconnect.bind(this, sapling));
+            listeners.bottom.add(element, 'dragenter', attach.bind(this, sapling));
+            listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, true));
+            listeners.bottom.add(element, 'dragleave', disconnect.bind(this, sapling));
         });
 
-        listeners.top.add(creator, 'dragend', (event) => {
+        listeners.top.add(parent, 'dragend', (event) => {
             event.stopPropagation();
 
-            this.listeners.clear();
+            listeners.bottom.clear();
         });
 
         return listeners.top;

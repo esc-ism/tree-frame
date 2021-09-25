@@ -16,27 +16,26 @@ export default abstract class Middle extends ValueHolder {
     predicate: dataTypes.Predicate;
 
     parent: unions.Upper;
-    children: Array<Middle | Leaf>;
+    abstract children: Array<Middle | Leaf>;
 
     element: HTMLElement = document.createElement('div');
     valueElement: HTMLElement = document.createElement('span');
 
-    listeners: Array<Listeners>;
+    listeners: Array<Listeners> = [];
 
-    protected constructor({label, value, children, ...optional}: dataTypes.Middle, parent?: unions.Upper) {
+    protected constructor({label, value, children, ...optional}: dataTypes.Middle, parent: unions.Upper) {
         super(label, value);
 
-        this.parent = parent;
+        this.element.draggable = true;
+        this.element.classList.add('internal-node', 'middle');
+        this.element.appendChild(this.valueElement);
+
+        this.render();
+        this.attach(parent);
 
         if ('predicate' in optional) {
             this.predicate = optional.predicate;
         }
-
-        this.element.draggable = true;
-        this.element.classList.add('draggable-object', 'middle');
-        this.element.appendChild(this.valueElement);
-
-        this.render();
 
         this.listeners.push(
             getModificationListeners(this),
@@ -82,9 +81,9 @@ export default abstract class Middle extends ValueHolder {
             default:
         }
 
-        parent.children.splice(index, 0, this);
-
         parent.element.insertBefore(this.element, parent.children[index]?.element ?? null);
+
+        parent.children.splice(index, 0, this);
     }
 
     disconnect() {

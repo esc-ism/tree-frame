@@ -7,13 +7,16 @@ import Leaf from './leaf';
 
 export default class Outer extends Middle {
     parent: unions.Upper;
-    children: Leaf[];
+    children: Leaf[] = [];
 
     constructor(data: dataTypes.Middle, parent?: unions.Upper) {
         super(data, parent);
 
         const {children} = data;
 
-        this.children = children.map(child => new Leaf(child, this));
+        for (const child of children) {
+            // @ts-ignore
+            this.children.push(new Leaf(child, this));
+        }
     }
 }

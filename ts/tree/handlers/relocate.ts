@@ -80,7 +80,7 @@ const accept = (() => {
                         acceptParent(target);
                     }
                 } else {
-                    this.reject(target);
+                    reject(target);
 
                     for (const child of target.children) {
                         addRecursively(child);
@@ -94,7 +94,7 @@ const accept = (() => {
         }
 
         return (() => {
-            const {element} = this.node;
+            const {element} = node;
             const listeners = {
                 'top': new Listeners(),
                 'bottom': new Listeners()

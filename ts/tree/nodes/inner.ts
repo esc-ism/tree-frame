@@ -1,28 +1,34 @@
 import type * as dataTypes from '../../types';
 import type * as unions from './unions';
 
-import {isUpper} from '../../validation';
-
 import Middle from './middle';
 import Outer from './outer';
 
 import getCreationListeners from '../handlers/create';
 
 export default class Inner extends Middle {
+    static isInner(data: dataTypes.Middle): data is dataTypes.Inner {
+        if ('seed' in data) {
+            return true;
+        }
+
+        const [child] = data.children;
+
+        return child ? 'children' in child : false;
+    }
+
     parent: unions.Upper;
-    children: Array<Middle>;
+    children: Array<Middle> = [];
     seed: dataTypes.Middle;
 
-    childType: typeof Inner | typeof Outer;
-
-    constructor(data: dataTypes.Middle, parent?: unions.Upper) {
+    constructor(data: dataTypes.Inner, parent?: unions.Upper) {
         super(data, parent);
 
         const {children} = data;
 
-        this.childType = isUpper(children[0]) ? Inner : Outer;
-
-        this.children = children.map(child => new this.childType(child, this));
+        for (const child of children) {
+            this.children.push(Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this));
+        }
 
         if ('seed' in data) {
             this.seed = data.seed;

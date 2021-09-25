@@ -48,7 +48,7 @@ function getMedia(
         'predicate': (value) => value !== '',
         'children': [
             {
-                'label': 'type',
+                'label': 'Type',
                 'value': type,
                 'predicate': ['Movie', 'TV Show', 'Song', 'Album'],
             },
@@ -58,7 +58,7 @@ function getMedia(
                 'predicate': (value) => value >= 0,
             },
             {
-                'label': 'description',
+                'label': 'Description',
                 'value': description,
                 'predicate': (value) => value !== '',
             },

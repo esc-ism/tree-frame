@@ -8,6 +8,7 @@ import Middle from '../nodes/middle';
 type ModifiableNode = Leaf | Middle;
 
 class Form {
+    private static openCount = 0;
     static readonly elements = {
         'form': document.getElementById('form-page'),
         'wrapper': document.getElementById('form-page-wrapper')
@@ -27,14 +28,14 @@ class Form {
     }
 
     private readonly node;
-    private isOpen: boolean = false;
+    private openId: number = -1;
 
     constructor(node: Middle) {
         this.node = node;
     }
 
     close() {
-        this.isOpen = false;
+        this.openId = -1;
 
         Form.elements.form.innerHTML = '';
 
@@ -42,7 +43,9 @@ class Form {
     }
 
     open() {
-        this.isOpen = true;
+        this.openId = ++Form.openCount;
+
+        Form.elements.form.innerHTML = '';
 
         Form.elements.wrapper.classList.add('selected');
 
@@ -138,10 +141,10 @@ class Form {
     }
 
     public toggle() {
-        if (this.isOpen) {
-            close();
+        if (this.openId === Form.openCount) {
+            this.close();
         } else {
-            open();
+            this.open();
         }
     }
 }
@@ -149,13 +152,13 @@ class Form {
 function accept(node: Middle): Listeners {
     const {element} = node;
 
-    function unhighlight(event) {
+    function highlight(event) {
         event.stopPropagation();
 
         element.classList.add('hovered');
     }
 
-    function highlight(event) {
+    function unhighlight(event) {
         event.stopPropagation();
 
         element.classList.remove('hovered');
@@ -166,7 +169,11 @@ function accept(node: Middle): Listeners {
         const listeners = new Listeners();
 
         listeners.add(element, 'mouseenter', highlight.bind(this));
-        listeners.add(element, 'click', form.toggle.bind(this));
+        listeners.add(element, 'click', (event) => {
+            event.stopPropagation();
+
+            form.toggle();
+        });
         listeners.add(element, 'mouseleave', unhighlight.bind(this));
 
         return listeners;

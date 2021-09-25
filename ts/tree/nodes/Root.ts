@@ -11,7 +11,7 @@ import getCreationListeners from '../handlers/create';
 export default class Root {
     static instance: Root;
 
-    readonly children: Array<Middle>;
+    readonly children: Array<Middle> = [];
     readonly seed: dataTypes.Middle;
 
     readonly element = document.getElementById('root');
@@ -26,9 +26,9 @@ export default class Root {
 
         Root.instance = this;
 
-        this.childType = isUpper(children[0]) ? Inner : Outer;
-
-        this.children = children.map(child => new this.childType(child, this));
+        for (const child of children) {
+            this.children.push(Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this));
+        }
 
         if ('seed' in optional) {
             this.seed = optional.seed;
