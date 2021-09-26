@@ -52,6 +52,7 @@ const accept = (() => {
         event.stopPropagation();
 
         node.disconnect();
+        node.disconnectHandlers();
     }
 
     function showSvg(showCreator = true) {

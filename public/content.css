@@ -140,22 +140,21 @@ body {
 .internal-node {
     position: relative;
     font-size: 25px;
-    white-space: pre;
     user-select: none;
     text-align: left;
     color: var(--dark-font);
     background-color: var(--light-background);
-
-    border-style: solid;
-    border-color: transparent;
-    border-width: 3px;
 }
 
 #adviser {
     color: var(--light-font);
     transition-duration: 2000ms;
-    white-space: normal;
+    white-space: pre;
     display: block;
+}
+
+span#adviser::after {
+    content: ' ';
 }
 
 #adviser > svg {
@@ -174,19 +173,19 @@ body {
 }
 
 .border-top {
-    border-top-style: solid;
+    border-top: 3px solid transparent;
 }
 
 .border-right {
-    border-right-style: solid;
+    border-right: 3px solid transparent;
 }
 
 .border-bottom {
-    border-bottom-style: solid;
+    border-bottom: 3px solid transparent;
 }
 
 .border-left {
-    border-left-style: solid;
+    border-left: 3px solid transparent;
 }
 
 .border-top.selected {
@@ -205,11 +204,6 @@ body {
     border-left-style: dashed;
 }
 
-.border-top, .border-right, .border-bottom, .border-left {
-    border-color: transparent;
-    border-width: 3px;
-}
-
 .border-strong {
     border-color: var(--border);
 }
@@ -222,7 +216,7 @@ body {
     pointer-events: none;
 }
 
-.internal-node.root > .internal-node-value {
+#root.internal-node > .internal-node-value {
     text-align: center;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -230,7 +224,7 @@ body {
     text-overflow: ellipsis;
 }
 
-.internal-node.root > .internal-node {
+#root.internal-node > .internal-node {
     padding-left: 12px;
 }
 
@@ -244,7 +238,7 @@ body {
     padding-top: 5px
 }
 
-.internal-node .internal-node:first-of-type {
+.internal-node:not(#root) .internal-node:first-of-type {
     margin-top: 8px;
 }
 

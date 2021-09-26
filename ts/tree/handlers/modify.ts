@@ -7,14 +7,16 @@ import Middle from '../nodes/middle';
 
 type ModifiableNode = Leaf | Middle;
 
-class Form {
-    private static openCount = 0;
-    static readonly elements = {
+const accept = (function() {
+    const SELECTED_CLASS = 'selected';
+    const ELEMENTS = {
         'form': document.getElementById('form-page'),
         'wrapper': document.getElementById('form-page-wrapper')
     };
 
-    static getFunctionPredicate(predicate: Predicate): FunctionPredicate {
+    let activeNode = null;
+
+    function getFunctionPredicate(predicate: Predicate): FunctionPredicate {
         switch (typeof predicate) {
             case 'boolean':
                 return () => predicate;
@@ -27,27 +29,19 @@ class Form {
         }
     }
 
-    private readonly node;
-    private openId: number = -1;
+    function close() {
+        ELEMENTS.form.innerHTML = '';
+        ELEMENTS.wrapper.classList.remove(SELECTED_CLASS);
 
-    constructor(node: Middle) {
-        this.node = node;
+        activeNode.element.classList.remove(SELECTED_CLASS);
+
+        activeNode = null;
     }
 
-    close() {
-        this.openId = -1;
+    function open() {
+        ELEMENTS.wrapper.classList.add(SELECTED_CLASS);
 
-        Form.elements.form.innerHTML = '';
-
-        Form.elements.wrapper.classList.remove('selected');
-    }
-
-    open() {
-        this.openId = ++Form.openCount;
-
-        Form.elements.form.innerHTML = '';
-
-        Form.elements.wrapper.classList.add('selected');
+        activeNode.element.classList.add(SELECTED_CLASS);
 
         const isValid = (value: Value, node: ModifiableNode) => {
             if (node instanceof Middle && node.hasSibling(value)) {
@@ -61,7 +55,7 @@ class Form {
                     return false;
             }
 
-            return Form.getFunctionPredicate(node.predicate)(value);
+            return getFunctionPredicate(node.predicate)(value);
         };
 
         const handleInput = (value: Value, inputElement: HTMLInputElement, node: ModifiableNode) => {
@@ -90,11 +84,13 @@ class Form {
                     inputElement.oninput = () => handleInput(inputElement.checked, inputElement, node);
                     inputElement.checked = value;
                     break;
+
                 case 'number':
                     inputElement.type = 'number';
                     inputElement.oninput = () => handleInput(Number(inputElement.value), inputElement, node);
                     inputElement.value = value.toString();
                     break;
+
                 case 'string':
                     inputElement.type = 'text';
                     inputElement.oninput = () => handleInput(inputElement.value, inputElement, node);
@@ -120,17 +116,17 @@ class Form {
                 table.appendChild(row);
             }
 
-            Form.elements.form.appendChild(table);
+            ELEMENTS.form.appendChild(table);
         };
 
         const getRows = () => {
-            const rows = [getInputRow(this.node)];
+            const rows = [getInputRow(activeNode)];
 
-            if (this.node.children.length > 0) {
-                const [modelChild] = this.node.children;
+            if (activeNode.children.length > 0) {
+                const [modelChild] = activeNode.children;
 
                 if (!(modelChild instanceof Middle)) {
-                    rows.push(...this.node.children.map(getInputRow));
+                    rows.push(...activeNode.children.map(getInputRow));
                 }
             }
 
@@ -140,45 +136,34 @@ class Form {
         loadForm(getRows());
     }
 
-    public toggle() {
-        if (this.openId === Form.openCount) {
-            this.close();
-        } else {
-            this.open();
+    return function (node: Middle): Listeners {
+        function toggle() {
+            if (activeNode === node) {
+                close();
+            } else {
+                if (activeNode) {
+                    close();
+                }
+
+                activeNode = node;
+
+                open();
+            }
         }
-    }
-}
 
-function accept(node: Middle): Listeners {
-    const {element} = node;
+        return (() => {
+            const listeners = new Listeners();
 
-    function highlight(event) {
-        event.stopPropagation();
+            listeners.add(node.element, 'click', (event) => {
+                event.stopPropagation();
 
-        element.classList.add('hovered');
-    }
+                toggle();
+            });
 
-    function unhighlight(event) {
-        event.stopPropagation();
-
-        element.classList.remove('hovered');
-    }
-
-    return (() => {
-        const form = new Form(node);
-        const listeners = new Listeners();
-
-        listeners.add(element, 'mouseenter', highlight.bind(this));
-        listeners.add(element, 'click', (event) => {
-            event.stopPropagation();
-
-            form.toggle();
-        });
-        listeners.add(element, 'mouseleave', unhighlight.bind(this));
-
-        return listeners;
-    })();
-}
+            return listeners;
+        })();
+    };
+})();
 
 export default function getListeners(node: Middle): Listeners {
     return accept(node);

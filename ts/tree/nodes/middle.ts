@@ -9,6 +9,7 @@ import type {Listeners} from '../handlers/utils';
 import getModificationListeners from '../handlers/modify';
 import getRelocationListeners from '../handlers/relocate';
 import getDeletionListeners from '../handlers/delete';
+import getHighlightListeners from '../handlers/highlight';
 
 import ValueHolder from './valueHolder';
 
@@ -23,24 +24,25 @@ export default abstract class Middle extends ValueHolder {
 
     listeners: Array<Listeners> = [];
 
-    protected constructor({label, value, children, ...optional}: dataTypes.Middle, parent: unions.Upper) {
+    protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper) {
         super(label, value);
 
         this.element.draggable = true;
-        this.element.classList.add('internal-node', 'middle');
+        this.element.classList.add('internal-node', 'middle', 'border-top', 'border-bottom');
         this.element.appendChild(this.valueElement);
 
         this.render();
         this.attach(parent);
 
-        if ('predicate' in optional) {
-            this.predicate = optional.predicate;
+        if ('predicate' in others) {
+            this.predicate = others.predicate;
         }
 
         this.listeners.push(
             getModificationListeners(this),
             getRelocationListeners(this),
-            getDeletionListeners(this)
+            getDeletionListeners(this),
+            getHighlightListeners(this),
         );
     }
 
@@ -100,10 +102,6 @@ export default abstract class Middle extends ValueHolder {
         this.element.remove();
 
         this.parent = undefined;
-
-        for (const listener of this.listeners) {
-            listener.clear();
-        }
     }
 
     disconnectHandlers() {

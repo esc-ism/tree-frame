@@ -15,7 +15,6 @@ export default class Outer extends Middle {
         const {children} = data;
 
         for (const child of children) {
-            // @ts-ignore
             this.children.push(new Leaf(child, this));
         }
     }

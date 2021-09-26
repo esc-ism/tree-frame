@@ -27,7 +27,7 @@ export default class Inner extends Middle {
         const {children} = data;
 
         for (const child of children) {
-            this.children.push(Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this));
+            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
         }
 
         if ('seed' in data) {
