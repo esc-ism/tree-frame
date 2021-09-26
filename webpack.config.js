@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: './ts/index.ts',
-    mode: 'production',
+    mode: 'development',
     module: {
         rules: [
             {
@@ -16,9 +16,9 @@ module.exports = {
         extensions: ['.ts', '.js'],
     },
     output: {
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'bin'),
-        sourceMapFilename: "bundle.js.map"
+        sourceMapFilename: "[name].bundle.js.map"
     },
     devtool: "eval-source-map",
     devServer: {

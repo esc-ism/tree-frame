@@ -1,7 +1,6 @@
 import {PASSWORD, EVENTS} from './consts';
 
 import validate from './validation';
-import getExampleConfig from './example';
 
 import start from './start';
 
@@ -23,11 +22,11 @@ export function onInit({data}) {
 }
 
 if (window.parent === window) {
-    const config = getExampleConfig();
+    import('./example').then(({default: config}) => {
+        validate(config);
 
-    validate(config);
-
-    start(config);
+        start(config);
+    });
 } else {
     window.parent.postMessage({
         'event': EVENTS.START,

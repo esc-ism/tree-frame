@@ -66,42 +66,13 @@ function getMedia(
     };
 }
 
-export default function getExampleConfig(): Config {
-    return {
-        'title': 'An Example Title for an Example Tree',
-        'tree': {
-            'children': [
-                {
-                    'label': 'Location',
-                    'value': 'The UK',
-                    'predicate': (value) => value !== '',
-                    'children': [
-                        {
-                            'label': 'Category',
-                            'value': 'Famous People',
-                            'predicate': false,
-                            'seed': getPerson(),
-                            'children': [
-                                getPerson('William Shakespeare', 'Playwright', 1564, 'Brown?', 'Brown'),
-                            ]
-                        },
-                        {
-                            'label': 'Category',
-                            'value': 'Famous Media',
-                            'predicate': false,
-                            'seed': getMedia(),
-                            'children': [
-                                getMedia('Doctor Who', 'TV Show', 1963, 'A genderless, time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
-                                getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.'),
-                                getMedia('How Soon Is Now?', 'Song', 1985, 'The Smiths\' manifestation of loneliness.'),
-                            ]
-                        },
-                    ]
-                },
-            ],
-            'seed': {
+const config: Config = {
+    'title': 'An Example Title for an Example Tree',
+    'tree': {
+        'children': [
+            {
                 'label': 'Location',
-                'value': '*location*',
+                'value': 'The UK',
                 'predicate': (value) => value !== '',
                 'children': [
                     {
@@ -109,17 +80,46 @@ export default function getExampleConfig(): Config {
                         'value': 'Famous People',
                         'predicate': false,
                         'seed': getPerson(),
-                        'children': [getPerson()]
+                        'children': [
+                            getPerson('William Shakespeare', 'Playwright', 1564, 'Brown?', 'Brown'),
+                        ]
                     },
                     {
                         'label': 'Category',
                         'value': 'Famous Media',
                         'predicate': false,
                         'seed': getMedia(),
-                        'children': [getMedia()]
-                    }
-                ],
-            }
+                        'children': [
+                            getMedia('Doctor Who', 'TV Show', 1963, 'A genderless, time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
+                            getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.'),
+                            getMedia('How Soon Is Now?', 'Song', 1985, 'The Smiths\' manifestation of loneliness.'),
+                        ]
+                    },
+                ]
+            },
+        ],
+        'seed': {
+            'label': 'Location',
+            'value': '*location*',
+            'predicate': (value) => value !== '',
+            'children': [
+                {
+                    'label': 'Category',
+                    'value': 'Famous People',
+                    'predicate': false,
+                    'seed': getPerson(),
+                    'children': [getPerson()]
+                },
+                {
+                    'label': 'Category',
+                    'value': 'Famous Media',
+                    'predicate': false,
+                    'seed': getMedia(),
+                    'children': [getMedia()]
+                }
+            ],
         }
-    };
+    }
 }
+
+export default config;

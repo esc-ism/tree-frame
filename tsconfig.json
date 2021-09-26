@@ -2,6 +2,7 @@
     "compilerOptions": {
       "target": "es6",
       "outDir": "out/js",
+      "module": "esnext",
       "moduleResolution": "node"
     },
     "include": [
