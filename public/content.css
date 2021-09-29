@@ -229,20 +229,32 @@ span#adviser::after {
 }
 
 .internal-node.middle .internal-node {
-    border-left: 3px solid var(--border);
+    background-size: 3px;
+    background-image: linear-gradient(
+        to bottom,
+        var(--light-background),
+        var(--border),
+        var(--border),
+        var(--border),
+        var(--border),
+        var(--border),
+        var(--light-background)
+    );
+    background-repeat: no-repeat;
     padding-left: 10px;
     margin-left: 1.6em;
 }
 
 .internal-node .internal-node:not(.deepest-key):not(:first-of-type) {
-    padding-top: 5px
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .internal-node:not(#root) .internal-node:first-of-type {
     margin-top: 8px;
 }
 
-.internal-node.hovered {
+.internal-node.middle.hovered {
     background-size: 1em;
     background-image: linear-gradient(
         to right,

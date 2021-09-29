@@ -21,8 +21,8 @@ export default class Inner extends Middle {
     children: Array<Middle> = [];
     seed: dataTypes.Middle;
 
-    constructor(data: dataTypes.Inner, parent?: unions.Upper) {
-        super(data, parent);
+    constructor(data: dataTypes.Inner, parent: unions.Upper, isConnected: boolean = true) {
+        super(data, parent, isConnected);
 
         const {children} = data;
 

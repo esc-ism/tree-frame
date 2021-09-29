@@ -2,12 +2,10 @@ import {handleDragOver, Listeners} from './utils';
 
 import type {Upper} from '../nodes/unions';
 import type Middle from '../nodes/middle';
-import  Inner from '../nodes/inner';
-import  Outer from '../nodes/outer';
+import Inner from '../nodes/inner';
+import Outer from '../nodes/outer';
 
 import {LIFECYCLE_SVGS} from '../../consts';
-
-//TODO you were listening to creator.parentElement for drags before; if buggy return to that
 
 (function setup() {
     const {creator, parent} = LIFECYCLE_SVGS;
@@ -38,6 +36,7 @@ function reject(node: Upper): Listeners {
 
         listeners.bottom.add(element, 'dragenter', handleDragOver.bind(null, false));
         listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, false));
+        listeners.bottom.add(element, 'dragleave', (event) => event.stopPropagation());
     });
 
     listeners.top.add(parent, 'dragend', (event) => {
@@ -49,46 +48,84 @@ function reject(node: Upper): Listeners {
     return listeners.top;
 }
 
-function accept(node: Upper): Listeners {
-    function disconnect(sapling: Middle, event) {
-        event.stopPropagation();
+const accept = (function () {
+    const saplings = {
+        'backups': [],
+        'active': null
+    };
 
-        sapling.disconnect();
+    function reset() {
+        saplings.backups = [];
+        saplings.active = null;
     }
 
-    function attach(sapling: Middle, event) {
-        handleDragOver(true, event);
+    function deactivate() {
+        saplings.active.disconnect();
 
-        sapling.attach(node);
+        saplings.active = saplings.backups.pop();
+
+        if (saplings.active) {
+            saplings.active.attach();
+        }
     }
 
-    return (() => {
+    function activate(sapling: Middle, node: Upper) {
+        if (saplings.active) {
+            saplings.active.disconnect();
+
+            saplings.backups.push(saplings.active);
+        }
+
+        saplings.active = {
+            'attach': sapling.attach.bind(sapling, node, 0),
+            'disconnect': sapling.disconnect.bind(sapling)
+        };
+
+        saplings.active.attach();
+    }
+
+    return function (node: Upper): Listeners {
         const {parent} = LIFECYCLE_SVGS;
         const listeners = {
             'top': new Listeners(),
             'bottom': new Listeners()
         };
+        const getSapling = (() => {
+            const {seed} = node;
+
+            if (Inner.isInner(seed)) {
+                return () => new Inner(seed, node, false);
+            }
+
+            return () => new Outer(seed, node, false);
+        })();
 
         listeners.top.add(parent, 'dragstart', (event) => {
             event.stopPropagation();
 
-            const {seed, element} = node;
-            const sapling = Inner.isInner(seed) ? new Inner(seed, node) : new Outer(seed, node);
+            const {element} = node;
+            const sapling = getSapling();
 
-            listeners.bottom.add(element, 'dragenter', attach.bind(this, sapling));
+            listeners.bottom.add(element, 'dragenter', (event) => {
+                handleDragOver(true, event);
+
+                activate(sapling, node);
+            });
             listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, true));
-            listeners.bottom.add(element, 'dragleave', disconnect.bind(this, sapling));
+            listeners.bottom.add(element, 'dragleave', deactivate);
         });
 
         listeners.top.add(parent, 'dragend', (event) => {
             event.stopPropagation();
 
+            reset();
+
             listeners.bottom.clear();
         });
 
         return listeners.top;
-    })();
-}
+    };
+})();
 
 export default function getListeners(node: Upper): Listeners {
     return (node.seed ? accept : reject)(node);

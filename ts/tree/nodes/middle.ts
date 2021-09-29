@@ -24,7 +24,7 @@ export default abstract class Middle extends ValueHolder {
 
     listeners: Array<Listeners> = [];
 
-    protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper) {
+    protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper, isConnected: boolean) {
         super(label, value);
 
         this.element.draggable = true;
@@ -32,7 +32,12 @@ export default abstract class Middle extends ValueHolder {
         this.element.appendChild(this.valueElement);
 
         this.render();
-        this.attach(parent);
+
+        if (isConnected) {
+            this.attach(parent);
+        } else {
+            this.parent = parent;
+        }
 
         if ('predicate' in others) {
             this.predicate = others.predicate;

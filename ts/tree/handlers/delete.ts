@@ -48,16 +48,16 @@ function reject(node: Middle) {
 }
 
 const accept = (() => {
-    function destroy(event, node) {
+    function destroy(node, event) {
         event.stopPropagation();
 
         node.disconnect();
         node.disconnectHandlers();
     }
 
-    function showSvg(showCreator = true) {
-        LIFECYCLE_SVGS[showCreator ? 'creator' : 'destroyer'].style.removeProperty('display');
-        LIFECYCLE_SVGS[showCreator ? 'destroyer' : 'creator'].style.display = 'none';
+    function showSvg(showDestroyer = true) {
+        LIFECYCLE_SVGS[showDestroyer ? 'destroyer' : 'creator'].style.removeProperty('display');
+        LIFECYCLE_SVGS[showDestroyer ? 'creator' : 'destroyer'].style.display = 'none';
     }
 
     return function (node: Middle) {
@@ -78,7 +78,7 @@ const accept = (() => {
             listeners.bottom.add(destroyer, 'dragenter', svgInterface.handleEnter.bind(svgInterface));
             listeners.bottom.add(destroyer, 'dragover', handleDragOver.bind(null, true));
             listeners.bottom.add(destroyer, 'dragleave', svgInterface.handleExit.bind(svgInterface));
-            listeners.bottom.add(destroyer, 'drop', destroy.bind(this));
+            listeners.bottom.add(destroyer, 'drop', destroy.bind(null, node));
         });
 
         listeners.top.add(element, 'dragend', (event) => {
@@ -92,7 +92,7 @@ const accept = (() => {
         });
 
         return listeners.top;
-    }
+    };
 })();
 
 export default function getListeners(node: Middle): Listeners {

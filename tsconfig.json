@@ -3,7 +3,8 @@
       "target": "es6",
       "outDir": "out/js",
       "module": "esnext",
-      "moduleResolution": "node"
+      "moduleResolution": "node",
+      "sourceMap": true
     },
     "include": [
       "ts/**/*"

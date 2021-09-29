@@ -17,8 +17,6 @@ export default class Root {
     readonly element = document.getElementById('root');
     private readonly valueElement = document.getElementById('adviser');
 
-    readonly childType: typeof Inner | typeof Outer;
-
     constructor({children, ...optional}: dataTypes.Root) {
         if (Root.instance) {
             throw new Error('Attempt to instantiate a second Root node.');
@@ -27,7 +25,7 @@ export default class Root {
         Root.instance = this;
 
         for (const child of children) {
-            this.children.push(Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this));
+            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
         }
 
         if ('seed' in optional) {
