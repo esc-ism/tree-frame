@@ -9,6 +9,8 @@ function setTitle(title: string) {
     const titleElement = document.getElementById('title');
 
     titleElement.innerText = title;
+
+    titleElement.title = title;
 }
 
 function loadClosers(root: Root) {

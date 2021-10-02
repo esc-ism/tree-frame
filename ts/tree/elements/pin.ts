@@ -18,6 +18,6 @@ svg.appendChild(g);
 g.appendChild(outline);
 g.appendChild(ballCurve);
 
-export default function getPin() {
-    return svg.cloneNode(true);
+export default function getPin(): SVGElement {
+    return svg.cloneNode(true) as SVGElement;
 }

@@ -8,10 +8,10 @@ import Middle from '../nodes/middle';
 type ModifiableNode = Leaf | Middle;
 
 const accept = (function() {
-    const SELECTED_CLASS = 'selected';
     const ELEMENTS = {
         'form': document.getElementById('form-page'),
-        'wrapper': document.getElementById('form-page-wrapper')
+        'table': document.getElementById('config-table'),
+        'closer': document.getElementById('form-page-closer'),
     };
 
     let activeNode = null;
@@ -30,29 +30,21 @@ const accept = (function() {
     }
 
     function close() {
-        ELEMENTS.form.innerHTML = '';
-        ELEMENTS.wrapper.classList.remove(SELECTED_CLASS);
+        ELEMENTS.form.classList.remove('selected');
 
-        activeNode.valueElement.classList.remove(SELECTED_CLASS);
+        activeNode.select(false);
 
         activeNode = null;
     }
 
     function open() {
-        ELEMENTS.wrapper.classList.add(SELECTED_CLASS);
+        ELEMENTS.form.classList.add('selected');
 
-        activeNode.valueElement.classList.add(SELECTED_CLASS);
+        activeNode.select();
 
-        const isValid = (value: Value, node: ModifiableNode) => {
+        const isValid = (value: Value, node: ModifiableNode): boolean => {
             if (node instanceof Middle && node.hasSibling(value)) {
                 return false;
-            }
-
-            const {predicate} = node;
-
-            switch (typeof predicate) {
-                case 'undefined':
-                    return false;
             }
 
             return getFunctionPredicate(node.predicate)(value);
@@ -117,15 +109,13 @@ const accept = (function() {
         };
 
         const loadForm = (inputRows) => {
-            const table = document.createElement('table');
+            const {table} = ELEMENTS;
 
-            table.id = 'config-table';
+            table.innerHTML = '';
 
             for (const row of inputRows) {
                 table.appendChild(row);
             }
-
-            ELEMENTS.form.appendChild(table);
         };
 
         const getRows = () => {
@@ -144,6 +134,8 @@ const accept = (function() {
 
         loadForm(getRows());
     }
+
+    ELEMENTS.closer.addEventListener('click', close);
 
     return function (node: Middle): Listeners {
         function toggle() {

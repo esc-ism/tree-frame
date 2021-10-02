@@ -19,18 +19,27 @@ export default abstract class Middle extends ValueHolder {
     abstract children: Array<Middle | Leaf>;
 
     element: HTMLElement = document.createElement('div');
+    valueAligner: HTMLElement = document.createElement('div');
     valueElement: HTMLElement = document.createElement('span');
+    pinElement: SVGElement = getPin();
 
     listeners: Array<Listeners> = [];
 
     protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper, isConnected: boolean) {
         super(label, value);
 
-        this.valueElement.classList.add('internal-node-value', 'border-top', 'border-bottom');
+        this.valueElement.classList.add('internal-node-value');
 
         this.element.draggable = true;
         this.element.classList.add('internal-node', 'middle');
-        this.element.appendChild(this.valueElement);
+
+        this.valueAligner.classList.add('internal-node-aligner', 'border-top', 'border-bottom');
+
+        this.pinElement.style.visibility = 'hidden';
+
+        this.valueAligner.appendChild(this.pinElement);
+        this.valueAligner.appendChild(this.valueElement);
+        this.element.appendChild(this.valueAligner);
 
         this.render();
 
@@ -50,6 +59,14 @@ export default abstract class Middle extends ValueHolder {
             getDeletionListeners(this),
             getHighlightListeners(this),
         );
+    }
+
+    select(doSelect = true) {
+        if (doSelect) {
+            this.valueAligner.classList.add('selected');
+        } else {
+            this.valueAligner.classList.remove('selected');
+        }
     }
 
     render() {
@@ -119,15 +136,7 @@ export default abstract class Middle extends ValueHolder {
     unpin() {
         this.element.draggable = true;
 
-        if (this.element.childNodes.length < 2) {
-            return;
-        }
-
-        const {firstChild} = this.element;
-
-        if (firstChild.nodeName === 'svg') {
-            firstChild.remove();
-        }
+        this.pinElement.style.visibility = 'hidden';
     }
 
     pin() {
@@ -137,7 +146,7 @@ export default abstract class Middle extends ValueHolder {
             return;
         }
 
-        this.element.insertBefore(getPin(), this.element.firstChild);
+        this.pinElement.style.removeProperty('visibility');
     }
 
     getDataTree() {

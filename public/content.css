@@ -18,7 +18,6 @@ body {
 .vr {
     height: 100%;
     border-left: 2px solid var(--border);
-    float: left;
 }
 
 .hr {
@@ -66,18 +65,15 @@ body {
     opacity: 0.7;
 }
 
-#object-page, #form-page-wrapper {
+#object-page, #form-page {
     height: 60vh;
-    max-height: 100%;
     overflow-y: hidden;
 }
 
 #object-page {
-    float: left;
     background-color: var(--light-background);
     position: relative;
     direction: rtl;
-    width: 50%;
     display: flex;
     flex-direction: row-reverse;
 }
@@ -86,16 +82,31 @@ body {
     direction: ltr;
 }
 
-#form-page-wrapper {
-    background: var(--light-background);
+#form-page {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    max-width: 100%;
     display: flex;
-    flex-direction: row;
+    background: var(--light-background);
     align-items: center;
     flex-wrap: wrap;
+    margin-left:100%;
+    transform: translateX(100%);
+    transition: transform 1000ms;
 }
 
-#form-page {
-    width: 100%;
+#form-page.selected {
+    transform: translateX(0);
+}
+
+#form-page-closer {
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 20px;
+    cursor: pointer;
 }
 
 #config-table {
@@ -120,11 +131,6 @@ body {
     background-color: var(--table-even);
 }
 
-.config-input-cell {
-    display: flex;
-    flex-direction: column;
-}
-
 .config-input {
     background-color: rgba(255, 255, 255, 0.88);
     border-width: 1px;
@@ -132,12 +138,12 @@ body {
 }
 
 #object-scroll-area {
-    flex-shrink: 0;
     position: sticky;
     position: -webkit-sticky;
     top: 0;
     left: 0;
-    width: 13%;
+    min-width: 2em;
+    max-width: 4em;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -194,10 +200,6 @@ span#adviser::after {
     pointer-events: auto;
 }
 
-#form-page-wrapper.lr {
-    border-left: 3px dashed var(--selection);
-}
-
 .border-top {
     border-top: 3px solid transparent;
 }
@@ -242,13 +244,13 @@ span#adviser::after {
     border-color: var(--selection);
 }
 
-.internal-node.middle > .internal-node-value {
+.internal-node.middle > .internal-node-aligner {
     pointer-events: none;
     display: block;
     padding-left: 12px;
 }
 
-.internal-node.inner > .internal-node-value {
+.internal-node.inner > .internal-node-aligner {
     padding-bottom: 3px;
 }
 
