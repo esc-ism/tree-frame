@@ -1,7 +1,5 @@
 import type * as dataTypes from '../../types';
 
-import {isUpper} from '../../validation';
-
 import Inner from './inner';
 import Outer from './outer';
 import type Middle from './middle';
@@ -24,12 +22,12 @@ export default class Root {
 
         Root.instance = this;
 
-        for (const child of children) {
-            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
-        }
-
         if ('seed' in optional) {
             this.seed = optional.seed;
+        }
+
+        for (const child of children) {
+            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
         }
 
         getCreationListeners(this);
