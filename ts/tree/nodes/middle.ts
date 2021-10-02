@@ -3,6 +3,7 @@ import type * as unions from './unions';
 
 import getPin from '../elements/pin';
 
+import ValueHolder from './valueHolder';
 import type Leaf from './leaf';
 
 import type {Listeners} from '../handlers/utils';
@@ -10,8 +11,6 @@ import getModificationListeners from '../handlers/modify';
 import getRelocationListeners from '../handlers/relocate';
 import getDeletionListeners from '../handlers/delete';
 import getHighlightListeners from '../handlers/highlight';
-
-import ValueHolder from './valueHolder';
 
 export default abstract class Middle extends ValueHolder {
     predicate: dataTypes.Predicate;
@@ -27,8 +26,10 @@ export default abstract class Middle extends ValueHolder {
     protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper, isConnected: boolean) {
         super(label, value);
 
+        this.valueElement.classList.add('internal-node-value', 'border-top', 'border-bottom');
+
         this.element.draggable = true;
-        this.element.classList.add('internal-node', 'middle', 'border-top', 'border-bottom');
+        this.element.classList.add('internal-node', 'middle');
         this.element.appendChild(this.valueElement);
 
         this.render();

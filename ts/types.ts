@@ -41,9 +41,7 @@ export interface Root extends Parent {
 // Node unions
 
 export type Middle = Inner | Outer;
-
 export type Child = Middle | Leaf;
-
 export type Node = Root | Child;
 
 // Config type

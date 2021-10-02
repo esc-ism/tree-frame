@@ -3,6 +3,8 @@ import stop from './stop';
 
 import Root from './tree/nodes/root';
 
+import {SCROLLERS} from './consts';
+
 function setTitle(title: string) {
     const titleElement = document.getElementById('title');
 
@@ -23,21 +25,41 @@ function loadClosers(root: Root) {
     });
 }
 
-function setupDragScrolling(trackerCount = 20) {
-    const scroller = Root.instance.element.parentElement.parentElement;
+function setupWheelScrolling() {
+    const DELTA_MULTIPLIER = 0.7;
+
+    for (const scroller of Object.values(SCROLLERS)) {
+        scroller.addEventListener('wheel', (event) => {
+            event.stopPropagation();
+
+            scroller.scrollTop += event.deltaY * DELTA_MULTIPLIER;
+        });
+    }
+}
+
+function setupDragScrolling(trackerCount = 25) {
+    const DELTA_MULTIPLIER = 4;
+    const DELTA_POWER = 1.5;
+
+    const {NODES} = SCROLLERS;
 
     const getTrackers = () => {
         const trackerHeight = 100 / trackerCount;
         const trackers = [];
+        const trackerRadius = (trackerCount - 1) / 2;
+
+        const getScroll = (deltaY) => {
+            const normalised = deltaY / trackerCount;
+
+            return normalised * Math.pow(Math.abs(normalised), DELTA_POWER);
+        }
 
         for (let i = 0; i < trackerCount; i++) {
-            const yVector = (trackerCount - 1) / 2 - i;
-            const dragVector = (yVector * Math.pow(Math.abs(yVector), 2)) / (trackerCount * 2);
+            const dragVector = getScroll((trackerRadius - i) * DELTA_MULTIPLIER);
             const tracker = document.createElement('section');
 
             // Store data
             tracker.setAttribute('top', `${trackerHeight * i}`);
-            tracker.setAttribute('yVector', `${yVector}`);
 
             // Size and position
             tracker.style.position = 'absolute';
@@ -45,9 +67,9 @@ function setupDragScrolling(trackerCount = 20) {
             tracker.style.width = '100%';
             tracker.style.top = `${tracker.getAttribute('top')}%`;
 
-            tracker.ondragenter = function () {
+            tracker.ondragenter = () => {
                 const scroll = setInterval(() => {
-                    scroller.scrollTop -= dragVector;
+                    NODES.scrollTop -= dragVector;
                 }, 5);
 
                 tracker.ondragleave = () => clearInterval(scroll);
@@ -71,5 +93,6 @@ export default function start(config: Config) {
 
     setTitle(config.title);
     loadClosers(root);
+    setupWheelScrolling();
     setupDragScrolling();
 }

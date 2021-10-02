@@ -2,7 +2,6 @@ import type * as dataTypes from '../../types';
 import type * as unions from './unions';
 
 import Middle from './middle';
-
 import Leaf from './leaf';
 
 export default class Outer extends Middle {
@@ -11,6 +10,8 @@ export default class Outer extends Middle {
 
     constructor(data: dataTypes.Middle, parent: unions.Upper, isConnected: boolean = true) {
         super(data, parent, isConnected);
+
+        this.element.classList.add('outer');
 
         const {children} = data;
 

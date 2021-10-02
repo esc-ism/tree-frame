@@ -12,15 +12,13 @@ const accept = (function () {
     }
 
     function unhighlight() {
-        activeNode.element.classList.remove(HIGHLIGHT_CLASS);
+        activeNode?.element.classList.remove(HIGHLIGHT_CLASS);
     }
 
     return function (node: Middle) {
         function enter() {
             if (!isDragOngoing) {
-                if (activeNode) {
-                    unhighlight();
-                }
+                unhighlight();
 
                 activeNode = node;
 

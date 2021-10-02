@@ -1,11 +1,11 @@
-import {handleDragOver, Listeners} from './utils';
+import {EventCounter, handleDragOver, Listeners} from './utils';
 
 import type {Upper} from '../nodes/unions';
-import type Middle from '../nodes/middle';
 import Inner from '../nodes/inner';
 import Outer from '../nodes/outer';
 
 import {LIFECYCLE_SVGS} from '../../consts';
+import {NonLeaf} from '../nodes/unions';
 
 (function setup() {
     const {creator, parent} = LIFECYCLE_SVGS;
@@ -23,7 +23,7 @@ import {LIFECYCLE_SVGS} from '../../consts';
     });
 })();
 
-function reject(node: Upper): Listeners {
+function reject(node: NonLeaf): Listeners {
     const {element} = node;
     const {parent} = LIFECYCLE_SVGS;
     const listeners = {
@@ -34,9 +34,9 @@ function reject(node: Upper): Listeners {
     listeners.top.add(parent, 'dragstart', (event) => {
         event.stopPropagation();
 
-        listeners.bottom.add(element, 'dragenter', handleDragOver.bind(null, false));
-        listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, false));
-        listeners.bottom.add(element, 'dragleave', (event) => event.stopPropagation());
+        listeners.bottom.add(element, 'dragenter', (event) => void event.stopPropagation());
+        listeners.bottom.add(element, 'dragover', (event) => void event.stopPropagation());
+        listeners.bottom.add(element, 'dragleave', (event) => void event.stopPropagation());
     });
 
     listeners.top.add(parent, 'dragend', (event) => {
@@ -48,85 +48,94 @@ function reject(node: Upper): Listeners {
     return listeners.top;
 }
 
-const accept = (function () {
-    const saplings = {
-        'backups': [],
-        'active': null
+class NodeInterface extends EventCounter {
+    private readonly parent: Upper;
+    private readonly isInner: boolean
+    private sapling: Outer | Inner;
+
+    isDroppable = true;
+
+    constructor(parent: Upper) {
+        super();
+
+        this.parent = parent;
+        this.isInner = Inner.isInner(parent.seed);
+        this.sapling = this.getSapling();
+    }
+
+    reset() {
+        super.reset();
+
+        const {element} = this.sapling;
+
+        element.classList.remove('sapling');
+
+        if (!element.isConnected) {
+            this.sapling.disconnectHandlers();
+        }
+
+        this.sapling = this.getSapling();
+    }
+
+    getSapling() {
+        // @ts-ignore
+        const sapling = new (this.isInner ? Inner : Outer)(this.parent.seed, this.parent, false);
+
+        sapling.element.classList.add('sapling');
+
+        return sapling;
+    }
+
+    onEnter() {
+        this.sapling.attach(this.parent, 0);
+    }
+
+    onExit() {
+        this.sapling.disconnect();
+    }
+}
+
+function accept(node: Upper): Listeners {
+    const {parent} = LIFECYCLE_SVGS;
+    const listeners = {
+        'top': new Listeners(),
+        'bottom': new Listeners()
     };
 
-    function reset() {
-        saplings.backups = [];
-        saplings.active = null;
-    }
+    const nodeInterface = new NodeInterface(node);
 
-    function deactivate() {
-        saplings.active.disconnect();
+    listeners.top.add(parent, 'dragstart', (event) => {
+        event.stopPropagation();
 
-        saplings.active = saplings.backups.pop();
+        const {element} = node;
+        const {value} = node.seed;
 
-        if (saplings.active) {
-            saplings.active.attach();
-        }
-    }
-
-    function activate(sapling: Middle, node: Upper) {
-        if (saplings.active) {
-            saplings.active.disconnect();
-
-            saplings.backups.push(saplings.active);
-        }
-
-        saplings.active = {
-            'attach': sapling.attach.bind(sapling, node, 0),
-            'disconnect': sapling.disconnect.bind(sapling)
-        };
-
-        saplings.active.attach();
-    }
-
-    return function (node: Upper): Listeners {
-        const {parent} = LIFECYCLE_SVGS;
-        const listeners = {
-            'top': new Listeners(),
-            'bottom': new Listeners()
-        };
-        const getSapling = (() => {
-            const {seed} = node;
-
-            if (Inner.isInner(seed)) {
-                return () => new Inner(seed, node, false);
-            }
-
-            return () => new Outer(seed, node, false);
-        })();
-
-        listeners.top.add(parent, 'dragstart', (event) => {
-            event.stopPropagation();
-
-            const {element} = node;
-            const sapling = getSapling();
-
-            listeners.bottom.add(element, 'dragenter', (event) => {
-                handleDragOver(true, event);
-
-                activate(sapling, node);
-            });
+        if (node.children.some(child => child.getValue() === value)) {
+            listeners.bottom.add(element, 'dragenter', (event) => void event.stopPropagation());
+            listeners.bottom.add(element, 'dragover', (event) => void event.stopPropagation());
+            listeners.bottom.add(element, 'dragleave', (event) => void event.stopPropagation());
+        } else {
+            listeners.bottom.add(element, 'dragenter', nodeInterface.registerEnter.bind(nodeInterface));
             listeners.bottom.add(element, 'dragover', handleDragOver.bind(null, true));
-            listeners.bottom.add(element, 'dragleave', deactivate);
-        });
+            listeners.bottom.add(element, 'dragleave', nodeInterface.registerExit.bind(nodeInterface));
+        }
+    });
 
-        listeners.top.add(parent, 'dragend', (event) => {
-            event.stopPropagation();
+    listeners.top.add(parent, 'dragend', (event) => {
+        event.stopPropagation();
 
-            reset();
+        nodeInterface.reset();
 
-            listeners.bottom.clear();
-        });
+        listeners.bottom.clear();
+    });
 
-        return listeners.top;
-    };
-})();
+    return listeners.top;
+}
 
-export default function getListeners(node: Upper): Listeners {
-    return (node.seed ? accept : reject)(node);
+export default function getListeners(node: NonLeaf): Listeners {
+    if ('seed' in node) {
+        return (node.seed ? accept : reject)(node);
+    }
+
+    return reject(node);
 }

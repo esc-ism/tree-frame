@@ -24,14 +24,14 @@ export default class Inner extends Middle {
     constructor(data: dataTypes.Inner, parent: unions.Upper, isConnected: boolean = true) {
         super(data, parent, isConnected);
 
-        const {children} = data;
-
-        for (const child of children) {
-            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
-        }
+        this.element.classList.add('inner');
 
         if ('seed' in data) {
             this.seed = data.seed;
+        }
+
+        for (const child of data.children) {
+            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
         }
 
         this.listeners.push(getCreationListeners(this));

@@ -1,36 +1,8 @@
-import {Listeners, handleDragOver} from './utils';
+import {Listeners, handleDragOver, EventCounter} from './utils';
 
 import type Middle from '../nodes/middle';
 
 import {LIFECYCLE_SVGS} from '../../consts';
-
-class SvgInterface {
-    static readonly file: HTMLElement = LIFECYCLE_SVGS.destroyer.querySelector('#recycled-file');
-
-    static reset() {
-        SvgInterface.file.classList.add('empty');
-    }
-
-    private count: number = 0;
-
-    handleEnter(event) {
-        handleDragOver(true, event);
-
-        this.count++;
-
-        SvgInterface.file.classList.remove('empty');
-    }
-
-    handleExit(event) {
-        event.stopPropagation();
-
-        this.count--;
-
-        if (this.count === 0) {
-            SvgInterface.file.classList.add('empty');
-        }
-    }
-}
 
 function reject(node: Middle) {
     const listeners = new Listeners();
@@ -47,13 +19,27 @@ function reject(node: Middle) {
     return listeners;
 }
 
-const accept = (() => {
-    function destroy(node, event) {
-        event.stopPropagation();
+class SvgInterface extends EventCounter {
+    static readonly file: HTMLElement = LIFECYCLE_SVGS.destroyer.querySelector('#recycled-file');
 
-        node.disconnect();
-        node.disconnectHandlers();
+    isDroppable = true;
+
+    reset() {
+        super.reset();
+
+        SvgInterface.file.classList.add('empty');
     }
+
+    onEnter() {
+        SvgInterface.file.classList.remove('empty');
+    }
+
+    onExit() {
+        SvgInterface.file.classList.add('empty');
+    }
+}
+
+const accept = (() => {
 
     function showSvg(showDestroyer = true) {
         LIFECYCLE_SVGS[showDestroyer ? 'destroyer' : 'creator'].style.removeProperty('display');
@@ -66,6 +52,17 @@ const accept = (() => {
             'top': new Listeners(),
             'bottom': new Listeners()
         };
+        const svgInterface = new SvgInterface();
+
+        function destroy(event) {
+            event.stopPropagation();
+
+            // Trigger the reset listener
+            node.element.dispatchEvent(new DragEvent('dragend'));
+
+            node.disconnect();
+            node.disconnectHandlers();
+        }
 
         listeners.top.add(element, 'dragstart', (event) => {
             event.stopPropagation();
@@ -73,12 +70,11 @@ const accept = (() => {
             showSvg();
 
             const {destroyer} = LIFECYCLE_SVGS;
-            const svgInterface = new SvgInterface();
 
-            listeners.bottom.add(destroyer, 'dragenter', svgInterface.handleEnter.bind(svgInterface));
+            listeners.bottom.add(destroyer, 'dragenter', svgInterface.registerEnter.bind(svgInterface));
             listeners.bottom.add(destroyer, 'dragover', handleDragOver.bind(null, true));
-            listeners.bottom.add(destroyer, 'dragleave', svgInterface.handleExit.bind(svgInterface));
-            listeners.bottom.add(destroyer, 'drop', destroy.bind(null, node));
+            listeners.bottom.add(destroyer, 'dragleave', svgInterface.registerExit.bind(svgInterface));
+            listeners.bottom.add(destroyer, 'drop', destroy);
         });
 
         listeners.top.add(element, 'dragend', (event) => {
@@ -86,7 +82,7 @@ const accept = (() => {
 
             showSvg(false);
 
-            SvgInterface.reset();
+            svgInterface.reset();
 
             listeners.bottom.clear();
         });

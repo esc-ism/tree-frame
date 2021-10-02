@@ -44,3 +44,33 @@ export class Listeners {
         this.listeners.length = 0;
     }
 }
+
+export abstract class EventCounter {
+    private count: number = 0;
+
+    protected abstract isDroppable: boolean;
+
+    reset() {
+        this.count = 0;
+    }
+
+    registerEnter(event) {
+        event.stopPropagation();
+
+        if (this.count++ === 0) {
+            this.onEnter();
+        }
+    }
+
+    registerExit(event) {
+        handleDragOver(this.isDroppable, event)
+
+        if (this.count-- === 1) {
+            this.onExit();
+        }
+    }
+
+    abstract onEnter();
+
+    abstract onExit();
+}

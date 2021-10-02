@@ -33,7 +33,7 @@ const accept = (function() {
         ELEMENTS.form.innerHTML = '';
         ELEMENTS.wrapper.classList.remove(SELECTED_CLASS);
 
-        activeNode.element.classList.remove(SELECTED_CLASS);
+        activeNode.valueElement.classList.remove(SELECTED_CLASS);
 
         activeNode = null;
     }
@@ -41,7 +41,7 @@ const accept = (function() {
     function open() {
         ELEMENTS.wrapper.classList.add(SELECTED_CLASS);
 
-        activeNode.element.classList.add(SELECTED_CLASS);
+        activeNode.valueElement.classList.add(SELECTED_CLASS);
 
         const isValid = (value: Value, node: ModifiableNode) => {
             if (node instanceof Middle && node.hasSibling(value)) {
@@ -74,27 +74,34 @@ const accept = (function() {
             const inputCell = document.createElement('td');
             const inputElement = document.createElement('input');
 
-            labelCell.innerText = node.label;
-
+            row.classList.add('config-row');
+            labelCell.classList.add('config-label-cell');
+            inputCell.classList.add('config-input-cell');
             inputElement.classList.add('config-input');
+
+            labelCell.innerText = node.label;
 
             switch (typeof value) {
                 case 'boolean':
                     inputElement.type = 'checkbox';
-                    inputElement.oninput = () => handleInput(inputElement.checked, inputElement, node);
                     inputElement.checked = value;
+                    inputElement.oninput = () => handleInput(inputElement.checked, inputElement, node);
                     break;
 
                 case 'number':
                     inputElement.type = 'number';
-                    inputElement.oninput = () => handleInput(Number(inputElement.value), inputElement, node);
                     inputElement.value = value.toString();
+                    inputElement.oninput = () => handleInput(Number(inputElement.value), inputElement, node);
                     break;
 
                 case 'string':
                     inputElement.type = 'text';
-                    inputElement.oninput = () => handleInput(inputElement.value, inputElement, node);
                     inputElement.value = value;
+                    inputElement.oninput = () => handleInput(inputElement.value, inputElement, node);
+            }
+
+            if (node.predicate === false) {
+                inputElement.disabled = true;
             }
 
             row.appendChild(labelCell);
@@ -111,6 +118,8 @@ const accept = (function() {
 
         const loadForm = (inputRows) => {
             const table = document.createElement('table');
+
+            table.id = 'config-table';
 
             for (const row of inputRows) {
                 table.appendChild(row);
