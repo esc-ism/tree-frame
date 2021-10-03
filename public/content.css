@@ -169,6 +169,10 @@ body {
     z-index: 1;
 }
 
+#paper-container * {
+    pointer-events: none;
+}
+
 #object-tree {
     flex-grow: 1;
 }

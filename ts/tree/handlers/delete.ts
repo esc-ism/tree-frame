@@ -19,26 +19,6 @@ function reject(node: Middle) {
     return listeners;
 }
 
-class SvgInterface extends EventCounter {
-    static readonly file: HTMLElement = LIFECYCLE_SVGS.destroyer.querySelector('#recycled-file');
-
-    isDroppable = true;
-
-    reset() {
-        super.reset();
-
-        SvgInterface.file.classList.add('empty');
-    }
-
-    onEnter() {
-        SvgInterface.file.classList.remove('empty');
-    }
-
-    onExit() {
-        SvgInterface.file.classList.add('empty');
-    }
-}
-
 const accept = (() => {
 
     function showSvg(showDestroyer = true) {
@@ -52,29 +32,37 @@ const accept = (() => {
             'top': new Listeners(),
             'bottom': new Listeners()
         };
-        const svgInterface = new SvgInterface();
 
         function destroy(event) {
             event.stopPropagation();
 
             // Trigger the reset listener
-            node.element.dispatchEvent(new DragEvent('dragend'));
+            element.dispatchEvent(new DragEvent('dragend'));
 
             node.disconnect();
             node.disconnectHandlers();
         }
+
+        const {parent, destroyer} = LIFECYCLE_SVGS;
+        const file = destroyer.querySelector('#recycled-file');
 
         listeners.top.add(element, 'dragstart', (event) => {
             event.stopPropagation();
 
             showSvg();
 
-            const {destroyer} = LIFECYCLE_SVGS;
+            listeners.bottom.add(parent, 'dragenter', (event) => {
+                event.stopPropagation();
 
-            listeners.bottom.add(destroyer, 'dragenter', svgInterface.registerEnter.bind(svgInterface));
-            listeners.bottom.add(destroyer, 'dragover', handleDragOver.bind(null, true));
-            listeners.bottom.add(destroyer, 'dragleave', svgInterface.registerExit.bind(svgInterface));
-            listeners.bottom.add(destroyer, 'drop', destroy);
+                file.classList.remove('empty');
+            });
+            listeners.bottom.add(parent, 'dragover', handleDragOver.bind(null, true));
+            listeners.bottom.add(parent, 'dragleave', (event) => {
+                event.stopPropagation();
+
+                file.classList.add('empty');
+            });
+            listeners.bottom.add(parent, 'drop', destroy);
         });
 
         listeners.top.add(element, 'dragend', (event) => {
@@ -82,7 +70,7 @@ const accept = (() => {
 
             showSvg(false);
 
-            svgInterface.reset();
+            file.classList.add('empty');
 
             listeners.bottom.clear();
         });
