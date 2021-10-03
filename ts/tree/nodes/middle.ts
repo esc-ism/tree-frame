@@ -18,8 +18,8 @@ export default abstract class Middle extends ValueHolder {
     parent: unions.Upper;
     abstract children: Array<Middle | Leaf>;
 
-    element: HTMLElement = document.createElement('div');
-    valueAligner: HTMLElement = document.createElement('div');
+    element: HTMLElement = document.createElement('section');
+    valueAligner: HTMLElement = document.createElement('span');
     valueElement: HTMLElement = document.createElement('span');
     pinElement: SVGElement = getPin();
 

@@ -11,8 +11,3 @@ export const LIFECYCLE_SVGS = {
     'creator': document.getElementById('object-creator'),
     'parent': document.getElementById('paper-container'),
 };
-
-export const SCROLLERS = {
-    'NODES': document.getElementById('object-page'),
-    'FORM': document.getElementById('form-page-wrapper'),
-}

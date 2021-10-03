@@ -3,8 +3,6 @@ import stop from './stop';
 
 import Root from './tree/nodes/root';
 
-import {SCROLLERS} from './consts';
-
 function setTitle(title: string) {
     const titleElement = document.getElementById('title');
 
@@ -27,23 +25,11 @@ function loadClosers(root: Root) {
     });
 }
 
-function setupWheelScrolling() {
-    const DELTA_MULTIPLIER = 0.7;
-
-    for (const scroller of Object.values(SCROLLERS)) {
-        scroller.addEventListener('wheel', (event) => {
-            event.stopPropagation();
-
-            scroller.scrollTop += event.deltaY * DELTA_MULTIPLIER;
-        });
-    }
-}
-
 function setupDragScrolling(trackerCount = 25) {
     const DELTA_MULTIPLIER = 4;
     const DELTA_POWER = 1.5;
 
-    const {NODES} = SCROLLERS;
+    const frame = document.getElementById('object-page');
 
     const getTrackers = () => {
         const trackerHeight = 100 / trackerCount;
@@ -71,7 +57,7 @@ function setupDragScrolling(trackerCount = 25) {
 
             tracker.ondragenter = () => {
                 const scroll = setInterval(() => {
-                    NODES.scrollTop -= dragVector;
+                    frame.scrollTop -= dragVector;
                 }, 5);
 
                 tracker.ondragleave = () => clearInterval(scroll);
@@ -95,6 +81,5 @@ export default function start(config: Config) {
 
     setTitle(config.title);
     loadClosers(root);
-    setupWheelScrolling();
     setupDragScrolling();
 }

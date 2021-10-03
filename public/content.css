@@ -1,5 +1,5 @@
 :root {
-    --light-background: #f5f5f5;
+    --light-background: #f2f2f2;
     --dark-background: #d2d2d2;
     --table-odd: #e4e4e4;
     --table-even: #d2d2d2;
@@ -67,46 +67,53 @@ body {
 
 #object-page, #form-page {
     height: 60vh;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 #object-page {
-    background-color: var(--light-background);
+    background-color: #f9f9f9;
     position: relative;
-    direction: rtl;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
 }
 
 #object-page > * {
     direction: ltr;
 }
 
-#form-page {
+#form-page-wrapper {
     position: absolute;
     right: 0;
     top: 0;
+    margin-left: 100%;
     z-index: 1;
+    height: 100%;
     max-width: 100%;
+    display: flex;
+    align-items: center;
+    transform: translateX(100%);
+    transition: transform 650ms ease-out;
+}
+
+#form-page-wrapper.open {
+    transform: translateX(0);
+}
+
+#form-page {
     display: flex;
     background: var(--light-background);
     align-items: center;
     flex-wrap: wrap;
-    margin-left:100%;
-    transform: translateX(100%);
-    transition: transform 1000ms;
-}
-
-#form-page.selected {
-    transform: translateX(0);
 }
 
 #form-page-closer {
-    position: absolute;
-    left: 0;
     height: 100%;
     width: 20px;
     cursor: pointer;
+}
+
+#form-page-wrapper.open > #form-page-closer:hover {
+    background-image: linear-gradient(to left, #777, transparent);
 }
 
 #config-table {
@@ -176,17 +183,17 @@ body {
     user-select: none;
     text-align: left;
     color: var(--dark-font);
-    background-color: var(--light-background);
 }
 
 #adviser {
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--light-font);
-    transition-duration: 2000ms;
     white-space: pre;
     display: block;
-}
-
-#adviser:only-child {
     border-bottom: 3px solid var(--border);
 }
 
@@ -214,10 +221,6 @@ span#adviser::after {
 
 .border-left {
     border-left: 3px solid transparent;
-}
-
-#root.internal-node > .internal-node:first-of-type:not(.selected) {
-    border-top: 3px solid var(--border);
 }
 
 .border-top.selected {
@@ -252,14 +255,6 @@ span#adviser::after {
 
 .internal-node.inner > .internal-node-aligner {
     padding-bottom: 3px;
-}
-
-#adviser {
-    text-align: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .internal-node.middle:not(.outer):not(:first-of-type) {

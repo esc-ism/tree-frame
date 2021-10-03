@@ -9,12 +9,13 @@ type ModifiableNode = Leaf | Middle;
 
 const accept = (function() {
     const ELEMENTS = {
+        'wrapper': document.getElementById('form-page-wrapper'),
         'form': document.getElementById('form-page'),
         'table': document.getElementById('config-table'),
         'closer': document.getElementById('form-page-closer'),
     };
 
-    let activeNode = null;
+    let activeNode: Middle = null;
 
     function getFunctionPredicate(predicate: Predicate): FunctionPredicate {
         switch (typeof predicate) {
@@ -30,7 +31,7 @@ const accept = (function() {
     }
 
     function close() {
-        ELEMENTS.form.classList.remove('selected');
+        ELEMENTS.wrapper.classList.remove('open');
 
         activeNode.select(false);
 
@@ -38,7 +39,7 @@ const accept = (function() {
     }
 
     function open() {
-        ELEMENTS.form.classList.add('selected');
+        ELEMENTS.wrapper.classList.add('open');
 
         activeNode.select();
 
@@ -111,7 +112,9 @@ const accept = (function() {
         const loadForm = (inputRows) => {
             const {table} = ELEMENTS;
 
-            table.innerHTML = '';
+            while (table.lastChild) {
+                table.removeChild(table.lastChild);
+            }
 
             for (const row of inputRows) {
                 table.appendChild(row);
