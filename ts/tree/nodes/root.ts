@@ -26,8 +26,12 @@ export default class Root {
             this.seed = optional.seed;
         }
 
-        for (const child of children) {
-            Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
+        if (children.length === 0) {
+            Inner.isInner(this.seed) ? new Inner(this.seed, this) : new Outer(this.seed, this)
+        } else {
+            for (const child of children) {
+                Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
+            }
         }
 
         getCreationListeners(this);

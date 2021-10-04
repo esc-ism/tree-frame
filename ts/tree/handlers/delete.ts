@@ -1,4 +1,4 @@
-import {Listeners, handleDragOver, EventCounter} from './utils';
+import {Listeners, handleDragOver} from './utils';
 
 import type Middle from '../nodes/middle';
 

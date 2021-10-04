@@ -4,8 +4,7 @@ export const VALUE_TYPES = ['boolean', 'number', 'string'] as const;
 export type Value = boolean | string | number;
 
 export const PREDICATE_TYPES = ['boolean', 'function', 'array'];
-export type FunctionPredicate = (input: any) => boolean;
-export type Predicate = boolean | FunctionPredicate | Array<string>;
+export type Predicate = boolean | ((input: any) => boolean) | Array<string>;
 
 // Group types
 

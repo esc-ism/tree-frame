@@ -1,8 +1,6 @@
 import type * as dataTypes from '../../types';
 import type * as unions from './unions';
 
-import getPin from '../elements/pin';
-
 import ValueHolder from './valueHolder';
 import type Leaf from './leaf';
 
@@ -21,23 +19,22 @@ export default abstract class Middle extends ValueHolder {
     element: HTMLElement = document.createElement('section');
     valueAligner: HTMLElement = document.createElement('span');
     valueElement: HTMLElement = document.createElement('span');
-    pinElement: SVGElement = getPin();
 
     listeners: Array<Listeners> = [];
 
-    protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper, isConnected: boolean) {
+    protected constructor({
+        label,
+        value,
+        ...others
+    }: dataTypes.Middle, parent: unions.Upper, isConnected: boolean) {
         super(label, value);
 
         this.valueElement.classList.add('internal-node-value');
 
-        this.element.draggable = true;
         this.element.classList.add('internal-node', 'middle');
 
         this.valueAligner.classList.add('internal-node-aligner', 'border-top', 'border-bottom');
 
-        this.pinElement.style.visibility = 'hidden';
-
-        this.valueAligner.appendChild(this.pinElement);
         this.valueAligner.appendChild(this.valueElement);
         this.element.appendChild(this.valueAligner);
 
@@ -55,10 +52,23 @@ export default abstract class Middle extends ValueHolder {
 
         this.listeners.push(
             getModificationListeners(this),
-            getRelocationListeners(this),
-            getDeletionListeners(this),
-            getHighlightListeners(this),
+            getHighlightListeners(this)
         );
+
+        if (parent.seed) {
+            this.element.draggable = true;
+
+            this.listeners.push(
+                getRelocationListeners(this),
+                getDeletionListeners(this)
+            );
+        } else {
+            this.pin();
+        }
+
+        if (this.parent.children.length === 1) {
+            this.pin();
+        }
     }
 
     select(doSelect = true) {
@@ -101,9 +111,8 @@ export default abstract class Middle extends ValueHolder {
                 const [sibling] = parent.children;
 
                 sibling.unpin();
-
-                break;
             default:
+                this.unpin();
         }
 
         parent.element.insertBefore(this.element, parent.children[index]?.element ?? null);
@@ -134,19 +143,19 @@ export default abstract class Middle extends ValueHolder {
     }
 
     unpin() {
-        this.element.draggable = true;
+        if (!this.parent.seed) {
+            return;
+        }
 
-        this.pinElement.style.visibility = 'hidden';
+        this.element.draggable = true;
     }
 
     pin() {
-        this.element.draggable = false;
+        this.element.removeAttribute('draggable');
 
         if (!(this.parent instanceof Middle)) {
             return;
         }
-
-        this.pinElement.style.removeProperty('visibility');
     }
 
     getDataTree() {

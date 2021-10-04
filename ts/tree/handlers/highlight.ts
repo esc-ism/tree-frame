@@ -1,72 +1,85 @@
+import type Root from '../nodes/root';
 import Middle from '../nodes/middle';
+
 import {Listeners} from './utils';
 
 const accept = (function () {
-    const HIGHLIGHT_CLASS = 'hovered';
+    const SELECT_CLASS = 'click-target';
+    const DRAG_CLASS = 'drag-target';
 
-    let activeNode = null;
-    let isDragOngoing = false;
+    let isDragOngoing: boolean = false;
 
-    function highlight() {
-        activeNode.element.classList.add(HIGHLIGHT_CLASS);
+    function getDraggable(node: Middle | Root) {
+        if (node.element.draggable) {
+            return node;
+        }
+
+        return 'parent' in node ? getDraggable(node.parent) : null;
     }
 
-    function unhighlight() {
-        activeNode?.element.classList.remove(HIGHLIGHT_CLASS);
+    function clear(node: Middle | Root) {
+        const {element} = node;
+
+        element.classList.remove(DRAG_CLASS);
+        element.classList.remove(SELECT_CLASS);
+
+        if ('parent' in node) {
+            clear(node.parent);
+        }
     }
 
     return function (node: Middle) {
-        function enter() {
-            if (!isDragOngoing) {
-                unhighlight();
+        const {element} = node;
+        const listeners = {
+            'top': new Listeners(),
+            'bottom': new Listeners()
+        };
 
-                activeNode = node;
-
-                highlight();
+        listeners.top.add(element, 'mouseenter', () => {
+            if (isDragOngoing) {
+                return;
             }
-        }
 
-        function exit() {
-            if (!isDragOngoing) {
-                unhighlight();
+            clear(node.parent);
 
-                if (activeNode.parent instanceof Middle) {
-                    activeNode = activeNode.parent;
+            element.classList.add(SELECT_CLASS);
 
-                    highlight();
-                } else {
-                    activeNode = null;
-                }
+            const draggable = getDraggable(node);
+
+            if (draggable) {
+                const draggableElement = draggable.element;
+
+                draggableElement.classList.add(DRAG_CLASS);
+
+                listeners.bottom.add(draggableElement, 'dragstart', (event) => {
+                    event.stopPropagation();
+
+                    element.classList.remove(SELECT_CLASS);
+
+                    isDragOngoing = true;
+                });
+                listeners.bottom.add(draggableElement, 'dragend', () => {
+                    isDragOngoing = false;
+
+                    draggableElement.classList.remove(DRAG_CLASS);
+
+                    listeners.bottom.clear();
+                });
             }
-        }
+        });
 
-        return (() => {
-            const {element} = node;
-            const listeners = new Listeners();
+        listeners.top.add(element, 'mouseleave', () => {
+            if (isDragOngoing) {
+                return;
+            }
 
-            listeners.add(element, 'mouseenter', (event) => {
-                event.stopPropagation();
+            element.classList.remove(DRAG_CLASS);
+            element.classList.remove(SELECT_CLASS);
 
-                enter();
-            });
-            listeners.add(element, 'mouseleave', (event) => {
-                event.stopPropagation();
+            node.parent.element.classList.add(SELECT_CLASS);
+        });
 
-                exit();
-            });
-            listeners.add(element, 'dragstart', (event) => {
-                event.stopPropagation();
-
-                isDragOngoing = true;
-            });
-            listeners.add(element, 'dragend', (event) => {
-                event.stopPropagation();
-
-                isDragOngoing = false;
-            });
-
-            return listeners;
-        })();
+        return listeners.top;
     };
 })();
 
