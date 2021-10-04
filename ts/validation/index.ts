@@ -10,6 +10,7 @@ import {
     // API argument type
     Config, PREDICATE_TYPES
 } from '../types';
+import {EmptyInnerError} from './errors';
 
 // Type predicate helpers
 
@@ -162,6 +163,11 @@ function isInnerNode(breadcrumbs: string[], candidate: unknown): candidate is In
         throw new errors.PropertyError(breadcrumbs, 'children', true);
     if (!isArrayOf<Middle>([...breadcrumbs, 'children'], candidate.children, isMiddleNode))
         throw new errors.UnexpectedStateError();
+    if (candidate.children.length === 0)
+        throw new errors.JoinedError(
+            new errors.EmptyInnerError(),
+            new errors.ValueError([...breadcrumbs, 'children', '0'], 'null', ['object'])
+        );
 
     if (hasOwnProperty(candidate, 'seed'))
         if (!isMiddleNode([...breadcrumbs, 'seed'], candidate.seed))
@@ -182,20 +188,26 @@ function isMiddleNode(breadcrumbs: string[], candidate: unknown): candidate is M
     return (isUpper(candidate as Middle) ? isInnerNode : isOuterNode)(breadcrumbs, candidate);
 }
 
-function isRoot(candidate: unknown): candidate is Root {
+function isRoot(breadcrumbs: Array<string>, candidate: unknown): candidate is Root {
     if (typeof candidate !== 'object')
         throw new errors.TypeError([], typeof candidate, ['object']);
 
     if (!hasOwnProperty(candidate, 'children'))
-        throw new errors.PropertyError([], 'children', true);
-    if (!isArrayOf<Middle>(['children'], candidate.children, isMiddleNode))
+        throw new errors.PropertyError(breadcrumbs, 'children', true);
+    if (!isArrayOf<Middle>([...breadcrumbs, 'children'], candidate.children, isMiddleNode))
         throw new errors.UnexpectedStateError();
 
     if (hasOwnProperty(candidate, 'seed'))
-        if (!isMiddleNode(['seed'], candidate.seed))
+        if (!isMiddleNode([...breadcrumbs, 'seed'], candidate.seed))
             throw new errors.UnexpectedStateError();
 
-    validateUnexpectedKeys([], candidate, ['children', 'seed']);
+    if (candidate.children.length === 0 && !hasOwnProperty(candidate, 'seed'))
+        throw new errors.JoinedError(
+            new errors.DeadRootError(),
+            new errors.PropertyError([...breadcrumbs, 'seed'], 'seed', true)
+        );
+
+    validateUnexpectedKeys(breadcrumbs, candidate, ['children', 'seed']);
 
     return true;
 }
@@ -408,7 +420,7 @@ function hasTree<X extends {}>(candidate: X): candidate is X & Record<'tree', Ro
     if (!hasOwnProperty(candidate, 'tree'))
         throw new errors.PropertyError([], 'tree', true);
 
-    if (!isRoot(candidate.tree))
+    if (!isRoot(['tree'], candidate.tree))
         throw new errors.UnexpectedStateError();
 
     return true;
