@@ -7,6 +7,8 @@ import Outer from '../nodes/outer';
 import {LIFECYCLE_SVGS} from '../../consts';
 import {NonLeaf} from '../nodes/unions';
 
+import {toggle} from './modify';
+
 (function setup() {
     const {creator, parent} = LIFECYCLE_SVGS;
 
@@ -70,7 +72,9 @@ class NodeInterface extends EventCounter {
 
         element.classList.remove('sapling');
 
-        if (!element.isConnected) {
+        if (element.isConnected) {
+            toggle(this.sapling);
+        } else {
             this.sapling.disconnectHandlers();
         }
 

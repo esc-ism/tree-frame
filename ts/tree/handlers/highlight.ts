@@ -3,9 +3,17 @@ import Middle from '../nodes/middle';
 
 import {Listeners} from './utils';
 
+const SELECT_CLASS = 'click-target';
+const DRAG_CLASS = 'valid-drag-target';
+
+/**
+ * TODO
+ * You want to add indicators to nodes whilst the node-creator is being dragged.
+ * Potentially switch to a new group of handlers when the drag starts, switch back when it ends.
+ * Call a function to initialise classes, re-call it when the state change back happens.
+ */
+
 const accept = (function () {
-    const SELECT_CLASS = 'click-target';
-    const DRAG_CLASS = 'drag-target';
 
     let isDragOngoing: boolean = false;
 

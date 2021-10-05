@@ -115,7 +115,7 @@ body {
 }
 
 #form-page-wrapper.open > #form-page-closer:hover {
-    background-image: linear-gradient(to left, #777, transparent);
+    background-image: linear-gradient(to left, #676767, transparent);
 }
 
 #config-table {
@@ -306,7 +306,7 @@ span#adviser::after {
     background-repeat: no-repeat;
 }
 
-.internal-node.middle[draggable=true] {
+.internal-node.middle.valid-drag-target {
     background-image: linear-gradient(
         to bottom,
         transparent,
@@ -327,7 +327,7 @@ span#adviser::after {
     border-bottom-style: dashed;
 }
 
-.internal-node.middle.drag-target {
+.internal-node.middle.valid-drag-target.current-drag-target {
     background-image: linear-gradient(
         to bottom,
         transparent,
