@@ -4,7 +4,11 @@ import Inner from './inner';
 import Outer from './outer';
 import type Middle from './middle';
 
-import getCreationListeners from '../handlers/create';
+import * as create from '../handlers/create';
+
+import NodeElement from './element';
+
+const actions = [create];
 
 export default class Root {
     static instance: Root;
@@ -12,8 +16,7 @@ export default class Root {
     readonly children: Array<Middle> = [];
     readonly seed: dataTypes.Middle;
 
-    readonly element = document.getElementById('root');
-    private readonly valueElement = document.getElementById('adviser');
+    readonly element = new NodeElement();
 
     constructor({children, ...optional}: dataTypes.Root) {
         if (Root.instance) {
@@ -34,7 +37,15 @@ export default class Root {
             }
         }
 
-        getCreationListeners(this);
+        for (const {shouldMount, mount} of actions) {
+            if (shouldMount(this)) {
+                mount(this);
+            }
+        }
+
+        this.element.addClass('root');
+
+        document.getElementById('object-tree').appendChild(this.element.root);
     }
 
     getDataTree() {

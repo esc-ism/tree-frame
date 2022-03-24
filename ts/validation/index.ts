@@ -8,9 +8,8 @@ import {
     // Node groups
     Node, Middle, Child,
     // API argument type
-    Config, PREDICATE_TYPES
+    Config, PREDICATE_TYPES, Parent
 } from '../types';
-import {EmptyInnerError} from './errors';
 
 // Type predicate helpers
 
@@ -223,61 +222,85 @@ function validateForest(breadcrumbs: string[], doValidation: Validator, forest: 
         if ('children' in node) {
             validateForest([...breadcrumbs, 'children'], doValidation, node.children, ...args);
         }
+
+        if ('seed' in node) {
+            validateForest([...breadcrumbs, 'seed'], doValidation, [node.seed], ...args);
+        }
     }
 }
 
 // Tree validators
 
-function validateValidator(breadcrumbs: string[], node: Child): void {
-    if ('predicate' in node) {
-        switch (typeof node.predicate) {
-            case 'boolean':
-                break;
+function validatePredicate(breadcrumbs: Array<string>, child: Child): void {
+    switch (typeof child.predicate) {
+        case 'boolean':
+            break;
 
-            case 'function':
-                if (!node.predicate(node.value))
-                    throw new errors.JoinedError(
-                        new errors.ValuePredicateError(),
-                        new errors.ValueError([...breadcrumbs, 'value'], node.value, ['unknown'])
-                    );
+        case 'function':
+            if (!child.predicate(child.value))
+                throw new errors.JoinedError(
+                    new errors.ValuePredicateError(),
+                    new errors.ValueError([...breadcrumbs, 'value'], child.value, ['unknown'])
+                );
 
-                break;
+            break;
 
-            default:
-                const options = node.predicate;
+        default:
+            const options = child.predicate;
 
-                if (options.length === 0)
-                    throw new errors.JoinedError(
-                        new errors.NoOptionsError(),
-                        new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
-                    );
+            if (options.length === 0)
+                throw new errors.JoinedError(
+                    new errors.NoOptionsError(),
+                    new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
+                );
 
-                if (options.indexOf(node.value as string) === -1)
-                    throw new errors.JoinedError(
-                        new errors.ValuePredicateError(),
-                        new errors.ValueError([...breadcrumbs, 'value'], node.value, options)
-                    );
+            if (options.indexOf(child.value as string) === -1)
+                throw new errors.JoinedError(
+                    new errors.ValuePredicateError(),
+                    new errors.ValueError([...breadcrumbs, 'value'], child.value, options)
+                );
+    }
+}
+
+function validatePredicates(breadcrumbs: string[], parent: Parent): void {
+    if ('seed' in parent) {
+        const {seed} = parent;
+
+        validatePredicate([...breadcrumbs, 'seed'], seed);
+
+        validatePredicates([...breadcrumbs, 'seed'], seed);
+    }
+
+    const {children} = parent;
+
+    for (let i = 0; i < children.length; ++i) {
+        const child = children[i];
+
+        validatePredicate([...breadcrumbs, 'children', i.toString()], child);
+
+        if ('children' in child) {
+            validatePredicates([...breadcrumbs, 'children', i.toString()], child);
         }
     }
 }
 
-export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Child): void {
+export function validateSeedMatch(seedBreadcrumbs: string[], mainBreadcrumbs: string[], seed: Child, target: Child): void {
     if (seed.label !== target.label)
         throw new errors.JoinedError(
             new errors.SeedMatchError(),
-            new errors.ValueError([...breadcrumbs, 'label'], target.label, [seed.label])
+            new errors.ValueError([...mainBreadcrumbs, 'label'], target.label, [seed.label])
         );
 
     if (typeof seed.value !== typeof target.value)
         throw new errors.JoinedError(
             new errors.SeedMatchError(),
-            new errors.TypeError([...breadcrumbs, 'predicate'], typeof target.predicate, [typeof seed.predicate])
+            new errors.TypeError([...mainBreadcrumbs, 'value'], typeof target.value, [typeof seed.value])
         );
 
     if (typeof seed.predicate !== typeof target.predicate)
         throw new errors.JoinedError(
             new errors.SeedMatchError(),
-            new errors.TypeError([...breadcrumbs, 'predicate'], typeof target.predicate, [typeof seed.predicate])
+            new errors.TypeError([...mainBreadcrumbs, 'predicate'], typeof target.predicate, [typeof seed.predicate])
         );
 
     switch (typeof seed.predicate) {
@@ -285,14 +308,14 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
             if (seed.predicate !== target.predicate)
                 throw new errors.JoinedError(
                     new errors.SeedMatchError(),
-                    new errors.ValueError([...breadcrumbs, 'predicate'], target.predicate, [seed.predicate])
+                    new errors.ValueError([...mainBreadcrumbs, 'predicate'], target.predicate, [seed.predicate])
                 );
 
             if (seed.predicate === false)
                 if (seed.value !== target.value) {
                     throw new errors.JoinedError(
                         new errors.SeedMatchError(),
-                        new errors.ValueError([...breadcrumbs, 'value'], target.value, [seed.value])
+                        new errors.ValueError([...mainBreadcrumbs, 'value'], target.value, [seed.value])
                     );
                 }
 
@@ -302,7 +325,7 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
             if (!seed.predicate(target.value))
                 throw new errors.JoinedError(
                     new errors.SeedMatchError(),
-                    new errors.ValueError([...breadcrumbs, 'value'], target.value, ['unknown'])
+                    new errors.ValueError([...mainBreadcrumbs, 'value'], target.value, ['unknown'])
                 );
 
             break;
@@ -313,14 +336,14 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
             if (seed.predicate.length !== length)
                 throw new errors.JoinedError(
                     new errors.SeedMatchError(),
-                    new errors.ValueError([...breadcrumbs, 'predicate', 'length'], length, [seed.predicate.length])
+                    new errors.ValueError([...mainBreadcrumbs, 'predicate', 'length'], length, [seed.predicate.length])
                 );
 
             for (const [i, option] of seed.predicate.entries()) {
                 if (target.predicate[i] !== option)
                     throw new errors.JoinedError(
                         new errors.SeedMatchError(),
-                        new errors.ValueError([...breadcrumbs, 'predicate', i.toString()], target.predicate[i], [option])
+                        new errors.ValueError([...mainBreadcrumbs, 'predicate', i.toString()], target.predicate[i], [option])
                     );
             }
     }
@@ -328,39 +351,51 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
     if ('seed' in seed !== 'seed' in target)
         throw new errors.JoinedError(
             new errors.SeedMatchError(),
-            new errors.PropertyError(breadcrumbs, 'seed', 'seed' in seed)
+            new errors.PropertyError(mainBreadcrumbs, 'seed', 'seed' in seed)
         );
 
     if ('seed' in seed && 'seed' in target) {
-        validateSeedMatch([...breadcrumbs, 'seed'], seed.seed, target.seed);
+        validateSeedMatch([...seedBreadcrumbs, 'seed'], [...mainBreadcrumbs, 'seed'], seed.seed, target.seed);
     }
 
     if ('children' in seed !== 'children' in target)
         throw new errors.JoinedError(
             new errors.SeedMatchError(),
-            new errors.PropertyError(breadcrumbs, 'children', 'children' in seed)
+            new errors.PropertyError(mainBreadcrumbs, 'children', 'children' in seed)
         );
 
     if ('children' in seed && 'children' in target) {
         if ('seed' in seed) {
-            const childSeed = seed.seed;
-
             for (const [i, child] of target.children.entries()) {
-                validateSeedMatch([...breadcrumbs, 'children', i.toString()], child, childSeed);
+                validateSeedMatch(
+                    [...seedBreadcrumbs, 'seed'],
+                    [...mainBreadcrumbs, 'children', i.toString()],
+                    seed, child
+                );
             }
 
             for (const [i, child] of seed.children.entries()) {
-                validateSeedMatch([...breadcrumbs, 'children', i.toString()], child, childSeed);
+                validateSeedMatch(
+                    [...seedBreadcrumbs, 'seed'],
+                    [...seedBreadcrumbs, 'children', i.toString()],
+                    seed, child
+                );
             }
         } else {
             if (seed.children.length !== target.children.length)
                 throw new errors.JoinedError(
                     new errors.SeedMatchError(),
-                    new errors.ValueError([...breadcrumbs, 'children', 'length'], target.children.length, [seed.children.length])
+                    new errors.ValueError([...mainBreadcrumbs, 'children', 'length'], target.children.length, [seed.children.length])
                 );
+        }
 
-            for (const [i, child] of seed.children.entries()) {
-                validateSeedMatch([...breadcrumbs, 'children', i.toString()], target.children[i], child);
+        for (const [i, seedChild] of seed.children.entries()) {
+            for (const [j, child] of target.children.entries()) {
+                validateSeedMatch(
+                    [...seedBreadcrumbs, 'children', i.toString()],
+                    [...mainBreadcrumbs, 'children', j.toString()],
+                    seedChild, child
+                );
             }
         }
     }
@@ -368,10 +403,14 @@ export function validateSeedMatch(breadcrumbs: string[], target: Child, seed: Ch
 
 function validateSeeds(breadcrumbs: string[], node: Node): void {
     if ('seed' in node) {
-        const {seed} = node;
+        const {children, seed} = node;
 
-        for (const child of node.children) {
-            validateSeedMatch([...breadcrumbs, 'seed'], child, seed);
+        for (const [i, child] of children.entries()) {
+            validateSeedMatch(
+                [...breadcrumbs, 'seed'],
+                [...breadcrumbs, 'children', i.toString()],
+                seed, child
+            );
         }
     }
 }
@@ -401,7 +440,7 @@ function validateRoot(breadcrumbs: string[], node: Root): void {
     validateSeeds(breadcrumbs, node);
     validateForest([...breadcrumbs, 'children'], validateSeeds, node.children);
 
-    validateForest([...breadcrumbs, 'children'], validateValidator, node.children);
+    validatePredicates(breadcrumbs, node);
 }
 
 // Config type predicate helpers

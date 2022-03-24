@@ -13,22 +13,38 @@
     padding: 0;
     width: 80%;
     box-shadow: 1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065;
+    outline: #fff solid 2px;
 }
 
 #modal-header {
-    font-size: 5.5vh;
-    padding: 9px 9px 9px 16px;
-    background: #5a6060;
-    color: var(--light-background);
-    text-align: center;
+    font-size: 4.5vh;
+    background: black;
+    color: #ffffff;
+    align-items: center;
     display: flex;
+    border-bottom: #ffffff solid 2px;
+    text-align: center;
+}
+
+#title-wrapper {
+    padding: 0 20px;
+    display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+#title {
+    text-align: center;
+    vertical-align: middle;
+    white-space: pre;
 }
 
 .frame-button {
     font-family: Helvetica, Verdana, sans-serif;
     color: white;
     float: right;
-    font-size: 1.4em;
+    font-size: 2em;
     white-space: pre;
     border-left: 2px solid white;
     width: 1.3em;
@@ -40,6 +56,12 @@
     color: var(--dark-background);
     text-decoration: none;
     cursor: pointer;
+    background-color: #222;
+}
+
+#close:hover,
+#close:focus {
+    background-color: #aa0000;
 }
 
 #help:after {
@@ -49,19 +71,6 @@
 
 #close:after {
     content: '×';
-}
-
-#title-wrapper {
-    display: inline;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-grow: 1;
-}
-
-#title {
-    text-align: center;
-    vertical-align: middle;
-    white-space: pre;
 }
 
 #modal-body {

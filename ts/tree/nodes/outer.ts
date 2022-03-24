@@ -8,10 +8,10 @@ export default class Outer extends Middle {
     parent: unions.Upper;
     children: Leaf[] = [];
 
-    constructor(data: dataTypes.Middle, parent: unions.Upper, isConnected: boolean = true) {
-        super(data, parent, isConnected);
+    constructor(data: dataTypes.Middle, parent: unions.Upper, index?: number) {
+        super(data, parent, index);
 
-        this.element.classList.add('outer');
+        this.element.addClass('outer');
 
         const {children} = data;
 

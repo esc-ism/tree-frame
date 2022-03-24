@@ -1,9 +1,12 @@
-import {Value} from '../../types';
+import {Predicate, Value} from '../../../types';
 
-import {Listeners} from './utils';
+import type Leaf from '../../nodes/leaf';
+import Middle from '../../nodes/middle';
 
-import type Leaf from '../nodes/leaf';
-import Middle from '../nodes/middle';
+import template from './button';
+
+import {addButton} from '../index';
+import {ACTION_ID} from './consts';
 
 type ModifiableNode = Leaf | Middle;
 
@@ -15,6 +18,19 @@ const ELEMENTS = {
 };
 
 let activeNode: Middle = null;
+
+export function isValid(predicate: Predicate, value: Value): boolean {
+    switch (typeof predicate) {
+        case 'boolean':
+            return predicate;
+
+        case 'function':
+            return predicate(value);
+
+        default:
+            return predicate.indexOf(value as string) !== -1;
+    }
+}
 
 function close() {
     if (!activeNode) {
@@ -29,41 +45,28 @@ function close() {
         (inputElement as HTMLInputElement).disabled = true;
     }
 
-    activeNode.select(false);
+    activeNode.element.setSelected(false);
 
     activeNode = null;
 }
 
-function open(node) {
+function open(node: Middle) {
     activeNode = node;
+
+    const {predicate} = node;
+    const values = node.parent.children.map((node) => node.getValue());
+    const index = node.parent.children.indexOf(node);
 
     ELEMENTS.wrapper.classList.add('open');
     ELEMENTS.form.classList.add('selected');
 
-    activeNode.select();
-
-    const isValid = (value: Value, node: ModifiableNode): boolean => {
-        if (node instanceof Middle && node.hasSibling(value)) {
-            return false;
-        }
-
-        const {predicate} = node;
-
-        switch (typeof predicate) {
-            case 'boolean':
-                return predicate;
-
-            case 'function':
-                return predicate(value);
-
-            default:
-                return predicate.indexOf(value as string) !== -1;
-        }
-    };
+    activeNode.element.setSelected();
 
     const handleInput = (value: Value, inputElement: HTMLInputElement, node: ModifiableNode) => {
-        if (isValid(value, node)) {
+        if (isValid(predicate, value)) {
             node.setValue(value);
+
+            values[index] = value;
         } else {
             inputElement.classList.add('invalid-input');
         }
@@ -186,38 +189,18 @@ document.body.addEventListener('keydown', (event) => {
     }
 });
 
-function accept(node: Middle): Listeners {
-    const {element} = node;
-    const listeners = {
-        'top': new Listeners(),
-        'bottom': new Listeners()
-    };
+export function mount(node: Middle): void {
+    const button = template.cloneNode(true);
 
-    listeners.top.add(element, 'mousedown', (event) => {
+    button.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        if (element.isSameNode(event.target)) {
-            listeners.bottom.add(element, 'click', (event) => {
-                event.stopPropagation();
-
-                toggle(node);
-
-                listeners.bottom.clear();
-            });
-        }
+        toggle(node);
     });
 
-    listeners.top.add(element, 'mouseover', () => {
-        listeners.bottom.clear();
-    });
-
-    listeners.top.add(element, 'mouseout', () => {
-        listeners.bottom.clear();
-    });
-
-    return listeners.top;
+    addButton(node, button, ACTION_ID);
 }
 
-export default function getListeners(node: Middle): Listeners {
-    return accept(node);
+export function shouldMount(node: Middle): boolean {
+    return node.predicate !== false;
 }

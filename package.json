@@ -12,5 +12,8 @@
     "build": "tsc",
     "webpack": "webpack",
     "dev": "webpack serve"
+  },
+  "dependencies": {
+    "eventemitter3": "^4.0.7"
   }
 }

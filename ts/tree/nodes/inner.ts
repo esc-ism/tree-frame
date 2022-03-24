@@ -4,7 +4,9 @@ import type * as unions from './unions';
 import Middle from './middle';
 import Outer from './outer';
 
-import getCreationListeners from '../handlers/create';
+import * as create from '../handlers/create';
+
+const actions = [create];
 
 export default class Inner extends Middle {
     static isInner(data: dataTypes.Middle): data is dataTypes.Inner {
@@ -21,10 +23,10 @@ export default class Inner extends Middle {
     children: Array<Middle> = [];
     seed: dataTypes.Middle;
 
-    constructor(data: dataTypes.Inner, parent: unions.Upper, isConnected: boolean = true) {
-        super(data, parent, isConnected);
+    constructor(data: dataTypes.Inner, parent: unions.Upper, index?: number) {
+        super(data, parent, index);
 
-        this.element.classList.add('inner');
+        this.element.addClass('inner');
 
         if ('seed' in data) {
             this.seed = data.seed;
@@ -34,14 +36,18 @@ export default class Inner extends Middle {
             Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
         }
 
-        this.listeners.push(getCreationListeners(this));
+        for (const {shouldMount, mount} of actions) {
+            if (shouldMount(this)) {
+                mount(this);
+            }
+        }
     }
 
-    disconnectHandlers() {
-        super.disconnectHandlers();
+    disconnect() {
+        super.disconnect();
 
         for (const child of this.children) {
-            child.disconnectHandlers();
+            child.disconnect();
         }
     }
 

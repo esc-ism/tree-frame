@@ -1,14 +1,18 @@
+import {EventEmitter} from 'eventemitter3';
+
 import type * as dataTypes from '../../types';
 import type * as unions from './unions';
 
 import ValueHolder from './valueHolder';
 import type Leaf from './leaf';
 
-import type {Listeners} from '../handlers/utils';
-import getModificationListeners from '../handlers/modify';
-import getRelocationListeners from '../handlers/relocate';
-import getDeletionListeners from '../handlers/delete';
-import getHighlightListeners from '../handlers/highlight';
+import * as edit from '../handlers/edit';
+// import * as move from '../handlers/move';
+import * as disconnect from '../handlers/delete';
+
+import NodeElement from './element';
+
+const actions = [edit, disconnect];
 
 export default abstract class Middle extends ValueHolder {
     predicate: dataTypes.Predicate;
@@ -16,77 +20,36 @@ export default abstract class Middle extends ValueHolder {
     parent: unions.Upper;
     abstract children: Array<Middle | Leaf>;
 
-    element: HTMLElement = document.createElement('section');
-    valueAligner: HTMLElement = document.createElement('span');
-    valueElement: HTMLElement = document.createElement('span');
+    element: NodeElement = new NodeElement();
 
-    listeners: Array<Listeners> = [];
+    emitter = new EventEmitter();
 
-    protected constructor({
-        label,
-        value,
-        ...others
-    }: dataTypes.Middle, parent: unions.Upper, isConnected: boolean) {
+    protected constructor({label, value, ...others}: dataTypes.Middle, parent: unions.Upper, index?: number) {
         super(label, value);
 
-        this.valueElement.classList.add('internal-node-value');
+        this.element.render(value);
 
-        this.element.classList.add('internal-node', 'middle');
-
-        this.valueAligner.classList.add('internal-node-aligner', 'border-top', 'border-bottom');
-
-        this.valueAligner.appendChild(this.valueElement);
-        this.element.appendChild(this.valueAligner);
-
-        this.render();
-
-        if (isConnected) {
-            this.attach(parent);
-        } else {
-            this.parent = parent;
-        }
+        this.attach(parent, index);
 
         if ('predicate' in others) {
             this.predicate = others.predicate;
         }
 
-        this.listeners.push(
-            getModificationListeners(this),
-            getHighlightListeners(this)
-        );
+        for (const {shouldMount, mount} of actions) {
+            if (shouldMount(this)) {
+                mount(this);
+            }
+        }
 
-        if (parent.seed) {
-            this.element.draggable = true;
-
-            this.listeners.push(
-                getRelocationListeners(this),
-                getDeletionListeners(this)
-            );
-        } else {
+        if (!parent.seed) {
             this.pin();
         }
-
-        if (this.parent.children.length === 1) {
-            this.pin();
-        }
-    }
-
-    select(doSelect = true) {
-        if (doSelect) {
-            this.valueAligner.classList.add('selected');
-        } else {
-            this.valueAligner.classList.remove('selected');
-        }
-    }
-
-    render() {
-        this.valueElement.innerText = this.value.toString();
     }
 
     setValue(value: dataTypes.Value): void {
         super.setValue(value);
 
-        this.render();
+        this.element.render(value);
     }
 
     hasSibling(value: dataTypes.Value) {
@@ -115,7 +78,7 @@ export default abstract class Middle extends ValueHolder {
                 this.unpin();
         }
 
-        parent.element.insertBefore(this.element, parent.children[index]?.element ?? null);
+        parent.element.addChild(this.element, index);
 
         parent.children.splice(index, 0, this);
     }
@@ -126,19 +89,17 @@ export default abstract class Middle extends ValueHolder {
         siblings.splice(siblings.indexOf(this), 1);
 
         if (siblings.length === 1) {
-            const [sibling] = siblings;
-
-            sibling.pin();
+            siblings[0].pin();
         }
 
         this.element.remove();
 
         this.parent = undefined;
-    }
 
-    disconnectHandlers() {
-        for (const listener of this.listeners) {
-            listener.clear();
+        for (const action of actions) {
+            if ('unmount' in action) {
+                action.unmount(this);
+            }
         }
     }
 
@@ -146,13 +107,9 @@ export default abstract class Middle extends ValueHolder {
         if (!this.parent.seed) {
             return;
         }
-
-        this.element.draggable = true;
     }
 
     pin() {
-        this.element.removeAttribute('draggable');
-
         if (!(this.parent instanceof Middle)) {
             return;
         }

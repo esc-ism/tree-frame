@@ -1,9 +1,10 @@
-import Leaf from './leaf';
-import Outer from './outer';
-import Inner from './inner';
-import Middle from './middle';
-import Root from './root';
+import type Leaf from './leaf';
+import type Outer from './outer';
+import type Inner from './inner';
+import type Middle from './middle';
+import type Root from './root';
 
 export type Upper = Inner | Root;
-export type NonLeaf = Upper | Outer;
+export type NonRoot = Leaf | Middle;
+export type NonLeaf = Root | Middle;
 export type Node = Leaf | Middle | Root;

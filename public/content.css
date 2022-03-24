@@ -1,17 +1,21 @@
 :root {
-    --light-background: #f2f2f2;
+    --light-background: #000000;
     --dark-background: #d2d2d2;
-    --table-odd: #e4e4e4;
-    --table-even: #d2d2d2;
+    --table-odd: #232535;
+    --table-even: #363a51;
     --border: #666;
     --border-positive: #90ad90;
     --border-negative: #ababab;
-    --dark-font: #1a1a1a;
-    --darker-font: #000000;
+    --dark-font: #ffffff;
+    --darker-font: #ffffff;
     --light-font: #737373;
-    --selection-target: #bbb;
-    --selection: #282b21;
+    --selection-target: #aaa;
+    --selection: white;
     --svg: #110918;
+    --node-fertile: rgba(136, 60, 219, 0.49);
+    --node-transient: rgba(68, 219, 60, 0.49);
+    --node-editable: rgba(219, 177, 60, 0.49);
+    --node-moveable: rgba(219, 60, 94, 0.49);
 }
 
 body {
@@ -69,8 +73,8 @@ body {
     position: relative;
     display: flex;
     flex-direction: row;
-    color: var(--dark-font);
-    background-color: #f9f9f9;
+    background-color: black;
+    color: #eeeeee;
 }
 
 #object-page > * {
@@ -96,7 +100,7 @@ body {
 }
 
 #form-page.selected {
-    border-color: var(--selection);
+    border-color: white;
 }
 
 #form-page {
@@ -105,7 +109,6 @@ body {
     align-items: center;
     flex-wrap: wrap;
     color: var(--darker-font);
-    border-color: var(--selection-target);
 }
 
 #form-page-closer {
@@ -190,38 +193,11 @@ body {
     font-size: 18px;
     user-select: none;
     text-align: left;
-    color: var(--dark-font);
+    transition: background-color 1000ms, color 1000ms;
 }
 
-.internal-node :not(.internal-node) {
-    pointer-events: none;
-}
-
-#adviser {
-    margin-left: 5px;
-    background-image: linear-gradient(
-        to bottom,
-        var(--dark-background) 50%,
-        transparent
-    );
-    text-align: center;
+.root {
     padding-top: 5px;
-    padding-bottom: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--light-font);
-    white-space: pre;
-    display: block;
-}
-
-span#adviser::after {
-    content: " ";
-}
-
-#adviser > svg {
-    vertical-align: middle;
-    height: 1em;
-    pointer-events: auto;
 }
 
 .border-top {
@@ -294,13 +270,13 @@ span#adviser::after {
     background-image: linear-gradient(
         to bottom,
         transparent,
-        var(--border-negative) 10px 51%,
+        white 10px 51%,
         transparent
     ),
     linear-gradient(
         to top,
         transparent,
-        var(--border-negative) 10px 51%,
+        white 10px 51%,
         transparent
     );
     background-repeat: no-repeat;
@@ -319,6 +295,13 @@ span#adviser::after {
         var(--border-positive) 10px 51%,
         transparent
     );
+}
+
+.internal-node-value {
+    position: relative;
+    left: 3em;
+    height: 1.3em;
+    display: block;
 }
 
 .internal-node.middle.click-target > .internal-node-aligner:not(.selected) {
@@ -350,10 +333,6 @@ span#adviser::after {
     color: #888888;
 }
 
-.internal-node {
-    transition: background-color 1000ms, color 1000ms;
-}
-
 .svg-icon.indicator {
     position: absolute;
     left: -1.6em;
@@ -365,4 +344,47 @@ span#adviser::after {
 
 .svg-pin {
     margin-left: 0.3em;
+}
+
+.node-button-container {
+    position: absolute;
+    left: 10px;
+}
+
+.node-button-container.blur {
+    opacity: 0.5;
+}
+
+.node-button-container svg:not(:hover) {
+    opacity: 0.5;
+}
+
+.node-button-svg {
+    width: 1.5em;
+    cursor: pointer;
+}
+
+.node-button-container.blur svg {
+    filter: url(#svg-blur);
+}
+
+.node-button-svg:hover {
+    opacity: 1;
+    stroke-width: 4px;
+}
+
+.node-button-delete {
+    stroke: red;
+}
+
+.node-button-create {
+    stroke: yellow;
+}
+
+.node-button-edit {
+    stroke: lawngreen;
+}
+
+.node-button-move {
+    stroke: cyan;
 }
