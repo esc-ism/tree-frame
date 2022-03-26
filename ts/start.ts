@@ -7,19 +7,36 @@ function setTitle(title: string) {
     const titleElement = document.getElementById('title');
 
     titleElement.innerText = title;
-
-    titleElement.title = title;
 }
 
-function loadClosers(root: Root) {
-    const closeButton = document.getElementById('close');
-    const backgroundElement = document.getElementById('modal-background');
+function setupLabelToggle() {
+    const root = document.getElementById('object-tree');
+    const button = document.getElementById('toggle-labels');
+
+    let isActive = false;
+
+    button.addEventListener('click', () => {
+        if (isActive) {
+            button.classList.remove('active');
+            root.classList.remove('locked');
+        } else {
+            button.classList.add('active');
+            root.classList.add('locked');
+        }
+
+        isActive = !isActive;
+    });
+}
+
+function setupExit(root: Root) {
+    const button = document.getElementById('close');
+    const background = document.getElementById('modal-background');
     const stopBound = () => void stop(root.getDataTree());
 
-    closeButton.addEventListener('click', stopBound);
+    button.addEventListener('click', stopBound);
 
     window.addEventListener('click', (event) => {
-        if (event.target === backgroundElement) {
+        if (event.target === background) {
             stopBound();
         }
     });
@@ -29,5 +46,8 @@ export default function start(config: Config) {
     const root = new Root(config.tree);
 
     setTitle(config.title);
-    loadClosers(root);
+
+    setupLabelToggle();
+
+    setupExit(root);
 }

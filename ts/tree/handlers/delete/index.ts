@@ -1,19 +1,19 @@
-import type Middle from '../../nodes/middle';
+import type Child from '../../nodes/child';
 
 import template from './button';
 
 import {addButton} from '../index';
 import {ACTION_ID} from './consts';
 
-export function act(node: Middle) {
+function act(node: Child) {
     node.disconnect();
 }
 
-export function unmount(node: Middle) {
+export function unmount(node: Child) {
     // ?
 }
 
-export function mount(node: Middle): void {
+export function mount(node: Child): void {
     const button = template.cloneNode(true);
 
     button.addEventListener('click', (event) => {
@@ -25,6 +25,6 @@ export function mount(node: Middle): void {
     addButton(node, button, ACTION_ID);
 }
 
-export function shouldMount(node: Middle): boolean {
+export function shouldMount(node: Child): boolean {
     return Boolean(node.parent.seed);
 }

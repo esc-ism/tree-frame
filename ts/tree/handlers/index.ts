@@ -1,10 +1,10 @@
 import {NAMESPACE, BUTTON_ORDER, SVG_CLASS_NAME, BUTTON_CLASS_NAME} from './consts';
 
 import Root from '../nodes/root';
-import Middle from '../nodes/middle';
+import Leaf from '../nodes/child';
 
-export function addButton(node: Root | Middle, button: Node, id: string) {
-    node.element.addButton(button, BUTTON_ORDER[id]);
+export function addButton(node: Root | Leaf, button: Node, id: string) {
+    node.element.addButton(button, BUTTON_ORDER.indexOf(id));
 }
 
 export const getButton = (function () {
@@ -15,7 +15,7 @@ export const getButton = (function () {
         circle.setAttribute('cy', '70');
         circle.setAttribute('r', '50');
         circle.setAttribute('stroke-width', '10');
-        circle.setAttribute('fill', 'none');
+        circle.setAttribute('fill', 'black');
 
         const svg = document.createElementNS(NAMESPACE, 'svg');
 

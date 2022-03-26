@@ -1,6 +1,6 @@
 import {NAMESPACE} from '../consts';
 import {getButton} from '../index';
-import {ACTION_ID, CLASS_NAME as ACTION_CLASS_NAME} from './consts';
+import {CLASS_NAME as ACTION_CLASS_NAME} from './consts';
 
 const lineVertical0 = document.createElementNS(NAMESPACE, 'line');
 

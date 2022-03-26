@@ -10,11 +10,10 @@
 </head>
 
 <body>
-
 <svg>
     <defs>
         <filter id="svg-blur" x="0" y="0">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0.7" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" />
         </filter>
     </defs>
 </svg>
@@ -25,20 +24,13 @@
             <div id="title-wrapper">
                 <span id="title"></span>
             </div>
+
+            <span id="toggle-labels" class="frame-button"></span>
             <span id="close" class="frame-button"></span>
         </div>
 
         <div id="modal-body">
-            <div id="object-page">
-                <div id="object-tree"></div>
-            </div>
-
-            <div id="form-page-wrapper">
-                <div id="form-page-closer"></div>
-                <div id="form-page" class="border-left">
-                    <table id="config-table"></table>
-                </div>
-            </div>
+            <div id="object-tree"></div>
         </div>
     </div>
 </div>

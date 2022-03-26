@@ -1,362 +1,68 @@
-:root {
-    --light-background: #000000;
-    --dark-background: #d2d2d2;
-    --table-odd: #232535;
-    --table-even: #363a51;
-    --border: #666;
-    --border-positive: #90ad90;
-    --border-negative: #ababab;
-    --dark-font: #ffffff;
-    --darker-font: #ffffff;
-    --light-font: #737373;
-    --selection-target: #aaa;
-    --selection: white;
-    --svg: #110918;
-    --node-fertile: rgba(136, 60, 219, 0.49);
-    --node-transient: rgba(68, 219, 60, 0.49);
-    --node-editable: rgba(219, 177, 60, 0.49);
-    --node-moveable: rgba(219, 60, 94, 0.49);
-}
-
 body {
     font-family: Tahoma, Geneva, sans-serif;
 }
 
-.vr {
-    height: 100%;
-    border-left: 2px solid var(--border);
-}
-
-.hr {
-    width: 100%;
-    border-bottom: 2px solid var(--border);
-}
-
-.svg-icon {
-    height: 100%;
-    width: 100%;
-    margin: auto;
-    stroke: var(--svg);
-    stroke-width: 15px;
-}
-
-.svg * {
-    pointer-events: none;
-}
-
-#object-creator {
-    stroke-width: 18px;
-}
-
-.empty {
-    fill: none;
-}
-
-#object-creator.empty {
-    stroke-dasharray: 14px;
-}
-
-#recycled-file.empty {
-    stroke-dasharray: 10px;
-}
-
-#header {
-    width: 100%;
-}
-
-#object-page, #form-page {
+#object-tree {
     height: 60vh;
     overflow-y: auto;
-}
-
-#object-page {
-    position: relative;
-    display: flex;
-    flex-direction: row;
     background-color: black;
     color: #eeeeee;
 }
 
-#object-page > * {
-    direction: ltr;
-}
-
-#form-page-wrapper {
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin-left: 100%;
-    z-index: 1;
-    height: 100%;
-    max-width: 100%;
-    display: flex;
-    align-items: center;
-    transform: translateX(100%);
-    transition: transform 650ms ease-out;
-}
-
-#form-page-wrapper.open {
-    transform: translateX(0);
-}
-
-#form-page.selected {
-    border-color: white;
-}
-
-#form-page {
-    display: flex;
-    background: var(--light-background);
-    align-items: center;
-    flex-wrap: wrap;
-    color: var(--darker-font);
-}
-
-#form-page-closer {
-    height: 100%;
-    width: 20px;
-    cursor: pointer;
-}
-
-#form-page-wrapper.open > #form-page-closer:hover {
-    background-image: linear-gradient(to left, #676767, transparent);
-}
-
-#config-table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 17px;
-}
-
-.config-label-cell {
-    padding-left: 8px;
-}
-
-.config-input-cell {
-    padding: 5px 8px;
-}
-
-.config-row:nth-child(odd) {
-    background-color: var(--table-odd);
-}
-
-.config-row:nth-child(even) {
-    background-color: var(--table-even);
-}
-
-.config-input {
-    background-color: rgba(255, 255, 255, 0.88);
-    border-width: 1px;
-    font-size: 0.9em;
-}
-
-#object-scroll-area {
-    border-right: 5px solid #0002;
-    margin-right: -5px;
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    left: 0;
-    min-width: 2em;
-    max-width: 4em;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background: var(--dark-background);
-}
-
-#object-page.fixed > #object-scroll-area {
-    display: none;
-}
-
-#paper-container {
-    margin: auto;
-    height: 17vh;
-    max-height: 80px;
-    padding: 7px 0;
-    z-index: 1;
-}
-
-#paper-container * {
-    pointer-events: none;
-}
-
-#object-tree {
-    flex-grow: 1;
-}
-
-#object-page.fixed > #object-tree {
-    width: 100%;
-}
-
-.internal-node {
-    position: relative;
+.node-data-container {
     font-size: 18px;
     user-select: none;
-    text-align: left;
-    transition: background-color 1000ms, color 1000ms;
 }
 
 .root {
     padding-top: 5px;
+    height: fit-content;
 }
 
-.border-top {
-    border-top: 3px solid transparent;
-}
-
-.border-right {
-    border-right: 3px solid transparent;
-}
-
-.border-bottom {
-    border-bottom: 3px solid transparent;
-}
-
-.border-left {
-    border-left: 3px solid transparent;
-}
-
-.border-top.selected {
-    border-top-style: dashed;
-}
-
-.border-right.selected {
-    border-right-style: dashed;
-}
-
-.border-bottom.selected {
-    border-bottom-style: dashed;
-}
-
-.border-left.selected {
-    border-left-style: dashed;
-}
-
-.selected {
-    border-color: var(--selection);
-}
-
-.border-strong {
-    border-color: var(--border);
-}
-
-#form-page-wrapper tr:first-child {
-    outline: 3px dashed var(--selection-target);
-}
-
-#form-page-wrapper.open tr:first-child {
-    outline: 3px dashed var(--selection);
-}
-
-.internal-node.middle > .internal-node-aligner {
-    display: block;
-    padding-left: 12px;
-}
-
-.internal-node.inner > .internal-node-aligner {
+.node-aligner {
     padding-bottom: 3px;
 }
 
-.internal-node.middle:not(.outer) + .internal-node {
-    border-top: 0.5em solid transparent;
+:not(.root) > .node-aligner {
+    padding-left: 0.35em;
 }
 
-.internal-node.middle .internal-node {
+.node .node .node {
     margin-left: 1.8em;
 }
 
-.internal-node.middle {
+.node-data-container:not(.middle):not(.root):last-child, .node-data-container:not(.middle):not(.root) + .focused {
+    /*
+    Using border rather than margin/padding
+    prevents root being hoverable at the bottom &
+    prevents the background image extending further.
+     */
+    border-bottom: 0.4em transparent;
+}
+
+.node.focused .node:not(.focused) {
+    display: none;
+}
+
+.node-data-container {
+    padding-left: 0.4em;
     background-size: 5px;
-    background-image: linear-gradient(
-        to bottom,
-        transparent,
-        white 10px 51%,
-        transparent
-    ),
-    linear-gradient(
-        to top,
-        transparent,
-        white 10px 51%,
-        transparent
-    );
+    background-image: linear-gradient(#bbb, #bbb);
     background-repeat: no-repeat;
+    transition: background-size 300ms, color 500ms;
 }
 
-.internal-node.middle.valid-drag-target {
-    background-image: linear-gradient(
-        to bottom,
-        transparent,
-        var(--border-positive) 10px 51%,
-        transparent
-    ),
-    linear-gradient(
-        to top,
-        transparent,
-        var(--border-positive) 10px 51%,
-        transparent
-    );
+.node-data-container:hover {
+    color: black;
+    background-size: 100%;
 }
 
-.internal-node-value {
-    position: relative;
-    left: 3em;
-    height: 1.3em;
-    display: block;
+.node-button-wrapper {
+    vertical-align: middle;
 }
 
-.internal-node.middle.click-target > .internal-node-aligner:not(.selected) {
-    border-color: var(--selection-target);
-    border-top-style: dashed;
-    border-bottom-style: dashed;
-}
-
-.internal-node.middle.valid-drag-target.current-drag-target {
-    background-image: linear-gradient(
-        to bottom,
-        transparent,
-        #76dd76 5px 51%,
-        transparent
-    ),
-    linear-gradient(
-        to top,
-        transparent,
-        #76dd76 5px 51%,
-        transparent
-    );
-}
-
-.sapling {
-    background-color: #dbdbdb;
-}
-
-.sapling, .sapling .internal-node {
-    color: #888888;
-}
-
-.svg-icon.indicator {
-    position: absolute;
-    left: -1.6em;
-    height: 1.2em;
-    width: 0.9em;
-    stroke: var(--dark-font);
-    pointer-events: none;
-}
-
-.svg-pin {
-    margin-left: 0.3em;
-}
-
-.node-button-container {
-    position: absolute;
-    left: 10px;
-}
-
-.node-button-container.blur {
-    opacity: 0.5;
-}
-
-.node-button-container svg:not(:hover) {
-    opacity: 0.5;
+#object-tree.locked .node-button-container {
+    visibility: hidden;
 }
 
 .node-button-svg {
@@ -364,13 +70,24 @@ body {
     cursor: pointer;
 }
 
-.node-button-container.blur svg {
+.node-button-container.blur .node-button-svg {
     filter: url(#svg-blur);
 }
 
-.node-button-svg:hover {
+.node-button-container.blur .node-button-svg:not(:hover) {
+    opacity: 0.5;
+}
+
+.node-button-container.blur circle {
+    opacity: 0;
+}
+
+.node-button-container g {
+    opacity: 0.5;
+}
+
+.node-button-svg:hover g {
     opacity: 1;
-    stroke-width: 4px;
 }
 
 .node-button-delete {
@@ -386,5 +103,17 @@ body {
 }
 
 .node-button-move {
-    stroke: cyan;
+    stroke: mediumpurple;
+}
+
+.node-label, .node-value {
+    white-space: pre;
+}
+
+#object-tree.locked .node-value {
+    display: none;
+}
+
+#object-tree:not(.locked) .node-label {
+    display: none;
 }

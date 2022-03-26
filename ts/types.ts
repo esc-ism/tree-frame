@@ -25,22 +25,16 @@ export interface Dynamic {
 export interface Leaf extends ValueHolder {
 }
 
-export interface Outer extends ValueHolder {
-    children: Array<Leaf>;
-    predicate: Predicate;
-}
-
-export interface Inner extends ValueHolder, Dynamic {
-    children: Array<Middle>;
+export interface Middle extends ValueHolder, Dynamic {
+    children: Array<Middle | Leaf>;
 }
 
 export interface Root extends Dynamic {
-    children: Array<Middle>;
+    children: Array<Middle | Leaf>;
 }
 
 // Node unions
 
-export type Middle = Inner | Outer;
 export type Child = Middle | Leaf;
 export type Parent = Root | Middle;
 export type Node = Root | Child;

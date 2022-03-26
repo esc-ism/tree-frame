@@ -53,24 +53,33 @@
 
 .frame-button:hover,
 .frame-button:focus {
-    color: var(--dark-background);
     text-decoration: none;
     cursor: pointer;
     background-color: #222;
 }
 
-#close:hover,
-#close:focus {
-    background-color: #aa0000;
-}
-
-#help:after {
+#toggle-labels:after {
     font-weight: bold;
     content: '﹖';
 }
 
+#toggle-labels.active:after {
+    font-weight: bold;
+    content: '﹗';
+}
+
+#toggle-labels:hover,
+#toggle-labels:focus {
+    background-color: #007997;
+}
+
 #close:after {
     content: '×';
+}
+
+#close:hover,
+#close:focus {
+    background-color: #aa0000;
 }
 
 #modal-body {

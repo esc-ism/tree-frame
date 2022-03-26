@@ -1,20 +1,19 @@
 import type * as dataTypes from '../../types';
 
-import Inner from './inner';
-import Outer from './outer';
-import type Middle from './middle';
+import Middle from './middle';
+import Child from './child';
 
 import * as create from '../handlers/create';
 
-import NodeElement from './element';
+import NodeElement from '../element';
 
 const actions = [create];
 
 export default class Root {
     static instance: Root;
 
-    readonly children: Array<Middle> = [];
-    readonly seed: dataTypes.Middle;
+    readonly children: Array<Child> = [];
+    readonly seed: dataTypes.Child;
 
     readonly element = new NodeElement();
 
@@ -30,10 +29,18 @@ export default class Root {
         }
 
         if (children.length === 0) {
-            Inner.isInner(this.seed) ? new Inner(this.seed, this) : new Outer(this.seed, this)
+            if ('children' in this.seed) {
+                new Middle(this.seed, this)
+            } else {
+                new Child(this.seed, this)
+            }
         } else {
             for (const child of children) {
-                Inner.isInner(child) ? new Inner(child, this) : new Outer(child, this);
+                if ('children' in child) {
+                    new Middle(child, this)
+                } else {
+                    new Child(child, this)
+                }
             }
         }
 
@@ -44,6 +51,8 @@ export default class Root {
         }
 
         this.element.addClass('root');
+
+        this.element.render(' ', ' ');
 
         document.getElementById('object-tree').appendChild(this.element.root);
     }

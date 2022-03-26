@@ -5,12 +5,12 @@ import {ACTION_ID as DELETE_ID} from './delete/consts';
 
 export const NAMESPACE = 'http://www.w3.org/2000/svg';
 
-export const BUTTON_ORDER = {
-    [CREATE_ID]: 0,
-    [EDIT_ID]: 1,
-    [MOVE_ID]: 2,
-    [DELETE_ID]: 3,
-};
+export const BUTTON_ORDER = [
+    MOVE_ID,
+    EDIT_ID,
+    DELETE_ID,
+    CREATE_ID,
+];
 
 export const SVG_CLASS_NAME = 'node-button-svg';
 
