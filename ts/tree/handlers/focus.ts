@@ -7,18 +7,8 @@ const ACTIVE_CLASS_NAME = 'selected';
 
 let activeNode: Middle | Child;
 
-function focusDown(doFocus: boolean = true, node: Middle | Child = activeNode) {
-    node.element.root.classList[doFocus ? 'add' : 'remove'](FOCUS_CLASS_NAME);
-
-    if ('children' in node) {
-        for (const child of node.children) {
-            focusDown(doFocus, child);
-        }
-    }
-}
-
 function focusUp(doFocus: boolean = true, node: Root | Middle = activeNode.parent) {
-    node.element.root.classList[doFocus ? 'add' : 'remove'](FOCUS_CLASS_NAME);
+    node.element[`${doFocus ? 'add' : 'remove'}Class`](FOCUS_CLASS_NAME);
 
     if ('parent' in node) {
         focusUp(doFocus, node.parent);
@@ -27,14 +17,16 @@ function focusUp(doFocus: boolean = true, node: Root | Middle = activeNode.paren
 
 function act(node: Child) {
     if (activeNode) {
-        focusDown(false);
+        activeNode.element.removeClass(ACTIVE_CLASS_NAME);
+
         focusUp(false);
     }
 
     if (node !== activeNode) {
         activeNode = node;
 
-        focusDown();
+        node.element.addClass(ACTIVE_CLASS_NAME);
+
         focusUp();
     } else {
         activeNode = undefined;

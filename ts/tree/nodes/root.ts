@@ -52,8 +52,6 @@ export default class Root {
 
         this.element.addClass('root');
 
-        this.element.render(' ', ' ');
-
         document.getElementById('object-tree').appendChild(this.element.root);
     }
 

@@ -19,7 +19,7 @@ const actions: Array<{
 
 export default class Child {
     public readonly label: string;
-    protected value: Value;
+    public value: Value;
 
     predicate: dataTypes.Predicate;
     parent: Root | Middle;
@@ -45,19 +45,9 @@ export default class Child {
         }
     }
 
-    setValue(value: dataTypes.Value): void {
-        this.value = value;
-
-        this.element.render(value);
-    }
-
-    public getValue(): Value {
-        return this.value;
-    }
-
     hasSibling(value: dataTypes.Value) {
         for (const sibling of this.parent.children) {
-            if (sibling !== this && sibling.getValue() === value) {
+            if (sibling !== this && sibling.value === value) {
                 return true;
             }
         }

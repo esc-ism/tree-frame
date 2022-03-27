@@ -1,5 +1,3 @@
-import {Predicate, Value} from '../../../types';
-
 import type Child from '../../nodes/child';
 
 import template from './button';
@@ -7,9 +5,12 @@ import template from './button';
 import {addButton} from '../index';
 import {ACTION_ID} from './consts';
 
-let activeNode: Child = null;
+let activeNode: Child;
 
-function isValid(predicate: Predicate, value: Value): boolean {
+function isValid(): boolean {
+    const {predicate} = activeNode;
+    const {value} = activeNode.element.valueElement;
+
     switch (typeof predicate) {
         case 'boolean':
             return predicate;
@@ -22,41 +23,45 @@ function isValid(predicate: Predicate, value: Value): boolean {
     }
 }
 
-function close() {
-    if (!activeNode) {
-        return;
-    }
+export function update() {
+    if (isValid()) {
+        activeNode.value = activeNode.element.valueElement.value;
 
-    //TODO
-
-    activeNode.element.setSelected(false);
-
-    activeNode = null;
-}
-
-function open(node: Child) {
-    activeNode = node;
-
-    const {predicate} = node;
-    const values = node.parent.children.map((node) => node.getValue());
-    const index = node.parent.children.indexOf(node);
-}
-
-export function toggle(node) {
-    const doOpen = node !== activeNode;
-
-    close();
-
-    if (doOpen) {
-        open(node);
+        activeNode.element.removeClass('rejected');
+    } else {
+        activeNode.element.addClass('rejected');
     }
 }
 
-document.body.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        close();
+function reset() {
+    if (activeNode) {
+        activeNode.element.render(activeNode.value);
+        activeNode.element.removeClass('rejected');
+
+        activeNode.element.valueElement.disabled = true;
+  }
+
+    activeNode = undefined;
+}
+
+window.addEventListener('keyup', (event) => {
+    if (activeNode) {
+        if (event.key === 'Enter' || event.key === 'Escape') {
+            reset();
+        }
     }
 });
+
+export function toggle(node) {
+    reset();
+
+    if (activeNode !== node) {
+        activeNode = node;
+
+        node.element.valueElement.disabled = false;
+        node.element.valueElement.select();
+    }
+}
 
 export function mount(node: Child): void {
     const button = template.cloneNode(true);
@@ -68,6 +73,8 @@ export function mount(node: Child): void {
     });
 
     addButton(node, button, ACTION_ID);
+
+    node.element.valueElement.addEventListener('input', update);
 }
 
 export function shouldMount(node: Child): boolean {

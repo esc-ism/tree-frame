@@ -62,12 +62,6 @@ export class NoOptionsError extends Error {
     }
 }
 
-export class EmptyInnerError extends Error {
-    constructor() {
-        super('Inner nodes must have at least one child.');
-    }
-}
-
 export class DeadRootError extends Error {
     constructor() {
         super('If the tree\'s root has no children, it must have a seed.');

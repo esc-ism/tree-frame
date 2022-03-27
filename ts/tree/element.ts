@@ -1,5 +1,3 @@
-let highlighted: Element;
-
 export default class Element {
     root: HTMLElement = document.createElement('div');
 
@@ -8,8 +6,8 @@ export default class Element {
     buttonContainer: HTMLElement = document.createElement('span');
 
     valueAligner: HTMLElement = document.createElement('span');
-    valueElement: HTMLElement = document.createElement('span');
-    labelElement: HTMLElement = document.createElement('span');
+    valueElement: HTMLInputElement = document.createElement('input');
+    labelElement: HTMLInputElement = document.createElement('input');
 
     childContainer: HTMLElement = document.createElement('div');
 
@@ -26,17 +24,8 @@ export default class Element {
         this.valueElement.classList.add('node-value');
         this.labelElement.classList.add('node-label');
 
-        this.unhighlight();
-
-        this.dataContainer.addEventListener('mouseover', (event) => {
-            event.stopPropagation();
-
-            this.highlight();
-        });
-
-        this.dataContainer.addEventListener('mouseout', () => {
-            this.unhighlight();
-        });
+        this.valueElement.disabled = true;
+        this.labelElement.disabled = true;
 
         this.valueAligner.appendChild(this.valueElement);
         this.valueAligner.appendChild(this.labelElement);
@@ -49,10 +38,12 @@ export default class Element {
     }
 
     render(value: unknown, label?: string) {
-        this.valueElement.innerText = value.toString();
+        this.valueElement.value = value.toString();
 
         if (label) {
-            this.labelElement.innerText = label;
+            this.labelElement.value = label;
+
+            this.valueElement.placeholder = label;
         }
 
         //     if (Array.isArray(node.predicate)) {
@@ -151,35 +142,15 @@ export default class Element {
         // }
     }
 
-    setSelected(doSelect = true) {
-        if (doSelect) {
-            this.valueAligner.classList.add('selected');
-        } else {
-            this.valueAligner.classList.remove('selected');
-        }
-    }
-
-    unhighlight() {
-        this.buttonContainer.classList.add('blur');
-    }
-
-    highlight() {
-        if (highlighted) {
-            highlighted.unhighlight();
-        }
-
-        this.buttonContainer.classList.remove('blur');
-    }
-
     addClass(...names: string[]) {
         for (const name of names) {
-            this.dataContainer.classList.add(name);
+            this.root.classList.add(name);
         }
     }
 
     removeClass(...names: string[]) {
         for (const name of names) {
-            this.dataContainer.classList.remove(name);
+            this.root.classList.remove(name);
         }
     }
 

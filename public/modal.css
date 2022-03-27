@@ -8,44 +8,51 @@
 }
 
 #modal-content {
+    /* Position & size */
     position: relative;
     margin: 12vh auto;
     padding: 0;
     width: 80%;
+
+    /* Colour & accents */
+    background: black;
+    font-family: Tahoma, Geneva, sans-serif;
+    color: white;
     box-shadow: 1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065;
-    outline: #fff solid 2px;
+    outline: white solid 2px;
 }
 
 #modal-header {
-    font-size: 4.5vh;
-    background: black;
-    color: #ffffff;
-    align-items: center;
     display: flex;
+
     border-bottom: #ffffff solid 2px;
+
+    /* Font */
+    font-size: 4.5vh;
+    align-items: center;
     text-align: center;
 }
 
 #title-wrapper {
-    padding: 0 20px;
+    flex-grow: 1;
     display: inline;
+
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-grow: 1;
+
+    padding: 0 20px;
 }
 
 #title {
     text-align: center;
     vertical-align: middle;
-    white-space: pre;
 }
 
 .frame-button {
     font-family: Helvetica, Verdana, sans-serif;
-    color: white;
     float: right;
     font-size: 2em;
-    white-space: pre;
     border-left: 2px solid white;
     width: 1.3em;
     user-select: none;

@@ -1,0 +1,47 @@
+/* Positioning and cursor */
+
+.node-button-wrapper {
+    vertical-align: middle;
+}
+
+.node-button-svg {
+    width: 1.5em;
+    cursor: pointer;
+}
+
+/* Mouseover changes */
+
+.node-data-container:not(:hover) .node-button-svg {
+    filter: url(#svg-blur);
+}
+
+.node:not(.selected) > .node-data-container:not(:hover) .node-button-svg {
+    opacity: 0.5;
+}
+
+.node:not(.selected) > .node-data-container:not(:hover) circle {
+    opacity: 0;
+}
+
+.node-data-container:hover .node-button-svg:not(:hover) circle,
+.node.selected > .node-data-container .node-button-svg:not(:hover) circle {
+    stroke-opacity: 0.5;
+}
+
+/* Colours */
+
+.node-button-delete {
+    stroke: red;
+}
+
+.node-button-create {
+    stroke: yellow;
+}
+
+.node-button-edit {
+    stroke: lawngreen;
+}
+
+.node-button-move {
+    stroke: mediumpurple;
+}

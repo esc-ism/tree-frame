@@ -7,6 +7,8 @@ function setTitle(title: string) {
     const titleElement = document.getElementById('title');
 
     titleElement.innerText = title;
+    // In case the text is too long to fit
+    titleElement.title = title;
 }
 
 function setupLabelToggle() {
@@ -31,13 +33,15 @@ function setupLabelToggle() {
 function setupExit(root: Root) {
     const button = document.getElementById('close');
     const background = document.getElementById('modal-background');
-    const stopBound = () => void stop(root.getDataTree());
+    const doExit = () => {
+        stop(root.getDataTree());
+    }
 
-    button.addEventListener('click', stopBound);
+    button.addEventListener('click', doExit);
 
     window.addEventListener('click', (event) => {
         if (event.target === background) {
-            stopBound();
+            doExit();
         }
     });
 }

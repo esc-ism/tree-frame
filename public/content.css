@@ -1,37 +1,31 @@
-body {
-    font-family: Tahoma, Geneva, sans-serif;
-}
-
 #object-tree {
     height: 60vh;
     overflow-y: auto;
-    background-color: black;
-    color: #eeeeee;
 }
 
 .node-data-container {
     font-size: 18px;
+
     user-select: none;
 }
 
-.root {
-    padding-top: 5px;
-    height: fit-content;
-}
-
-.node-aligner {
-    padding-bottom: 3px;
-}
-
-:not(.root) > .node-aligner {
-    padding-left: 0.35em;
-}
+/* Node spacing */
 
 .node .node .node {
     margin-left: 1.8em;
 }
 
-.node-data-container:not(.middle):not(.root):last-child, .node-data-container:not(.middle):not(.root) + .focused {
+.node-data-container {
+    display: flex;
+    align-items: center;
+}
+
+.node-button-container {
+    margin-right: 0.6em;
+}
+
+.node:not(.middle):not(.root):last-child > .node-data-container,
+.node:not(.middle):not(.root) + .focused > .node-data-container {
     /*
     Using border rather than margin/padding
     prevents root being hoverable at the bottom &
@@ -40,80 +34,51 @@ body {
     border-bottom: 0.4em transparent;
 }
 
-.node.focused .node:not(.focused) {
-    display: none;
-}
+/* Background image */
 
 .node-data-container {
-    padding-left: 0.4em;
+    padding-left: 5px;
+
     background-size: 5px;
-    background-image: linear-gradient(#bbb, #bbb);
     background-repeat: no-repeat;
+    background-image: linear-gradient(#bbb, #bbb);
+
     transition: background-size 300ms, color 500ms;
 }
 
-.node-data-container:hover {
+.node-data-container:hover,
+.node.selected > .node-data-container {
     color: black;
     background-size: 100%;
 }
 
-.node-button-wrapper {
-    vertical-align: middle;
-}
+/* Focus */
 
-#object-tree.locked .node-button-container {
-    visibility: hidden;
-}
-
-.node-button-svg {
-    width: 1.5em;
-    cursor: pointer;
-}
-
-.node-button-container.blur .node-button-svg {
-    filter: url(#svg-blur);
-}
-
-.node-button-container.blur .node-button-svg:not(:hover) {
-    opacity: 0.5;
-}
-
-.node-button-container.blur circle {
-    opacity: 0;
-}
-
-.node-button-container g {
-    opacity: 0.5;
-}
-
-.node-button-svg:hover g {
-    opacity: 1;
-}
-
-.node-button-delete {
-    stroke: red;
-}
-
-.node-button-create {
-    stroke: yellow;
-}
-
-.node-button-edit {
-    stroke: lawngreen;
-}
-
-.node-button-move {
-    stroke: mediumpurple;
-}
-
-.node-label, .node-value {
-    white-space: pre;
-}
-
-#object-tree.locked .node-value {
+.node.focused .node:not(.focused):not(.selected):not(.selected *) {
     display: none;
 }
 
-#object-tree:not(.locked) .node-label {
-    display: none;
+/* Edit */
+
+.node-aligner {
+    flex-grow: 1;
+}
+
+.node-aligner > * {
+    width: 92%;
+    padding: 0 2%;
+
+    /* Override input style */
+    font: inherit;
+    background: inherit;
+    color: inherit;
+    border: inherit;
+}
+
+.node-value:not([disabled]) {
+    background: rgba(204, 255, 170, 0.8);
+}
+
+.rejected .node-value {
+    background: rgba(255, 196, 203, 0.8);
 }

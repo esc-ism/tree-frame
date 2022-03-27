@@ -1,0 +1,11 @@
+#object-tree.locked .node-button-container {
+    visibility: hidden;
+}
+
+#object-tree.locked .node-value {
+    display: none;
+}
+
+#object-tree:not(.locked) .node-label {
+    display: none;
+}
