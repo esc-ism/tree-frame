@@ -6,12 +6,15 @@ import {ACTION_ID as DELETE_ID} from './delete/consts';
 export const NAMESPACE = 'http://www.w3.org/2000/svg';
 
 export const BUTTON_ORDER = [
-    MOVE_ID,
-    EDIT_ID,
     DELETE_ID,
     CREATE_ID,
+    MOVE_ID,
+    EDIT_ID,
 ];
 
 export const SVG_CLASS_NAME = 'node-button-svg';
 
 export const BUTTON_CLASS_NAME = 'node-button-wrapper';
+
+// For active buttons
+export const ACTIVE_CLASS_NAME = 'active';

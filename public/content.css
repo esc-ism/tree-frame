@@ -5,7 +5,6 @@
 
 .node-data-container {
     font-size: 18px;
-
     user-select: none;
 }
 
@@ -21,7 +20,7 @@
 }
 
 .node-button-container {
-    margin-right: 0.6em;
+    margin-right: 0.4em;
 }
 
 .node:not(.middle):not(.root):last-child > .node-data-container,
@@ -47,14 +46,14 @@
 }
 
 .node-data-container:hover,
-.node.selected > .node-data-container {
+.node.focused > .node-data-container {
     color: black;
     background-size: 100%;
 }
 
 /* Focus */
 
-.node.focused .node:not(.focused):not(.selected):not(.selected *) {
+.node.focused-ancestor .node:not(.focused-ancestor):not(.focused):not(.focused *) {
     display: none;
 }
 
@@ -64,9 +63,14 @@
     flex-grow: 1;
 }
 
+/* Avoid showing annoying accidental highlights */
+.node-aligner > *[disabled]::selection {
+    background: none;
+}
+
 .node-aligner > * {
     width: 92%;
-    padding: 0 2%;
+    padding: 0 1.5%;
 
     /* Override input style */
     font: inherit;
@@ -76,9 +80,14 @@
 }
 
 .node-value:not([disabled]) {
-    background: rgba(204, 255, 170, 0.8);
+    background: #D9FFC0;
 }
 
-.rejected .node-value {
-    background: rgba(255, 196, 203, 0.8);
+.rejected > .node-data-container .node-value {
+    background: #FFB4BE;
+}
+
+.node-button-svg {
+    stroke: black;
+    fill: none;
 }

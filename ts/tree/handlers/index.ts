@@ -1,4 +1,4 @@
-import {NAMESPACE, BUTTON_ORDER, SVG_CLASS_NAME, BUTTON_CLASS_NAME} from './consts';
+import {NAMESPACE, BUTTON_ORDER, SVG_CLASS_NAME, BUTTON_CLASS_NAME, ACTIVE_CLASS_NAME} from './consts';
 
 import Root from '../nodes/root';
 import Leaf from '../nodes/child';
@@ -7,7 +7,7 @@ export function addButton(node: Root | Leaf, button: Node, id: string) {
     node.element.addButton(button, BUTTON_ORDER.indexOf(id));
 }
 
-export const getButton = (function () {
+export const getNewButton = (function () {
     const template = (() => {
         const circle = document.createElementNS(NAMESPACE, 'circle');
 
@@ -15,7 +15,6 @@ export const getButton = (function () {
         circle.setAttribute('cy', '70');
         circle.setAttribute('r', '50');
         circle.setAttribute('stroke-width', '10');
-        circle.setAttribute('fill', 'black');
 
         const svg = document.createElementNS(NAMESPACE, 'svg');
 
@@ -43,3 +42,18 @@ export const getButton = (function () {
         return button;
     };
 })();
+
+let isActive: boolean = false;
+
+export function setActive(node, actionClass: string, doActivate = true) {
+    const button = node.element.buttonContainer.querySelector(`.${actionClass}`);
+
+    button.classList[doActivate ? 'add' : 'remove'](ACTIVE_CLASS_NAME);
+
+    isActive = doActivate;
+}
+
+// Basically a getter
+export function actionIsActive(): boolean {
+    return isActive;
+}

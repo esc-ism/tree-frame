@@ -1,5 +1,5 @@
 import {NAMESPACE} from '../consts';
-import {getButton} from '../index';
+import {getNewButton} from '../index';
 import {CLASS_NAME as ACTION_CLASS_NAME} from './consts';
 
 const point0 = document.createElementNS(NAMESPACE, 'line');
@@ -53,6 +53,6 @@ g.setAttribute('transform', 'rotate(212 70 70)');
 
 g.append(point0, point1, pointFill, side0, side1, topCurve, bottomCurve);
 
-const button = getButton(g, ACTION_CLASS_NAME);
+const button = getNewButton(g, ACTION_CLASS_NAME);
 
 export default button;

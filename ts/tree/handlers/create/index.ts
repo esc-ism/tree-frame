@@ -7,7 +7,7 @@ import template from './button';
 import {addButton} from '../index';
 import {ACTION_ID} from './consts';
 
-function act(parent: Root | Middle) {
+function doAction(parent: Root | Middle) {
     const {seed} = parent;
 
     if ('children' in seed) {
@@ -23,7 +23,7 @@ export function mount(node: Root | Middle): void {
     button.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        act(node);
+        doAction(node);
     });
 
     addButton(node, button, ACTION_ID);

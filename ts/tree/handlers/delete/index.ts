@@ -5,12 +5,8 @@ import template from './button';
 import {addButton} from '../index';
 import {ACTION_ID} from './consts';
 
-function act(node: Child) {
+function doAction(node: Child) {
     node.disconnect();
-}
-
-export function unmount(node: Child) {
-    // ?
 }
 
 export function mount(node: Child): void {
@@ -19,7 +15,7 @@ export function mount(node: Child): void {
     button.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        act(node);
+        doAction(node);
     });
 
     addButton(node, button, ACTION_ID);

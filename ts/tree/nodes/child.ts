@@ -4,7 +4,7 @@ import {Value} from '../../types';
 import * as edit from '../handlers/edit';
 import * as disconnect from '../handlers/delete';
 import * as focus from '../handlers/focus';
-// import * as move from '../handlers/move';
+import * as move from '../handlers/move';
 
 import NodeElement from '../element';
 
@@ -15,7 +15,7 @@ const actions: Array<{
     shouldMount: (node: Child) => boolean,
     mount: (node: Child) => void,
     unmount?: (node: Child) => void
-}> = [edit, disconnect, focus];
+}> = [edit, disconnect, focus, move];
 
 export default class Child {
     public readonly label: string;
@@ -64,20 +64,19 @@ export default class Child {
     }
 
     disconnect() {
-        const siblings = this.parent.children;
-
-        // @ts-ignore
-        siblings.splice(siblings.indexOf(this), 1);
-
-        this.element.remove();
-
-        this.parent = undefined;
-
         for (const action of actions) {
             if ('unmount' in action) {
                 action.unmount(this);
             }
         }
+
+        const siblings = this.parent.children;
+
+        siblings.splice(siblings.indexOf(this), 1);
+
+        this.element.remove();
+
+        this.parent = undefined;
     }
 
     getDataTree() {

@@ -1,39 +1,73 @@
-// import {validateSeedMatch as _validateSeedMatch} from '../../../validation';
-// import type {Middle as Seed, Predicate} from '../../../types';
-//
-// import type * as unions from '../../nodes/unions';
-// import Root from '../../nodes/root';
-// import Middle from '../../nodes/middle';
-//
-// import {isValid} from '../edit';
-//
-// import template from '../create/button';
-//
-// const validateSeedMatch = _validateSeedMatch.bind(null, [], []);
-//
-// function act(node: Middle) {
-//     const {parent} = node;
-//
-//     addRecursively(Root.instance, parent);
-// }
-//
-// export default function mount(node: Middle): void {
-//     const button = template.cloneNode(true);
-//
-//     button.addEventListener('click', (event) => {
-//         event.stopPropagation();
-//
-//         act(node);
-//     });
-// }
-//
-// export function shouldMount(node: Middle): boolean {
-//     return Boolean(node.parent.seed);
-// }
-//
-//
-//
-//
+import {validateSeedMatch as _validateSeedMatch} from '../../../validation';
+
+import Root from '../../nodes/root';
+import Middle from '../../nodes/middle';
+import Child from '../../nodes/child';
+
+import template from './button';
+import {addButton, setActive} from '../index';
+import {ACTION_ID, CLASS_NAME as BUTTON_CLASS_NAME} from './consts';
+
+import {focus} from '../focus';
+
+const validateSeedMatch = _validateSeedMatch.bind(null, [], []);
+
+let activeNode: Child;
+
+export function reset() {
+    if (activeNode) {
+        Root.instance.element.removeClass(BUTTON_CLASS_NAME);
+
+        focus(false, activeNode, false);
+        setActive(activeNode, BUTTON_CLASS_NAME, false);
+    }
+
+    activeNode = undefined;
+}
+
+window.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter' || event.key === 'Escape') {
+        reset();
+    }
+});
+
+function doAction(node: Child) {
+    const previousNode = activeNode;
+
+    reset();
+
+    if (previousNode !== node) {
+        activeNode = node;
+
+        Root.instance.element.addClass(BUTTON_CLASS_NAME);
+
+        focus(true, activeNode);
+        setActive(activeNode, BUTTON_CLASS_NAME);
+    }
+}
+
+export function unmount(node) {
+    if (node === activeNode) {
+        reset();
+    }
+}
+
+export function mount(node: Child): void {
+    const button = template.cloneNode(true);
+
+    button.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        doAction(node);
+    });
+
+    addButton(node, button, ACTION_ID);
+}
+
+export function shouldMount(node: Child): boolean {
+    return Boolean(node.parent.seed);
+}
+
 // function _act(node: Middle) {
 //     const value = node.getValue();
 //     const {seed} = node.parent;

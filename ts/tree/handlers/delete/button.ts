@@ -1,5 +1,5 @@
 import {NAMESPACE} from '../consts';
-import {getButton} from '../index';
+import {getNewButton} from '../index';
 import {CLASS_NAME as ACTION_CLASS_NAME} from './consts';
 
 const lineVertical0 = document.createElementNS(NAMESPACE, 'line');
@@ -62,6 +62,6 @@ const g = document.createElementNS(NAMESPACE, 'g');
 
 g.append(lineVertical0, lineVertical1, lineVertical2, lineVertical3, curveBottom, curveTop0, curveTop1, lid);
 
-const button = getButton(g, ACTION_CLASS_NAME);
+const button = getNewButton(g, ACTION_CLASS_NAME);
 
 export default button;
