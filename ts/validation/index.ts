@@ -329,20 +329,14 @@ export function validateSeedMatch(seedBreadcrumbs: string[], mainBreadcrumbs: st
 
     if ('children' in seed && 'children' in target) {
         if ('seed' in seed) {
-            for (const [i, child] of target.children.entries()) {
-                validateSeedMatch(
-                    [...seedBreadcrumbs, 'seed'],
-                    [...mainBreadcrumbs, 'children', i.toString()],
-                    seed, child
-                );
-            }
-
-            for (const [i, child] of seed.children.entries()) {
-                validateSeedMatch(
-                    [...seedBreadcrumbs, 'seed'],
-                    [...seedBreadcrumbs, 'children', i.toString()],
-                    seed, child
-                );
+            for (const [i, seedChild] of seed.children.entries()) {
+                for (const [j, child] of target.children.entries()) {
+                    validateSeedMatch(
+                        [...seedBreadcrumbs, 'children', i.toString()],
+                        [...mainBreadcrumbs, 'children', j.toString()],
+                        seedChild, child
+                    );
+                }
             }
         } else {
             if (seed.children.length !== target.children.length)
@@ -350,14 +344,12 @@ export function validateSeedMatch(seedBreadcrumbs: string[], mainBreadcrumbs: st
                     new errors.SeedMatchError(),
                     new errors.ValueError([...mainBreadcrumbs, 'children', 'length'], target.children.length, [seed.children.length])
                 );
-        }
 
-        for (const [i, seedChild] of seed.children.entries()) {
-            for (const [j, child] of target.children.entries()) {
+            for (const [i, child] of target.children.entries()) {
                 validateSeedMatch(
                     [...seedBreadcrumbs, 'children', i.toString()],
-                    [...mainBreadcrumbs, 'children', j.toString()],
-                    seedChild, child
+                    [...mainBreadcrumbs, 'children', i.toString()],
+                    seed.children[i], child
                 );
             }
         }
@@ -400,6 +392,7 @@ function validateDuplicates(breadcrumbs: string[], siblings: Child[]) {
 function validateRoot(breadcrumbs: string[], node: Root): void {
     validateDuplicates([...breadcrumbs, 'children'], node.children);
 
+    // TODO this seems to not work :)
     validateSeeds(breadcrumbs, node);
     validateForest([...breadcrumbs, 'children'], validateSeeds, node.children);
 

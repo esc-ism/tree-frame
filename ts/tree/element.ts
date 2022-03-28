@@ -46,6 +46,8 @@ export default class Element {
             this.valueElement.placeholder = label;
         }
 
+        // TODO you still need to implement non-string values
+
         //     if (Array.isArray(node.predicate)) {
         //         const selectElement = document.createElement('select');
         //         const value = node.getValue();
@@ -158,7 +160,11 @@ export default class Element {
         this.childContainer.insertBefore(child.root, this.childContainer.children[index] ?? null);
     }
 
-    addButton(button: Node, index: number) {
+    removeButton() {
+        this.buttons.length--;
+    }
+
+    addButton(button: Node, index: number = this.buttons.length) {
         this.buttons[index] = button;
 
         for (let i = index + 1; i < this.buttons.length; ++i) {

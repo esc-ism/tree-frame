@@ -11,31 +11,43 @@ arrowTrunk.setAttribute('x2', '70');
 arrowTrunk.setAttribute('y1', '40');
 arrowTrunk.setAttribute('y2', '100');
 
-const arrowHead1 = document.createElementNS(NAMESPACE, 'line');
+const arrowBottomLeft = document.createElementNS(NAMESPACE, 'line');
 
-arrowHead1.setAttribute('stroke-linecap', 'round');
-arrowHead1.setAttribute('stroke-width', '10');
-arrowHead1.setAttribute('x1', '70');
-arrowHead1.setAttribute('x2', '58');
-arrowHead1.setAttribute('y1', '43');
-arrowHead1.setAttribute('y2', '55');
+arrowBottomLeft.setAttribute('stroke-linecap', 'round');
+arrowBottomLeft.setAttribute('stroke-width', '10');
+arrowBottomLeft.setAttribute('x1', '70');
+arrowBottomLeft.setAttribute('x2', '58');
+arrowBottomLeft.setAttribute('y1', '97');
+arrowBottomLeft.setAttribute('y2', '85');
 
-const arrowHead2 = arrowHead1.cloneNode(true) as SVGLineElement;
+const arrowBottomRight = arrowBottomLeft.cloneNode(true) as SVGLineElement;
 
-arrowHead2.setAttribute('x2', '82');
+arrowBottomRight.setAttribute('x2', '82');
 
-const arrowTail1 = arrowHead1.cloneNode(true) as SVGLineElement;
+const gMain = document.createElementNS(NAMESPACE, 'g');
 
-arrowTail1.setAttribute('transform', 'rotate(180 70 70)');
+gMain.append(arrowTrunk, arrowBottomLeft, arrowBottomRight);
 
-const arrowTail2 = arrowHead2.cloneNode(true) as SVGLineElement;
+const gSibling = gMain.cloneNode(true) as SVGGElement;
 
-arrowTail2.setAttribute('transform', 'rotate(180 70 70)');
+export const siblingButton = getNewButton(gSibling, ACTION_CLASS_NAME);
 
-const g = document.createElementNS(NAMESPACE, 'g');
+const gParent = gMain.cloneNode(true) as SVGGElement;
 
-g.append(arrowTrunk, arrowHead1, arrowHead2, arrowTail1, arrowTail2);
+gParent.setAttribute('transform', 'rotate(-45 70 70)');
 
-const button = getNewButton(g, ACTION_CLASS_NAME);
+export const parentButton = getNewButton(gParent, ACTION_CLASS_NAME);
 
-export default button;
+const arrowTopRight = arrowBottomLeft.cloneNode(true) as SVGLineElement;
+
+arrowTopRight.setAttribute('transform', 'rotate(180 70 70)');
+
+const arrowTopLeft = arrowBottomRight.cloneNode(true) as SVGLineElement;
+
+arrowTopLeft.setAttribute('transform', 'rotate(180 70 70)');
+
+gMain.append(arrowTopRight, arrowTopLeft);
+
+const mainButton = getNewButton(gMain, ACTION_CLASS_NAME);
+
+export default mainButton;

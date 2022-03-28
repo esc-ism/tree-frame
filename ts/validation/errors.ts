@@ -52,7 +52,7 @@ export class ValueError extends Error {
 
 export class SeedMatchError extends Error {
     constructor() {
-        super('All children of nodes with a seed property must creatable from the seed tree.');
+        super('All children of nodes with a seed property must be creatable from the seed tree.');
     }
 }
 

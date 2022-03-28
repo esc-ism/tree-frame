@@ -10,8 +10,21 @@ import {ACTION_ID, CLASS_NAME as BUTTON_CLASS_NAME} from './consts';
 
 let activeNode: Child;
 
-export function isActive() {
-    return Boolean(activeNode);
+export function reset() {
+    if (activeNode) {
+        activeNode.element.render(activeNode.value);
+
+        Root.instance.element.removeClass(BUTTON_CLASS_NAME);
+
+        focus(false, activeNode);
+        setActive(activeNode, BUTTON_CLASS_NAME, false);
+
+        activeNode.element.removeClass('rejected');
+
+        activeNode.element.valueElement.disabled = true;
+    }
+
+    activeNode = undefined;
 }
 
 function isValid(): boolean {
@@ -38,23 +51,6 @@ export function update() {
     } else {
         activeNode.element.addClass('rejected');
     }
-}
-
-export function reset() {
-    if (activeNode) {
-        activeNode.element.render(activeNode.value);
-
-        Root.instance.element.removeClass(BUTTON_CLASS_NAME);
-
-        focus(false, activeNode);
-        setActive(activeNode, BUTTON_CLASS_NAME, false);
-
-        activeNode.element.removeClass('rejected');
-
-        activeNode.element.valueElement.disabled = true;
-  }
-
-    activeNode = undefined;
 }
 
 window.addEventListener('keyup', (event) => {

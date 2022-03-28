@@ -45,22 +45,22 @@ export default class Child {
         }
     }
 
-    hasSibling(value: dataTypes.Value) {
-        for (const sibling of this.parent.children) {
-            if (sibling !== this && sibling.value === value) {
-                return true;
-            }
-        }
+    detach() {
+        const siblings = this.parent.children;
 
-        return false;
+        siblings.splice(siblings.indexOf(this), 1);
+
+        this.element.remove();
+
+        this.parent = undefined;
     }
 
     attach(parent: Middle | Root, index: number = parent.children.length) {
-        this.parent = parent;
+        parent.children.splice(index, 0, this);
 
         parent.element.addChild(this.element, index);
 
-        parent.children.splice(index, 0, this);
+        this.parent = parent;
     }
 
     disconnect() {
@@ -70,13 +70,7 @@ export default class Child {
             }
         }
 
-        const siblings = this.parent.children;
-
-        siblings.splice(siblings.indexOf(this), 1);
-
-        this.element.remove();
-
-        this.parent = undefined;
+        this.detach();
     }
 
     getDataTree() {

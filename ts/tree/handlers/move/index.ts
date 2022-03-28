@@ -1,16 +1,16 @@
-import {validateSeedMatch as _validateSeedMatch} from '../../../validation';
+import {validateSeedMatch} from '../../../validation';
 
 import Root from '../../nodes/root';
 import Middle from '../../nodes/middle';
 import Child from '../../nodes/child';
 
-import template from './button';
-import {addButton, setActive} from '../index';
+import template, {parentButton, siblingButton} from './button';
+import {addButton as addMainButton, setActive} from '../index';
 import {ACTION_ID, CLASS_NAME as BUTTON_CLASS_NAME} from './consts';
 
 import {focus} from '../focus';
 
-const validateSeedMatch = _validateSeedMatch.bind(null, [], []);
+const targetButtons = [];
 
 let activeNode: Child;
 
@@ -20,9 +20,75 @@ export function reset() {
 
         focus(false, activeNode, false);
         setActive(activeNode, BUTTON_CLASS_NAME, false);
+
+        for (const button of targetButtons) {
+            button.remove();
+        }
+
+        targetButtons.length = 0;
     }
 
     activeNode = undefined;
+}
+
+function isSeedMatch(seed) {
+    try {
+        validateSeedMatch([], [], seed, activeNode.getDataTree());
+
+        return true
+    } catch (e) {
+        return false;
+    }
+}
+
+function addTargetButton(node, isSiblingButton = true) {
+    const clone = (isSiblingButton ? siblingButton : parentButton).cloneNode(true);
+
+    node.element.addButton(clone);
+
+    clone.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        activeNode.detach();
+
+        if (isSiblingButton) {
+            activeNode.attach(node.parent, node.parent.children.indexOf(node) + 1);
+        } else {
+            activeNode.attach(node, 0);
+        }
+
+        reset();
+    })
+
+    targetButtons.push(clone);
+}
+
+function addButtons(parent: Root | Child = Root.instance) {
+    if ('seed' in parent) {
+        const isCurrentParent = parent === activeNode.parent;
+
+        if (isCurrentParent || isSeedMatch(parent.seed)) {
+            addTargetButton(parent, false);
+
+            if (isCurrentParent) {
+                for (const child of parent.children) {
+                    if (child !== activeNode) {
+                        addTargetButton(child);
+                    }
+                }
+            } else {
+                for (const child of parent.children) {
+                    addTargetButton(child);
+                }
+            }
+        }
+    }
+
+    if ('children' in parent) {
+        for (const child of parent.children) {
+            addButtons(child);
+        }
+    }
 }
 
 window.addEventListener('keyup', (event) => {
@@ -43,6 +109,8 @@ function doAction(node: Child) {
 
         focus(true, activeNode);
         setActive(activeNode, BUTTON_CLASS_NAME);
+
+        addButtons();
     }
 }
 
@@ -61,7 +129,7 @@ export function mount(node: Child): void {
         doAction(node);
     });
 
-    addButton(node, button, ACTION_ID);
+    addMainButton(node, button, ACTION_ID);
 }
 
 export function shouldMount(node: Child): boolean {
