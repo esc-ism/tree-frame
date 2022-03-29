@@ -2,7 +2,7 @@ import type Child from '../../nodes/child';
 
 import template from './button';
 
-import {addButton} from '../index';
+import {addActionButton} from '../index';
 import {ACTION_ID} from './consts';
 
 function doAction(node: Child) {
@@ -10,15 +10,7 @@ function doAction(node: Child) {
 }
 
 export function mount(node: Child): void {
-    const button = template.cloneNode(true);
-
-    button.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-        doAction(node);
-    });
-
-    addButton(node, button, ACTION_ID);
+    addActionButton(template, ACTION_ID, doAction, node);
 }
 
 export function shouldMount(node: Child): boolean {

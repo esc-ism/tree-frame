@@ -4,15 +4,16 @@ import Middle from './middle';
 import Child from './child';
 
 import * as create from '../handlers/create';
+import * as focus from '../handlers/focus';
 
 import NodeElement from '../element';
 
-const actions = [create];
+const actions = [create, focus];
 
 export default class Root {
     static instance: Root;
 
-    readonly children: Array<Child> = [];
+    readonly children: Array<Middle | Child> = [];
     readonly seed: dataTypes.Child;
 
     readonly element = new NodeElement();

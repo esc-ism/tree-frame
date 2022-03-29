@@ -59,9 +59,11 @@ function hasValue<X extends {}>(breadcrumbs: string[], candidate: X): candidate 
     return true;
 }
 
-function isOption(breadcrumbs: string[], option: unknown, index: number): option is string {
-    if (typeof option !== 'string')
-        throw new errors.TypeError([...breadcrumbs, index.toString()], typeof option, ['string']);
+function isOption(breadcrumbs: string[], option: unknown, index: number): option is Value {
+    const type = typeof option;
+
+    if (!VALUE_TYPES.some((expectedType) => expectedType === type))
+        throw new errors.TypeError([...breadcrumbs, index.toString()], type, [...VALUE_TYPES]);
 
     return true;
 }
@@ -80,7 +82,7 @@ function hasPredicate<X extends {}>(breadcrumbs: string[], candidate: X): candid
         default:
             if (!Array.isArray(candidate.predicate))
                 throw new errors.TypeError([...breadcrumbs, 'predicate'], typeof predicate, PREDICATE_TYPES);
-            if (!isArrayOf<String>([...breadcrumbs, 'predicate'], predicate, isOption))
+            if (!isArrayOf<Value>([...breadcrumbs, 'predicate'], predicate, isOption))
                 throw new errors.UnexpectedStateError();
     }
 
@@ -217,7 +219,17 @@ function validatePredicate(breadcrumbs: Array<string>, child: Child): void {
                     new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
                 );
 
-            if (options.indexOf(child.value as string) === -1)
+            const type = typeof options[0];
+
+            for (let i = 1; i < options.length; ++i) {
+                if (typeof options[i] !== type)
+                    throw new errors.JoinedError(
+                        new errors.MismatchedOptionsError(),
+                        new errors.TypeError([...breadcrumbs, 'predicate', i.toString()], typeof options[i], [type])
+                    );
+            }
+
+            if (options.indexOf(child.value) === -1)
                 throw new errors.JoinedError(
                     new errors.ValuePredicateError(),
                     new errors.ValueError([...breadcrumbs, 'value'], child.value, options)

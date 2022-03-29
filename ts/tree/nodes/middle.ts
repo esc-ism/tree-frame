@@ -5,11 +5,15 @@ import Child from './child';
 
 import * as create from '../handlers/create';
 
-const actions = [create];
+const actions: Array<{
+    shouldMount: (node: Middle) => boolean,
+    mount: (node: Middle) => void,
+    unmount?: (node: Middle) => void
+}> = [create];
 
 export default class Middle extends Child {
     seed: dataTypes.Middle;
-    children: Array<Child> = [];
+    children: Array<Middle | Child> = [];
 
     constructor({children, ...data}: dataTypes.Middle, parent: Root | Middle, index?: number) {
         super(data, parent, index);
@@ -35,12 +39,24 @@ export default class Middle extends Child {
         }
     }
 
+    unmount() {
+        super.unmount();
+
+        for (const action of actions) {
+            if ('unmount' in action) {
+                action.unmount(this);
+            }
+        }
+    }
+
     disconnect() {
-        super.disconnect();
+        this.unmount();
 
         for (const child of this.children) {
             child.disconnect();
         }
+
+        this.detach();
     }
 
     getDataTree() {

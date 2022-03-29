@@ -1,13 +1,24 @@
 import type Root from '../nodes/root';
-import type Middle from '../nodes/middle';
 import type Child from '../nodes/child';
 
 import {actionIsActive} from '.';
 
-const SOURCE_CLASS_NAME = 'focused';
-const ANCESTOR_CLASS_NAME = 'focused-ancestor';
+const SOURCE_CLASS_NAME = 'focused-source';
+const BRANCH_CLASS_NAME = 'focused-branch';
 
-let activeNode: Middle | Child;
+let activeNode: Root | Child;
+
+export function reset() {
+    if (!activeNode) {
+        return;
+    }
+
+    focus(false);
+
+    focusBranch(false);
+
+    activeNode = undefined;
+}
 
 export function focus(doFocus: boolean = true, node = activeNode, doForce = true) {
     // Avoid unfocusing a focused node if not forced
@@ -16,31 +27,15 @@ export function focus(doFocus: boolean = true, node = activeNode, doForce = true
     }
 }
 
-function focusAncestors(doFocus: boolean = true, node: Root | Middle = activeNode.parent) {
-    node.element[`${doFocus ? 'add' : 'remove'}Class`](ANCESTOR_CLASS_NAME);
+export function focusBranch(doFocus: boolean = true, node: Root | Child = activeNode, focusAncestors = true) {
+    node.element[`${doFocus ? 'add' : 'remove'}Class`](BRANCH_CLASS_NAME);
 
-    if ('parent' in node) {
-        focusAncestors(doFocus, node.parent);
+    if (focusAncestors && 'parent' in node) {
+        focusBranch(doFocus, node.parent);
     }
 }
 
-function reset() {
-    if (activeNode) {
-        focus(false);
-
-        focusAncestors(false);
-    }
-
-    activeNode = undefined;
-}
-
-export function unmount(node) {
-    if (node === activeNode) {
-        reset();
-    }
-}
-
-function doAction(node: Child) {
+function doAction(node: Root | Child) {
     // TODO allow reset even if active?
     // Prevent annoying focuses from clicking the input element
     // Also hiding an active input is undesirable
@@ -57,11 +52,17 @@ function doAction(node: Child) {
 
         focus();
 
-        focusAncestors();
+        focusBranch();
     }
 }
 
-export function mount(node: Child): void {
+export function unmount(node) {
+    if (node === activeNode) {
+        reset();
+    }
+}
+
+export function mount(node: Root | Child): void {
     node.element.dataContainer.addEventListener('click', (event) => {
         event.stopPropagation();
 
@@ -69,6 +70,6 @@ export function mount(node: Child): void {
     });
 }
 
-export function shouldMount(node: Child): boolean {
+export function shouldMount(): boolean {
     return true;
 }

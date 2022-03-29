@@ -1,7 +1,7 @@
 /* Positioning and cursor */
 
-.node-button-wrapper {
-    vertical-align: middle;
+.node-button-container {
+    display: flex;
 }
 
 .node-button-svg {
@@ -16,8 +16,8 @@
     filter: url(#svg-blur);
 }
 
-.node:not(.focused) > .node-data-container:not(:hover) circle {
-    opacity: 0;
+.node:not(.focused-source) > .node-data-container:not(:hover) circle {
+    stroke: transparent;
 }
 
 /* Bug-prevention */
@@ -31,33 +31,36 @@
 /* Colours */
 
 /* Node's neither focused nor hovered */
-.node:not(.focused) > .node-data-container:not(:hover) .node-button-svg,
+.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-svg {
+    fill: none;
+}
+
 /* Button's hovered but not selected */
 .node-button-svg:not(.active):hover,
-/* Button's selected but not hovered */
+    /* Button's selected but not hovered */
 .node-button-svg.active:not(:hover) {
     fill: black;
 }
 
-.node:not(.focused) > .node-data-container:not(:hover) .node-button-delete,
+.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-delete,
 .node-button-delete:not(.active):hover,
 .node-button-delete.active:not(:hover) {
     stroke: red;
 }
 
-.node:not(.focused) > .node-data-container:not(:hover) .node-button-create,
+.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-create,
 .node-button-create:not(.active):hover,
 .node-button-create.active:not(:hover) {
     stroke: yellow;
 }
 
-.node:not(.focused) > .node-data-container:not(:hover) .node-button-edit,
+.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-edit,
 .node-button-edit:not(.active):hover,
 .node-button-edit.active:not(:hover) {
     stroke: lawngreen;
 }
 
-.node:not(.focused) > .node-data-container:not(:hover) .node-button-move,
+.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-move,
 .node-button-move:not(.active):hover,
 .node-button-move.active:not(:hover) {
     stroke: #70c2db;

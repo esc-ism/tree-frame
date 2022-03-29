@@ -5,7 +5,7 @@ export type Value = boolean | string | number;
 
 export const PREDICATE_TYPES = ['boolean', 'function', 'array'];
 // TODO handle string return values for rejection with tooltip-style hint?
-export type Predicate = boolean | ((value: Value) => boolean) | Array<string>;
+export type Predicate = boolean | ((value: Value) => boolean) | Array<Value>;
 
 // Group types
 

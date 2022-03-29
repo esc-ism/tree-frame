@@ -1,4 +1,4 @@
-import {NAMESPACE, BUTTON_ORDER, SVG_CLASS_NAME, BUTTON_CLASS_NAME, ACTIVE_CLASS_NAME} from './consts';
+import {NAMESPACE, BUTTON_ORDER, SVG_CLASS_NAME, ACTIVE_CLASS_NAME} from './consts';
 
 import Root from '../nodes/root';
 import Leaf from '../nodes/child';
@@ -18,28 +18,22 @@ export const getNewButton = (function () {
 
         const svg = document.createElementNS(NAMESPACE, 'svg');
 
-        svg.setAttribute('viewBox', '0 0 140 140');
         svg.classList.add(SVG_CLASS_NAME);
+        svg.setAttribute('viewBox', '0 0 140 140');
 
         svg.append(circle);
 
         return svg;
     })();
 
-    return function (group: SVGGElement, actionClass: string): HTMLElement {
+    return function (group: SVGGElement, actionClass: string): SVGSVGElement {
         const copy = template.cloneNode(true) as SVGSVGElement;
 
         copy.classList.add(actionClass);
 
         copy.append(group);
 
-        const button = document.createElement('span');
-
-        button.classList.add(BUTTON_CLASS_NAME);
-
-        button.append(copy);
-
-        return button;
+        return copy;
     };
 })();
 
@@ -56,4 +50,16 @@ export function setActive(node, actionClass: string, doActivate = true) {
 // Basically a getter
 export function actionIsActive(): boolean {
     return isActive;
+}
+
+export function addActionButton(template, actionId, doAction, node) {
+    const button = template.cloneNode(true) as HTMLElement;
+
+    button.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        doAction(node);
+    });
+
+    addButton(node, button, actionId);
 }

@@ -1,3 +1,9 @@
+import {Predicate} from '../types';
+
+const OPTIONS_ID_PREFIX = 'predicate-options-';
+
+let count = 0;
+
 export default class Element {
     root: HTMLElement = document.createElement('div');
 
@@ -27,6 +33,8 @@ export default class Element {
         this.valueElement.disabled = true;
         this.labelElement.disabled = true;
 
+        this.childContainer.classList.add('node-child-container');
+
         this.valueAligner.appendChild(this.valueElement);
         this.valueAligner.appendChild(this.labelElement);
 
@@ -37,111 +45,40 @@ export default class Element {
         this.root.appendChild(this.childContainer);
     }
 
-    render(value: unknown, label?: string) {
-        this.valueElement.value = value.toString();
+    initialise(value: unknown, label: string, predicate: Predicate) {
+        this.render(value);
+        this.render(label, this.labelElement);
 
-        if (label) {
-            this.labelElement.value = label;
+        this.valueElement.title = label;
+        // In case the text is too long to fit
+        this.labelElement.title = label;
 
-            this.valueElement.placeholder = label;
+        if (Array.isArray(predicate)) {
+            const optionsElement = document.createElement('datalist');
+            const id = `${OPTIONS_ID_PREFIX}${count++}`;
+
+            // Link input to datalist
+            this.valueElement.setAttribute('list', id);
+            optionsElement.id = id;
+
+            for (const option of predicate) {
+                const optionElement = document.createElement('option');
+
+                optionElement.value = option.toString();
+
+                optionsElement.appendChild(optionElement);
+            }
+
+            this.valueAligner.appendChild(optionsElement);
         }
 
-        // TODO you still need to implement non-string values
+        if (typeof value === 'number') {
+            this.valueElement.type = 'number';
+        }
+    }
 
-        //     if (Array.isArray(node.predicate)) {
-        //         const selectElement = document.createElement('select');
-        //         const value = node.getValue();
-        //
-        //         selectElement.classList.add('config-input');
-        //
-        //         for (const option of node.predicate) {
-        //             const optionElement = document.createElement('option');
-        //
-        //             optionElement.value = option;
-        //             optionElement.text = option;
-        //
-        //             if (value === option) {
-        //                 optionElement.selected = true;
-        //             }
-        //
-        //             selectElement.add(optionElement);
-        //         }
-        //
-        //         selectElement.onchange = () => {
-        //             node.setValue(selectElement.value);
-        //         };
-        //
-        //         return selectElement;
-        //     } else {
-        //         const inputElement = document.createElement('input');
-        //
-        //         switch (typeof value) {
-        //             case 'boolean':
-        //                 inputElement.type = 'checkbox';
-        //                 inputElement.checked = value;
-        //                 inputElement.oninput = () => handleInput(inputElement.checked, inputElement, node);
-        //                 break;
-        //
-        //             case 'number':
-        //                 inputElement.type = 'number';
-        //                 inputElement.value = value.toString();
-        //                 inputElement.oninput = () => handleInput(Number(inputElement.value), inputElement, node);
-        //                 break;
-        //
-        //             case 'string':
-        //                 inputElement.type = 'text';
-        //                 inputElement.value = value;
-        //                 inputElement.oninput = () => handleInput(inputElement.value, inputElement, node);
-        //         }
-        //
-        //         if (node.predicate === false) {
-        //             inputElement.disabled = true;
-        //         }
-        //
-        //         return inputElement;
-        //     }
-        // };
-        //
-        // const getRowElement = (node: ModifiableNode) => {
-        //     const row = document.createElement('tr');
-        //     const labelCell = document.createElement('td');
-        //     const inputCell = document.createElement('td');
-        //     const inputElement: HTMLInputElement | HTMLSelectElement = getInputElement(node);
-        //
-        //     labelCell.innerText = node.label;
-        //
-        //     row.classList.add('config-row');
-        //     labelCell.classList.add('config-label-cell');
-        //     inputCell.classList.add('config-input-cell');
-        //     inputElement.classList.add('config-input');
-        //
-        //     inputCell.appendChild(inputElement);
-        //
-        //     row.appendChild(labelCell);
-        //     row.appendChild(inputCell);
-        //
-        //     return row;
-        // };
-        //
-        // const {table} = ELEMENTS;
-        //
-        // while (table.lastChild) {
-        //     table.removeChild(table.lastChild);
-        // }
-        //
-        // const mainRow = getRowElement(activeNode);
-        //
-        // mainRow.classList.add('selected');
-        //
-        // table.appendChild(mainRow);
-        //
-        // for (const child of activeNode.children) {
-        //     if (child instanceof Middle) {
-        //         break;
-        //     }
-        //
-        //     table.appendChild(getRowElement(child));
-        // }
+    render(value: unknown, element = this.valueElement) {
+        element.value = value.toString();
     }
 
     addClass(...names: string[]) {
@@ -158,10 +95,6 @@ export default class Element {
 
     addChild(child: Element, index) {
         this.childContainer.insertBefore(child.root, this.childContainer.children[index] ?? null);
-    }
-
-    removeButton() {
-        this.buttons.length--;
     }
 
     addButton(button: Node, index: number = this.buttons.length) {

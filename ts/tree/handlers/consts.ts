@@ -14,7 +14,5 @@ export const BUTTON_ORDER = [
 
 export const SVG_CLASS_NAME = 'node-button-svg';
 
-export const BUTTON_CLASS_NAME = 'node-button-wrapper';
-
-// For active buttons
+// Indicates 'on' state for actions that can be turned on and off
 export const ACTIVE_CLASS_NAME = 'active';

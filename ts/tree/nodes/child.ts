@@ -26,17 +26,14 @@ export default class Child {
 
     element: NodeElement = new NodeElement();
 
-    constructor({label, value, ...others}: dataTypes.Middle | dataTypes.Leaf, parent: Root | Middle, index?: number) {
+    constructor({label, value, predicate}: dataTypes.Middle | dataTypes.Leaf, parent: Root | Middle, index?: number) {
         this.label = label;
         this.value = value;
+        this.predicate = predicate;
 
-        this.element.render(value, this.label);
+        this.element.initialise(value, this.label, predicate);
 
         this.attach(parent, index);
-
-        if ('predicate' in others) {
-            this.predicate = others.predicate;
-        }
 
         for (const {shouldMount, mount} of actions) {
             if (shouldMount(this)) {
@@ -63,12 +60,16 @@ export default class Child {
         this.parent = parent;
     }
 
-    disconnect() {
+    unmount() {
         for (const action of actions) {
             if ('unmount' in action) {
                 action.unmount(this);
             }
         }
+    }
+
+    disconnect() {
+        this.unmount();
 
         this.detach();
     }

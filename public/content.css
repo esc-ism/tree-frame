@@ -19,18 +19,14 @@
     align-items: center;
 }
 
-.node-button-container {
-    margin-right: 0.4em;
-}
-
 .node:not(.middle):not(.root):last-child > .node-data-container,
-.node:not(.middle):not(.root) + .focused > .node-data-container {
+.node:not(.middle):not(.root) + .focused-source.focused-branch > .node-data-container {
     /*
     Using border rather than margin/padding
     prevents root being hoverable at the bottom &
     prevents the background image extending further.
      */
-    border-bottom: 0.4em transparent;
+    border-bottom: 0.4em solid transparent;
 }
 
 /* Background image */
@@ -46,21 +42,38 @@
 }
 
 .node-data-container:hover,
-.node.focused > .node-data-container {
+.node.focused-source > .node-data-container {
     color: black;
     background-size: 100%;
 }
 
 /* Focus */
 
-.node.focused-ancestor .node:not(.focused-ancestor):not(.focused):not(.focused *) {
+.root.focused-branch .node:not(.focused-branch) {
     display: none;
+}
+
+.node.focused-source:not(.move-source) > .node-child-container > .node {
+    display: inherit;
+}
+
+.node-child-container {
+    transition: opacity 200ms;
+}
+
+.node.focused-source.focused-branch .node:not(.focused-branch) {
+    opacity: 0.3;
+}
+
+.node.focused-source.focused-branch > .node-child-container > .node:not(.focused-branch) .node-button-svg {
+    pointer-events: none;
 }
 
 /* Edit */
 
 .node-aligner {
     flex-grow: 1;
+    display: flex;
 }
 
 /* Avoid showing annoying accidental highlights */
@@ -68,9 +81,11 @@
     background: none;
 }
 
-.node-aligner > * {
-    width: 92%;
-    padding: 0 1.5%;
+.node-value, .node-label {
+    flex-grow: 1;
+    margin: 0.2em 0.5em;
+    padding: 0 0.5em;
+    text-overflow: ellipsis;
 
     /* Override input style */
     font: inherit;

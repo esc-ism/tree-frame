@@ -4,29 +4,21 @@ import type Root from '../../nodes/root';
 
 import template from './button';
 
-import {addButton} from '../index';
+import {addActionButton} from '../index';
 import {ACTION_ID} from './consts';
 
 function doAction(parent: Root | Middle) {
     const {seed} = parent;
 
     if ('children' in seed) {
-        new Middle(seed, parent)
+        new Middle(seed, parent, 0);
     } else {
-        new Child(seed, parent)
+        new Child(seed, parent, 0);
     }
 }
 
 export function mount(node: Root | Middle): void {
-    const button = template.cloneNode(true);
-
-    button.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-        doAction(node);
-    });
-
-    addButton(node, button, ACTION_ID);
+    addActionButton(template, ACTION_ID, doAction, node);
 }
 
 export function shouldMount(node: Root | Middle): boolean {

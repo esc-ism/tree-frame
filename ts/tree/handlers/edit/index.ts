@@ -5,31 +5,46 @@ import template from './button';
 
 import {focus} from '../focus';
 
-import {addButton, setActive} from '../index';
+import {addActionButton, setActive} from '../index';
 import {ACTION_ID, CLASS_NAME as BUTTON_CLASS_NAME} from './consts';
 
 let activeNode: Child;
 
 export function reset() {
-    if (activeNode) {
-        activeNode.element.render(activeNode.value);
-
-        Root.instance.element.removeClass(BUTTON_CLASS_NAME);
-
-        focus(false, activeNode);
-        setActive(activeNode, BUTTON_CLASS_NAME, false);
-
-        activeNode.element.removeClass('rejected');
-
-        activeNode.element.valueElement.disabled = true;
+    if (!activeNode) {
+        return;
     }
+
+    activeNode.element.render(activeNode.value);
+
+    Root.instance.element.removeClass(BUTTON_CLASS_NAME);
+
+    focus(false, activeNode);
+    setActive(activeNode, BUTTON_CLASS_NAME, false);
+
+    activeNode.element.removeClass('rejected');
+
+    activeNode.element.valueElement.disabled = true;
 
     activeNode = undefined;
 }
 
+function toCorrectType(value) {
+    switch (typeof activeNode.value) {
+        case 'number':
+            return Number(value);
+
+        case 'boolean':
+            return Boolean(value);
+
+        default:
+            return value;
+    }
+}
+
 function isValid(): boolean {
     const {predicate} = activeNode;
-    const {value} = activeNode.element.valueElement;
+    const value = toCorrectType(activeNode.element.valueElement.value);
 
     switch (typeof predicate) {
         case 'boolean':
@@ -45,7 +60,7 @@ function isValid(): boolean {
 
 export function update() {
     if (isValid()) {
-        activeNode.value = activeNode.element.valueElement.value;
+        activeNode.value = toCorrectType(activeNode.element.valueElement.value);
 
         activeNode.element.removeClass('rejected');
     } else {
@@ -71,32 +86,40 @@ export function doAction(node) {
     reset();
 
     if (previousNode !== node) {
-        activeNode = node;
+        if (typeof node.value === 'boolean') {
+            node.value = !node.value;
 
-        Root.instance.element.addClass(BUTTON_CLASS_NAME);
+            node.element.render(node.value);
+        } else {
+            activeNode = node;
 
-        focus(true, activeNode, false);
-        setActive(activeNode, BUTTON_CLASS_NAME);
+            Root.instance.element.addClass(BUTTON_CLASS_NAME);
 
-        node.element.valueElement.disabled = false;
-        node.element.valueElement.select();
+            focus(true, activeNode, false);
+            setActive(activeNode, BUTTON_CLASS_NAME);
+
+            node.element.valueElement.disabled = false;
+            node.element.valueElement.select();
+        }
     }
 }
 
 export function mount(node: Child): void {
-    const button = template.cloneNode(true);
-
-    button.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-        doAction(node);
-    });
-
-    addButton(node, button, ACTION_ID);
+    addActionButton(template, ACTION_ID, doAction, node);
 
     node.element.valueElement.addEventListener('input', update);
 }
 
 export function shouldMount(node: Child): boolean {
-    return node.predicate !== false;
+    switch (typeof node.predicate) {
+        case 'boolean':
+            return node.predicate !== false;
+
+        case 'object':
+            // Prevent editing if there are no other valid values
+            return node.predicate.length > 1;
+
+        default:
+            return true;
+    }
 }

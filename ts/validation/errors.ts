@@ -62,6 +62,12 @@ export class NoOptionsError extends Error {
     }
 }
 
+export class MismatchedOptionsError extends Error {
+    constructor() {
+        super('Values in array type validators must all be the same type.');
+    }
+}
+
 export class DeadRootError extends Error {
     constructor() {
         super('If the tree\'s root has no children, it must have a seed.');
