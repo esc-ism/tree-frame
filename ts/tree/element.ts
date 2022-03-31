@@ -1,4 +1,4 @@
-import {Predicate} from '../types';
+import {Input, Predicate} from '../types';
 
 const OPTIONS_ID_PREFIX = 'predicate-options-';
 
@@ -17,9 +17,9 @@ export default class Element {
 
     childContainer: HTMLElement = document.createElement('div');
 
-    buttons: Array<Node> = [];
+    buttons: Array<HTMLButtonElement> = [];
 
-    constructor() {
+    constructor(isParent = true) {
         this.root.classList.add('node');
 
         this.dataContainer.classList.add('node-data-container');
@@ -45,9 +45,11 @@ export default class Element {
         this.root.appendChild(this.childContainer);
     }
 
-    initialise(value: unknown, label: string, predicate: Predicate) {
+    initialise(value: unknown, label: string, predicate: Predicate, input: Input = 'text') {
         this.render(value);
         this.render(label, this.labelElement);
+
+        this.valueElement.type = input;
 
         this.valueElement.title = label;
         // In case the text is too long to fit
@@ -97,7 +99,7 @@ export default class Element {
         this.childContainer.insertBefore(child.root, this.childContainer.children[index] ?? null);
     }
 
-    addButton(button: Node, index: number = this.buttons.length) {
+    addButton(button: HTMLButtonElement, index: number = this.buttons.length) {
         this.buttons[index] = button;
 
         for (let i = index + 1; i < this.buttons.length; ++i) {
@@ -115,5 +117,9 @@ export default class Element {
 
     remove() {
         this.root.remove();
+    }
+
+    scrollIntoView() {
+        this.dataContainer.scrollIntoView({'block': 'center'});
     }
 }

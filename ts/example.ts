@@ -1,4 +1,4 @@
-import {Config} from './types';
+import {Config, Middle} from './types';
 
 function getPerson(
     name = '*name*',
@@ -6,7 +6,7 @@ function getPerson(
     birthYear = 0,
     hairColour = '*colour*',
     eyeColour = '*colour*'
-) {
+): Middle {
     return {
         'label': 'Name',
         'value': name,
@@ -20,17 +20,19 @@ function getPerson(
             {
                 'label': 'Birth Year (AD)',
                 'value': birthYear,
-                'predicate': (value) => value >= 0 && Math.floor(value) === value,
+                'predicate': (value: number): boolean => value >= 0 && Math.floor(value) === value,
             },
             {
                 'label': 'Hair Colour',
                 'value': hairColour,
                 'predicate': (value) => value !== '',
+                'input': 'color',
             },
             {
                 'label': 'Eye Colour',
                 'value': eyeColour,
                 'predicate': (value) => value !== '',
+                'input': 'color',
             },
             {
                 'label': 'Has Children',
@@ -46,21 +48,21 @@ function getMedia(
     type = '*type*',
     releaseYear = 0,
     description = '*description*'
-) {
+): Middle {
     return {
         'label': 'Title',
         'value': title,
         'predicate': (value) => value !== '',
         'children': [
             {
-                'label': 'Type',
+                'label': 'input',
                 'value': type,
                 'predicate': ['*type*', 'Movie', 'TV Show', 'Song', 'Album'],
             },
             {
                 'label': 'Release Year (AD)',
                 'value': releaseYear,
-                'predicate': (value) => value >= 0 && Math.floor(value) === value,
+                'predicate': (value: number): boolean => value >= 0 && Math.floor(value) === value,
             },
             {
                 'label': 'Description',
@@ -113,14 +115,14 @@ const config: Config = {
                     'value': 'Famous People',
                     'predicate': false,
                     'seed': getPerson(),
-                    'children': [getPerson()]
+                    'children': []
                 },
                 {
                     'label': 'Category',
                     'value': 'Famous Media',
                     'predicate': false,
                     'seed': getMedia(),
-                    'children': [getMedia()]
+                    'children': []
                 }
             ],
         }

@@ -1,6 +1,6 @@
 // Private
 
-function getOptionString(array: string[]) {
+function getOptionString(array: readonly string[]) {
     if (array.length === 0) {
         throw new Error('No valid options.');
     }
@@ -33,7 +33,7 @@ export class UnexpectedStateError extends Error {
 }
 
 export class TypeError extends Error {
-    constructor(breadcrumbs: string[], found: string, expected: string[]) {
+    constructor(breadcrumbs: string[], found: string, expected: readonly string[]) {
         super(`Found ${found} type value at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
     }
 }
@@ -45,8 +45,14 @@ export class PropertyError extends Error {
 }
 
 export class ValueError extends Error {
-    constructor(breadcrumbs: string[], found: any, expected: any[]) {
+    constructor(breadcrumbs: string[], found: any, expected: readonly  any[]) {
         super(`Found ${found} value at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
+    }
+}
+
+export class PredicateError extends Error {
+    constructor(breadcrumbs: string[]) {
+        super(`Predicate failed at ${getPath(breadcrumbs)}. Predicates must succeed.`);
     }
 }
 
@@ -71,17 +77,5 @@ export class MismatchedOptionsError extends Error {
 export class DeadRootError extends Error {
     constructor() {
         super('If the tree\'s root has no children, it must have a seed.');
-    }
-}
-
-export class ValuePredicateError extends Error {
-    constructor() {
-        super('If a node is given a validator, its value must be accepted.');
-    }
-}
-
-export class DuplicateValueError extends Error {
-    constructor() {
-        super('Siblings may not have equal values.');
     }
 }

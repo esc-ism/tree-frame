@@ -12,6 +12,8 @@ export const BUTTON_ORDER = [
     EDIT_ID,
 ];
 
+export const BUTTON_CLASS_NAME = 'node-button';
+
 export const SVG_CLASS_NAME = 'node-button-svg';
 
 // Indicates 'on' state for actions that can be turned on and off

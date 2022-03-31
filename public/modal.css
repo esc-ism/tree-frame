@@ -62,7 +62,6 @@
 .frame-button:focus {
     text-decoration: none;
     cursor: pointer;
-    background-color: #222;
 }
 
 #toggle-labels:after {

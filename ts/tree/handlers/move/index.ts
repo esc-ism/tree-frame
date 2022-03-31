@@ -10,8 +10,6 @@ import {ACTION_ID, CLASS_NAME as BUTTON_CLASS_NAME} from './consts';
 
 import {focus, focusBranch, reset as resetFocus} from '../focus';
 
-const SOURCE_CLASS_NAME = 'move-source';
-
 const targets = [];
 
 let activeNode: Child;
@@ -23,13 +21,6 @@ export function reset() {
 
     Root.instance.element.removeClass(BUTTON_CLASS_NAME);
 
-    activeNode.element.removeClass(SOURCE_CLASS_NAME);
-
-    focus(false, activeNode);
-    focusBranch(false, activeNode, false);
-
-    setActive(activeNode, BUTTON_CLASS_NAME, false);
-
     for (const {node, button, isParent} of targets) {
         focus(false, node);
         focusBranch(false, node, isParent);
@@ -38,6 +29,10 @@ export function reset() {
     }
 
     targets.length = 0;
+
+    setActive(activeNode, BUTTON_CLASS_NAME, false);
+    // May have been unfocused above
+    focusBranch(true, activeNode);
 
     activeNode = undefined;
 }
@@ -69,12 +64,12 @@ function addTargetButton(node, isParent = true) {
         }
 
         // Grab the reference before activeNode is wiped
-        const scrollTarget = activeNode.element.dataContainer;
+        const previousNode = activeNode;
 
         reset();
 
         // Show where the node's been moved to
-        scrollTarget.scrollIntoView({'block': 'center'});
+        previousNode.element.scrollIntoView();
     });
 
     targets.push({node, 'button': clone, isParent});
@@ -115,26 +110,18 @@ function addButtons(parent: Root | Middle = Root.instance) {
     }
 }
 
-window.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-        reset();
-    }
-});
-
 function doAction(node: Child) {
-    const previousNode = activeNode;
+    const toggleOn = node !== activeNode;
 
     reset();
-    node.element.addClass(SOURCE_CLASS_NAME);
 
-    if (previousNode !== node) {
+    if (toggleOn) {
         activeNode = node;
 
         resetFocus();
 
         Root.instance.element.addClass(BUTTON_CLASS_NAME);
 
-        focus(true, activeNode);
         setActive(activeNode, BUTTON_CLASS_NAME);
 
         addButtons();
@@ -149,6 +136,14 @@ export function unmount(node) {
 
 export function mount(node: Child): void {
     addActionButton(template, ACTION_ID, doAction, node);
+
+    node.element.valueElement.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === 'Escape') {
+            event.stopPropagation();
+
+            reset();
+        }
+    });
 }
 
 export function shouldMount(node: Child): boolean {

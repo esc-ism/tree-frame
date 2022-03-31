@@ -1,5 +1,5 @@
 import type * as dataTypes from '../../types';
-import {Value} from '../../types';
+import {Input, Value} from '../../types';
 
 import * as edit from '../handlers/edit';
 import * as disconnect from '../handlers/delete';
@@ -18,20 +18,27 @@ const actions: Array<{
 }> = [edit, disconnect, focus, move];
 
 export default class Child {
-    public readonly label: string;
-    public value: Value;
+    readonly label: string;
+    value: Value;
+    readonly predicate: dataTypes.Predicate;
+    readonly input?: Input;
 
-    predicate: dataTypes.Predicate;
     parent: Root | Middle;
 
-    element: NodeElement = new NodeElement();
+    readonly element: NodeElement = new NodeElement();
 
-    constructor({label, value, predicate}: dataTypes.Middle | dataTypes.Leaf, parent: Root | Middle, index?: number) {
+    constructor({label, value, predicate, ...optional}: dataTypes.Middle | dataTypes.Leaf, parent: Root | Middle, index?: number) {
         this.label = label;
         this.value = value;
         this.predicate = predicate;
 
-        this.element.initialise(value, this.label, predicate);
+        if ('input' in optional) {
+            this.input = optional.input;
+
+            this.element.initialise(value, this.label, predicate, optional.input);
+        } else {
+            this.element.initialise(value, this.label, predicate);
+        }
 
         this.attach(parent, index);
 

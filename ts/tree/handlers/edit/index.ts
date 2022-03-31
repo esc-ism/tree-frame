@@ -3,8 +3,6 @@ import type Child from '../../nodes/child';
 
 import template from './button';
 
-import {focus} from '../focus';
-
 import {addActionButton, setActive} from '../index';
 import {ACTION_ID, CLASS_NAME as BUTTON_CLASS_NAME} from './consts';
 
@@ -19,7 +17,6 @@ export function reset() {
 
     Root.instance.element.removeClass(BUTTON_CLASS_NAME);
 
-    focus(false, activeNode);
     setActive(activeNode, BUTTON_CLASS_NAME, false);
 
     activeNode.element.removeClass('rejected');
@@ -42,7 +39,27 @@ function toCorrectType(value) {
     }
 }
 
-function isValid(): boolean {
+// TODO Definitely set up tooltips for String predicate returns
+
+function passesAncestorPredicates(parent = activeNode.parent) {
+    if (parent.ancestorPredicate && parent.ancestorPredicate(parent.children)) {
+        return false;
+    }
+
+    if ('parent' in parent) {
+        return passesAncestorPredicates(parent.parent);
+    }
+
+    return true;
+}
+
+function passesParentPredicate() {
+    const {parentPredicate, children} = activeNode.parent;
+
+    return !(parentPredicate && parentPredicate(children));
+}
+
+function passesOwnPredicate() {
     const {predicate} = activeNode;
     const value = toCorrectType(activeNode.element.valueElement.value);
 
@@ -51,11 +68,15 @@ function isValid(): boolean {
             return predicate;
 
         case 'function':
-            return predicate(value);
+            return Boolean(predicate(value));
 
         default:
             return predicate.indexOf(value as string) !== -1;
     }
+}
+
+function isValid(): boolean {
+    return passesOwnPredicate() && passesParentPredicate() && passesAncestorPredicates();
 }
 
 export function update() {
@@ -67,12 +88,6 @@ export function update() {
         activeNode.element.addClass('rejected');
     }
 }
-
-window.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-        reset();
-    }
-});
 
 export function unmount(node) {
     if (node === activeNode) {
@@ -95,11 +110,11 @@ export function doAction(node) {
 
             Root.instance.element.addClass(BUTTON_CLASS_NAME);
 
-            focus(true, activeNode, false);
             setActive(activeNode, BUTTON_CLASS_NAME);
 
             node.element.valueElement.disabled = false;
             node.element.valueElement.select();
+            node.element.valueElement.click();
         }
     }
 }
@@ -108,6 +123,14 @@ export function mount(node: Child): void {
     addActionButton(template, ACTION_ID, doAction, node);
 
     node.element.valueElement.addEventListener('input', update);
+
+    node.element.valueElement.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === 'Escape') {
+            event.stopPropagation();
+
+            reset();
+        }
+    });
 }
 
 export function shouldMount(node: Child): boolean {

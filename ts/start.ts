@@ -51,6 +51,8 @@ export default function start(config: Config) {
 
     setTitle(config.title);
 
+    // TODO Maybe set up a button for hiding leaves? ScrollIntoView focused node on toggle
+
     setupLabelToggle();
 
     setupExit(root);

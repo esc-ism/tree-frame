@@ -12,14 +12,25 @@ const actions: Array<{
 }> = [create];
 
 export default class Middle extends Child {
-    seed: dataTypes.Middle;
-    children: Array<Middle | Child> = [];
+    readonly seed?: dataTypes.Child;
+    readonly parentPredicate?: dataTypes.SubPredicate;
+    readonly ancestorPredicate?: dataTypes.SubPredicate;
 
-    constructor({children, ...data}: dataTypes.Middle, parent: Root | Middle, index?: number) {
-        super(data, parent, index);
+    readonly children: Array<Middle | Child> = [];
 
-        if ('seed' in data) {
-            this.seed = data.seed;
+    constructor({children, ...other}: dataTypes.Middle, parent: Root | Middle, index?: number) {
+        super(other, parent, index);
+
+        if ('seed' in other) {
+            this.seed = other.seed;
+        }
+
+        if ('parentPredicate' in other) {
+            this.parentPredicate = other.parentPredicate;
+        }
+
+        if ('ancestorPredicate' in other) {
+            this.ancestorPredicate = other.ancestorPredicate;
         }
 
         for (const child of children) {

@@ -10,12 +10,24 @@
 
 /* Node spacing */
 
-.node .node .node {
+#object-tree {
+    display: flex;
+}
+
+.root {
+    /* Makes all nodes fill available space */
+    flex-grow: 1;
+}
+
+.node-child-container .node-child-container {
+    /* Indent with depth */
     margin-left: 1.8em;
 }
 
 .node-data-container {
+    /* Prevents line break between buttons and input */
     display: flex;
+    /* Ensures buttons are aligned with input if they have different heights */
     align-items: center;
 }
 
@@ -53,7 +65,7 @@
     display: none;
 }
 
-.node.focused-source:not(.move-source) > .node-child-container > .node {
+.node.focused-source > .node-child-container > .node {
     display: inherit;
 }
 
@@ -63,10 +75,6 @@
 
 .node.focused-source.focused-branch .node:not(.focused-branch) {
     opacity: 0.3;
-}
-
-.node.focused-source.focused-branch > .node-child-container > .node:not(.focused-branch) .node-button-svg {
-    pointer-events: none;
 }
 
 /* Edit */
@@ -92,6 +100,14 @@
     background: inherit;
     color: inherit;
     border: inherit;
+}
+
+.node-value[type=color] {
+    height: 1.2em;
+}
+
+.node-value[type=color]:not([disabled]) {
+    cursor: pointer;
 }
 
 .node-value:not([disabled]) {

@@ -13,34 +13,45 @@ const actions = [create, focus];
 export default class Root {
     static instance: Root;
 
+    readonly seed?: dataTypes.Child;
+    readonly parentPredicate?: dataTypes.SubPredicate;
+    readonly ancestorPredicate?: dataTypes.SubPredicate;
+
     readonly children: Array<Middle | Child> = [];
-    readonly seed: dataTypes.Child;
 
     readonly element = new NodeElement();
 
-    constructor({children, ...optional}: dataTypes.Root) {
+    constructor({children, ...other}: dataTypes.Root) {
         if (Root.instance) {
             throw new Error('Attempt to instantiate a second Root node.');
         }
 
         Root.instance = this;
 
-        if ('seed' in optional) {
-            this.seed = optional.seed;
+        if ('seed' in other) {
+            this.seed = other.seed;
+        }
+
+        if ('parentPredicate' in other) {
+            this.parentPredicate = other.parentPredicate;
+        }
+
+        if ('ancestorPredicate' in other) {
+            this.ancestorPredicate = other.ancestorPredicate;
         }
 
         if (children.length === 0) {
             if ('children' in this.seed) {
-                new Middle(this.seed, this)
+                new Middle(this.seed, this);
             } else {
-                new Child(this.seed, this)
+                new Child(this.seed, this);
             }
         } else {
             for (const child of children) {
                 if ('children' in child) {
-                    new Middle(child, this)
+                    new Middle(child, this);
                 } else {
-                    new Child(child, this)
+                    new Child(child, this);
                 }
             }
         }

@@ -8,14 +8,42 @@ const BRANCH_CLASS_NAME = 'focused-branch';
 
 let activeNode: Root | Child;
 
+// TODO Set tab indexes for all data containers to allow tabbing from top to bottom when no node's focused.
+//  You want pressing enter on a tabbed node to focus it.
+function setTabIndexes(doAdd = true) {
+    const {valueElement, buttons} = activeNode.element;
+
+    if (doAdd) {
+        activeNode.element.addClass(SOURCE_CLASS_NAME);
+
+        valueElement.setAttribute('tabIndex', '1');
+        valueElement.focus();
+    } else {
+        activeNode.element.removeClass(SOURCE_CLASS_NAME);
+
+        valueElement.removeAttribute('tabIndex');
+    }
+
+    for (let i = buttons.length - 1; i >= 0; --i) {
+        const button = buttons[i];
+
+        if (button) {
+            button.setAttribute('tabIndex', doAdd ? (i + 2).toString() : '-1');
+        }
+    }
+}
+
 export function reset() {
     if (!activeNode) {
         return;
     }
 
     focus(false);
-
     focusBranch(false);
+
+    setTabIndexes(false);
+
+    activeNode.element.scrollIntoView();
 
     activeNode = undefined;
 }
@@ -35,24 +63,29 @@ export function focusBranch(doFocus: boolean = true, node: Root | Child = active
     }
 }
 
-function doAction(node: Root | Child) {
-    // TODO allow reset even if active?
-    // Prevent annoying focuses from clicking the input element
-    // Also hiding an active input is undesirable
-    if (actionIsActive()) {
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === 'Escape') {
+        reset();
+    }
+});
+
+export function doAction(node: Root | Child, doForce = false) {
+    const toggleOn = node !== activeNode;
+
+    // Avoid unfocusing an active input
+    if (actionIsActive() || (doForce && !toggleOn)) {
         return;
     }
 
-    const previousNode = activeNode;
-
     reset();
 
-    if (previousNode !== node) {
+    if (toggleOn) {
         activeNode = node;
 
         focus();
-
         focusBranch();
+
+        setTabIndexes();
     }
 }
 

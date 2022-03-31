@@ -1,14 +1,22 @@
-import {NAMESPACE, BUTTON_ORDER, SVG_CLASS_NAME, ACTIVE_CLASS_NAME} from './consts';
+import {NAMESPACE, BUTTON_ORDER, BUTTON_CLASS_NAME, SVG_CLASS_NAME, ACTIVE_CLASS_NAME} from './consts';
 
 import Root from '../nodes/root';
 import Leaf from '../nodes/child';
+import Child from '../nodes/child';
 
-export function addButton(node: Root | Leaf, button: Node, id: string) {
+import {doAction as doFocus} from './focus';
+
+export function addButton(node: Root | Leaf, button: HTMLButtonElement, id: string) {
     node.element.addButton(button, BUTTON_ORDER.indexOf(id));
 }
 
 export const getNewButton = (function () {
-    const template = (() => {
+    const buttonTemplate = document.createElement('button');
+
+    buttonTemplate.setAttribute('tabIndex', '-1');
+    buttonTemplate.classList.add(BUTTON_CLASS_NAME);
+
+    const svgTemplate = (() => {
         const circle = document.createElementNS(NAMESPACE, 'circle');
 
         circle.setAttribute('cx', '70');
@@ -26,23 +34,27 @@ export const getNewButton = (function () {
         return svg;
     })();
 
-    return function (group: SVGGElement, actionClass: string): SVGSVGElement {
-        const copy = template.cloneNode(true) as SVGSVGElement;
+    return function (group: SVGGElement, actionClass: string): HTMLButtonElement {
+        const button = buttonTemplate.cloneNode(true) as HTMLButtonElement;
+        const svg = svgTemplate.cloneNode(true) as SVGSVGElement;
 
-        copy.classList.add(actionClass);
+        svg.classList.add(actionClass);
 
-        copy.append(group);
+        svg.append(group);
+        button.append(svg);
 
-        return copy;
+        return button;
     };
 })();
 
 let isActive: boolean = false;
 
-export function setActive(node, actionClass: string, doActivate = true) {
+export function setActive(node: Child, actionClass: string, doActivate = true) {
     const button = node.element.buttonContainer.querySelector(`.${actionClass}`);
 
     button.classList[doActivate ? 'add' : 'remove'](ACTIVE_CLASS_NAME);
+
+    doFocus(node, true);
 
     isActive = doActivate;
 }
@@ -52,8 +64,8 @@ export function actionIsActive(): boolean {
     return isActive;
 }
 
-export function addActionButton(template, actionId, doAction, node) {
-    const button = template.cloneNode(true) as HTMLElement;
+export function addActionButton(template: HTMLButtonElement, actionId, doAction, node) {
+    const button = template.cloneNode(true) as HTMLButtonElement;
 
     button.addEventListener('click', (event) => {
         event.stopPropagation();
