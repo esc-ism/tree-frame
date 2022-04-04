@@ -1,6 +1,24 @@
+button {
+    display: inline-flex;
+
+    cursor: pointer;
+}
+
+button * {
+    pointer-events: none;
+}
+
+.node-button-container, #modal-button-container {
+    display: inline-flex;
+}
+
+#modal-button-container {
+    flex-direction: row-reverse;
+}
+
 /* Button style stripping */
 
-.node-button {
+.node-button, .modal-button {
     background: inherit;
     padding: inherit;
     margin: inherit;
@@ -10,84 +28,95 @@
 
 /* Positioning and cursor */
 
-.node-button-svg {
+.node-svg {
     width: 1.5em;
-    cursor: pointer;
+}
+
+.modal-svg {
+    width: 2.6em;
 }
 
 /* Mouseover/tab changes */
 
-.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-svg {
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) .node-svg {
     opacity: 0.5;
     filter: url(#svg-blur);
 }
 
-.node:not(.focused-source) > .node-data-container:not(:hover) circle {
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) circle {
     stroke: transparent;
 }
 
 /* Bug-prevention */
 
-.root.node-button-edit .node-button-move,
-.root.node-button-move .node-button-edit {
-    pointer-events: none;
-    opacity: 0.3;
+#object-tree.node-edit .node-move,
+#object-tree.node-move .node-edit {
+    display: none;
 }
 
 /* Colours */
 
-/* Node's neither focused, tabbed nor hovered */
-.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-svg {
+.modal-button {
+    border-left: 2px solid white;
+}
+
+.node-svg, .modal-svg {
     fill: none;
 }
 
-/* Button's tabbed but not selected */
-.node-button:not(.active):focus > *,
-/* Button's hovered but not selected */
-.node-button-svg:not(.active):hover,
-/* Button's selected but not tabbed */
-.node-button.active:not(:focus) > *,
-/* Button's selected but not hovered */
-.node-button-svg.active:not(:hover) {
+.node-svg {
+    stroke: black;
+}
+
+.modal-svg {
+    stroke: white;
+}
+
+/* Node's neither focused, tabbed nor hovered */
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) .node-svg {
+    fill: none;
+}
+
+/* Not active */
+.node-button:not(.active):focus > svg,
+.node-button:not(.active):hover > svg,
+    /* Active */
+.node-button.active:not(:hover):not(:focus) > svg {
     fill: black;
 }
 
-.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-delete,
-/* Tab */
-.node-button:focus > .node-button-delete:not(.active),
-.node-button:focus > .node-button-delete.active,
-/* Hover */
-.node-button-delete:not(.active):hover,
-.node-button-delete.active:not(:hover) {
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) .node-delete > svg,
+    /* Not active */
+.node-delete:focus:not(.active) > svg,
+.node-delete:hover:not(.active) > svg,
+    /* Active */
+.node-delete.active:not(:hover):not(:focus) > svg {
     stroke: #ff0000;
 }
 
-.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-create,
-    /* Tab */
-.node-button:focus > .node-button-create:not(.active),
-.node-button:focus > .node-button-create.active,
-    /* Hover */
-.node-button-create:not(.active):hover,
-.node-button-create.active:not(:hover) {
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) .node-create > svg,
+    /* Not active */
+.node-create:focus:not(.active) > svg,
+.node-create:hover:not(.active) > svg,
+    /* Active */
+.node-create.active:not(:hover):not(:focus) > svg {
     stroke: #ffff00;
 }
 
-.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-edit,
-    /* Tab */
-.node-button:focus > .node-button-edit:not(.active),
-.node-button:focus > .node-button-edit.active,
-    /* Hover */
-.node-button-edit:not(.active):hover,
-.node-button-edit.active:not(:hover) {
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) .node-edit > svg,
+    /* Not active */
+.node-edit:focus:not(.active) > svg,
+.node-edit:hover:not(.active) > svg,
+    /* Active */
+.node-edit.active:not(:hover):not(:focus) > svg {
     stroke: #7cfc00;
 }
 
-.node:not(.focused-source) > .node-data-container:not(:hover) .node-button-move,
-    /* Tab */
-.node-button:focus > .node-button-move:not(.active),
-.node-button:focus > .node-button-move.active,
-    /* Hover */
-.node-button-move:not(.active):hover,
-.node-button-move.active:not(:hover) {
+.node:not(.focused-source) > .node-interaction-container:not(:hover):not(:focus) .node-move > svg,
+    /* Not active */
+.node-move:focus:not(.active) > svg,
+.node-move:hover:not(.active) > svg,
+    /* Active */
+.node-move.active:not(:hover):not(:focus) > svg {
     stroke: #70c2db;
 }

@@ -49,45 +49,6 @@
     vertical-align: middle;
 }
 
-.frame-button {
-    font-family: Helvetica, Verdana, sans-serif;
-    float: right;
-    font-size: 2em;
-    border-left: 2px solid white;
-    width: 1.3em;
-    user-select: none;
-}
-
-.frame-button:hover,
-.frame-button:focus {
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#toggle-labels:after {
-    font-weight: bold;
-    content: '﹖';
-}
-
-#toggle-labels.active:after {
-    font-weight: bold;
-    content: '﹗';
-}
-
-#toggle-labels:hover,
-#toggle-labels:focus {
-    background-color: #007997;
-}
-
-#close:after {
-    content: '×';
-}
-
-#close:hover,
-#close:focus {
-    background-color: #aa0000;
-}
-
 #modal-body {
     overflow: hidden;
     position: relative;

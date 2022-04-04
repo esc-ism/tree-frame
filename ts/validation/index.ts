@@ -10,7 +10,9 @@ import {
     Root, Child, Parent, Node,
     // API argument type
     Config, INPUT_TYPES
-} from '../types';
+} from './types';
+
+import StyleRoot from './style'
 
 // Type predicate helpers
 
@@ -433,18 +435,25 @@ function isConfig(candidate: unknown): candidate is Config {
 
 // Config validators
 
-function validateTitle(title: string): void {
+function validateTitle(breadcrumbs: Array<string>, title: string): void {
     if (title.length === 0)
-        throw new Error('The title may not be an empty string.');
+        throw new errors.EmptyTitleError(breadcrumbs);
 }
 
 // Top-level validator
 
-export default function validate(config: unknown): void {
+export default function validateConfig(config: unknown): void {
     if (!isConfig(config))
         throw new errors.UnexpectedStateError();
 
-    validateTitle(config.title);
+    validateTitle(['title'], config.title);
 
-    validateRoot(['tree'], config.tree);
+    validateRoot(['data'], config.data);
+
+    if ('style' in config) {
+        if (!isChild(['style'], config.style))
+            throw new errors.UnexpectedStateError();
+
+        validateSeedMatch(['style'], ['Model Style'], config.style, StyleRoot.seed);
+    }
 }

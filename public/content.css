@@ -3,7 +3,7 @@
     overflow-y: auto;
 }
 
-.node-data-container {
+.node-interaction-container {
     font-size: 18px;
     user-select: none;
 }
@@ -24,15 +24,15 @@
     margin-left: 1.8em;
 }
 
-.node-data-container {
+.node-interaction-container {
     /* Prevents line break between buttons and input */
     display: flex;
     /* Ensures buttons are aligned with input if they have different heights */
     align-items: center;
 }
 
-.node:not(.middle):not(.root):last-child > .node-data-container,
-.node:not(.middle):not(.root) + .focused-source.focused-branch > .node-data-container {
+.node:not(.middle):not(.root):last-child > .node-interaction-container,
+.node:not(.middle):not(.root) + .focused-source.focused-branch > .node-interaction-container {
     /*
     Using border rather than margin/padding
     prevents root being hoverable at the bottom &
@@ -43,7 +43,7 @@
 
 /* Background image */
 
-.node-data-container {
+.node-interaction-container {
     padding-left: 5px;
 
     background-size: 5px;
@@ -53,20 +53,21 @@
     transition: background-size 300ms, color 500ms;
 }
 
-.node-data-container:hover,
-.node.focused-source > .node-data-container {
+.node-interaction-container:focus-visible {
+    outline: inherit;
+}
+
+.node-interaction-container:focus,
+.node-interaction-container:hover,
+.node.focused-source > .node-interaction-container {
     color: black;
     background-size: 100%;
 }
 
 /* Focus */
 
-.root.focused-branch .node:not(.focused-branch) {
+.root.focused-branch .node:not(.focused-branch):not(.focused-source > .node-child-container > *) {
     display: none;
-}
-
-.node.focused-source > .node-child-container > .node {
-    display: inherit;
 }
 
 .node-child-container {
@@ -79,13 +80,13 @@
 
 /* Edit */
 
-.node-aligner {
+.node-input-container {
     flex-grow: 1;
     display: flex;
 }
 
 /* Avoid showing annoying accidental highlights */
-.node-aligner > *[disabled]::selection {
+.node-input-container > *[disabled]::selection {
     background: none;
 }
 
@@ -114,11 +115,6 @@
     background: #D9FFC0;
 }
 
-.rejected > .node-data-container .node-value {
+.rejected > .node-interaction-container .node-value {
     background: #FFB4BE;
-}
-
-.node-button-svg {
-    stroke: black;
-    fill: none;
 }

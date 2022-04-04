@@ -2,36 +2,37 @@ import {PASSWORD, EVENTS} from './consts';
 
 import validate from './validation';
 
-import start from './start';
+import start from './modal';
 
 export function onInit({data}) {
     const {password, ...config} = data;
 
+    // Ignore scripts that send messages to every frame
     if (password === PASSWORD) {
         try {
             validate(config);
-
-            start(config);
         } catch (error) {
             window.parent.postMessage({
                 'event': EVENTS.ERROR,
                 'reason': error.message
             }, '*');
         }
+
+        window.removeEventListener('message', onInit);
+
+        start(config);
     }
 }
 
 if (window.parent === window) {
-    import('./example').then(({default: config}) => {
-        validate(config);
-
-        start(config);
-    });
+    // Show an example tree when not used as an iFrame
+    start();
 } else {
+    window.addEventListener('message', onInit);
+
+    // Inform the frame's parent that it's ready to receive data
     window.parent.postMessage({
         'event': EVENTS.START,
         'password': PASSWORD
     }, '*');
-
-    window.addEventListener('message', onInit);
 }

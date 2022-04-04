@@ -26,6 +26,12 @@ export class JoinedError extends Error {
     }
 }
 
+export class EmptyTitleError extends Error {
+    constructor(breadcrumbs: string[]) {
+        super(`Found empty string at ${getPath(breadcrumbs)}. Titles may not be empty strings.`);
+    }
+}
+
 export class UnexpectedStateError extends Error {
     constructor() {
         super('Unexpected state reached.');

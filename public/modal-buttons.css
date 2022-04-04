@@ -1,0 +1,76 @@
+/* Label action */
+
+#object-tree.modal-labels .node-button-container {
+    visibility: hidden;
+}
+
+#object-tree.modal-labels .node-value {
+    display: none;
+}
+
+#object-tree:not(.modal-labels) .node-label {
+    display: none;
+}
+
+/* Leaf action */
+
+#object-tree.modal-leaves .node:not(.root):not(.middle) {
+    display: none;
+}
+
+/* Style action */
+
+#object-tree.modal-style > #root-data {
+    display: none;
+}
+
+#object-tree:not(.modal-style) > #root-style {
+    display: none;
+}
+
+/* Colours */
+
+#modal-close:hover > svg,
+#modal-close:focus > svg {
+    background-color: #aa0000;
+}
+
+#modal-labels:hover:not(.active) > svg,
+#modal-labels:focus:not(.active) > svg,
+#modal-labels.active:not(:hover):not(:focus) > svg {
+    fill: #f2a359;
+}
+
+#modal-leaves:hover:not(.active) > svg,
+#modal-leaves:focus:not(.active) > svg,
+#modal-leaves.active:not(:hover):not(:focus) > svg {
+    fill: green;
+}
+
+#modal-style circle {
+    fill: white;
+}
+
+#modal-style:hover:not(.active) circle:nth-of-type(1),
+#modal-style:focus:not(.active) circle:nth-of-type(1),
+#modal-style.active:not(:hover):not(:focus) circle:nth-of-type(1) {
+    fill: yellow;
+}
+
+#modal-style:hover:not(.active) circle:nth-of-type(2),
+#modal-style:focus:not(.active) circle:nth-of-type(2),
+#modal-style.active:not(:hover):not(:focus) circle:nth-of-type(2) {
+    fill: green;
+}
+
+#modal-style:hover:not(.active) circle:nth-of-type(3),
+#modal-style:focus:not(.active) circle:nth-of-type(3),
+#modal-style.active:not(:hover):not(:focus) circle:nth-of-type(3) {
+    fill: red;
+}
+
+#modal-style:hover:not(.active) circle:nth-of-type(4),
+#modal-style:focus:not(.active) circle:nth-of-type(4),
+#modal-style.active:not(:hover):not(:focus) circle:nth-of-type(4) {
+    fill: orange;
+}
