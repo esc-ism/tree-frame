@@ -1,0 +1,35 @@
+button {
+    display: inline-flex;
+    cursor: pointer;
+
+    /* Style stripping */
+    background: inherit;
+    padding: inherit;
+    margin: inherit;
+    border: inherit;
+    font-size: inherit;
+}
+
+button * {
+    pointer-events: none;
+}
+
+svg {
+    fill: none;
+}
+
+input {
+    font: inherit;
+    background: inherit;
+    color: inherit;
+    border: inherit;
+}
+
+input[disabled]::selection {
+    background: none;
+}
+
+/* TODO :not(button) ? */
+:focus-visible {
+    outline: inherit;
+}

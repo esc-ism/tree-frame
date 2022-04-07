@@ -1,31 +1,25 @@
-import mountActions from './actions';
+import {MODAL_BACKGROUND_ID, MODAL_ID} from './consts';
 import example from './example';
-import {TREE_CONTAINER, ROOT_ID} from './consts';
+import generateCSS from './css';
 
-import Root from './tree/nodes/root';
+import generateHeader from './header';
+import generateBody from './body';
 
 import {Config} from '../validation/types';
 
-function setTitle(title: string) {
-    const titleElement = document.getElementById('title');
+export default function generate(config: Config = example) {
+    generateCSS();
 
-    titleElement.innerText = title;
-    // In case the text is too long to fit
-    titleElement.title = title;
-}
+    const background = document.createElement('div');
+    const foreground = document.createElement('div');
 
-function getRoot(data) {
-    const root = new Root(data);
+    background.id = MODAL_BACKGROUND_ID;
 
-    root.element.elementContainer.id = ROOT_ID;
+    foreground.id = MODAL_ID;
 
-    TREE_CONTAINER.appendChild(root.element.elementContainer);
+    background.append(foreground);
+    document.body.append(background);
 
-    return root;
-}
-
-export default function start({title, data, style}: Config = example) {
-    setTitle(title);
-
-    mountActions(getRoot(data), style);
+    foreground.append(generateHeader(config));
+    foreground.append(generateBody(config));
 }

@@ -126,7 +126,8 @@ const config: Config = {
                 }
             ],
         }
-    }
+    },
+    'userStyles': []
 }
 
 export default config;

@@ -1,4 +1,4 @@
-// Private
+// Helpers
 
 function getOptionString(array: readonly string[]) {
     if (array.length === 0) {
@@ -18,7 +18,7 @@ function getPath(breadcrumbs: string[]): string {
     return `/${breadcrumbs.join('/')}`;
 }
 
-// Public
+// JoinedError definition
 
 export class JoinedError extends Error {
     constructor(...errors: Error[]) {
@@ -26,11 +26,7 @@ export class JoinedError extends Error {
     }
 }
 
-export class EmptyTitleError extends Error {
-    constructor(breadcrumbs: string[]) {
-        super(`Found empty string at ${getPath(breadcrumbs)}. Titles may not be empty strings.`);
-    }
-}
+// Errors that may be used outside of JoinedError
 
 export class UnexpectedStateError extends Error {
     constructor() {
@@ -53,6 +49,14 @@ export class PropertyError extends Error {
 export class ValueError extends Error {
     constructor(breadcrumbs: string[], found: any, expected: readonly  any[]) {
         super(`Found ${found} value at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
+    }
+}
+
+// Errors to be used in conjunction with JoinedError
+
+export class EmptyStringError extends Error {
+    constructor(breadcrumbs: string[]) {
+        super(`Found illegal empty string at ${getPath(breadcrumbs)}.`);
     }
 }
 
@@ -83,5 +87,11 @@ export class MismatchedOptionsError extends Error {
 export class DeadRootError extends Error {
     constructor() {
         super('If the tree\'s root has no children, it must have a seed.');
+    }
+}
+
+export class DevStylePredicateError extends Error {
+    constructor() {
+        super('If a devStyle tree is provided, no node in the tree may have a predicate.');
     }
 }

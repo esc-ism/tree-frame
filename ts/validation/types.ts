@@ -19,7 +19,7 @@ interface _Child {
     // The node's data
     value: Value;
     // A data validator
-    predicate: Predicate;
+    predicate?: Predicate;
     // Indicates a preferred input type
     input?: Input;
 }
@@ -61,8 +61,11 @@ export type Node = Root | Child;
 
 // Config type
 
+export const CONFIG_KEYS = ['title', 'data', 'userStyles', 'devStyle']
+
 export interface Config {
     title: string;
     data: Root;
-    style?: Child;
+    userStyles: Array<Middle>;
+    devStyle?: Middle;
 }

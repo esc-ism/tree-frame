@@ -24,6 +24,7 @@ export function onInit({data}) {
     }
 }
 
+// TODO use window.opener?
 if (window.parent === window) {
     // Show an example tree when not used as an iFrame
     start();
