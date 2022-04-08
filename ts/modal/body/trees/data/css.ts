@@ -18,6 +18,7 @@ export default function generate() {
     ]);
 
     addRule([
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:hover`,
         `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:focus`,
         `.${FOCUS_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
     ], [

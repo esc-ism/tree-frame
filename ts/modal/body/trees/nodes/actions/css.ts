@@ -72,7 +72,7 @@ export default function generate() {
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${FOCUS_SOURCE_CLASS}) > ` +
-        `${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus) circle`,
+        `${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus):not(:hover) circle`,
         ['stroke', 'transparent']
     );
 
@@ -81,7 +81,7 @@ export default function generate() {
     addRule([
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus) svg`
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus):not(:hover) svg`
     ], [
         ['opacity', '0.5'],
         ['filter', `url(#${FILTER_ID})`],

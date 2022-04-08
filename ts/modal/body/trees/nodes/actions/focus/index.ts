@@ -94,6 +94,10 @@ export function mount(node: Root | Child): void {
     });
 
     focusTarget.addEventListener('mouseenter', () => {
+        if (activeNode) {
+            return;
+        }
+
         const tabbedNode = document.querySelector(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:focus`) as HTMLElement;
 
         if (tabbedNode) {
