@@ -24,12 +24,13 @@ export function addColourRule(actionId: string, strokeVar: string) {
     addRule([
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus) ` +
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus):not(:hover) ` +
         `.${actionId} > svg`,
         // Not focused, hovered
         `.${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
+        `.${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
         // Active, not hovered
-        `.${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus) > svg`
+        `.${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) > svg`
     ], ['stroke', `var(${strokeVar})`]);
 }
 
@@ -90,8 +91,9 @@ export default function generate() {
     addRule([
         // Not active, focused
         `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus > svg`,
+        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`,
         // Active, not focused
-        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus) > svg`
+        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) > svg`
     ], ['fill', 'var(--base)']);
 
     // Active action clash avoidance

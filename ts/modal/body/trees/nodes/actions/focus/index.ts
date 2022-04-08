@@ -85,30 +85,38 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-    node.element.interactionContainer.addEventListener('click', (event) => {
+    const focusTarget = node.element.interactionContainer;
+    
+    focusTarget.addEventListener('click', (event) => {
         event.stopPropagation();
 
         doAction(node);
     });
 
-    node.element.interactionContainer.addEventListener('mouseenter', () => {
+    focusTarget.addEventListener('mouseenter', () => {
         const tabbedNode = document.querySelector(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:focus`) as HTMLElement;
 
         if (tabbedNode) {
             tabbedNode.blur();
         }
 
-        node.element.interactionContainer.focus();
+        focusTarget.focus();
     });
 
-    node.element.interactionContainer.addEventListener('keydown', (event) => {
+    focusTarget.addEventListener('keydown', (event) => {
+        event.stopPropagation();
+
         switch(event.key) {
             case 'Enter':
                 doAction(node);
 
                 break;
             case 'Escape':
-                reset();
+                if (activeNode) {
+                    reset();
+                } else {
+                    document.body.focus();
+                }
         }
     });
 }

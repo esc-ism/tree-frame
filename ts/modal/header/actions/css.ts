@@ -24,7 +24,8 @@ export function addColourRule(
 
     addRule([
         `#${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS})${targetSelector}`,
-        `#${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus)${targetSelector}`
+        `#${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS})${targetSelector}`,
+        `#${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover)${targetSelector}`
     ], styles);
 }
 
