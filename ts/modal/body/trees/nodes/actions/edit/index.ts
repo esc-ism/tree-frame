@@ -137,6 +137,12 @@ export function doAction(node) {
     }
 }
 
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        reset();
+    }
+});
+
 export function mount(node: Child): void {
     addActionButton(TEMPLATE, doAction, node);
 

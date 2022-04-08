@@ -1,4 +1,6 @@
-import {FOCUS_CLASS, HIGHLIGHT_SOURCE_CLASS as SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS as BRANCH_CLASS} from './consts';
+import {
+    FOCUS_CLASS, HIGHLIGHT_SOURCE_CLASS as SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS as BRANCH_CLASS
+} from './consts';
 
 import {actionIsActive} from '../active';
 
@@ -22,14 +24,14 @@ export function setTabIndexes(doAdd = true, node = activeNode) {
     }
 }
 
-export function focus(doFocus: boolean = true, node = activeNode, doForce = true) {
+export function focus(doFocus: boolean = true, node = activeNode, doForce: boolean = true) {
     // Avoid unfocusing the active node if not forced
     if (doForce || node !== activeNode) {
         node.element[`${doFocus ? 'add' : 'remove'}Class`](SOURCE_CLASS);
     }
 }
 
-export function focusBranch(doFocus: boolean = true, node: Root | Child = activeNode, focusAncestors = true) {
+export function focusBranch(doFocus: boolean = true, node: Root | Child = activeNode, focusAncestors: boolean = true) {
     node.element[`${doFocus ? 'add' : 'remove'}Class`](BRANCH_CLASS);
 
     if (focusAncestors && 'parent' in node) {
@@ -78,6 +80,18 @@ export function unmount(node) {
     }
 }
 
+const unfocusPrevious = (() => {
+    let previousNode;
+
+    return (newNode?) => {
+        if (previousNode) {
+            previousNode.element.removeClass(FOCUS_CLASS);
+        }
+
+        previousNode = newNode;
+    };
+})();
+
 export function mount(node: Root | Child): void {
     const focusTarget = node.element.interactionContainer;
 
@@ -89,25 +103,19 @@ export function mount(node: Root | Child): void {
 
     focusTarget.addEventListener('mouseenter', () => {
         // Avoid unfocusing an input
-        if (!activeNode) {
-            focusTarget.focus();
-        } else {
+        if (actionIsActive()) {
+            unfocusPrevious(node);
+
             node.element.addClass(FOCUS_CLASS);
+        } else {
+            focusTarget.focus();
         }
     });
 
-    focusTarget.addEventListener('mouseleave', () => {
-        focusTarget.blur();
-
-        node.element.removeClass(FOCUS_CLASS);
-    });
-
     focusTarget.addEventListener('focus', () => {
-        node.element.addClass(FOCUS_CLASS);
-    });
+        unfocusPrevious(node);
 
-    focusTarget.addEventListener('blur', () => {
-        node.element.removeClass(FOCUS_CLASS);
+        node.element.addClass(FOCUS_CLASS);
     });
 
     focusTarget.addEventListener('keydown', (event) => {
@@ -122,6 +130,8 @@ export function mount(node: Root | Child): void {
                 if (activeNode) {
                     reset();
                 } else {
+                    unfocusPrevious();
+
                     document.body.focus();
                 }
         }
