@@ -1,4 +1,4 @@
-import {Config, Middle} from '../validation/types';
+import {Config, Middle} from './validation/types';
 
 function getPerson(
     name = '*name*',

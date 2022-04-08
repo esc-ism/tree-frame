@@ -2,7 +2,13 @@ import {PASSWORD, EVENTS} from './consts';
 
 import validate from './validation';
 
-import start from './modal';
+// Dynamic imports for smaller bundles
+
+function start(config) {
+    import(/* webpackPrefetch: true */ './modal').then(({default: _start}) => {
+        _start(config);
+    });
+}
 
 export function onInit({data}) {
     const {password, ...config} = data;
@@ -26,8 +32,10 @@ export function onInit({data}) {
 
 // TODO use window.opener?
 if (window.parent === window) {
-    // Show an example tree when not used as an iFrame
-    start();
+    import('./example').then(({default: config}) => {
+        // Show an example tree when not used as an iFrame
+        start(config);
+    });
 } else {
     window.addEventListener('message', onInit);
 

@@ -1,5 +1,4 @@
 import {MODAL_BACKGROUND_ID, MODAL_ID} from './consts';
-import example from './example';
 import generateCSS from './css';
 
 import generateHeader from './header';
@@ -7,7 +6,7 @@ import generateBody from './body';
 
 import {Config} from '../validation/types';
 
-export default function generate(config: Config = example) {
+export default function generate(config: Config) {
     generateCSS();
 
     const background = document.createElement('div');
