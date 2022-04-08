@@ -25,7 +25,7 @@ export default function generate() {
         ['display', 'flex'],
     ]);
 
-    addRule([`.${ELEMENT_CLASSES.INPUT_VALUE}`, `${ELEMENT_CLASSES.INPUT_LABEL}`], [
+    addRule([`.${ELEMENT_CLASSES.INPUT_VALUE}`, `.${ELEMENT_CLASSES.INPUT_LABEL}`], [
         ['flex-grow', '1'],
         ['margin', '0.2em 0.5em'],
         ['padding', '0 0.5em'],
