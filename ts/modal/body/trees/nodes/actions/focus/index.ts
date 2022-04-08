@@ -129,6 +129,8 @@ export function mount(node: Root | Child): void {
             case 'Escape':
                 if (activeNode) {
                     reset();
+
+                    focusTarget.focus();
                 } else {
                     unfocusPrevious();
 

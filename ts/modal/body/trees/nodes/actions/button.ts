@@ -15,9 +15,11 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
         doAction(node);
     });
 
-    // Prevent enter/esc buttons presses from unfocusing
     button.addEventListener('keydown', (event) => {
-        event.stopPropagation();
+        // Prevent button presses via the Enter key from unfocusing the node
+        if (event.key === 'Enter') {
+            event.stopPropagation();
+        }
     });
 
     node.element.addButton(button);
