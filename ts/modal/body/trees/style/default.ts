@@ -63,7 +63,7 @@ const style: Middle = Object.freeze({
                 },
                 {
                     'label': 'Label Button Background',
-                    'value': '#00000000',
+                    'value': '#3FF5FF89',
                     'input': 'color',
                     'predicate': true
                 },
@@ -75,7 +75,7 @@ const style: Middle = Object.freeze({
                 },
                 {
                     'label': 'Leaf Button Background',
-                    'value': '#00000000',
+                    'value': '#3FF5FF89',
                     'input': 'color',
                     'predicate': true
                 },
@@ -88,7 +88,7 @@ const style: Middle = Object.freeze({
                 },
                 {
                     'label': 'Style Button Background',
-                    'value': '#00000000',
+                    'value': '#3FF5FF89',
                     'input': 'color',
                     'predicate': true
                 }
