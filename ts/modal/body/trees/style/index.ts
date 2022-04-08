@@ -20,7 +20,7 @@ export function getUserStyleTree() {
     return root[root.length - 1];
 }
 
-function getActiveStyle(styleGroups: Array<MiddleJSON>): MiddleJSON {
+export function getActiveStyle(styleGroups: Array<MiddleJSON>): MiddleJSON {
     const activeStyles: Array<Middle> = styleGroups
         .map(({children}) => children as Array<Middle>)
         .flat()
@@ -42,7 +42,20 @@ export default function generate(userStyles: Array<ChildJSON>, devStyle?: ChildJ
         'ancestorPredicate': (styleGroups: Array<MiddleJSON>): true | string => {
             const activeStyle = getActiveStyle(styleGroups);
 
-            return activeStyle ? true : 'Only one color scheme may be active at a time.';
+            if (activeStyle) {
+                updateStylesheet(activeStyle);
+
+                return true;
+            }
+
+            const previousStyle = getActiveStyle(getRoot().getJSON().children);
+
+            if (previousStyle) {
+                // There was an active style before the current change
+                updateStylesheet(previousStyle);
+            }
+
+            return 'Only one color scheme may be active at a time.';
         }
     }, ROOT_ID);
 

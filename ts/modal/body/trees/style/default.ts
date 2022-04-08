@@ -7,7 +7,8 @@ const style: Middle = Object.freeze({
     'children': [
         {
             'label': 'Is Active',
-            'value': false
+            'value': false,
+            'predicate': true
         },
         {
             'label': 'Category',
@@ -20,13 +21,13 @@ const style: Middle = Object.freeze({
                 },
                 {
                     'label': 'Base Color',
-                    'value': '#000',
+                    'value': '#000000',
                     'input': 'color',
                     'predicate': true
                 },
                 {
                     'label': 'Contrast Color',
-                    'value': '#bbb',
+                    'value': '#bbbbbb',
                     'input': 'color',
                     'predicate': true
                 },
@@ -81,7 +82,7 @@ const style: Middle = Object.freeze({
                 // Not currently used
                 {
                     'label': 'Style Button Fill',
-                    'value': '#00000000',
+                    'value': '#492609',
                     'input': 'color',
                     'predicate': true
                 },

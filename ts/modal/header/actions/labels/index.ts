@@ -1,5 +1,5 @@
 import BUTTON from './button';
-import {ACTION_ID} from './consts';
+import {ACTION_ID, HOTKEY} from './consts';
 import generateCSS from './css';
 
 import {bindAction} from '../button';
@@ -17,7 +17,7 @@ function doAction() {
 export default function generate() {
     generateCSS();
 
-    bindAction(BUTTON, doAction);
+    bindAction(doAction, BUTTON, HOTKEY, 'Toggle Labels');
 
     return BUTTON;
 }

@@ -1,5 +1,5 @@
 import BUTTON from './button';
-import {ACTION_ID} from './consts';
+import {ACTION_ID, HOTKEY} from './consts';
 import generateCSS from './css';
 
 import {bindAction} from '../button';
@@ -30,7 +30,7 @@ export default function generate() {
 
     const background = document.getElementById(MODAL_BACKGROUND_ID);
 
-    bindAction(BUTTON, doAction);
+    bindAction(doAction, BUTTON, HOTKEY, 'Save & Exit');
 
     background.addEventListener('click', (event) => {
         if (background.isSameNode(event.target as Node)) {

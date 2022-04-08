@@ -3,7 +3,7 @@ import {BUTTON_CLASS} from './consts';
 import {SVG_NAMESPACE} from '../../consts';
 
 // Adds the template to the DOM
-export function bindAction(button: HTMLButtonElement, doAction: Function): Function {
+export function bindAction(doAction: Function,button: HTMLButtonElement, hotkey: string, description: string): Function {
     const bound = (event) => {
         event.stopPropagation();
 
@@ -13,6 +13,14 @@ export function bindAction(button: HTMLButtonElement, doAction: Function): Funct
     };
 
     button.addEventListener('click', bound);
+
+    window.addEventListener('keydown', (event) => {
+        if (event.altKey && event.key === hotkey) {
+            bound(event);
+        }
+    });
+
+    button.title = `${description} (Alt+${hotkey.toUpperCase()})`;
 
     return bound;
 }

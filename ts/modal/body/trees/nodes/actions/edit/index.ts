@@ -90,11 +90,15 @@ function isValid(node: Child = activeNode): boolean {
 }
 
 export function update() {
-    if (isValid()) {
-        activeNode.value = getValue(activeNode);
+    const previousValue = activeNode.value;
 
+    activeNode.value = getValue(activeNode);
+
+    if (isValid()) {
         activeNode.element.removeClass(INVALID_CLASS);
     } else {
+        activeNode.value = previousValue;
+
         activeNode.element.addClass(INVALID_CLASS);
     }
 }
@@ -148,9 +152,13 @@ export function mount(node: Child): void {
 }
 
 export function shouldMount(node: Child): boolean {
+    if (!node.predicate) {
+        return false;
+    }
+
     switch (typeof node.predicate) {
         case 'boolean':
-            return node.predicate !== false;
+            return node.predicate;
 
         case 'object':
             // Prevent editing if there are no other valid values

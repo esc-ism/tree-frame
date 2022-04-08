@@ -4,8 +4,8 @@ function getPerson(
     name = '*name*',
     occupation = '*occupation*',
     birthYear = 0,
-    hairColour = '*colour*',
-    eyeColour = '*colour*'
+    hairColour = '#3B2D25',
+    eyeColour = '#3c75e2'
 ): Middle {
     return {
         'label': 'Name',
@@ -88,7 +88,7 @@ const config: Config = {
                         'predicate': false,
                         'seed': getPerson(),
                         'children': [
-                            getPerson('William Shakespeare', 'Playwright', 1564, 'Brown?', 'Brown'),
+                            getPerson('William Shakespeare', 'Playwright', 1564),
                         ]
                     },
                     {

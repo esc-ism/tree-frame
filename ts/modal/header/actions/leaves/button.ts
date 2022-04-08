@@ -1,4 +1,4 @@
-import {ACTION_ID} from './consts';
+import {ACTION_ID, HOTKEY} from './consts';
 
 import {getNewButton} from '../button';
 

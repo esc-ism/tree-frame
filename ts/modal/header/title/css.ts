@@ -1,4 +1,4 @@
-import {TITLE_CONTAINER_ID, TITLE_ID} from './consts';
+import {TITLE_CONTAINER_ID} from './consts';
 
 import {addRule} from '../../css';
 

@@ -12,6 +12,10 @@
     <script src="./main.bundle.js" type="module" defer></script>
 </head>
 
-<body></body>
+<!--
+Call `document.body.focus()` to reset tab index.
+Focused on load so that it doesn't have to be tabbed past.
+-->
+<body tabIndex="1" onload="document.body.focus();"></body>
 
 </html>

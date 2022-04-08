@@ -6,7 +6,7 @@ import {addRule} from '../../css';
 export function addColourRule(
     actionId: string,
     backgroundVar?: string, fillVar?: string, strokeVar?: string,
-    targetSelector: string = 'svg'
+    targetSelector: string = ' > svg'
 ) {
     const styles = [];
 
@@ -23,9 +23,9 @@ export function addColourRule(
     }
 
     addRule([
-        `#${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS}) > ${targetSelector}`,
-        `#${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > ${targetSelector}`,
-        `#${actionId}.${BUTTON_ACTIVE_CLASS}:not(:hover):not(:focus) > ${targetSelector}`
+        `#${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS})${targetSelector}`,
+        `#${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS})${targetSelector}`,
+        `#${actionId}.${BUTTON_ACTIVE_CLASS}:not(:hover):not(:focus)${targetSelector}`
     ], styles);
 }
 

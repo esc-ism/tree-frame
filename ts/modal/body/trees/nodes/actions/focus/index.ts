@@ -26,7 +26,7 @@ export function setTabIndexes(doAdd = true) {
 }
 
 export function focus(doFocus: boolean = true, node = activeNode, doForce = true) {
-    // Avoid unfocusing a focused node if not forced
+    // Avoid unfocusing the active node if not forced
     if (doForce || node !== activeNode) {
         node.element[`${doFocus ? 'add' : 'remove'}Class`](SOURCE_CLASS);
     }
@@ -98,6 +98,13 @@ export function mount(node: Root | Child): void {
             doAction(node);
 
             node.element.interactionContainer.focus();
+        }
+    });
+
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            // Stop focusing any node
+            document.body.focus();
         }
     });
 }
