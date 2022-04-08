@@ -88,7 +88,7 @@ const config: Config = {
                         'predicate': false,
                         'seed': getPerson(),
                         'children': [
-                            getPerson('William Shakespeare', 'Playwright', 1564),
+                            getPerson('William Shakespeare', 'Playwright', 1564, '#1b0600', '#391b00'),
                         ]
                     },
                     {
@@ -97,9 +97,8 @@ const config: Config = {
                         'predicate': false,
                         'seed': getMedia(),
                         'children': [
-                            getMedia('Doctor Who', 'TV Show', 1963, 'A genderless, time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
+                            getMedia('Doctor Who', 'TV Show', 1963, 'A time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
                             getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.'),
-                            getMedia('How Soon Is Now?', 'Song', 1985, 'The Smiths\' manifestation of loneliness.'),
                         ]
                     },
                 ]
