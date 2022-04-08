@@ -27,6 +27,8 @@ export function reset() {
         button.remove();
     }
 
+    focusBranch(false, activeNode, false);
+
     targets.length = 0;
 
     setActive(activeNode, ACTION_ID, false);
