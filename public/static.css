@@ -29,7 +29,6 @@ input[disabled]::selection {
     background: none;
 }
 
-/* TODO :not(button) ? */
-:focus-visible {
+:focus-visible:not(button) {
     outline: inherit;
 }

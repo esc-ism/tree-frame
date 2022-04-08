@@ -1,6 +1,6 @@
 import {ROOT_CLASS, ELEMENT_CLASSES, MIDDLE_CLASS} from '../nodes/consts';
 
-import {FOCUS_BRANCH_CLASS, FOCUS_SOURCE_CLASS} from '../nodes/actions/focus/consts';
+import {FOCUS_CLASS, HIGHLIGHT_BRANCH_CLASS, HIGHLIGHT_SOURCE_CLASS} from '../nodes/actions/focus/consts';
 
 import {addRule} from '../../../css';
 
@@ -18,9 +18,8 @@ export default function generate() {
     ]);
 
     addRule([
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:hover`,
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:focus`,
-        `.${FOCUS_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        `.${FOCUS_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
     ], [
         ['color', 'var(--base)'],
         ['background-size', '100%'],
@@ -45,6 +44,6 @@ export default function generate() {
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):not(.${MIDDLE_CLASS}):last-child > ` +
         `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):not(.${MIDDLE_CLASS}):last-child > ` +
-        `.${FOCUS_SOURCE_CLASS}.${FOCUS_BRANCH_CLASS} > ${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
+        `.${HIGHLIGHT_SOURCE_CLASS}.${HIGHLIGHT_BRANCH_CLASS} > ${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
     ], ['border-bottom', '0.4em solid transparent']);
 }

@@ -1,3 +1,5 @@
-export const FOCUS_SOURCE_CLASS = 'focused-source';
+export const HIGHLIGHT_SOURCE_CLASS = 'highlight-source';
 
-export const FOCUS_BRANCH_CLASS = 'focused-branch';
+export const HIGHLIGHT_BRANCH_CLASS = 'highlight-branch';
+
+export const FOCUS_CLASS = 'focused';

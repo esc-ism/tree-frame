@@ -1,4 +1,4 @@
-import {focus} from './focus';
+import {focus, reset as resetFocus, setTabIndexes} from './focus';
 
 import type Child from '../child';
 
@@ -17,8 +17,11 @@ export function setActive(node: Child, actionId: string, doActivate = true) {
 
     setTreeActive(button, actionId, doActivate);
 
-        focus(doActivate, node, false);
-        node.element.interactionContainer.focus();
+    resetFocus();
+    focus(doActivate, node, false);
+    setTabIndexes(doActivate, node);
+
+    node.element.interactionContainer.focus();
 
     isActive = doActivate;
 }

@@ -2,7 +2,7 @@ import {BUTTON_CLASS} from './consts';
 
 import {ACTION_ID as MOVE_ACTION_ID} from './move/consts';
 import {ACTION_ID as EDIT_ACTION_ID} from './edit/consts';
-import {FOCUS_SOURCE_CLASS} from './focus/consts';
+import {FOCUS_CLASS, HIGHLIGHT_SOURCE_CLASS} from './focus/consts';
 
 import generateCreate from './create/css';
 import generateEdit from './edit/css';
@@ -23,8 +23,8 @@ const FILTER_ID = 'node-filter';
 export function addColourRule(actionId: string, strokeVar: string) {
     addRule([
         // Not focused, not hovered
-        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus):not(:hover) ` +
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}):not(.${FOCUS_CLASS}) > ` +
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
         `.${actionId} > svg`,
         // Not focused, hovered
         `.${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
@@ -71,8 +71,8 @@ export default function generate() {
     addRule(`.${BUTTON_CLASS} > svg`, ['width', '1.5em']);
 
     addRule(
-        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${FOCUS_SOURCE_CLASS}) > ` +
-        `${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus):not(:hover) circle`,
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${HIGHLIGHT_SOURCE_CLASS}):not(${FOCUS_CLASS}) > ` +
+        `${ELEMENT_CLASSES.INTERACTION_CONTAINER} circle`,
         ['stroke', 'transparent']
     );
 
@@ -80,8 +80,8 @@ export default function generate() {
 
     addRule([
         // Not focused, not hovered
-        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus):not(:hover) svg`
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}):not(.${FOCUS_CLASS}) > ` +
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} svg`
     ], [
         ['opacity', '0.5'],
         ['filter', `url(#${FILTER_ID})`],

@@ -1,17 +1,16 @@
-import {FOCUS_SOURCE_CLASS as SOURCE_CLASS, FOCUS_BRANCH_CLASS as BRANCH_CLASS} from './consts';
+import {FOCUS_CLASS, HIGHLIGHT_SOURCE_CLASS as SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS as BRANCH_CLASS} from './consts';
 
 import {actionIsActive} from '../active';
 
 import type Root from '../../root';
 import type Child from '../../child';
-import {ELEMENT_CLASSES} from '../../consts';
 
 let activeNode: Root | Child;
 
 // TODO Set tab indexes for all data containers to allow tabbing from top to bottom when no node's focused.
 //  You want pressing enter on a tabbed node to focus it.
-export function setTabIndexes(doAdd = true) {
-    const buttons = activeNode.element.buttonContainer.children;
+export function setTabIndexes(doAdd = true, node = activeNode) {
+    const buttons = node.element.buttonContainer.children;
 
     for (let i = buttons.length - 1; i >= 0; --i) {
         const button = buttons[i] as HTMLButtonElement;
@@ -56,11 +55,6 @@ export function reset() {
 export function doAction(node: Root | Child, doForce = false) {
     const toggleOn = node !== activeNode;
 
-    // TODO remove
-    if (doForce && !toggleOn) {
-        console.log('?');
-    }
-
     // Avoid unfocusing a node that's being edited/moved
     if (actionIsActive() || (doForce && !toggleOn)) {
         return;
@@ -86,7 +80,7 @@ export function unmount(node) {
 
 export function mount(node: Root | Child): void {
     const focusTarget = node.element.interactionContainer;
-    
+
     focusTarget.addEventListener('click', (event) => {
         event.stopPropagation();
 
@@ -94,23 +88,32 @@ export function mount(node: Root | Child): void {
     });
 
     focusTarget.addEventListener('mouseenter', () => {
-        if (activeNode) {
-            return;
+        // Avoid unfocusing an input
+        if (!activeNode) {
+            focusTarget.focus();
+        } else {
+            node.element.addClass(FOCUS_CLASS);
         }
+    });
 
-        const tabbedNode = document.querySelector(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:focus`) as HTMLElement;
+    focusTarget.addEventListener('mouseleave', () => {
+        focusTarget.blur();
 
-        if (tabbedNode) {
-            tabbedNode.blur();
-        }
+        node.element.removeClass(FOCUS_CLASS);
+    });
 
-        focusTarget.focus();
+    focusTarget.addEventListener('focus', () => {
+        node.element.addClass(FOCUS_CLASS);
+    });
+
+    focusTarget.addEventListener('blur', () => {
+        node.element.removeClass(FOCUS_CLASS);
     });
 
     focusTarget.addEventListener('keydown', (event) => {
         event.stopPropagation();
 
-        switch(event.key) {
+        switch (event.key) {
             case 'Enter':
                 doAction(node);
 

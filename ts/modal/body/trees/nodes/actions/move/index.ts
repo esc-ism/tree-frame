@@ -3,13 +3,14 @@ import {ACTION_ID} from './consts';
 
 import {addActionButton} from '../button';
 import {setActive} from '../active';
-import {focus, focusBranch, reset as resetFocus} from '../focus';
+import {focusBranch} from '../focus';
 
 import type Root from '../../root';
 import type Middle from '../../middle';
 import type Child from '../../child';
 
 import {validateSeedMatch} from '../../../../../../validation';
+import {FOCUS_CLASS} from '../focus/consts';
 
 const targets = [];
 
@@ -21,7 +22,6 @@ export function reset() {
     }
 
     for (const {node, button, isParent} of targets) {
-        focus(false, node);
         focusBranch(false, node, isParent);
 
         button.remove();
@@ -30,8 +30,6 @@ export function reset() {
     targets.length = 0;
 
     setActive(activeNode, ACTION_ID, false);
-    // May have been unfocused above
-    focusBranch(true, activeNode);
 
     activeNode = undefined;
 }
@@ -47,11 +45,19 @@ function isSeedMatch(seed) {
 }
 
 function addTargetButton(node, isParent = true) {
-    const clone = (isParent ? BUTTON_PARENT : BUTTON_SIBLING).cloneNode(true) as HTMLButtonElement;
+    const button = (isParent ? BUTTON_PARENT : BUTTON_SIBLING).cloneNode(true) as HTMLButtonElement;
 
-    clone.setAttribute('tabIndex', '1');
+    button.addEventListener('focus', () => {
+        node.element.addClass(FOCUS_CLASS);
+    });
 
-    clone.addEventListener('click', (event) => {
+    button.addEventListener('blur', () => {
+        node.element.removeClass(FOCUS_CLASS);
+    });
+
+    button.setAttribute('tabIndex', '1');
+
+    button.addEventListener('click', (event) => {
         event.stopPropagation();
 
         activeNode.detach();
@@ -71,9 +77,9 @@ function addTargetButton(node, isParent = true) {
         previousNode.element.scrollIntoView();
     });
 
-    node.element.addButton(clone);
+    node.element.addButton(button);
 
-    targets.push({node, 'button': clone, isParent});
+    targets.push({node, 'button': button, isParent});
 }
 
 function addButtons(parent: Root | Middle) {
@@ -118,8 +124,6 @@ function doAction(node: Child) {
 
     if (toggleOn) {
         activeNode = node;
-
-        resetFocus();
 
         setActive(activeNode, ACTION_ID);
 
