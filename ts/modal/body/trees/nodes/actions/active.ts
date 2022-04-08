@@ -1,4 +1,4 @@
-import {doAction as doFocus} from './focus';
+import {focus} from './focus';
 
 import type Child from '../child';
 
@@ -17,12 +17,8 @@ export function setActive(node: Child, actionId: string, doActivate = true) {
 
     setTreeActive(button, actionId, doActivate);
 
-    if (doActivate) {
-        doFocus(node, true);
-    } else {
-        // Allow user to resume tab-based navigation
+        focus(doActivate, node, false);
         node.element.interactionContainer.focus();
-    }
 
     isActive = doActivate;
 }

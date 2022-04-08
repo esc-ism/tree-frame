@@ -4,14 +4,14 @@ import {actionIsActive} from '../active';
 
 import type Root from '../../root';
 import type Child from '../../child';
+import {ELEMENT_CLASSES} from '../../consts';
 
 let activeNode: Root | Child;
 
 // TODO Set tab indexes for all data containers to allow tabbing from top to bottom when no node's focused.
 //  You want pressing enter on a tabbed node to focus it.
 export function setTabIndexes(doAdd = true) {
-    const {interactionContainer, buttonContainer} = activeNode.element;
-    const buttons = buttonContainer.children;
+    const buttons = activeNode.element.buttonContainer.children;
 
     for (let i = buttons.length - 1; i >= 0; --i) {
         const button = buttons[i] as HTMLButtonElement;
@@ -21,8 +21,6 @@ export function setTabIndexes(doAdd = true) {
             button.setAttribute('tabIndex', doAdd && !button.disabled ? '1' : '-1');
         }
     }
-
-    interactionContainer.blur();
 }
 
 export function focus(doFocus: boolean = true, node = activeNode, doForce = true) {
@@ -93,18 +91,24 @@ export function mount(node: Root | Child): void {
         doAction(node);
     });
 
-    node.element.interactionContainer.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || (event.key === 'Escape' && activeNode)) {
-            doAction(node);
+    node.element.interactionContainer.addEventListener('mouseenter', () => {
+        const tabbedNode = document.querySelector(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:focus`) as HTMLElement;
 
-            node.element.interactionContainer.focus();
+        if (tabbedNode) {
+            tabbedNode.blur();
         }
+
+        node.element.interactionContainer.focus();
     });
 
-    window.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            // Stop focusing any node
-            document.body.focus();
+    node.element.interactionContainer.addEventListener('keydown', (event) => {
+        switch(event.key) {
+            case 'Enter':
+                doAction(node);
+
+                break;
+            case 'Escape':
+                reset();
         }
     });
 }

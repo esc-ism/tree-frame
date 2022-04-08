@@ -23,9 +23,8 @@ export function addColourRule(
     }
 
     addRule([
-        `#${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS})${targetSelector}`,
         `#${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS})${targetSelector}`,
-        `#${actionId}.${BUTTON_ACTIVE_CLASS}:not(:hover):not(:focus)${targetSelector}`
+        `#${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus)${targetSelector}`
     ], styles);
 }
 

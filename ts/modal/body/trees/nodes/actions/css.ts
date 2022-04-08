@@ -24,13 +24,12 @@ export function addColourRule(actionId: string, strokeVar: string) {
     addRule([
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:hover):not(:focus) ` +
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus) ` +
         `.${actionId} > svg`,
         // Not focused, hovered
-        `.${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
         `.${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
         // Active, not hovered
-        `.${actionId}.${BUTTON_ACTIVE_CLASS}:not(:hover):not(:focus) > svg`
+        `.${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus) > svg`
     ], ['stroke', `var(${strokeVar})`]);
 }
 
@@ -72,7 +71,7 @@ export default function generate() {
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${FOCUS_SOURCE_CLASS}) > ` +
-        `${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:hover):not(:focus) circle`,
+        `${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus) circle`,
         ['stroke', 'transparent']
     );
 
@@ -81,7 +80,7 @@ export default function generate() {
     addRule([
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:hover):not(:focus) svg`
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}:not(:focus) svg`
     ], [
         ['opacity', '0.5'],
         ['filter', `url(#${FILTER_ID})`],
@@ -89,11 +88,10 @@ export default function generate() {
     ]);
 
     addRule([
-        // Not active, hovered
-        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`,
+        // Not active, focused
         `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus > svg`,
-        // Active, not hovered
-        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:hover):not(:focus) > svg`
+        // Active, not focused
+        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus) > svg`
     ], ['fill', 'var(--base)']);
 
     // Active action clash avoidance
