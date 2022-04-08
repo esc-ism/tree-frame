@@ -9,7 +9,8 @@ import {addRule} from '../../../../../css';
 export default function generate() {
     addRule(
         `.${ROOT_CLASS}.${HIGHLIGHT_BRANCH_CLASS} ` +
-        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_BRANCH_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *)`,
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_BRANCH_CLASS})` +
+        `:not(.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *)`,
         ['display', 'none']
     );
 
