@@ -4,27 +4,27 @@ import {BUTTON_ACTIVE_CLASS} from '../../consts';
 import {addRule} from '../../css';
 
 export function addColourRule(actionId: string, colour: string) {
-    addRule([
-        `#${actionId}:focus > svg`, `#${actionId}:hover > svg`,
-        `#${actionId}.${BUTTON_ACTIVE_CLASS} > svg`
-    ], [
-        ['background-color', `var(--contrast)`],
-    ]);
-
-    addRule([
-        `#${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
-        `#${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
-    ], [
-        ['stroke', `var(--base)`],
-    ]);
-
     addRule(`#${actionId}.${BUTTON_ACTIVE_CLASS} > svg`, [
         ['stroke', `var(--base)`],
-        ['fill', `var(${colour})`],
+        ['fill', `var(${colour})`]
     ]);
 }
 
 export default function generate() {
+    addRule([
+        `.${BUTTON_CLASS}:focus > svg`, `.${BUTTON_CLASS}:hover > svg`,
+        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`
+    ], [
+        ['background-color', `var(--contrast)`]
+    ]);
+
+    addRule([
+        `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
+        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
+    ], [
+        ['stroke', `var(--base)`]
+    ]);
+
     addRule(`#${BUTTON_CONTAINER_ID}`, [
         ['display', 'inline-flex'],
         ['flex-direction', 'row']

@@ -1,4 +1,4 @@
-import {BUTTON_CLASS} from './consts';
+import {BUTTON_CLASS, CIRCLE_CLASS, G_BACK_CLASS, G_FRONT_CLASS} from './consts';
 
 import type Root from '../root';
 import type Child from '../child';
@@ -33,30 +33,40 @@ export const getNewButton = (function () {
     // Prevent tabbing to buttons until node is focused
     buttonTemplate.setAttribute('tabIndex', '-1');
 
-    const svgTemplate = (() => {
+    const gTemplate = (() => {
         const circle = document.createElementNS(SVG_NAMESPACE, 'circle');
+
+        circle.classList.add(CIRCLE_CLASS);
 
         circle.setAttribute('cx', '70');
         circle.setAttribute('cy', '70');
         circle.setAttribute('r', '50');
         circle.setAttribute('stroke-width', '10');
 
-        const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
+        const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
-        svg.setAttribute('viewBox', '0 0 140 140');
+        g.append(circle);
 
-        svg.append(circle);
-
-        return svg;
+        return g;
     })();
 
     return function (group: SVGGElement, actionId: string): HTMLButtonElement {
         const button = buttonTemplate.cloneNode(true) as HTMLButtonElement;
-        const svg = svgTemplate.cloneNode(true) as SVGSVGElement;
+        const gBack = gTemplate.cloneNode(true) as SVGSVGElement;
+
+        gBack.append(group);
+
+        const gFront = gBack.cloneNode(true) as SVGGElement;
 
         button.classList.add(actionId);
+        gBack.classList.add(G_BACK_CLASS);
+        gFront.classList.add(G_FRONT_CLASS);
 
-        svg.append(group);
+        const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
+
+        svg.setAttribute('viewBox', '0 0 140 140');
+
+        svg.append(gBack, gFront)
         button.append(svg);
 
         return button;

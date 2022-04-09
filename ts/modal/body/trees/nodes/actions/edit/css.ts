@@ -9,11 +9,11 @@ import {addRule} from '../../../../../css';
 export default function generate() {
     addColourRule(ACTION_ID, '--nodeButtonEdit');
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}:not([disabled])`, ['background', '--valid']);
+    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}:not([disabled])`, ['background', 'var(--valid)']);
 
     addRule(
-        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} ${ELEMENT_CLASSES.INPUT_VALUE}`,
-        ['background', '--invalid']
+        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_VALUE}`,
+        ['background', 'var(--invalid)']
     );
 
     addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}[type=color]`, ['height', '1.2em']);

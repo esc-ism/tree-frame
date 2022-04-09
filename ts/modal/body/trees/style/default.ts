@@ -51,25 +51,25 @@ const style: Middle = Object.freeze({
             'children': [
                 {
                     'label': 'Exit Color',
-                    'value': '#aa0000',
+                    'value': '#f10000',
                     'input': 'color',
                     'predicate': true
                 },
                 {
                     'label': 'Label Color',
-                    'value': '#9a7b4a',
+                    'value': '#ffd189',
                     'input': 'color',
                     'predicate': true
                 },
                 {
                     'label': 'Leaf Color',
-                    'value': '#0f5000',
+                    'value': '#65ff41',
                     'input': 'color',
                     'predicate': true
                 },
                 {
                     'label': 'Style Color',
-                    'value': '#cd00ff',
+                    'value': '#ff75da',
                     'input': 'color',
                     'predicate': true
                 }
