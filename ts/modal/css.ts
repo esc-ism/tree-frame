@@ -10,17 +10,8 @@ function isStyle(candidate): candidate is Style {
     return candidate.length > 0 && typeof candidate[0] === 'string';
 }
 
-function getStyleString(rules: Styles) {
-    const _getStyleString = ([property, value]) => `${property}:${value};`;
-
-    return isStyle(rules) ? _getStyleString(rules) : rules.map(_getStyleString).join('');
-}
-
-export function addKeyframeRule(name, frames: Array<[string, Styles]>) {
-    const framesString = frames.map(([time, rules]) => `${time}{${getStyleString(rules)}}`).join(' ');
-
-    console.log(`@keyframes ${name} {${framesString}}`);
-    STYLESHEET.insertRule(`@keyframes ${name} {${framesString}}`);
+function getStyleString([property, value]) {
+    return `${property}:${value};`;
 }
 
 export function getRuleString(selectors: Selectors, rules: Style | Array<Style>) {

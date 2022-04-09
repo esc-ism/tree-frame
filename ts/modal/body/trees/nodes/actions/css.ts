@@ -1,4 +1,4 @@
-import {BUTTON_CLASS, G_BACK_CLASS, G_FRONT_CLASS} from './consts';
+import {BUTTON_CLASS} from './consts';
 
 import {ACTION_ID as MOVE_ACTION_ID} from './move/consts';
 import {ACTION_ID as EDIT_ACTION_ID} from './edit/consts';
@@ -16,7 +16,7 @@ import {TREE_CONTAINER_ID} from '../../consts';
 
 import {BUTTON_ACTIVE_CLASS, SVG_NAMESPACE} from '../../../../consts';
 
-import {addKeyframeRule, addRule} from '../../../../css';
+import {addRule} from '../../../../css';
 
 const FILTER_ID = 'node-filter';
 
@@ -25,12 +25,10 @@ export function addColourRule(actionId: string, strokeVar: string) {
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}):not(.${FOCUS_CLASS}) > ` +
         `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
-        `.${BUTTON_CLASS}.${actionId} .${G_BACK_CLASS}`,
+        `.${BUTTON_CLASS}.${actionId} > svg`,
         // Active
-        `.${actionId}.${BUTTON_ACTIVE_CLASS} .${G_BACK_CLASS}`
+        `.${actionId}.${BUTTON_ACTIVE_CLASS} > svg`,
     ], ['stroke', `var(${strokeVar})`]);
-
-    addRule(`.${BUTTON_CLASS}.${actionId} .${G_FRONT_CLASS}`, ['stroke', `var(${strokeVar})`]);
 }
 
 // Filter setup
@@ -65,42 +63,20 @@ export default function generate() {
 
     // Svg appearance
 
-    addRule(`.${G_FRONT_CLASS}`, [
-        ['opacity', '0'],
-        ['fill', 'none'],
-    ]);
-
-    addKeyframeRule('pulse', [
-        ['from', ['opacity', '0']],
-        ['to', ['opacity', '1']]
-    ]);
-
     addRule([
-        `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) .${G_FRONT_CLASS}`,
-        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) .${G_FRONT_CLASS}`
+        // Hovered
+        `.${BUTTON_CLASS}:focus > svg`,
+        `.${BUTTON_CLASS}:hover > svg`
     ], [
-        ['animation-name', 'pulse'],
-        ['animation-iteration-count', 'infinite'],
-        ['animation-duration', '600ms'],
-        ['animation-direction', 'alternate'],
-        ['animation-delay', '400ms'],
-        ['animation-timing-function', 'ease-out'],
+        ['fill', `var(--base)`]
     ]);
 
     addRule([
         // Hovered
-        `.${BUTTON_CLASS}:focus .${G_BACK_CLASS}`,
-        `.${BUTTON_CLASS}:hover .${G_BACK_CLASS}`,
+        `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
+        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
     ], [
-        ['fill', `var(--base)`],
-    ]);
-
-    addRule([
-        // Hovered
-        `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) .${G_BACK_CLASS}`,
-        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) .${G_BACK_CLASS}`,
-    ], [
-        ['stroke', `var(--contrast)`],
+        ['stroke', `var(--contrast)`]
     ]);
 
     addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, ['display', 'inline-flex']);
@@ -113,7 +89,7 @@ export default function generate() {
         ['stroke', 'transparent']
     );
 
-    addRule(`.${BUTTON_CLASS} .${G_BACK_CLASS}`, ['stroke', 'var(--base)']);
+    addRule(`.${BUTTON_CLASS} > svg`, ['stroke', 'var(--base)']);
 
     addRule([
         // Not focused, not hovered
@@ -127,10 +103,10 @@ export default function generate() {
 
     addRule([
         // Not active, focused
-        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus .${G_BACK_CLASS}`,
-        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover .${G_BACK_CLASS}`,
+        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus > svg`,
+        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`,
         // Active, not focused
-        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) .${G_BACK_CLASS}`
+        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) > svg`
     ], ['fill', 'var(--base)']);
 
     // Active action clash avoidance
