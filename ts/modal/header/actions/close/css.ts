@@ -6,5 +6,5 @@ export default function generate() {
     addRule([
         `#${ACTION_ID}:focus > svg`,
         `#${ACTION_ID}:hover > svg`
-    ], ['background-color', 'var(--modalButtonExitBackground)']);
+    ], ['background-color', 'var(--modalButtonExit)']);
 }

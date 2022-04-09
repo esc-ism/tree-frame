@@ -22,15 +22,28 @@ const FILTER_ID = 'node-filter';
 
 export function addColourRule(actionId: string, strokeVar: string) {
     addRule([
+        // Hovered
+        `.${actionId}:focus > svg`,
+        `.${actionId}:hover > svg`,
+    ], [
+        ['fill', `var(--base)`],
+    ]);
+
+    addRule([
+        // Hovered
+        `.${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
+        `.${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
+    ], [
+        ['stroke', `var(--contrast)`],
+    ]);
+
+    addRule([
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}):not(.${FOCUS_CLASS}) > ` +
         `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
         `.${actionId} > svg`,
-        // Not focused, hovered
-        `.${actionId}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
-        `.${actionId}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
-        // Active, not hovered
-        `.${actionId}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) > svg`
+        // Active
+        `.${actionId}.${BUTTON_ACTIVE_CLASS} > svg`
     ], ['stroke', `var(${strokeVar})`]);
 }
 

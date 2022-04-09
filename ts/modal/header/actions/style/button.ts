@@ -4,51 +4,56 @@ import {getNewButton} from '../button';
 
 import {SVG_NAMESPACE} from '../../../consts';
 
-const CONTROL_POINT_OFFSET = 45;
+const handle = document.createElementNS(SVG_NAMESPACE, 'rect');
 
-const palette = document.createElementNS(SVG_NAMESPACE, 'path');
+handle.setAttribute('stroke-linecap', 'round');
+handle.setAttribute('stroke-width', '6');
+handle.setAttribute('x', '-5');
+handle.setAttribute('y', '15');
+handle.setAttribute('width', '15');
+handle.setAttribute('height', '40');
+handle.setAttribute('rx', '5');
 
-palette.setAttribute('stroke-linecap', 'round');
-palette.setAttribute('stroke-width', '5');
-palette.setAttribute('d',
-    'M 50,0' +
-    `Q ${CONTROL_POINT_OFFSET},-${CONTROL_POINT_OFFSET} 0,-50` +
-    `Q -${CONTROL_POINT_OFFSET},-${CONTROL_POINT_OFFSET} -50,0` +
-    `Q -${CONTROL_POINT_OFFSET},${CONTROL_POINT_OFFSET} 0,50` +
-    'Q 16,50 20,45' +
-    'Q 25,35 15,25' +
-    'Q -5,10 15,2' +
-    'Q 26,0 35,10' +
-    'Q 48,20 50,0'
+const frame = document.createElementNS(SVG_NAMESPACE, 'path');
+
+frame.setAttribute('fill', 'none');
+frame.setAttribute('stroke-linecap', 'round');
+frame.setAttribute('stroke-width', '3');
+frame.setAttribute('d',
+    'M 2.5,15' +
+    'L 2.5,0' +
+    'L -36,-15' +
+    'L -36,-35' +
+    'L -30,-35'
 );
 
-const paint0 = document.createElementNS(SVG_NAMESPACE, 'circle');
+const curveLeft = document.createElementNS(SVG_NAMESPACE, 'path');
 
-paint0.setAttribute('stroke-width', '0');
-paint0.setAttribute('r', '9');
-paint0.setAttribute('cx', '20');
-paint0.setAttribute('cy', '-20');
+curveLeft.setAttribute('fill', 'none');
+curveLeft.setAttribute('stroke-linecap', 'round');
+curveLeft.setAttribute('stroke-width', '6');
+curveLeft.setAttribute('d',
+    'M -25 -30' +
+    'Q -30,-35 -25,-40'
+);
 
-const paint1 = paint0.cloneNode(true) as SVGLineElement;
+const curveRight = curveLeft.cloneNode(true) as SVGLineElement;
 
-paint1.setAttribute('cx', '-5');
-paint1.setAttribute('cy', '-28');
+curveRight.setAttribute('transform', 'scale(-1,1) translate(-10,0)');
 
-const paint2 = paint0.cloneNode(true) as SVGLineElement;
+const roller = document.createElementNS(SVG_NAMESPACE, 'rect');
 
-paint2.setAttribute('cx', '-25');
-paint2.setAttribute('cy', '-5');
-
-const paint3 = paint0.cloneNode(true) as SVGLineElement;
-
-paint3.setAttribute('cx', '-15');
-paint3.setAttribute('cy', '22');
+roller.setAttribute('stroke-linecap', 'round');
+roller.setAttribute('stroke-width', '6');
+roller.setAttribute('x', '-22.5');
+roller.setAttribute('y', '-47.5');
+roller.setAttribute('width', '55');
+roller.setAttribute('height', '25');
+roller.setAttribute('rx', '1');
 
 const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
-g.setAttribute('transform', 'scale(0.95,0.95)');
-
-g.append(palette, paint0, paint1, paint2, paint3);
+g.append(handle, frame, curveLeft, curveRight, roller);
 
 const BUTTON = getNewButton(g, ACTION_ID);
 

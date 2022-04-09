@@ -50,45 +50,26 @@ const style: Middle = Object.freeze({
             'value': 'Menu Buttons',
             'children': [
                 {
-                    'label': 'Exit Button Background',
+                    'label': 'Exit Color',
                     'value': '#aa0000',
                     'input': 'color',
                     'predicate': true
                 },
                 {
-                    'label': 'Label Button Fill',
+                    'label': 'Label Color',
                     'value': '#9a7b4a',
                     'input': 'color',
                     'predicate': true
                 },
                 {
-                    'label': 'Label Button Background',
-                    'value': '#3FF5FF89',
+                    'label': 'Leaf Color',
+                    'value': '#0f5000',
                     'input': 'color',
                     'predicate': true
                 },
                 {
-                    'label': 'Leaf Button Fill',
-                    'value': '#177700',
-                    'input': 'color',
-                    'predicate': true
-                },
-                {
-                    'label': 'Leaf Button Background',
-                    'value': '#3FF5FF89',
-                    'input': 'color',
-                    'predicate': true
-                },
-                // Not currently used
-                {
-                    'label': 'Style Button Fill',
-                    'value': '#492609',
-                    'input': 'color',
-                    'predicate': true
-                },
-                {
-                    'label': 'Style Button Background',
-                    'value': '#3FF5FF89',
+                    'label': 'Style Color',
+                    'value': '#cd00ff',
                     'input': 'color',
                     'predicate': true
                 }

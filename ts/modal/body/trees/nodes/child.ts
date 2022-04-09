@@ -13,7 +13,7 @@ const actions: Array<{
     shouldMount: (node: Child) => boolean,
     mount: (node: Child) => void,
     unmount?: (node: Child) => void
-}> = [edit, disconnect, focus, move];
+}> = [disconnect, focus, move, edit];
 
 export default class Child {
     readonly label: string;

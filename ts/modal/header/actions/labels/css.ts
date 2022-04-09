@@ -24,5 +24,5 @@ export default function generate() {
         ['display', 'none']
     );
 
-    addColourRule(ACTION_ID, '--modalButtonLabelBackground', '--modalButtonLabelFill');
+    addColourRule(ACTION_ID, '--modalButtonLabel');
 }

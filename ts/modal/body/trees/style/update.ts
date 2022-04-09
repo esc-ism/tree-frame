@@ -20,24 +20,13 @@ function getGeneralRuleStrings({
 }
 
 function getModalButtonRuleString({
-    'children': [
-        exitBackground,
-        labelFill, labelBackground,
-        leafFill, leafBackground,
-        styleFill, styleBackground
-    ]
+    'children': [exit, label, leaf, style]
 }: dataTypes.Middle) {
     return getRuleString(':root', [
-        ['--modalButtonExitBackground', exitBackground.value as string],
-
-        ['--modalButtonLabelFill', labelFill.value as string],
-        ['--modalButtonLabelBackground', labelBackground.value as string],
-
-        ['--modalButtonLeafFill', leafFill.value as string],
-        ['--modalButtonLeafBackground', leafBackground.value as string],
-
-        ['--modalButtonStyleFill', styleFill.value as string],
-        ['--modalButtonStyleBackground', styleBackground.value as string]
+        ['--modalButtonExit', exit.value as string],
+        ['--modalButtonLabel', label.value as string],
+        ['--modalButtonLeaf', leaf.value as string],
+        ['--modalButtonStyle', style.value as string],
     ]);
 }
 
