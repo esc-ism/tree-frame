@@ -9,6 +9,7 @@ import generateEdit from './edit/css';
 import generateMove from './move/css';
 import generateRemove from './delete/css';
 import generateFocus from './focus/css';
+import generateTooltip from './edit/tooltip/css';
 
 import {ELEMENT_CLASSES} from '../consts';
 
@@ -39,6 +40,7 @@ export default function generate() {
     generateMove();
     generateRemove();
     generateFocus();
+    generateTooltip();
 
     (() => {
         const svg = document.createElementNS(SVG_NAMESPACE, 'svg');

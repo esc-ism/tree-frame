@@ -1,5 +1,6 @@
 import TEMPLATE from './button';
 import {ACTION_ID, INVALID_CLASS} from './consts';
+import generateTooltip, {show as showTooltip, hide as hideTooltip} from './tooltip';
 
 import {addActionButton} from '../button';
 import {setActive} from '../active';
@@ -31,9 +32,12 @@ function getPredicateResponse(predicate: (...args: any) => unknown, ...args: Arr
     const response = predicate(...args);
 
     if (typeof response === 'string') {
-        // TODO Definitely set up tooltips for String predicate returns
+        showTooltip(activeNode, response);
+
         return false;
     }
+
+    hideTooltip(activeNode);
 
     return Boolean(response);
 }
@@ -119,6 +123,8 @@ export function doAction(node) {
     reset();
 
     if (previousNode !== node) {
+        activeNode = node;
+
         if (typeof node.value === 'boolean') {
             node.value = !node.value;
 
@@ -127,8 +133,9 @@ export function doAction(node) {
             } else {
                 node.value = !node.value;
             }
+
+            activeNode = undefined;
         } else {
-            activeNode = node;
 
             setActive(activeNode, ACTION_ID);
 
@@ -149,6 +156,8 @@ window.addEventListener('keydown', (event) => {
 
 export function mount(node: Child): void {
     addActionButton(TEMPLATE, doAction, node);
+
+    generateTooltip(node);
 
     node.element.valueElement.addEventListener('input', update);
 

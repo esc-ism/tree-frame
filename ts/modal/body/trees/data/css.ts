@@ -4,25 +4,27 @@ import {FOCUS_CLASS, HIGHLIGHT_BRANCH_CLASS, HIGHLIGHT_SOURCE_CLASS} from '../no
 
 import {addRule} from '../../../css';
 
+export const BACKGROUND_IMAGE_SIZE = '5px';
+
 export default function generate() {
     addRule(`.${ROOT_CLASS}`, ['flex-grow', '1']);
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
         ['user-select', 'none'],
 
-        ['padding-left', '5px'],
-        ['background-size', '5px'],
+        ['padding-left', BACKGROUND_IMAGE_SIZE],
+        ['background-size', BACKGROUND_IMAGE_SIZE],
         ['background-repeat', 'no-repeat'],
         ['background-image', 'linear-gradient(var(--contrast), var(--contrast))'],
-        ['transition', 'background-size 300ms, color 500ms'],
+        ['transition', 'background-size 300ms, color 500ms']
     ]);
 
     addRule([
         `.${FOCUS_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
-        `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
     ], [
         ['color', 'var(--base)'],
-        ['background-size', '100%'],
+        ['background-size', '100%']
     ]);
 
     addRule(

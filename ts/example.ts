@@ -1,5 +1,25 @@
 import {Config, Middle} from './validation/types';
 
+const yearPredicate = (value: number): true | string => {
+    if (value < 0) {
+        return 'Value must be positive';
+    }
+
+    if (Math.floor(value) !== value) {
+        return 'Value must be an integer';
+    }
+
+    return true;
+};
+
+const emptyStringPredicate = (value: string): true | string => {
+    if (value === '') {
+        return 'Please provide a value';
+    }
+
+    return true;
+};
+
 function getPerson(
     name = '*name*',
     occupation = '*occupation*',
@@ -15,23 +35,23 @@ function getPerson(
             {
                 'label': 'Occupation',
                 'value': occupation,
-                'predicate': (value) => value !== '',
+                'predicate': emptyStringPredicate,
             },
             {
                 'label': 'Birth Year (AD)',
                 'value': birthYear,
-                'predicate': (value: number): boolean => value >= 0 && Math.floor(value) === value,
+                'predicate': yearPredicate
             },
             {
                 'label': 'Hair Colour',
                 'value': hairColour,
-                'predicate': (value) => value !== '',
+                'predicate': emptyStringPredicate,
                 'input': 'color',
             },
             {
                 'label': 'Eye Colour',
                 'value': eyeColour,
-                'predicate': (value) => value !== '',
+                'predicate': emptyStringPredicate,
                 'input': 'color',
             },
             {
@@ -52,7 +72,7 @@ function getMedia(
     return {
         'label': 'Title',
         'value': title,
-        'predicate': (value) => value !== '',
+        'predicate': emptyStringPredicate,
         'children': [
             {
                 'label': 'input',
@@ -62,12 +82,12 @@ function getMedia(
             {
                 'label': 'Release Year (AD)',
                 'value': releaseYear,
-                'predicate': (value: number): boolean => value >= 0 && Math.floor(value) === value,
+                'predicate': yearPredicate
             },
             {
                 'label': 'Description',
                 'value': description,
-                'predicate': (value) => value !== '',
+                'predicate': emptyStringPredicate,
             },
         ]
     };
@@ -80,7 +100,7 @@ const config: Config = {
             {
                 'label': 'Location',
                 'value': 'The UK',
-                'predicate': (value) => value !== '',
+                'predicate': emptyStringPredicate,
                 'children': [
                     {
                         'label': 'Category',
@@ -107,7 +127,7 @@ const config: Config = {
         'seed': {
             'label': 'Location',
             'value': '*location*',
-            'predicate': (value) => value !== '',
+            'predicate': emptyStringPredicate,
             'children': [
                 {
                     'label': 'Category',
