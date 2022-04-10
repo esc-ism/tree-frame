@@ -51,10 +51,12 @@ export default class Child {
         return 'parent' in this.parent ? this.parent.getRoot() : this.parent;
     }
 
-    detach() {
-        const siblings = this.parent.children;
+    getIndex() {
+        return this.parent.children.indexOf(this);
+    }
 
-        siblings.splice(siblings.indexOf(this), 1);
+    detach() {
+        this.parent.children.splice(this.getIndex(), 1);
 
         this.element.remove();
 
@@ -67,6 +69,12 @@ export default class Child {
         parent.element.addChild(this.element, index);
 
         this.parent = parent;
+    }
+
+    move(parent: Middle | Root, index: number) {
+        this.detach();
+
+        this.attach(parent, index);
     }
 
     unmount() {

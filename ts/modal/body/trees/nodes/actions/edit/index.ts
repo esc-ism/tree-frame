@@ -5,6 +5,8 @@ import {addActionButton} from '../button';
 import {setActive} from '../active';
 
 import type Child from '../../child';
+import type Middle from '../../middle';
+import type Root from '../../root';
 
 let activeNode: Child;
 
@@ -25,8 +27,8 @@ export function reset() {
     activeNode = undefined;
 }
 
-function getPredicateResponse(predicate, argument) {
-    const response = predicate(argument);
+function getPredicateResponse(predicate: (...args: any) => unknown, ...args: Array<any>) {
+    const response = predicate(...args);
 
     if (typeof response === 'string') {
         // TODO Definitely set up tooltips for String predicate returns
@@ -51,7 +53,7 @@ function getValue(node) {
     }
 }
 
-function passesAncestorPredicates(parent) {
+function passesAncestorPredicates(parent: Root | Middle) {
     if (parent.ancestorPredicate && !getPredicateResponse(parent.ancestorPredicate, parent.children)) {
         return false;
     }
@@ -63,10 +65,12 @@ function passesAncestorPredicates(parent) {
     return true;
 }
 
-function passesParentPredicate(node: Child) {
-    const {parentPredicate, children} = node.parent;
-
+function passesParentPredicate({parentPredicate, children}: Root | Middle) {
     return !parentPredicate || getPredicateResponse(parentPredicate, children);
+}
+
+export function passesSubPredicates(parent) {
+    return passesParentPredicate(parent) && passesAncestorPredicates(parent);
 }
 
 function passesOwnPredicate(node: Child) {
@@ -86,7 +90,7 @@ function passesOwnPredicate(node: Child) {
 }
 
 function isValid(node: Child = activeNode): boolean {
-    return passesOwnPredicate(node) && passesParentPredicate(node) && passesAncestorPredicates(node.parent);
+    return passesOwnPredicate(node) && passesSubPredicates(node);
 }
 
 export function update() {

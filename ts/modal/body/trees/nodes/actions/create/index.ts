@@ -1,6 +1,7 @@
 import TEMPLATE from './button';
 
 import {addActionButton} from '../button';
+import {passesSubPredicates} from '../edit';
 
 import Middle from '../../middle';
 import Child from '../../child';
@@ -8,11 +9,10 @@ import type Root from '../../root';
 
 function doAction(parent: Root | Middle) {
     const {seed} = parent;
+    const child = 'children' in seed ? new Middle(seed, parent, 0) : new Child(seed, parent, 0);
 
-    if ('children' in seed) {
-        new Middle(seed, parent, 0);
-    } else {
-        new Child(seed, parent, 0);
+    if (!passesSubPredicates(parent)) {
+        child.disconnect();
     }
 }
 

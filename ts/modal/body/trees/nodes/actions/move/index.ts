@@ -11,6 +11,7 @@ import type Child from '../../child';
 
 import {validateSeedMatch} from '../../../../../../validation';
 import {FOCUS_CLASS} from '../focus/consts';
+import {passesSubPredicates} from '../edit';
 
 const targets = [];
 
@@ -46,6 +47,25 @@ function isSeedMatch(seed) {
     }
 }
 
+function doMove(node, isParent) {
+    const revert = activeNode.move.bind(activeNode, activeNode.parent, activeNode.getIndex());
+    const parent = isParent ? node : node.parent;
+
+    activeNode.move(parent, isParent ? 0 : node.getIndex() + 1);
+
+    if (!passesSubPredicates(parent)) {
+        revert();
+    }
+
+    // Grab the reference before activeNode is wiped
+    const previousNode = activeNode;
+
+    reset();
+
+    // Show where the node's been moved to
+    previousNode.element.scrollIntoView();
+}
+
 function addTargetButton(node, isParent = true) {
     const button = (isParent ? BUTTON_PARENT : BUTTON_SIBLING).cloneNode(true) as HTMLButtonElement;
 
@@ -62,21 +82,7 @@ function addTargetButton(node, isParent = true) {
     button.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        activeNode.detach();
-
-        if (isParent) {
-            activeNode.attach(node, 0);
-        } else {
-            activeNode.attach(node.parent, node.parent.children.indexOf(node) + 1);
-        }
-
-        // Grab the reference before activeNode is wiped
-        const previousNode = activeNode;
-
-        reset();
-
-        // Show where the node's been moved to
-        previousNode.element.scrollIntoView();
+        doMove(node, isParent);
     });
 
     node.element.addButton(button);
