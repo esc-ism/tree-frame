@@ -32,9 +32,9 @@ export function onInit({data}) {
 
 // TODO use window.opener?
 if (window.parent === window) {
-    import('./example').then(({default: config}) => {
+    import('./modal/body/trees/data/examples').then(async ({default: getConfig}) => {
         // Show an example tree when not used as an iFrame
-        start(config);
+        getConfig().then(({default: config}) => start(config));
     });
 } else {
     window.addEventListener('message', onInit);
