@@ -32,7 +32,7 @@ function favePredicate(name: string, children: Array<Child>) {
 }
 
 const config: Config = {
-    'title': 'An Example Title for an Example Tree',
+    'title': 'My Favourite Things',
     'data': {
         'children': [
             {

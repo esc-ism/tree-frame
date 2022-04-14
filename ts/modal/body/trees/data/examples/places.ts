@@ -94,7 +94,7 @@ function getMedia(
 }
 
 const config: Config = {
-    'title': 'An Example Title for an Example Tree',
+    'title': 'Fame Atlas',
     'data': {
         'children': [
             {
