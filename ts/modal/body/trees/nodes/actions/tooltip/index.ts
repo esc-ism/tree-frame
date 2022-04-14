@@ -20,7 +20,22 @@ function isAboveCenter(element) {
     return scrollPosition > yPosition;
 }
 
-function generateContainer(parent?: HTMLElement) {
+function generate(parent: HTMLElement) {
+    const container = document.createElement('div');
+    const element = document.createElement('div');
+
+    parent.classList.add(TOOLTIP_PARENT_CLASS);
+    container.classList.add(TOOLTIP_CONTAINER_CLASS);
+    element.classList.add(TOOLTIP_CLASS);
+
+    container.appendChild(element);
+
+    parent.insertBefore(container, parent.firstChild);
+
+    return [container, element];
+}
+
+function getAnimated(parent?: HTMLElement) {
     if (!parent) {
         const element = activeParent.querySelector(`.${TOOLTIP_CLASS}`);
 
@@ -37,12 +52,7 @@ function generateContainer(parent?: HTMLElement) {
         return [oldElement.parentElement, oldElement];
     }
 
-    const container = document.createElement('div');
-    const element = document.createElement('div');
-
-    parent.classList.add(TOOLTIP_PARENT_CLASS);
-    container.classList.add(TOOLTIP_CONTAINER_CLASS);
-    element.classList.add(TOOLTIP_CLASS);
+    const [element, container] = generate(parent);
 
     element.animate(...TOOLTIP_ANIMATION).onfinish = () => {
         container.remove();
@@ -50,15 +60,11 @@ function generateContainer(parent?: HTMLElement) {
         parent.classList.remove(TOOLTIP_PARENT_CLASS);
     };
 
-    container.appendChild(element);
-
-    parent.insertBefore(container, parent.firstChild);
-
     return [container, element];
 }
 
 export function show(message: string, parent?: HTMLElement) {
-    const [container, element] = generateContainer(parent);
+    const [container, element] = getAnimated(parent);
 
     element.innerText = message;
 
@@ -90,7 +96,7 @@ export function reset() {
 export function setParent(parent: HTMLElement) {
     parent.classList.add(TOOLTIP_PARENT_CLASS);
 
-    generateContainer(parent);
+    generate(parent);
 
     activeParent = parent;
 }
