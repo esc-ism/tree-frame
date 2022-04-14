@@ -52,7 +52,7 @@ function getAnimated(parent?: HTMLElement) {
         return [oldElement.parentElement, oldElement];
     }
 
-    const [element, container] = generate(parent);
+    const [container, element] = generate(parent);
 
     element.animate(...TOOLTIP_ANIMATION).onfinish = () => {
         container.remove();
