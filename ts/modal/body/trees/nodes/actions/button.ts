@@ -12,7 +12,7 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
     button.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        doAction(node);
+        doAction(node, button);
     });
 
     button.addEventListener('keydown', (event) => {

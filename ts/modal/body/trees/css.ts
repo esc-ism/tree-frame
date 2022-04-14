@@ -10,6 +10,5 @@ export default function generate() {
     addRule(`#${TREE_CONTAINER_ID}`, [
         ['height', '60vh'],
         ['overflow-y', 'auto'],
-        ['display', 'flex']
     ]);
 }

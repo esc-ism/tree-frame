@@ -9,7 +9,7 @@ function addRule(...args: [any, any]) {
 }
 
 function addGeneralRuleStrings({
-    'children': [fontSize, base, contrast, valid, invalid]
+    'children': [fontSize, base, contrast, valid, invalid, tooltip]
 }: dataTypes.Middle) {
         addRule('body', [['font-size', `${fontSize.value}px`]]);
 
@@ -17,7 +17,8 @@ function addGeneralRuleStrings({
             ['--base', base.value as string],
             ['--contrast', contrast.value as string],
             ['--valid', valid.value as string],
-            ['--invalid', invalid.value as string]
+            ['--invalid', invalid.value as string],
+            ['--tooltip', tooltip.value as string],
         ]);
 }
 

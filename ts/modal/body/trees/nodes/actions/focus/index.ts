@@ -1,5 +1,6 @@
 import {
-    FOCUS_CLASS, HIGHLIGHT_SOURCE_CLASS as SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS as BRANCH_CLASS
+    HIGHLIGHT_SOURCE_CLASS as SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS as BRANCH_CLASS,
+    FOCUS_CLASS, EAVE_ID
 } from './consts';
 
 import {actionIsActive} from '../active';
@@ -142,4 +143,14 @@ export function mount(node: Root | Child): void {
 
 export function shouldMount(): boolean {
     return true;
+}
+
+
+// Prevents zipping to the end of the tree when mousing over the bottom pixel
+export function generateEave() {
+    const element = document.createElement('div');
+
+    element.id = EAVE_ID;
+
+    return element
 }

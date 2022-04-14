@@ -42,7 +42,13 @@ const style: Middle = Object.freeze({
                     'value': '#FFB4BE',
                     'input': 'color',
                     'predicate': true
-                }
+                },
+                {
+                    'label': 'Tooltip Color',
+                    'value': '#570000',
+                    'input': 'color',
+                    'predicate': true
+                },
             ]
         },
         {

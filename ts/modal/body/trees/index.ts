@@ -5,12 +5,16 @@ import generateCSS from './css';
 
 import Root from './nodes/root';
 
-import {Root as RootJSON, Child as ChildJSON} from '../../../validation/types';
+import {generateEave} from './nodes/actions/focus';
+
 import {BUTTON_ACTIVE_CLASS} from '../../consts';
+
+import {Root as RootJSON, Child as ChildJSON} from '../../../validation/types';
+
 
 export const ROOTS = {};
 
-const TREE_CONTAINER = document.createElement('div');
+export const TREE_CONTAINER = document.createElement('div');
 
 export function setActive(button, actionId, doActivate = true) {
     if (doActivate) {
@@ -43,8 +47,11 @@ export default function generate(data: RootJSON, userStyles: Array<ChildJSON>, d
 
     TREE_CONTAINER.id = TREE_CONTAINER_ID;
 
-    TREE_CONTAINER.append(generateDataTree(data));
-    TREE_CONTAINER.append(generateStyleTree(userStyles, devStyle));
+    TREE_CONTAINER.append(
+        generateDataTree(data),
+        generateStyleTree(userStyles, devStyle),
+        generateEave()
+    );
 
     return TREE_CONTAINER;
 }

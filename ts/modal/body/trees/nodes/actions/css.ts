@@ -9,7 +9,7 @@ import generateEdit from './edit/css';
 import generateMove from './move/css';
 import generateRemove from './delete/css';
 import generateFocus from './focus/css';
-import generateTooltip from './edit/tooltip/css';
+import generateTooltip from './tooltip/css';
 
 import {ELEMENT_CLASSES} from '../consts';
 

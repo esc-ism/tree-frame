@@ -1,18 +1,25 @@
 import TEMPLATE from './button';
 
 import {addActionButton} from '../button';
-import {passesSubPredicates} from '../edit';
+import {getSubPredicateResponse} from '../edit';
+import * as tooltip from '../tooltip';
 
 import Middle from '../../middle';
 import Child from '../../child';
 import type Root from '../../root';
 
-function doAction(parent: Root | Middle) {
+function doAction(parent: Root | Middle, button) {
     const {seed} = parent;
     const child = 'children' in seed ? new Middle(seed, parent, 0) : new Child(seed, parent, 0);
 
-    if (!passesSubPredicates(parent)) {
+    const response = getSubPredicateResponse(parent);
+
+    if (response !== true) {
         child.disconnect();
+
+        if (typeof response === 'string') {
+            tooltip.show(response, button)
+        }
     }
 }
 

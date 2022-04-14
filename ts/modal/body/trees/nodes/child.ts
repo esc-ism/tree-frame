@@ -71,10 +71,10 @@ export default class Child {
         this.parent = parent;
     }
 
-    move(parent: Middle | Root, index: number) {
+    move(parent: Middle | Root, to: number | Child) {
         this.detach();
 
-        this.attach(parent, index);
+        this.attach(parent, typeof to === 'number' ? to : to.getIndex() + 1);
     }
 
     unmount() {

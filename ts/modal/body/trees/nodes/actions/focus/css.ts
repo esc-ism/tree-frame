@@ -1,4 +1,4 @@
-import {HIGHLIGHT_SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS} from './consts';
+import {HIGHLIGHT_SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS, EAVE_ID} from './consts';
 
 import {ACTION_ID as MOVE_ID} from '../move/consts';
 
@@ -26,4 +26,11 @@ export default function generate() {
         `.${HIGHLIGHT_SOURCE_CLASS}.${HIGHLIGHT_BRANCH_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER}`,
         ['opacity', '0.3']
     );
+
+    addRule(`#${EAVE_ID}`, [
+        ['position', 'sticky'],
+        ['bottom', '0'],
+        ['width', '100%'],
+        ['height', '1px']
+    ]);
 }

@@ -29,6 +29,5 @@ export default function generate() {
         ['flex-grow', '1'],
         ['margin', '0.2em 0.5em'],
         ['padding', '0 0.5em'],
-        ['text-overflow', 'ellipsis'],
     ]);
 }

@@ -15,9 +15,9 @@ export function getRoot() {
 }
 
 export function getUserStyleTree() {
-    const root = getRoot();
+    const {children} = getRoot();
 
-    return root[root.length - 1];
+    return children[children.length - 1];
 }
 
 export function getActiveStyle(styleGroups: Array<MiddleJSON>): MiddleJSON {

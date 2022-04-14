@@ -1,6 +1,6 @@
 import TEMPLATE from './button';
 import {ACTION_ID, INVALID_CLASS} from './consts';
-import generateTooltip, {show as showTooltip, hide as hideTooltip} from './tooltip';
+import * as tooltip from '../tooltip';
 
 import {addActionButton} from '../button';
 import {setActive} from '../active';
@@ -25,21 +25,25 @@ export function reset() {
     activeNode.element.valueElement.setAttribute('tabIndex', '-1');
     activeNode.element.valueElement.disabled = true;
 
+    tooltip.reset();
+
     activeNode = undefined;
 }
 
-function getPredicateResponse(predicate: (...args: any) => unknown, ...args: Array<any>) {
-    const response = predicate(...args);
+function getPredicateResponse(...predicates: Array<(...args: any) => unknown>): boolean | string {
+    for (const predicate of predicates) {
+        const response = predicate();
 
-    if (typeof response === 'string') {
-        showTooltip(activeNode, response);
+        if (typeof response === 'string') {
+            return response;
+        }
 
-        return false;
+        if (!Boolean(response)) {
+            return false;
+        }
     }
 
-    hideTooltip(activeNode);
-
-    return Boolean(response);
+    return true;
 }
 
 function getValue(node) {
@@ -57,27 +61,34 @@ function getValue(node) {
     }
 }
 
-function passesAncestorPredicates(parent: Root | Middle) {
-    if (parent.ancestorPredicate && !getPredicateResponse(parent.ancestorPredicate, parent.children)) {
-        return false;
+function getAncestorPredicateResponse(parent: Root | Middle): boolean | string {
+    if (parent.ancestorPredicate) {
+        return getPredicateResponse(() => parent.ancestorPredicate(parent.children));
     }
 
     if ('parent' in parent) {
-        return passesAncestorPredicates(parent.parent);
+        return getAncestorPredicateResponse(parent.parent);
     }
 
     return true;
 }
 
-function passesParentPredicate({parentPredicate, children}: Root | Middle) {
-    return !parentPredicate || getPredicateResponse(parentPredicate, children);
+function getParentPredicateResponse({parentPredicate, children}: Root | Middle): boolean | string {
+    if (parentPredicate) {
+        return getPredicateResponse(() => parentPredicate(children));
+    }
+
+    return true;
 }
 
-export function passesSubPredicates(parent) {
-    return passesParentPredicate(parent) && passesAncestorPredicates(parent);
+export function getSubPredicateResponse(parent): boolean | string {
+    return getPredicateResponse(
+        () => getParentPredicateResponse(parent),
+        () => getAncestorPredicateResponse(parent)
+    );
 }
 
-function passesOwnPredicate(node: Child) {
+function getOwnPredicateResponse(node: Child): boolean | string {
     const {predicate} = node;
     const value = getValue(node);
 
@@ -86,15 +97,18 @@ function passesOwnPredicate(node: Child) {
             return predicate;
 
         case 'function':
-            return getPredicateResponse(predicate, value);
+            return getPredicateResponse(() => predicate(value));
 
         default:
             return predicate.indexOf(value as string) !== -1;
     }
 }
 
-function isValid(node: Child = activeNode): boolean {
-    return passesOwnPredicate(node) && passesSubPredicates(node);
+function getAllPredicateResponse(node: Child = activeNode): boolean | string {
+    return getPredicateResponse(
+        () => getOwnPredicateResponse(node),
+        () => getSubPredicateResponse(node.parent)
+    );
 }
 
 export function update() {
@@ -102,13 +116,23 @@ export function update() {
 
     activeNode.value = getValue(activeNode);
 
-    if (isValid()) {
+    const response = getAllPredicateResponse();
+
+    if (response === true) {
         activeNode.element.removeClass(INVALID_CLASS);
     } else {
         activeNode.value = previousValue;
 
         activeNode.element.addClass(INVALID_CLASS);
+
+        if (typeof response === 'string') {
+            tooltip.show(response);
+
+            return;
+        }
     }
+
+    tooltip.hide();
 }
 
 export function unmount(node) {
@@ -117,25 +141,30 @@ export function unmount(node) {
     }
 }
 
-export function doAction(node) {
+export function doAction(node, button) {
     const previousNode = activeNode;
 
     reset();
 
     if (previousNode !== node) {
-        activeNode = node;
-
         if (typeof node.value === 'boolean') {
             node.value = !node.value;
 
-            if (isValid(node)) {
+            const response = getAllPredicateResponse(node);
+
+            if (response === true) {
                 node.element.render(node.value);
             } else {
                 node.value = !node.value;
-            }
 
-            activeNode = undefined;
+                if (typeof response === 'string') {
+                    tooltip.show(response, button);
+                }
+            }
         } else {
+            activeNode = node;
+
+            tooltip.setParent(node.element.interactionContainer);
 
             setActive(activeNode, ACTION_ID);
 
@@ -156,8 +185,6 @@ window.addEventListener('keydown', (event) => {
 
 export function mount(node: Child): void {
     addActionButton(TEMPLATE, doAction, node);
-
-    generateTooltip(node);
 
     node.element.valueElement.addEventListener('input', update);
 

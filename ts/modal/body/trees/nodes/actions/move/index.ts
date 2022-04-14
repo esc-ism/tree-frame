@@ -4,14 +4,16 @@ import {ACTION_ID} from './consts';
 import {addActionButton} from '../button';
 import {setActive} from '../active';
 import {focusBranch} from '../focus';
+import {getSubPredicateResponse} from '../edit';
+import * as tooltip from '../tooltip';
+
+import {FOCUS_CLASS} from '../focus/consts';
 
 import type Root from '../../root';
 import type Middle from '../../middle';
 import type Child from '../../child';
 
 import {validateSeedMatch} from '../../../../../../validation';
-import {FOCUS_CLASS} from '../focus/consts';
-import {passesSubPredicates} from '../edit';
 
 const targets = [];
 
@@ -47,14 +49,29 @@ function isSeedMatch(seed) {
     }
 }
 
-function doMove(node, isParent) {
-    const revert = activeNode.move.bind(activeNode, activeNode.parent, activeNode.getIndex());
-    const parent = isParent ? node : node.parent;
+function doMove(node, button, isParent) {
+    const oldParent = activeNode.parent;
+    const index = activeNode.getIndex();
+    const newParent = isParent ? node : node.parent;
 
-    activeNode.move(parent, isParent ? 0 : node.getIndex() + 1);
+    activeNode.move(newParent, isParent ? 0 : node);
 
-    if (!passesSubPredicates(parent)) {
-        revert();
+    for (const parent of [oldParent, newParent]) {
+        const response = getSubPredicateResponse(parent);
+
+        if (response !== true) {
+            activeNode.move(oldParent, index);
+
+            if (typeof response === 'string') {
+                tooltip.show(response, button)
+            }
+
+            return;
+        }
+
+        if (oldParent === newParent) {
+            break;
+        }
     }
 
     // Grab the reference before activeNode is wiped
@@ -82,7 +99,7 @@ function addTargetButton(node, isParent = true) {
     button.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        doMove(node, isParent);
+        doMove(node, button, isParent);
     });
 
     node.element.addButton(button);
