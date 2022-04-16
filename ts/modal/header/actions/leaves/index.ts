@@ -19,5 +19,7 @@ export default function generate() {
 
     bindAction(doAction, BUTTON, HOTKEY, 'Toggle Leaves');
 
+    BUTTON.click();
+
     return BUTTON;
 }

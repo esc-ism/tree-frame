@@ -486,13 +486,13 @@ function validateStyle(breadcrumbs: string[], style: Child, enforcePredicateMatc
     validateSeedMatch(breadcrumbs, ['Model Style'], style, modelStyle, enforcePredicateMatch);
 }
 
-function validateUserStyles(userStyles: Array<Child>) {
+function validateUserStyles(breadcrumbs: string[], userStyles: Array<Child>) {
     for (const [i, style] of userStyles.entries()) {
-        validateStyle(['userStyles', i.toString()], style);
+        validateStyle([...breadcrumbs, i.toString()], style);
     }
 }
 
-function validateDevStyle(devStyle: Child) {
+function validateDevStyle(breadcrumbs: string[], devStyle: Child) {
     function validateNoPredicates(breadcrumbs: string[], node: Child): void {
         if ('predicate' in node) {
             throw new errors.JoinedError(
@@ -521,11 +521,11 @@ export default function validateConfig(config: unknown): void {
 
     validateTitle(config.title);
 
-    validateRoot(['data'], config.data);
+    validateRoot(['dataTree'], config.dataTree);
 
-    validateUserStyles(config.userStyles);
+    validateUserStyles(['userStyleForest'], config.userStyleForest);
 
-    if ('devStyle' in config) {
-        validateDevStyle(config.devStyle);
+    if ('devStyleTree' in config) {
+        validateDevStyle(['devStyleTree'], config.devStyleTree);
     }
 }

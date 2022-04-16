@@ -5,7 +5,7 @@ import {addRule} from '../../css';
 
 export function addColourRule(actionId: string, colour: string) {
     addRule(`#${actionId}.${BUTTON_ACTIVE_CLASS} > svg`, [
-        ['stroke', `var(--base)`],
+        ['stroke', `var(--baseHead)`],
         ['fill', `var(${colour})`]
     ]);
 }
@@ -15,14 +15,14 @@ export default function generate() {
         `.${BUTTON_CLASS}:focus > svg`, `.${BUTTON_CLASS}:hover > svg`,
         `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`
     ], [
-        ['background-color', `var(--contrast)`]
+        ['background-color', `var(--contrastHead)`]
     ]);
 
     addRule([
         `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
         `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
     ], [
-        ['stroke', `var(--base)`]
+        ['stroke', `var(--baseHead)`]
     ]);
 
     addRule(`#${BUTTON_CONTAINER_ID}`, [
@@ -30,12 +30,12 @@ export default function generate() {
         ['flex-direction', 'row']
     ]);
 
-    addRule(`.${BUTTON_CLASS}`, ['border-left', '2px solid var(--contrast)']);
+    addRule(`.${BUTTON_CLASS}`, ['border-left', '2px solid var(--contrastHead)']);
 
     addRule(`.${BUTTON_CLASS} > svg`, [
         ['width', '1.81em'],
-        ['stroke', 'var(--contrast)'],
-        ['fill', `var(--contrast)`],
+        ['stroke', 'var(--contrastHead)'],
+        ['fill', `var(--contrastHead)`],
 
         // Fixes pixel gap between button border & svg
         ['margin-left', '-0.5px']

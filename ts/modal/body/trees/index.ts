@@ -5,8 +5,6 @@ import generateCSS from './css';
 
 import Root from './nodes/root';
 
-import {generateEave} from './nodes/actions/focus';
-
 import {BUTTON_ACTIVE_CLASS} from '../../consts';
 
 import {Root as RootJSON, Child as ChildJSON} from '../../../validation/types';
@@ -49,8 +47,7 @@ export default function generate(data: RootJSON, userStyles: Array<ChildJSON>, d
 
     TREE_CONTAINER.append(
         generateDataTree(data),
-        generateStyleTree(userStyles, devStyle),
-        generateEave()
+        generateStyleTree(userStyles, devStyle)
     );
 
     return TREE_CONTAINER;

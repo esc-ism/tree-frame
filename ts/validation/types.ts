@@ -61,11 +61,11 @@ export type Node = Root | Child;
 
 // Config type
 
-export const CONFIG_KEYS = ['title', 'data', 'userStyles', 'devStyle']
+export const CONFIG_KEYS = ['title', 'dataTree', 'userStyleForest', 'devStyleTree']
 
 export interface Config {
     title: string;
-    data: Root;
-    userStyles: Array<Middle>;
-    devStyle?: Middle;
+    dataTree: Root;
+    userStyleForest: Array<Middle>;
+    devStyleTree?: Middle;
 }

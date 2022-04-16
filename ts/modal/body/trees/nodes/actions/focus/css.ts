@@ -28,7 +28,7 @@ export default function generate() {
     );
 
     addRule(`#${EAVE_ID}`, [
-        ['position', 'sticky'],
+        ['position', 'absolute'],
         ['bottom', '0'],
         ['width', '100%'],
         ['height', '1px']

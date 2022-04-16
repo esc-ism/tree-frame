@@ -13,7 +13,7 @@ export default function generate() {
         ['padding-left', '5px'],
         ['background-size', '5px'],
         ['background-repeat', 'no-repeat'],
-        ['background-image', 'linear-gradient(var(--contrast), var(--contrast))'],
+        ['background-image', 'linear-gradient(var(--contrastBody), var(--contrastBody))'],
         ['transition', 'background-size 300ms, color 500ms']
     ]);
 
@@ -21,7 +21,7 @@ export default function generate() {
         `.${FOCUS_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
         `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
     ], [
-        ['color', 'var(--base)'],
+        ['color', 'var(--baseBody)'],
         ['background-size', '100%']
     ]);
 

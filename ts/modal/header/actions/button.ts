@@ -15,7 +15,7 @@ export function bindAction(doAction: Function,button: HTMLButtonElement, hotkey:
     button.addEventListener('click', bound);
 
     window.addEventListener('keydown', (event) => {
-        if (event.altKey && event.key === hotkey) {
+        if (event.altKey && event.key.toLowerCase() === hotkey) {
             bound(event);
         }
     });

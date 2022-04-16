@@ -95,7 +95,7 @@ function getMedia(
 
 const config: Config = {
     'title': 'Fame Atlas',
-    'data': {
+    'dataTree': {
         'children': [
             {
                 'label': 'Location',
@@ -146,7 +146,7 @@ const config: Config = {
             ],
         }
     },
-    'userStyles': []
+    'userStyleForest': []
 }
 
 export default config;

@@ -7,7 +7,10 @@ export default function generate() {
         ['display', 'flex'],
         ['align-items', 'center'],
 
-        ['border-bottom', '#fff solid 2px'],
+        ['background', 'var(--baseHead)'],
+        ['color', 'var(--contrastHead)'],
+
+        ['border-bottom', 'var(--modalOutline) solid 2px'],
 
         ['font-size', '1.6em'],
         ['text-align', 'center'],

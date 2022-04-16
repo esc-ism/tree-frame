@@ -8,32 +8,49 @@ function addRule(...args: [any, any]) {
     _addRule(...args, STYLESHEET);
 }
 
-function addGeneralRuleStrings({
-    'children': [fontSize, base, contrast, valid, invalid, tooltip]
+function addModalRuleStrings({
+    'children': [fontSize, modalOutline]
 }: dataTypes.Middle) {
-        addRule('body', [['font-size', `${fontSize.value}px`]]);
+    addRule('body', [['font-size', `${fontSize.value}px`]]);
 
-        addRule(':root', [
-            ['--base', base.value as string],
-            ['--contrast', contrast.value as string],
-            ['--valid', valid.value as string],
-            ['--invalid', invalid.value as string],
-            ['--tooltip', tooltip.value as string],
-        ]);
+    addRule(':root', [
+        ['--modalOutline', modalOutline.value as string]
+    ]);
 }
 
-function addModalButtonRuleString({
+function addHeadGeneralRuleStrings({
+    'children': [base, contrast]
+}: dataTypes.Middle) {
+    addRule(':root', [
+        ['--baseHead', base.value as string],
+        ['--contrastHead', contrast.value as string]
+    ]);
+}
+
+function addHeadButtonRuleStrings({
     'children': [exit, label, leaf, style]
 }: dataTypes.Middle) {
     addRule(':root', [
         ['--modalButtonExit', exit.value as string],
         ['--modalButtonLabel', label.value as string],
         ['--modalButtonLeaf', leaf.value as string],
-        ['--modalButtonStyle', style.value as string],
+        ['--modalButtonStyle', style.value as string]
     ]);
 }
 
-function addNodeButtonRuleString({
+function addBodyGeneralRuleStrings({
+    'children': [base, contrast, valid, invalid, tooltip]
+}: dataTypes.Middle) {
+    addRule(':root', [
+        ['--baseBody', base.value as string],
+        ['--contrastBody', contrast.value as string],
+        ['--valid', valid.value as string],
+        ['--invalid', invalid.value as string],
+        ['--tooltip', tooltip.value as string]
+    ]);
+}
+
+function addBodyButtonRuleStrings({
     'children': [remove, create, move, edit]
 }: dataTypes.Middle) {
     addRule(':root', [
@@ -45,11 +62,13 @@ function addNodeButtonRuleString({
 }
 
 function addRuleStrings(style: dataTypes.Middle) {
-    const [, general, modalButtons, nodeButtons] = style.children as Array<dataTypes.Middle>;
+    const [, modal, header, body] = style.children as Array<dataTypes.Middle>;
 
-    addGeneralRuleStrings(general);
-        addModalButtonRuleString(modalButtons);
-        addNodeButtonRuleString(nodeButtons);
+    addModalRuleStrings(modal);
+    addHeadGeneralRuleStrings(header.children[0] as dataTypes.Middle);
+    addHeadButtonRuleStrings(header.children[1] as dataTypes.Middle);
+    addBodyGeneralRuleStrings(body.children[0] as dataTypes.Middle);
+    addBodyButtonRuleStrings(body.children[1] as dataTypes.Middle);
 }
 
 export default function updateStylesheet(activeStyle: dataTypes.Middle) {

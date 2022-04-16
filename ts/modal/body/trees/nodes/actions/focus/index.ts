@@ -120,14 +120,16 @@ export function mount(node: Root | Child): void {
     });
 
     focusTarget.addEventListener('keydown', (event) => {
-        event.stopPropagation();
-
         switch (event.key) {
             case 'Enter':
+                event.stopPropagation();
+
                 doAction(node);
 
                 break;
             case 'Escape':
+                event.stopPropagation();
+
                 if (activeNode) {
                     reset();
 

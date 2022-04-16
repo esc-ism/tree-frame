@@ -20,8 +20,8 @@ function doAction() {
 
     window.parent.postMessage({
         'event': EVENTS.STOP,
-        'data': getDataTree().getJSON(),
-        'userStyles': getUserStyleTree().getJSON().children
+        'dataTree': getDataTree().getJSON(),
+        'userStyleForest': getUserStyleTree().getJSON().children
     }, '*');
 }
 

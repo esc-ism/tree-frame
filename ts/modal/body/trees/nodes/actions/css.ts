@@ -70,7 +70,7 @@ export default function generate() {
         `.${BUTTON_CLASS}:focus > svg`,
         `.${BUTTON_CLASS}:hover > svg`
     ], [
-        ['fill', `var(--base)`]
+        ['fill', `var(--baseBody)`]
     ]);
 
     addRule([
@@ -78,7 +78,7 @@ export default function generate() {
         `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
         `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
     ], [
-        ['stroke', `var(--contrast)`]
+        ['stroke', `var(--contrastBody)`]
     ]);
 
     addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, ['display', 'inline-flex']);
@@ -91,7 +91,7 @@ export default function generate() {
         ['stroke', 'transparent']
     );
 
-    addRule(`.${BUTTON_CLASS} > svg`, ['stroke', 'var(--base)']);
+    addRule(`.${BUTTON_CLASS} > svg`, ['stroke', 'var(--baseBody)']);
 
     addRule([
         // Not focused, not hovered
@@ -109,7 +109,7 @@ export default function generate() {
         `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`,
         // Active, not focused
         `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) > svg`
-    ], ['fill', 'var(--base)']);
+    ], ['fill', 'var(--baseBody)']);
 
     // Active action clash avoidance
 

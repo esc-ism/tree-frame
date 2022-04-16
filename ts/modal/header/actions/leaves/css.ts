@@ -10,7 +10,7 @@ import {ROOT_CLASS, MIDDLE_CLASS, ELEMENT_CLASSES} from '../../../body/trees/nod
 
 export default function generate() {
     addRule(
-        `#${TREE_CONTAINER_ID}.${ACTION_ID} .${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):not(.${MIDDLE_CLASS})`,
+        `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):not(.${MIDDLE_CLASS})`,
         ['display', 'none']
     );
 

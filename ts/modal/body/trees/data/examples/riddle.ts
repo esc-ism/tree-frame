@@ -19,7 +19,7 @@ let mistakes = 0;
 
 const config: Config = {
     'title': 'Move Everything to the Goal!',
-    'data': {
+    'dataTree': {
         'children': [
             {
                 'label': 'Location',
@@ -120,7 +120,7 @@ const config: Config = {
             return true;
         }
     },
-    'userStyles': []
+    'userStyleForest': []
 };
 
 export default config;

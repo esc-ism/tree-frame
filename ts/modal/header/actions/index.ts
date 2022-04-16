@@ -13,9 +13,9 @@ export default function generate() {
 
     element.id = BUTTON_CONTAINER_ID;
 
-    element.append(generateStyler());
     element.append(generateLeafToggle());
     element.append(generateLabelToggle());
+    element.append(generateStyler());
     element.append(generateCloser());
 
     return element;

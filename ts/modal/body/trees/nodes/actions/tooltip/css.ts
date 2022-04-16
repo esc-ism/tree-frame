@@ -38,8 +38,8 @@ export default function generate() {
 
     addRule(`.${TOOLTIP_CLASS}`, [
         ['margin', '0 auto'],
-        ['background-color', 'var(--base)'],
-        ['color', 'var(--contrast)'],
+        ['background-color', 'var(--baseBody)'],
+        ['color', 'var(--contrastBody)'],
         ['font-size', '0.9em'],
         ['padding', '3px 8px'],
         ['border-radius', '1em'],

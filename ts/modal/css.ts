@@ -42,10 +42,8 @@ export default function generate() {
         ['padding', '0'],
         ['width', '80%'],
 
-        ['background', 'var(--base)'],
-        ['color', 'var(--contrast)'],
         ['font-family', 'Tahoma, Geneva, sans-serif'],
-        ['outline', 'white solid 2px'],
+        ['outline', 'var(--modalOutline) solid 2px'],
         ['box-shadow', '1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065']
     ]);
 }
