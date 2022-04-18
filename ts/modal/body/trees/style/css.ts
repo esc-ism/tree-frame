@@ -5,7 +5,6 @@ import {TREE_CONTAINER_ID} from '../consts';
 import {addRule} from '../../../css';
 
 import {ROOT_ID as ROOT_ID_DATA} from '../data/consts';
-import {ROOT_CLASS} from '../nodes/consts';
 
 import {ACTION_ID} from '../../../header/actions/style/consts';
 
@@ -19,10 +18,4 @@ export default function generate() {
         `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) > #${ROOT_ID_STYLE}`,
         ['display', 'none']
     );
-
-    addRule(`.${ROOT_CLASS}`, [
-        ['display', 'flex'],
-        ['flex-direction', 'column'],
-        ['flex-wrap', 'wrap'],
-    ])
 }

@@ -3,7 +3,9 @@ import {
     TOOLTIP_TOP_CLASS, TOOLTIP_BOTTOM_CLASS
 } from './consts';
 
-import {ELEMENT_CLASSES} from '../../consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../../consts';
+
+import {addDepthChangeListener} from '../../../style/update/depth';
 
 import {addRule} from '../../../../../css';
 
@@ -29,23 +31,29 @@ export default function generate() {
     ]);
 
     addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`, [
-        ['bottom', '102%'],
+        ['bottom', '102%']
     ]);
 
     addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_BOTTOM_CLASS}`, [
-        ['top', '102%'],
+        ['top', '102%']
     ]);
 
     addRule(`.${TOOLTIP_CLASS}`, [
         ['margin', '0 auto'],
-        ['background-color', 'var(--baseBody)'],
-        ['color', 'var(--contrastBody)'],
         ['font-size', '0.9em'],
         ['padding', '3px 8px'],
         ['border-radius', '1em'],
         ['width', '10em'],
         ['outline', 'solid 3px var(--tooltip)']
     ]);
+
+    addDepthChangeListener((depth, addRule) => {
+        addRule(
+            `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${TOOLTIP_CLASS}`, [
+            ['background-color', `var(--baseBody${depth})`],
+            ['color', `var(--contrastBody${depth})`]
+        ]);
+    });
 
     // Don't show when there's no hint to give
     addRule(
@@ -54,12 +62,13 @@ export default function generate() {
     );
 
     addRule(`.${TOOLTIP_CLASS}::after`, [
+        // TODO ['content', '\'\''] is nani ?????
         ['content', '\'\''],
         ['position', 'absolute'],
         ['left', '50%'],
         ['margin-left', '-0.5em'],
         ['border-width', '0.5em'],
-        ['border-style', 'solid'],
+        ['border-style', 'solid']
     ]);
 
     addRule(`.${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`, [

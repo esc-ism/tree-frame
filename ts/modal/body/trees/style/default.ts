@@ -6,7 +6,7 @@ const style: Middle = Object.freeze({
     'predicate': true,
     'children': [
         {
-            'label': 'Is Active',
+            'label': 'Style Is Active?',
             'value': false,
             'predicate': true
         },
@@ -36,16 +36,15 @@ const style: Middle = Object.freeze({
                     'value': 'General',
                     'children': [
                         {
-                            'label': 'Header Base Color',
+                            'label': 'Base Color',
                             'value': '#000000',
                             'input': 'color',
                             'predicate': true
                         },
                         {
-                            'label': 'Header Contrast Color',
-                            'value': '#bbbbbb',
-                            'input': 'color',
-                            'predicate': true
+                            'label': 'Contrast System',
+                            'value': 'Black / White',
+                            'predicate': ['Black / White', 'Invert']
                         }
                     ]
                 },
@@ -90,35 +89,34 @@ const style: Middle = Object.freeze({
                     'value': 'General',
                     'children': [
                         {
-                            'label': 'Body Base Color',
-                            'value': '#000000',
-                            'input': 'color',
-                            'predicate': true
+                            'label': 'Sub-Part',
+                            'value': 'Depth Base Colors',
+                            'seed': {
+                                'label': 'Depth Color',
+                                'value': '#000000',
+                                'input': 'color',
+                                'predicate': true
+                            },
+                            'children': [
+                                {
+                                    'label': 'Depth Color',
+                                    'value': '#000000',
+                                    'input': 'color',
+                                    'predicate': true
+                                }
+                            ],
+                            'parentPredicate': (children) => children.length > 0 ? true : 'At least one color must be provided.'
                         },
                         {
-                            'label': 'Body Contrast Color',
-                            'value': '#bbbbbb',
-                            'input': 'color',
-                            'predicate': true
+                            'label': 'Contrast System',
+                            'value': 'Black / White',
+                            'predicate': ['Black / White', 'Invert']
                         },
                         {
-                            'label': 'Valid Color',
-                            'value': '#D9FFC0',
-                            'input': 'color',
+                            'label': 'Show Leaf Separator?',
+                            'value': false,
                             'predicate': true
                         },
-                        {
-                            'label': 'Invalid Color',
-                            'value': '#FFB4BE',
-                            'input': 'color',
-                            'predicate': true
-                        },
-                        {
-                            'label': 'Tooltip Color',
-                            'value': '#570000',
-                            'input': 'color',
-                            'predicate': true
-                        }
                     ]
                 },
                 {
@@ -146,6 +144,30 @@ const style: Middle = Object.freeze({
                         {
                             'label': 'Edit Color',
                             'value': '#7cfc00',
+                            'input': 'color',
+                            'predicate': true
+                        }
+                    ]
+                },
+                {
+                    'label': 'Body Part',
+                    'value': 'Miscellaneous',
+                    'children': [
+                        {
+                            'label': 'Valid Color',
+                            'value': '#D9FFC0',
+                            'input': 'color',
+                            'predicate': true
+                        },
+                        {
+                            'label': 'Invalid Color',
+                            'value': '#FFB4BE',
+                            'input': 'color',
+                            'predicate': true
+                        },
+                        {
+                            'label': 'Tooltip Color',
+                            'value': '#570000',
                             'input': 'color',
                             'predicate': true
                         }

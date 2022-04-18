@@ -25,6 +25,7 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
     node.element.addButton(button);
 }
 
+// TODO add button title attributes
 // Creates a template
 export const getNewButton = (function () {
     const buttonTemplate = document.createElement('button');

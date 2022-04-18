@@ -8,6 +8,7 @@ import * as focus from './actions/focus';
 import * as move from './actions/move';
 
 import type * as dataTypes from '../../../../validation/types';
+import {getDepthClassCount} from '../style/update/depth';
 
 const actions: Array<{
     shouldMount: (node: Child) => boolean,
@@ -21,6 +22,8 @@ export default class Child {
     readonly predicate: dataTypes.Predicate;
     readonly input?: dataTypes.Input;
 
+    readonly depth: number;
+
     parent: Root | Middle;
 
     readonly element: NodeElement = new NodeElement();
@@ -30,6 +33,8 @@ export default class Child {
         this.value = value;
         this.predicate = predicate;
 
+        this.depth = parent.depth + 1;
+
         if ('input' in optional) {
             this.input = optional.input;
 
@@ -37,6 +42,8 @@ export default class Child {
         } else {
             this.element.initialise(value, this.label, predicate);
         }
+
+        this.element.addDepthClass(this.depth % getDepthClassCount());
 
         this.attach(parent, index);
 
@@ -53,6 +60,10 @@ export default class Child {
 
     getIndex() {
         return this.parent.children.indexOf(this);
+    }
+
+    updateDepthClass(classCount)  {
+        this.element.addDepthClass(this.depth % classCount);
     }
 
     detach() {

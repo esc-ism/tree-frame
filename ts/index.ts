@@ -30,7 +30,6 @@ export function onInit({data}) {
     }
 }
 
-// TODO use window.opener?
 if (window.parent === window) {
     import('./modal/body/trees/data/examples').then(async ({default: getConfig}) => {
         // Show an example tree when not used as an iFrame

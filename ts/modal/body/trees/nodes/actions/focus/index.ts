@@ -10,8 +10,6 @@ import type Child from '../../child';
 
 let activeNode: Root | Child;
 
-// TODO Set tab indexes for all data containers to allow tabbing from top to bottom when no node's focused.
-//  You want pressing enter on a tabbed node to focus it.
 export function setTabIndexes(doAdd = true, node = activeNode) {
     const buttons = node.element.buttonContainer.children;
 

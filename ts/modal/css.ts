@@ -1,10 +1,20 @@
-import {MODAL_BACKGROUND_ID, MODAL_ID, STYLESHEET} from './consts';
+import {MODAL_BACKGROUND_ID, MODAL_ID} from './consts';
 
 type Selector = string;
-type Selectors = Selector | Array<Selector>;
+export type Selectors = Selector | Array<Selector>;
 
 type Style = [string, string];
-type Styles = Style | Array<Style>;
+export type Styles = Style | Array<Style>;
+
+export function generateStylesheet(): CSSStyleSheet  {
+    const wrapper = document.createElement('style');
+
+    document.head.appendChild(wrapper);
+
+    return wrapper.sheet;
+}
+
+const STYLESHEET = generateStylesheet();
 
 function isStyle(candidate): candidate is Style {
     return candidate.length > 0 && typeof candidate[0] === 'string';

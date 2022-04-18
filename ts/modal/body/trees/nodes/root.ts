@@ -17,6 +17,8 @@ export default class Root {
 
     readonly children: Array<Middle | Child> = [];
 
+    readonly depth = 0;
+
     readonly element = new NodeElement();
 
     constructor({children, ...other}: dataTypes.Root) {
@@ -51,11 +53,18 @@ export default class Root {
         }
 
         this.element.addClass(ROOT_CLASS);
+        this.element.addDepthClass(0);
 
         for (const {shouldMount, mount} of actions) {
             if (shouldMount(this)) {
                 mount(this);
             }
+        }
+    }
+
+    updateDepthClass(classCount)  {
+        for (const child of this.children) {
+            child.updateDepthClass(classCount);
         }
     }
 

@@ -22,13 +22,20 @@ export default function generate() {
 
     addRule(`.${ELEMENT_CLASSES.INPUT_CONTAINER}`, [
         ['flex-grow', '1'],
-        ['display', 'flex']
+        ['display', 'flex'],
+        ['align-items', 'center']
     ]);
 
     addRule([`.${ELEMENT_CLASSES.INPUT_VALUE}`, `.${ELEMENT_CLASSES.INPUT_LABEL}`], [
-        ['margin', '0.2em 0.5em'],
         ['padding', '0 0.5em']
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}`, ['flex-grow', '1']);
+    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}`, [
+        ['flex-grow', '1'],
+        ['margin', '0.2em 0.5em']
+    ]);
+
+    addRule(`.${ELEMENT_CLASSES.INPUT_LABEL}`, [
+        ['padding', '0.2em 0.5em']
+    ]);
 }

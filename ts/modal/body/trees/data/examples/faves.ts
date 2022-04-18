@@ -12,7 +12,11 @@ const numberSeed: Child = {
     'value': 29,
     'predicate': (value: number) => {
         if (Math.floor(value) !== value) {
-            return 'A non-integer favourite number? I don\'t buy it.';
+            return 'A non-integer favourite number? That\'s cheating.';
+        }
+
+        if (Math.floor(value) !== value) {
+            return 'A negative favourite number? I don\'t buy it.';
         }
 
         return true;

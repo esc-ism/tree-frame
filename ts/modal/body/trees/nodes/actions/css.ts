@@ -11,9 +11,11 @@ import generateRemove from './delete/css';
 import generateFocus from './focus/css';
 import generateTooltip from './tooltip/css';
 
-import {ELEMENT_CLASSES} from '../consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../consts';
 
 import {TREE_CONTAINER_ID} from '../../consts';
+
+import {addDepthChangeListener} from '../../style/update/depth';
 
 import {BUTTON_ACTIVE_CLASS, SVG_NAMESPACE} from '../../../../consts';
 
@@ -28,7 +30,7 @@ export function addColourRule(actionId: string, strokeVar: string) {
         `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
         `.${BUTTON_CLASS}.${actionId} > svg`,
         // Active
-        `.${actionId}.${BUTTON_ACTIVE_CLASS} > svg`,
+        `.${actionId}.${BUTTON_ACTIVE_CLASS} > svg`
     ], ['stroke', `var(${strokeVar})`]);
 }
 
@@ -65,22 +67,6 @@ export default function generate() {
 
     // Svg appearance
 
-    addRule([
-        // Hovered
-        `.${BUTTON_CLASS}:focus > svg`,
-        `.${BUTTON_CLASS}:hover > svg`
-    ], [
-        ['fill', `var(--baseBody)`]
-    ]);
-
-    addRule([
-        // Hovered
-        `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
-        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
-    ], [
-        ['stroke', `var(--contrastBody)`]
-    ]);
-
     addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, ['display', 'inline-flex']);
 
     addRule(`.${BUTTON_CLASS} > svg`, ['width', '1.5em']);
@@ -91,25 +77,37 @@ export default function generate() {
         ['stroke', 'transparent']
     );
 
-    addRule(`.${BUTTON_CLASS} > svg`, ['stroke', 'var(--baseBody)']);
-
-    addRule([
+    addRule(
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}):not(.${FOCUS_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} svg`
-    ], [
-        ['opacity', '0.5'],
-        ['filter', `url(#${FILTER_ID})`],
-        ['fill', 'none']
-    ]);
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} svg`, [
+            ['opacity', '0.5'],
+            ['filter', `url(#${FILTER_ID})`],
+            ['fill', 'none']
+        ]
+    );
 
-    addRule([
-        // Not active, focused
-        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus > svg`,
-        `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`,
-        // Active, not focused
-        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}:not(:focus):not(:hover) > svg`
-    ], ['fill', 'var(--baseBody)']);
+    addDepthChangeListener((depth, addRule) => {
+        const depthSelector = `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`;
+
+        addRule([
+            `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}) svg`,
+        ], ['stroke', `var(--baseBody${depth})`]);
+
+        addRule([
+            // Not active, focused
+            `${depthSelector} .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus > svg`,
+            `${depthSelector} .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`
+        ], [
+            ['stroke', `var(--contrastBody${depth})`],
+            ['fill', `var(--baseBody${depth})`]
+        ]);
+
+        addRule(
+            `${depthSelector} .${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`,
+            ['fill', `var(--baseBody${depth})`]
+        );
+    });
 
     // Active action clash avoidance
 

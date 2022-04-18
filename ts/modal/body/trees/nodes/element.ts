@@ -1,4 +1,4 @@
-import {ELEMENT_CLASSES, OPTIONS_ID_PREFIX} from './consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, OPTIONS_ID_PREFIX} from './consts';
 
 import type {Input, Predicate} from '../../../../validation/types';
 
@@ -16,6 +16,8 @@ export default class Element {
     labelElement: HTMLInputElement = document.createElement('input');
 
     childContainer: HTMLElement = document.createElement('div');
+
+    depthClass: string;
 
     constructor() {
         this.elementContainer.classList.add(ELEMENT_CLASSES.ELEMENT_CONTAINER);
@@ -89,6 +91,18 @@ export default class Element {
         for (const name of names) {
             this.elementContainer.classList.remove(name);
         }
+    }
+
+    addDepthClass(depth: number) {
+        if (this.depthClass) {
+            this.removeClass(this.depthClass)
+        }
+
+        const depthClass = `${DEPTH_CLASS_PREFIX}${depth}`;
+
+        this.addClass(depthClass);
+
+        this.depthClass = depthClass;
     }
 
     addChild(child: Element, index) {

@@ -12,4 +12,6 @@ export const ELEMENT_CLASSES = {
     'INPUT_LABEL': 'node-label',
 }
 
+export const DEPTH_CLASS_PREFIX = 'node-depth-';
+
 export const OPTIONS_ID_PREFIX = 'predicate-options-';

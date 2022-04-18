@@ -1,5 +1,4 @@
 import {ROOT_ID} from './consts';
-import generateCSS from './css';
 
 import {generateTree, ROOTS} from '../index';
 
@@ -10,7 +9,5 @@ export function getRoot() {
 }
 
 export default function generate(data: RootJSON) {
-    generateCSS();
-
     return generateTree(data, ROOT_ID);
 }

@@ -72,6 +72,14 @@ export default class Middle extends Child {
         this.detach();
     }
 
+    updateDepthClass(classCount)  {
+        super.updateDepthClass(classCount);
+
+        for (const child of this.children) {
+            child.updateDepthClass(classCount);
+        }
+    }
+
     getJSON() {
         const {seed} = this;
 

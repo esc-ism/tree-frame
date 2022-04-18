@@ -1,12 +1,63 @@
-import {HIGHLIGHT_SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS, EAVE_ID} from './consts';
+import {HIGHLIGHT_SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS, EAVE_ID, FOCUS_CLASS} from './consts';
 
 import {ACTION_ID as MOVE_ID} from '../move/consts';
 
-import {ELEMENT_CLASSES, ROOT_CLASS} from '../../consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, ROOT_CLASS} from '../../consts';
+
+import {addDepthChangeListener} from '../../../style/update/depth';
 
 import {addRule} from '../../../../../css';
 
 export default function generate() {
+
+    // Background
+
+    addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
+        ['padding-left', '5px'],
+        ['background-size', '5px'],
+        ['background-repeat', 'no-repeat'],
+        ['transition', 'background-size 300ms, color 500ms']
+    ]);
+
+    addRule([
+        `.${FOCUS_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
+    ], ['background-size', '100%']);
+
+    addRule(`.${ELEMENT_CLASSES.INPUT_LABEL}`, [
+        ['text-align', 'right'],
+        ['position', 'absolute'],
+        ['right', '0'],
+        ['padding-left', '20%'],
+    ]);
+
+    addDepthChangeListener((depth, addRule) => {
+        addRule(`.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
+            ['background-image', `linear-gradient(var(--contrastBody${depth}), var(--contrastBody${depth}))`]
+        ]);
+
+        addRule([
+            `.${DEPTH_CLASS_PREFIX}${depth}.${FOCUS_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+            `.${DEPTH_CLASS_PREFIX}${depth}.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
+        ], [
+            ['color', `var(--baseBody${depth})`]
+        ]);
+
+        addRule(
+            `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`,
+            ['background-image', `linear-gradient(to left, var(--baseBody${depth}) 70%, transparent)`]
+        );
+
+        addRule([
+            `.${DEPTH_CLASS_PREFIX}${depth}.${FOCUS_CLASS} >` +
+            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`,
+            `.${DEPTH_CLASS_PREFIX}${depth}.${HIGHLIGHT_SOURCE_CLASS} >` +
+            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`
+        ], ['background-image', `linear-gradient(to left, var(--contrastBody${depth}) 70%, transparent)`]);
+    });
+
+    // Focus exclusion
+
     addRule(
         `.${ROOT_CLASS}.${HIGHLIGHT_BRANCH_CLASS} ` +
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_BRANCH_CLASS})` +
@@ -26,6 +77,8 @@ export default function generate() {
         `.${HIGHLIGHT_SOURCE_CLASS}.${HIGHLIGHT_BRANCH_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER}`,
         ['opacity', '0.3']
     );
+
+    // Bug fixer
 
     addRule(`#${EAVE_ID}`, [
         ['position', 'absolute'],
