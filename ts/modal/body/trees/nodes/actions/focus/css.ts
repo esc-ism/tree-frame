@@ -24,12 +24,7 @@ export default function generate() {
         `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
     ], ['background-size', '100%']);
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_LABEL}`, [
-        ['text-align', 'right'],
-        ['position', 'absolute'],
-        ['right', '0'],
-        ['padding-left', '20%'],
-    ]);
+    addRule(`.${ELEMENT_CLASSES.INPUT_LABEL}`, ['padding-left', '15%']);
 
     addDepthChangeListener((depth, addRule) => {
         addRule(`.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
@@ -43,9 +38,11 @@ export default function generate() {
             ['color', `var(--baseBody${depth})`]
         ]);
 
+        // Label background
+
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`,
-            ['background-image', `linear-gradient(to left, var(--baseBody${depth}) 70%, transparent)`]
+            ['background-image', `linear-gradient(to left, var(--baseBody${depth}) 60%, transparent)`]
         );
 
         addRule([
@@ -53,7 +50,7 @@ export default function generate() {
             `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`,
             `.${DEPTH_CLASS_PREFIX}${depth}.${HIGHLIGHT_SOURCE_CLASS} >` +
             `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`
-        ], ['background-image', `linear-gradient(to left, var(--contrastBody${depth}) 70%, transparent)`]);
+        ], ['background-image', `linear-gradient(to left, var(--contrastBody${depth}) 60%, transparent)`]);
     });
 
     // Focus exclusion
