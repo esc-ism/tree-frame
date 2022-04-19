@@ -3,7 +3,7 @@ import {BUTTON_CLASS} from './consts';
 import {SVG_NAMESPACE} from '../../consts';
 
 // Adds the template to the DOM
-export function bindAction(doAction: Function,button: HTMLButtonElement, hotkey: string, description: string): Function {
+export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey: string): Function {
     const bound = (event) => {
         event.stopPropagation();
 
@@ -20,8 +20,6 @@ export function bindAction(doAction: Function,button: HTMLButtonElement, hotkey:
         }
     });
 
-    button.title = `${description} (Alt+${hotkey.toUpperCase()})`;
-
     return bound;
 }
 
@@ -36,11 +34,12 @@ export const getNewButton = (function () {
 
     svgTemplate.setAttribute('viewBox', `-70 -70 140 140`);
 
-    return function (group: SVGGElement, actionId: string): HTMLButtonElement {
+    return function (group: SVGGElement, actionId: string, description: string, hotkey: string): HTMLButtonElement {
         const button = buttonTemplate.cloneNode(true) as HTMLButtonElement;
         const svg = svgTemplate.cloneNode(true) as SVGSVGElement;
 
         button.id = actionId;
+        button.title = `${description} (Alt+${hotkey.toUpperCase()})`;
 
         svg.append(group);
         button.append(svg);

@@ -1,4 +1,4 @@
-import {ACTION_ID} from './consts';
+import {ACTION_ID, HOTKEY} from './consts';
 
 import {getNewButton} from '../button';
 
@@ -21,6 +21,6 @@ const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(line0, line1);
 
-const BUTTON = getNewButton(g, ACTION_ID);
+const BUTTON = getNewButton(g, ACTION_ID, 'Save & Exit', HOTKEY);
 
 export default BUTTON;

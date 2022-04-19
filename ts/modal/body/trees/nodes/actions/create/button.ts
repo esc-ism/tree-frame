@@ -21,6 +21,6 @@ const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(lineHorizontal, lineVertical);
 
-const BUTTON = getNewButton(g, ACTION_ID);
+const BUTTON = getNewButton(g, ACTION_ID, 'Create');
 
 export default BUTTON;

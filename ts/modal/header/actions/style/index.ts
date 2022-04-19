@@ -28,7 +28,7 @@ function doAction() {
 export default function generate() {
     generateCSS();
 
-    bindAction(doAction, BUTTON, HOTKEY, 'Toggle Style Editor');
+    bindAction(BUTTON, doAction, HOTKEY);
 
     return BUTTON;
 }

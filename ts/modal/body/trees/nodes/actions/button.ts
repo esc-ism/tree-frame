@@ -25,7 +25,6 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
     node.element.addButton(button);
 }
 
-// TODO add button title attributes
 // Creates a template
 export const getNewButton = (function () {
     const buttonTemplate = document.createElement('button');
@@ -51,11 +50,12 @@ export const getNewButton = (function () {
         return svg;
     })();
 
-    return function (group: SVGGElement, actionId: string): HTMLButtonElement {
+    return function (group: SVGGElement, actionId: string, description: string): HTMLButtonElement {
         const button = buttonTemplate.cloneNode(true) as HTMLButtonElement;
         const svg = svgTemplate.cloneNode(true) as SVGSVGElement;
 
         button.classList.add(actionId);
+        button.title = description;
 
         svg.append(group);
         button.append(svg);

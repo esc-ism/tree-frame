@@ -1,4 +1,4 @@
-import {ACTION_ID} from './consts';
+import {ACTION_ID, HOTKEY} from './consts';
 
 import {getNewButton} from '../button';
 
@@ -41,6 +41,6 @@ g.setAttribute('transform', 'rotate(-60 0 0)');
 
 g.append(outline, circle, loop);
 
-const BUTTON = getNewButton(g, ACTION_ID);
+const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Labels', HOTKEY);
 
 export default BUTTON;

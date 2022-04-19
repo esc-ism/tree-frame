@@ -32,13 +32,13 @@ gMain.append(arrowTrunk, arrowBottomLeft, arrowBottomRight);
 
 const gSibling = gMain.cloneNode(true) as SVGGElement;
 
-export const BUTTON_SIBLING = getNewButton(gSibling, ACTION_ID);
+export const BUTTON_SIBLING = getNewButton(gSibling, ACTION_ID, 'Put After');
 
 const gParent = gMain.cloneNode(true) as SVGGElement;
 
 gParent.setAttribute('transform', 'rotate(-45 70 70)');
 
-export const BUTTON_PARENT = getNewButton(gParent, ACTION_ID);
+export const BUTTON_PARENT = getNewButton(gParent, ACTION_ID, 'Put Into');
 
 const arrowTopRight = arrowBottomLeft.cloneNode(true) as SVGLineElement;
 
@@ -50,6 +50,6 @@ arrowTopLeft.setAttribute('transform', 'rotate(180 70 70)');
 
 gMain.append(arrowTopRight, arrowTopLeft);
 
-const BUTTON = getNewButton(gMain, ACTION_ID);
+const BUTTON = getNewButton(gMain, ACTION_ID, 'Move');
 
 export default BUTTON;

@@ -55,6 +55,6 @@ g.append(
     lineHorizontal2, lineHorizontal3
 );
 
-const BUTTON = getNewButton(g, ACTION_ID);
+const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Leaves', HOTKEY);
 
 export default BUTTON;

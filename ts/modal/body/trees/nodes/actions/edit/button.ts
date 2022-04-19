@@ -55,6 +55,6 @@ g.setAttribute('transform', 'rotate(212 70 70)');
 
 g.append(point0, point1, pointFill, side0, side1, topCurve, bottomCurve);
 
-const BUTTON = getNewButton(g, ACTION_ID);
+const BUTTON = getNewButton(g, ACTION_ID, 'Edit');
 
 export default BUTTON;

@@ -64,6 +64,6 @@ const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(lineVertical0, lineVertical1, lineVertical2, lineVertical3, curveBottom, curveTop0, curveTop1, lid);
 
-const BUTTON = getNewButton(g, ACTION_ID);
+const BUTTON = getNewButton(g, ACTION_ID, 'Delete');
 
 export default BUTTON;

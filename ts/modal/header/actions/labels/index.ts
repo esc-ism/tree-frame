@@ -17,7 +17,7 @@ function doAction() {
 export default function generate() {
     generateCSS();
 
-    bindAction(doAction, BUTTON, HOTKEY, 'Toggle Labels');
+    bindAction(BUTTON, doAction, HOTKEY);
 
     BUTTON.click();
 
