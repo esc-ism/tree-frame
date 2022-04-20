@@ -3,7 +3,7 @@ import {updateDepth} from './depth';
 import {addRule as _addRule, generateStylesheet} from '../../../../css';
 import type {Selectors, Styles} from '../../../../css';
 
-import * as dataTypes from '../../../../../validation/types';
+import type {DefaultStyle, ContrastMethod} from '../../../../../validation/types';
 
 const STYLESHEET = generateStylesheet();
 
@@ -11,7 +11,7 @@ function addRule(selectors: Selectors, styles: Styles) {
     _addRule(selectors, styles, STYLESHEET);
 }
 
-function getContrast(hex: string, method: string): string {
+function getContrast(hex: string, method: ContrastMethod): string {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
@@ -34,90 +34,30 @@ function getContrast(hex: string, method: string): string {
     }
 }
 
-function addModalRuleStrings({
-    'children': [fontSize, modalOutline]
-}: dataTypes.Middle) {
-    addRule('body', [['font-size', `${fontSize.value}px`]]);
-
-    addRule(':root', [
-        ['--modalOutline', modalOutline.value as string]
-    ]);
-}
-
-function addHeadGeneralRuleStrings({
-    'children': [base, contrastType]
-}: dataTypes.Middle) {
-    addRule(':root', [
-        ['--baseHead', base.value as string],
-        ['--contrastHead', getContrast(base.value as string, contrastType.value as string)]
-    ]);
-}
-
-function addHeadButtonRuleStrings({
-    'children': [exit, label, leaf, style]
-}: dataTypes.Middle) {
-    addRule(':root', [
-        ['--modalButtonExit', exit.value as string],
-        ['--modalButtonLabel', label.value as string],
-        ['--modalButtonLeaf', leaf.value as string],
-        ['--modalButtonStyle', style.value as string]
-    ]);
-}
-
-function addBodyGeneralRuleStrings({
-    'children': [base, contrastType, separator]
-}: dataTypes.Middle) {
-    updateDepth((base as dataTypes.Middle).children.length);
-
-    for (const [depth, colour] of (base as dataTypes.Middle).children.entries()) {
-        const inversion = getContrast(colour.value as string, contrastType.value as string);
-
-        addRule(':root', [
-            [`--baseBody${depth}`, colour.value as string],
-            [`--contrastBody${depth}`, inversion],
-            [`--leafGroupSeparator${depth}`, separator.value ? inversion : 'transparent']
-        ]);
-    }
-}
-
-function addBodyButtonRuleStrings({
-    'children': [remove, create, move, edit]
-}: dataTypes.Middle) {
-    addRule(':root', [
-        ['--nodeButtonRemove', remove.value as string],
-        ['--nodeButtonCreate', create.value as string],
-        ['--nodeButtonMove', move.value as string],
-        ['--nodeButtonEdit', edit.value as string]
-    ]);
-}
-
-function addBodyMiscRuleStrings({
-    'children': [valid, invalid, tooltip]
-}: dataTypes.Middle) {
-    addRule(':root', [
-        ['--valid', valid.value as string],
-        ['--invalid', invalid.value as string],
-        ['--tooltip', tooltip.value as string]
-    ]);
-}
-
-function addRuleStrings(style: dataTypes.Middle) {
-    const [, modal, header, body] = style.children as Array<dataTypes.Middle>;
-
-    addModalRuleStrings(modal);
-
-    addHeadGeneralRuleStrings(header.children[0] as dataTypes.Middle);
-    addHeadButtonRuleStrings(header.children[1] as dataTypes.Middle);
-
-    addBodyGeneralRuleStrings(body.children[0] as dataTypes.Middle);
-    addBodyButtonRuleStrings(body.children[1] as dataTypes.Middle);
-    addBodyMiscRuleStrings(body.children[2] as dataTypes.Middle);
-}
-
-export default function updateStylesheet(activeStyle: dataTypes.Middle) {
+export default function updateStylesheet({
+    fontSize, leafShowBorder, headContrast, nodeBase, nodeContrast, ...colours
+}: DefaultStyle) {
     for (let i = STYLESHEET.cssRules.length - 1; i >= 0; --i) {
         STYLESHEET.deleteRule(i);
     }
 
-    addRuleStrings(activeStyle);
+    updateDepth(nodeBase.length);
+
+    addRule('body', ['font-size', `${fontSize}px`]);
+
+    const colourStyles: Styles = Object.entries(colours).map(
+        ([property, value]: [string, string]): [string, string] => [`--${property}`, value]
+    );
+
+    for (const [depth, baseColour] of nodeBase.entries()) {
+        const contrastColour = getContrast(baseColour, nodeContrast);
+
+        colourStyles.push([`--nodeBase${depth}`, baseColour]);
+        colourStyles.push([`--nodeContrast${depth}`, contrastColour]);
+        colourStyles.push([`--leafBorder${depth}`, leafShowBorder ? contrastColour : 'transparent']);
+    }
+
+    colourStyles.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
+
+    addRule(':root', colourStyles);
 }

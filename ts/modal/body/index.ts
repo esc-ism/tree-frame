@@ -2,13 +2,16 @@ import {MODAL_BODY_ID} from './consts';
 import generateTrees from './trees';
 import generateCSS from './css';
 
-import {Config} from '../../validation/types';
-import {generateEave} from './trees/nodes/actions/focus';
-import updateStylesheet from './trees/style/update';
 import {getActiveStyle} from './trees/style';
 
-export default function generate({dataTree, userStyleForest, devStyleTree}: Config) {
-    updateStylesheet(getActiveStyle(devStyleTree ? [...userStyleForest, devStyleTree] : userStyleForest));
+import updateStylesheet from './trees/style/update';
+
+import {generateEave} from './trees/nodes/actions/focus';
+
+import type {Config} from '../../validation/types';
+
+export default function generate({tree, userStyles, defaultStyle}: Config) {
+    updateStylesheet(getActiveStyle(userStyles, defaultStyle));
 
     generateCSS();
 
@@ -17,7 +20,7 @@ export default function generate({dataTree, userStyleForest, devStyleTree}: Conf
     element.id = MODAL_BODY_ID;
 
     element.append(
-        generateTrees(dataTree, userStyleForest, devStyleTree),
+        generateTrees(tree, userStyles, defaultStyle),
         generateEave()
     );
 

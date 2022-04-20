@@ -10,10 +10,10 @@ import type * as dataTypes from '../../../../validation/types';
 
 const actions = [create, focus];
 
-export default class Root {
+export default class Root implements dataTypes.Root {
     readonly seed?: dataTypes.Child;
-    readonly parentPredicate?: dataTypes.SubPredicate;
-    readonly ancestorPredicate?: dataTypes.SubPredicate;
+    readonly childPredicate?: dataTypes.SubPredicate;
+    readonly descendantPredicate?: dataTypes.SubPredicate;
 
     readonly children: Array<Middle | Child> = [];
 
@@ -26,12 +26,12 @@ export default class Root {
             this.seed = other.seed;
         }
 
-        if ('parentPredicate' in other) {
-            this.parentPredicate = other.parentPredicate;
+        if ('childPredicate' in other) {
+            this.childPredicate = other.childPredicate;
         }
 
-        if ('ancestorPredicate' in other) {
-            this.ancestorPredicate = other.ancestorPredicate;
+        if ('descendantPredicate' in other) {
+            this.descendantPredicate = other.descendantPredicate;
         }
 
         if (children.length === 0) {
@@ -68,7 +68,7 @@ export default class Root {
         }
     }
 
-    getJSON() {
+    getJSON(): dataTypes.Root {
         const {seed} = this;
 
         return {

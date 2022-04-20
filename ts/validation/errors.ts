@@ -89,9 +89,3 @@ export class DeadRootError extends Error {
         super('If the tree\'s root has no children, it must have a seed.');
     }
 }
-
-export class DevStylePredicateError extends Error {
-    constructor() {
-        super('If a devStyle tree is provided, no node in the tree may have a predicate.');
-    }
-}

@@ -14,5 +14,5 @@ export default function generate() {
         ['display', 'none']
     );
 
-    addColourRule(ACTION_ID, '--modalButtonLeaf');
+    addColourRule(ACTION_ID, '--headButtonLeaf');
 }

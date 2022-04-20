@@ -7,8 +7,8 @@ export default function generate() {
         ['display', 'flex'],
         ['align-items', 'center'],
 
-        ['background', 'var(--baseHead)'],
-        ['color', 'var(--contrastHead)'],
+        ['background', 'var(--headBase)'],
+        ['color', 'var(--headContrast)'],
 
         ['border-bottom', 'var(--modalOutline) solid 2px'],
 

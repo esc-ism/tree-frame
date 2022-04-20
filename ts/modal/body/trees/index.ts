@@ -7,7 +7,7 @@ import Root from './nodes/root';
 
 import {BUTTON_ACTIVE_CLASS} from '../../consts';
 
-import {Root as RootJSON, Middle as MiddleJSON} from '../../../validation/types';
+import {Root as RootJSON, DefaultStyle, UserStyle} from '../../../validation/types';
 
 interface RootRecord {
     [id: string]: Root;
@@ -43,13 +43,13 @@ export function generateTree(data: RootJSON, id: string) {
     return root.element.elementContainer;
 }
 
-export default function generate(data: RootJSON, userStyles: Array<MiddleJSON>, devStyle?: MiddleJSON) {
+export default function generate(data: RootJSON, userStyles: Array<UserStyle>, defaultStyle?: DefaultStyle) {
     generateCSS();
 
     TREE_CONTAINER.id = TREE_CONTAINER_ID;
 
     TREE_CONTAINER.append(
-        generateStyleTree(userStyles, devStyle),
+        generateStyleTree(userStyles, defaultStyle),
         generateDataTree(data)
     );
 

@@ -53,12 +53,7 @@ function getPerson(
                 'value': eyeColour,
                 'predicate': emptyStringPredicate,
                 'input': 'color',
-            },
-            {
-                'label': 'Has Children',
-                'value': true,
-                'predicate': true,
-            },
+            }
         ]
     };
 }
@@ -95,7 +90,7 @@ function getMedia(
 
 const config: Config = {
     'title': 'Fame Atlas',
-    'dataTree': {
+    'tree': {
         'children': [
             {
                 'label': 'Location',
@@ -146,7 +141,7 @@ const config: Config = {
             ],
         }
     },
-    'userStyleForest': []
+    'userStyles': []
 }
 
 export default config;

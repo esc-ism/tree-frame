@@ -44,14 +44,14 @@ export default function generate() {
         ['padding', '3px 8px'],
         ['border-radius', '1em'],
         ['width', '10em'],
-        ['outline', 'solid 3px var(--tooltip)']
+        ['outline', 'solid 3px var(--tooltipOutline)']
     ]);
 
     addDepthChangeListener((depth, addRule) => {
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${TOOLTIP_CLASS}`, [
-            ['background-color', `var(--baseBody${depth})`],
-            ['color', `var(--contrastBody${depth})`]
+            ['background-color', `var(--nodeBase${depth})`],
+            ['color', `var(--nodeContrast${depth})`]
         ]);
     });
 
@@ -62,8 +62,7 @@ export default function generate() {
     );
 
     addRule(`.${TOOLTIP_CLASS}::after`, [
-        // TODO ['content', '\'\''] is nani ?????
-        ['content', '\'\''],
+        ['content', '""'],
         ['position', 'absolute'],
         ['left', '50%'],
         ['margin-left', '-0.5em'],
@@ -73,12 +72,12 @@ export default function generate() {
 
     addRule(`.${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`, [
         ['top', '100%'],
-        ['border-color', 'var(--tooltip) transparent transparent transparent']
+        ['border-color', 'var(--tooltipOutline) transparent transparent transparent']
     ]);
 
     addRule(`.${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`, [
         ['bottom', '100%'],
-        ['border-color', 'transparent transparent var(--tooltip) transparent']
+        ['border-color', 'transparent transparent var(--tooltipOutline) transparent']
     ]);
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, ['position', 'relative']);

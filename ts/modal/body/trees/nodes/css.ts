@@ -10,12 +10,12 @@ export default function generate() {
     addDepthChangeListener((depth, addRule) => {
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
-            ['color', `var(--contrastBody${depth})`]
+            ['color', `var(--nodeContrast${depth})`]
         );
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth}`,
-            ['background', `var(--baseBody${depth})`],
+            ['background', `var(--nodeBase${depth})`],
         );
 
         addRule([
@@ -23,7 +23,7 @@ export default function generate() {
             `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
             `.${DEPTH_CLASS_PREFIX}${depth}:not(.${ROOT_CLASS}):not(.${MIDDLE_CLASS}):last-child > ` +
             `.${HIGHLIGHT_SOURCE_CLASS}.${HIGHLIGHT_BRANCH_CLASS} > ${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
-        ], ['border-bottom', `5px ridge var(--leafGroupSeparator${depth})`]);
+        ], ['border-bottom', `5px ridge var(--leafBorder${depth})`]);
     });
 
     addRule(`.${ROOT_CLASS}`, ['flex-grow', '1']);

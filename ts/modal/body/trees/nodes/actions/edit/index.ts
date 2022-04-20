@@ -1,7 +1,7 @@
 import TEMPLATE from './button';
 import {ACTION_ID, INVALID_CLASS} from './consts';
-import * as tooltip from '../tooltip';
 
+import * as tooltip from '../tooltip';
 import {addActionButton} from '../button';
 import {setActive} from '../active';
 
@@ -61,21 +61,21 @@ function getValue(node) {
     }
 }
 
-function getAncestorPredicateResponse(parent: Root | Middle): boolean | string {
-    if (parent.ancestorPredicate) {
-        return getPredicateResponse(() => parent.ancestorPredicate(parent.children));
+function getDescendantPredicateResponse(parent: Root | Middle): boolean | string {
+    if (parent.descendantPredicate) {
+        return getPredicateResponse(() => parent.descendantPredicate(parent.children));
     }
 
     if ('parent' in parent) {
-        return getAncestorPredicateResponse(parent.parent);
+        return getDescendantPredicateResponse(parent.parent);
     }
 
     return true;
 }
 
-function getParentPredicateResponse({parentPredicate, children}: Root | Middle): boolean | string {
-    if (parentPredicate) {
-        return getPredicateResponse(() => parentPredicate(children));
+function getChildPredicateResponse({childPredicate, children}: Root | Middle): boolean | string {
+    if (childPredicate) {
+        return getPredicateResponse(() => childPredicate(children));
     }
 
     return true;
@@ -83,8 +83,8 @@ function getParentPredicateResponse({parentPredicate, children}: Root | Middle):
 
 export function getSubPredicateResponse(parent): boolean | string {
     return getPredicateResponse(
-        () => getParentPredicateResponse(parent),
-        () => getAncestorPredicateResponse(parent)
+        () => getChildPredicateResponse(parent),
+        () => getDescendantPredicateResponse(parent)
     );
 }
 

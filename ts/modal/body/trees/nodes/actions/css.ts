@@ -92,20 +92,20 @@ export default function generate() {
 
         addRule([
             `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}) svg`,
-        ], ['stroke', `var(--baseBody${depth})`]);
+        ], ['stroke', `var(--nodeBase${depth})`]);
 
         addRule([
             // Not active, focused
             `${depthSelector} .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):focus > svg`,
             `${depthSelector} .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):hover > svg`
         ], [
-            ['stroke', `var(--contrastBody${depth})`],
-            ['fill', `var(--baseBody${depth})`]
+            ['stroke', `var(--nodeContrast${depth})`],
+            ['fill', `var(--nodeBase${depth})`]
         ]);
 
         addRule(
             `${depthSelector} .${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`,
-            ['fill', `var(--baseBody${depth})`]
+            ['fill', `var(--nodeBase${depth})`]
         );
     });
 

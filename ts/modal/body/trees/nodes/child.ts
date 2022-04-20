@@ -102,7 +102,7 @@ export default class Child {
         this.detach();
     }
 
-    getJSON() {
+    getJSON(): dataTypes.Child {
         const {label, value, predicate} = this;
 
         return {label, value, predicate};

@@ -15,7 +15,7 @@ const numberSeed: Child = {
             return 'A non-integer favourite number? That\'s cheating.';
         }
 
-        if (Math.floor(value) !== value) {
+        if (value < 0) {
             return 'A negative favourite number? I don\'t buy it.';
         }
 
@@ -29,7 +29,7 @@ function favePredicate(name: string, children: Array<Child>) {
     }
 
     if (children.length > 5) {
-        return `'Six favourite ${name}s!? Let\'s not get carried away.'`;
+        return `Six favourite ${name}s!? Let\'s not get carried away.`;
     }
 
     return true;
@@ -37,19 +37,19 @@ function favePredicate(name: string, children: Array<Child>) {
 
 const config: Config = {
     'title': 'My Favourite Things',
-    'dataTree': {
+    'tree': {
         'children': [
             {
                 'label': 'Category',
                 'value': 'Favourite Colours',
-                'parentPredicate': favePredicate.bind(null, 'colour'),
+                'childPredicate': favePredicate.bind(null, 'colour'),
                 'children': [colourSeed],
                 'seed': colourSeed
             },
             {
                 'label': 'Category',
                 'value': 'Favourite Numbers',
-                'parentPredicate': (children) => {
+                'childPredicate': (children) => {
                     if (children.map(({value}) => value).join('') === '80085') {
                         return 'Ha ha. Very funny.';
                     }
@@ -61,7 +61,22 @@ const config: Config = {
             }
         ]
     },
-    'userStyleForest': []
+    'userStyles': [],
+    'defaultStyle': {
+        'headBase': '#eeff00',
+        'headContrast': 'Black / White',
+        'headButtonExit': '#f10000',
+        'headButtonLabel': '#7a4800',
+        'headButtonLeaf': '#3bac21',
+        'headButtonStyle': '#ff75da',
+        'nodeBase': ['#381700', '#2f3000'],
+        'nodeContrast': 'Invert',
+        'leafShowBorder': true,
+        'nodeButtonRemove': '#ff0000',
+        'nodeButtonCreate': '#15ff00',
+        'nodeButtonMove': '#9000ff',
+        'nodeButtonEdit': '#00bbd1',
+    }
 };
 
 export default config;

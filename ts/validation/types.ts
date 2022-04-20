@@ -11,6 +11,42 @@ export type Predicate = boolean | ((value: Value) => unknown) | Array<Value>;
 
 export type SubPredicate = (children: Array<Child>) => unknown;
 
+export const CONTRAST_METHODS = ['Black / White', 'Invert'] as const;
+export type ContrastMethod = typeof CONTRAST_METHODS[number];
+
+export interface DefaultStyle {
+    fontSize?: number;
+    tooltipOutline?: string;
+
+    modalOutline?: string;
+
+    headBase?: string;
+    headContrast?: ContrastMethod;
+
+    headButtonExit?: string;
+    headButtonLabel?: string;
+    headButtonLeaf?: string;
+    headButtonStyle?: string;
+
+    nodeBase?: Array<string>;
+    nodeContrast?: ContrastMethod;
+
+    nodeButtonRemove?: string;
+    nodeButtonCreate?: string;
+    nodeButtonMove?: string;
+    nodeButtonEdit?: string;
+
+    inputValid?: string;
+    inputInvalid?: string;
+
+    leafShowBorder?: boolean;
+}
+
+export interface UserStyle extends DefaultStyle {
+    name: string;
+    isActive: boolean
+}
+
 // Group types
 
 interface _Child {
@@ -30,25 +66,22 @@ interface _Parent {
     // A node that can be added to children
     seed?: Child;
     // Checked before a child's edited/added/deleted
-    parentPredicate?: SubPredicate;
+    childPredicate?: SubPredicate;
     // Checked before any descendant's edited/added/deleted
-    ancestorPredicate?: SubPredicate;
+    descendantPredicate?: SubPredicate;
 }
 
 // Node types
 
-// TODO Can you say LEAF_KEYS = Object.keys(_Child) or something?
-export const LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input'] as const;
+export const LEAF_KEYS = ['label', 'value', 'predicate', 'input'] as const;
+export const ROOT_KEYS = ['children', 'seed', 'childPredicate', 'descendantPredicate'] as const;
+export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
 
 export interface Leaf extends _Child {
 }
 
-export const ROOT_KEYS = ['children', 'seed', 'parentPredicate', 'ancestorPredicate'] as const;
-
 export interface Root extends _Parent {
 }
-
-export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
 
 export interface Middle extends _Child, _Parent {
 }
@@ -61,11 +94,11 @@ export type Node = Root | Child;
 
 // Config type
 
-export const CONFIG_KEYS = ['title', 'dataTree', 'userStyleForest', 'devStyleTree']
+export const CONFIG_KEYS = ['title', 'tree', 'userStyles', 'devStyle'];
 
 export interface Config {
     title: string;
-    dataTree: Root;
-    userStyleForest: Array<Middle>;
-    devStyleTree?: Middle;
+    tree: Root;
+    userStyles: Array<UserStyle>;
+    defaultStyle?: DefaultStyle;
 }

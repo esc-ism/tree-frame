@@ -9,7 +9,7 @@ import {MODAL_BACKGROUND_ID} from '../../../consts';
 import {EVENTS} from '../../../../consts';
 
 import {getRoot as getDataTree} from '../../../body/trees/data';
-import {getUserStyleTree} from '../../../body/trees/style';
+import {getUserStyles} from '../../../body/trees/style';
 
 function doAction() {
     // TODO Maybe add a white, 0.5 opacity foreground over everything with a loading symbol.
@@ -18,10 +18,16 @@ function doAction() {
     // Prevent further interaction
     document.body.classList.add(ACTION_ID);
 
+    console.log({
+        'event': EVENTS.STOP,
+        'tree': getDataTree().getJSON(),
+        'userStyles': getUserStyles()
+    })
+
     window.parent.postMessage({
         'event': EVENTS.STOP,
-        'dataTree': getDataTree().getJSON(),
-        'userStyleForest': getUserStyleTree().getJSON().children
+        'tree': getDataTree().getJSON(),
+        'userStyles': getUserStyles()
     }, '*');
 }
 

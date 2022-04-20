@@ -14,5 +14,5 @@ export default function generate() {
         `.${ROOT_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`
     ], ['display', 'none']);
 
-    addColourRule(ACTION_ID, '--modalButtonLabel');
+    addColourRule(ACTION_ID, '--headButtonLabel');
 }

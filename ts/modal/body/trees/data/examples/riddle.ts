@@ -19,7 +19,7 @@ let mistakes = 0;
 
 const config: Config = {
     'title': 'Move Everything to the Goal!',
-    'dataTree': {
+    'tree': {
         'children': [
             {
                 'label': 'Location',
@@ -48,7 +48,7 @@ const config: Config = {
                 'value': 'Bandit\'s Camp',
                 'children': [],
                 seed,
-                'parentPredicate': (children) => {
+                'childPredicate': (children) => {
                     if (children.length > 0) {
                         let foundShield = false;
 
@@ -79,7 +79,7 @@ const config: Config = {
                 'value': 'Goal',
                 'children': [],
                 seed,
-                'parentPredicate': (children) => {
+                'childPredicate': (children) => {
                     if (children.length === 3) {
                         window.alert('You win!\n\n' + (mistakes === 0 ? 'Perfect clear!' : `You made ${mistakes} mistake${mistakes === 1 ? '' : 's'}.`));
                     }
@@ -88,7 +88,7 @@ const config: Config = {
                 }
             }
         ],
-        'ancestorPredicate': (locations: Array<Middle>) => {
+        'descendantPredicate': (locations: Array<Middle>) => {
             let childCount = 0;
 
             for (const {children} of locations) {
@@ -120,7 +120,7 @@ const config: Config = {
             return true;
         }
     },
-    'userStyleForest': []
+    'userStyles': []
 };
 
 export default config;
