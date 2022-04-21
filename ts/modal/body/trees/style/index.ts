@@ -16,11 +16,15 @@ export function getRoot() {
     return ROOTS[ROOT_ID];
 }
 
-export function getActiveStyle(userStyles: Array<UserStyle>, devStyle: DefaultStyle = {}): DefaultStyle {
+// Fill any missing entries
+function getFilledStyle(style: DefaultStyle = {}): DefaultStyle {
+    return {...DEFAULT_STYLE, ...style}
+}
+
+export function getActiveStyle(userStyles: Array<UserStyle>, devStyle?: DefaultStyle): DefaultStyle {
     const activeUserStyle = userStyles.find(({isActive}) => isActive);
 
-    // Fill any missing entries
-    return activeUserStyle ?? {...DEFAULT_STYLE, ...devStyle};
+    return activeUserStyle ?? getFilledStyle(devStyle);
 }
 
 export function toJSON(style: UserStyle): MiddleJSON {
@@ -31,6 +35,8 @@ export function toJSON(style: UserStyle): MiddleJSON {
         'input': 'color',
         'predicate': true
     });
+    const partLabel = 'Section';
+    const categoryLabel = 'Category';
 
     return {
         'label': 'Name',
@@ -43,7 +49,7 @@ export function toJSON(style: UserStyle): MiddleJSON {
                 'predicate': true
             },
             {
-                'label': 'Section',
+                'label': partLabel,
                 'value': 'Modal',
                 'children': [
                     {
@@ -60,11 +66,11 @@ export function toJSON(style: UserStyle): MiddleJSON {
                 ]
             },
             {
-                'label': 'Section',
+                'label': partLabel,
                 'value': 'Header',
                 'children': [
                     {
-                        'label': 'Header Part',
+                        'label': categoryLabel,
                         'value': 'General',
                         'children': [
                             {
@@ -81,7 +87,7 @@ export function toJSON(style: UserStyle): MiddleJSON {
                         ]
                     },
                     {
-                        'label': 'Header Part',
+                        'label': categoryLabel,
                         'value': 'Buttons',
                         'children': [
                             {
@@ -113,11 +119,11 @@ export function toJSON(style: UserStyle): MiddleJSON {
                 ]
             },
             {
-                'label': 'Segment',
+                'label': partLabel,
                 'value': 'Body',
                 'children': [
                     {
-                        'label': 'Body Part',
+                        'label': categoryLabel,
                         'value': 'General',
                         'children': [
                             {
@@ -135,7 +141,7 @@ export function toJSON(style: UserStyle): MiddleJSON {
                         ]
                     },
                     {
-                        'label': 'Body Part',
+                        'label': categoryLabel,
                         'value': 'Buttons',
                         'children': [
                             {
@@ -165,7 +171,7 @@ export function toJSON(style: UserStyle): MiddleJSON {
                         ]
                     },
                     {
-                        'label': 'Body Part',
+                        'label': categoryLabel,
                         'value': 'Miscellaneous',
                         'children': [
                             {
@@ -247,8 +253,10 @@ export function getUserStyles(): Array<UserStyle> {
     return styles;
 }
 
-export default function generate(userStyles: Array<UserStyle>, defaultStyle: DefaultStyle = DEFAULT_STYLE) {
+export default function generate(userStyles: Array<UserStyle>, devStyle?: DefaultStyle) {
     generateCSS();
+
+    const defaultStyle = getFilledStyle(devStyle);
 
     return generateTree({
         'children': userStyles.map(toJSON),

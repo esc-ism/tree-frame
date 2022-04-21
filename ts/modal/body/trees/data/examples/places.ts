@@ -89,7 +89,7 @@ function getMedia(
 }
 
 const config: Config = {
-    'title': 'Fame Atlas',
+    'title': 'Pop Atlas',
     'tree': {
         'children': [
             {
@@ -141,7 +141,21 @@ const config: Config = {
             ],
         }
     },
-    'userStyles': []
+    'userStyles': [],
+    'defaultStyle': {
+        'tooltipOutline': '#7f0000',
+        'headBase': '#30ff00',
+        'headButtonExit': '#f15200',
+        'headButtonLabel': '#001fff',
+        'headButtonLeaf': '#7d721b',
+        'headButtonStyle': '#ae00ff',
+        'nodeBase': ['#000000', '#0a2400', '#0c3700', '#0d4800'],
+        'leafShowBorder': true,
+        'nodeButtonRemove': '#ff0000',
+        'nodeButtonCreate': '#15ff00',
+        'nodeButtonMove': '#fff600',
+        'nodeButtonEdit': '#ad4aff',
+    }
 }
 
 export default config;

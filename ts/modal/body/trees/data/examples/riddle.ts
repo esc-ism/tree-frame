@@ -120,7 +120,10 @@ const config: Config = {
             return true;
         }
     },
-    'userStyles': []
+    'userStyles': [],
+    'defaultStyle': {
+        'fontSize': 20
+    }
 };
 
 export default config;

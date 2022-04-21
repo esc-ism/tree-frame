@@ -63,19 +63,21 @@ const config: Config = {
     },
     'userStyles': [],
     'defaultStyle': {
-        'headBase': '#eeff00',
+        'fontSize': 19,
+        'headBase': '#0cc0ff',
         'headContrast': 'Black / White',
         'headButtonExit': '#f10000',
-        'headButtonLabel': '#7a4800',
-        'headButtonLeaf': '#3bac21',
+        'headButtonLabel': '#563b14',
+        'headButtonLeaf': '#f3ff00',
         'headButtonStyle': '#ff75da',
-        'nodeBase': ['#381700', '#2f3000'],
+        'nodeBase': ['#001946', '#001130'],
         'nodeContrast': 'Invert',
         'leafShowBorder': true,
         'nodeButtonRemove': '#ff0000',
         'nodeButtonCreate': '#15ff00',
         'nodeButtonMove': '#9000ff',
         'nodeButtonEdit': '#00bbd1',
+        'tooltipOutline': '#c12d00',
     }
 };
 
