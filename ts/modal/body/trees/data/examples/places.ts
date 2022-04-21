@@ -145,7 +145,7 @@ const config: Config = {
     'defaultStyle': {
         'tooltipOutline': '#7f0000',
         'headBase': '#30ff00',
-        'headButtonExit': '#f15200',
+        'headButtonExit': '#d60000',
         'headButtonLabel': '#001fff',
         'headButtonLeaf': '#7d721b',
         'headButtonStyle': '#ae00ff',
