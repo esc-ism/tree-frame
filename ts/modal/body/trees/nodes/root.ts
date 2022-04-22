@@ -14,6 +14,7 @@ export default class Root implements dataTypes.Root {
     readonly seed?: dataTypes.Child;
     readonly childPredicate?: dataTypes.SubPredicate;
     readonly descendantPredicate?: dataTypes.SubPredicate;
+    readonly poolId?: number;
 
     readonly children: Array<Middle | Child> = [];
 
@@ -32,6 +33,10 @@ export default class Root implements dataTypes.Root {
 
         if ('descendantPredicate' in other) {
             this.descendantPredicate = other.descendantPredicate;
+        }
+
+        if ('poolId' in other) {
+            this.poolId = other.poolId;
         }
 
         if (children.length === 0) {

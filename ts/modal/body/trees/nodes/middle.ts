@@ -17,6 +17,7 @@ export default class Middle extends Child {
     readonly seed?: dataTypes.Child;
     readonly childPredicate?: dataTypes.SubPredicate;
     readonly descendantPredicate?: dataTypes.SubPredicate;
+    readonly poolId?: number;
 
     readonly children: Array<Middle | Child> = [];
 
@@ -33,6 +34,10 @@ export default class Middle extends Child {
 
         if ('descendantPredicate' in other) {
             this.descendantPredicate = other.descendantPredicate;
+        }
+
+        if ('poolId' in other) {
+            this.poolId = other.poolId;
         }
 
         for (const child of children) {

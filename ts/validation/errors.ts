@@ -68,7 +68,22 @@ export class PredicateError extends Error {
 
 export class SeedMatchError extends Error {
     constructor() {
-        super('All children of nodes with a seed property must be creatable from the seed tree.');
+        super('All children must be structurally similar to their parent\'s seed.');
+    }
+}
+
+export class PoolMatchError extends Error {
+    constructor() {
+        super('Nodes with the same poolId value must be structurally similar.');
+    }
+}
+
+export class RootPoolMatchError extends Error {
+    constructor(breadcrumbs: Array<string>) {
+        super(
+            `Node found at ${getPath(breadcrumbs)} with the same poolId value as the root.` +
+            `It\'s impossible for the root to be structurally similar to any other node.`
+        );
     }
 }
 

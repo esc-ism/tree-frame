@@ -7,13 +7,6 @@ const NAMES = [
 ];
 
 const label = 'Entity';
-const predicate = () => 'No changing the names!';
-
-const seed = {
-    label,
-    'value': '',
-    predicate
-};
 
 let mistakes = 0;
 
@@ -24,30 +17,27 @@ const config: Config = {
             {
                 'label': 'Location',
                 'value': 'Start',
+                'poolId': 0,
                 'children': [
                     {
                         label,
                         'value': NAMES[0],
-                        predicate
                     },
                     {
                         label,
                         'value': NAMES[1],
-                        predicate
                     },
                     {
                         label,
                         'value': NAMES[2],
-                        predicate
                     }
                 ],
-                seed
             },
             {
                 'label': 'Location',
                 'value': 'Bandit\'s Camp',
                 'children': [],
-                seed,
+                'poolId': 0,
                 'childPredicate': (children) => {
                     if (children.length > 0) {
                         let foundShield = false;
@@ -78,10 +68,16 @@ const config: Config = {
                 'label': 'Location',
                 'value': 'Goal',
                 'children': [],
-                seed,
+                'poolId': 0,
                 'childPredicate': (children) => {
                     if (children.length === 3) {
-                        window.alert('You win!\n\n' + (mistakes === 0 ? 'Perfect clear!' : `You made ${mistakes} mistake${mistakes === 1 ? '' : 's'}.`));
+                        // Wait for the element to move
+                        window.setTimeout(
+                            () => window.alert('You win!\n\n' + (
+                                mistakes === 0 ? 'Perfect clear!' :
+                                    `You made ${mistakes} mistake${mistakes === 1 ? '' : 's'}.`
+                            )), 1
+                        );
                     }
 
                     return true;
@@ -89,15 +85,11 @@ const config: Config = {
             }
         ],
         'descendantPredicate': (locations: Array<Middle>) => {
-            let childCount = 0;
-
             for (const {children} of locations) {
                 const register = [false, false, false];
 
                 for (const {value} of children) {
                     register[NAMES.indexOf(value as string)] = true;
-
-                    childCount++;
                 }
 
                 if (!register[0] && register[1] && register[2]) {
@@ -111,10 +103,6 @@ const config: Config = {
 
                     return `The ${NAMES[2].toLowerCase()} will destroy the ${NAMES[0].toLowerCase()} if it's not with the ${NAMES[1].toLowerCase()}!`;
                 }
-            }
-
-            if (childCount !== 3) {
-                return 'No cheating!';
             }
 
             return true;

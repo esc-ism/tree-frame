@@ -173,6 +173,9 @@ function isParent(breadcrumbs: string[], candidate: object): candidate is Parent
     if (hasOwnProperty(candidate, 'descendantPredicate') && typeof candidate.descendantPredicate !== 'function')
         throw new errors.TypeError([...breadcrumbs, 'descendantPredicate'], typeof candidate.descendantPredicate, ['function']);
 
+    if (hasOwnProperty(candidate, 'poolId') && typeof candidate.poolId !== 'number')
+        throw new errors.TypeError([...breadcrumbs, 'poolId'], typeof candidate.poolId, ['number']);
+
     for (const [i, child] of candidate.children.entries()) {
         if (!isChild([...breadcrumbs, 'children', i.toString()], child))
             throw new errors.UnexpectedStateError();
@@ -260,120 +263,93 @@ function validateForest(breadcrumbs: string[], doValidation: Validator, forest: 
 
 // Tree validators
 
-export function validateSeedMatch(
-    seedBreadcrumbs: string[], mainBreadcrumbs: string[],
-    seed: Child, target: Child
+export function validateMatch(
+    // Expect children, since the root can't match with anything but itself
+    modelBreadcrumbs: string[], model: Child,
+    candidateBreadcrumbs: string[], candidate: Child
 ): void {
-    if (seed.label !== target.label)
-        throw new errors.JoinedError(
-            new errors.SeedMatchError(),
-            new errors.ValueError([...mainBreadcrumbs, 'label'], target.label, [seed.label])
-        );
+    if (model.label !== candidate.label)
+        throw new errors.ValueError([...candidateBreadcrumbs, 'label'], candidate.label, [model.label]);
 
-    if (typeof seed.value !== typeof target.value)
-        throw new errors.JoinedError(
-            new errors.SeedMatchError(),
-            new errors.TypeError([...mainBreadcrumbs, 'value'], typeof target.value, [typeof seed.value])
-        );
+    if (typeof model.value !== typeof candidate.value)
+        throw new errors.TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
 
-    if ('predicate' in seed !== 'predicate' in target)
-        throw new errors.JoinedError(
-            new errors.SeedMatchError(),
-            new errors.PropertyError(mainBreadcrumbs, 'predicate', 'predicate' in seed)
-        );
+    if ('predicate' in model !== 'predicate' in candidate)
+        throw new errors.PropertyError(candidateBreadcrumbs, 'predicate', 'predicate' in model);
 
-    if ('predicate' in seed) {
-        if (typeof seed.predicate !== typeof target.predicate)
-            throw new errors.JoinedError(
-                new errors.SeedMatchError(),
-                new errors.TypeError([...mainBreadcrumbs, 'predicate'], typeof target.predicate, [typeof seed.predicate])
-            );
+    if ('predicate' in model) {
+        if (typeof model.predicate !== typeof candidate.predicate)
+            throw new errors.TypeError([...candidateBreadcrumbs, 'predicate'], typeof candidate.predicate, [typeof model.predicate]);
 
-        switch (typeof seed.predicate) {
+        switch (typeof model.predicate) {
             case 'boolean':
-                if (seed.predicate !== target.predicate)
-                    throw new errors.JoinedError(
-                        new errors.SeedMatchError(),
-                        new errors.ValueError([...mainBreadcrumbs, 'predicate'], target.predicate, [seed.predicate])
-                    );
+                if (model.predicate !== candidate.predicate)
+                    throw new errors.ValueError([...candidateBreadcrumbs, 'predicate'], candidate.predicate, [model.predicate]);
 
-                if (seed.predicate === false)
-                    if (seed.value !== target.value) {
-                        throw new errors.JoinedError(
-                            new errors.SeedMatchError(),
-                            new errors.ValueError([...mainBreadcrumbs, 'value'], target.value, [seed.value])
-                        );
+                if (model.predicate === false)
+                    if (model.value !== candidate.value) {
+                        throw new errors.ValueError([...candidateBreadcrumbs, 'value'], candidate.value, [model.value]);
                     }
 
                 break;
 
             case 'function':
-                if (!seed.predicate(target.value))
-                    throw new errors.JoinedError(
-                        new errors.SeedMatchError(),
-                        new errors.ValueError([...mainBreadcrumbs, 'value'], target.value, ['unknown'])
-                    );
+                if (!model.predicate(candidate.value))
+                    throw new errors.ValueError([...candidateBreadcrumbs, 'value'], candidate.value, ['unknown']);
 
                 break;
 
             default:
-                const {length} = target.predicate as Array<string>;
+                const {length} = candidate.predicate as Array<string>;
 
-                if (seed.predicate.length !== length)
-                    throw new errors.JoinedError(
-                        new errors.SeedMatchError(),
-                        new errors.ValueError([...mainBreadcrumbs, 'predicate', 'length'], length, [seed.predicate.length])
-                    );
+                if (model.predicate.length !== length)
+                    throw new errors.ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
 
-                for (const [i, option] of seed.predicate.entries()) {
-                    if (target.predicate[i] !== option)
-                        throw new errors.JoinedError(
-                            new errors.SeedMatchError(),
-                            new errors.ValueError([...mainBreadcrumbs, 'predicate', i.toString()], target.predicate[i], [option])
-                        );
+                for (const [i, option] of model.predicate.entries()) {
+                    if (candidate.predicate[i] !== option)
+                        throw new errors.ValueError([...candidateBreadcrumbs, 'predicate', i.toString()], candidate.predicate[i], [option]);
                 }
         }
     }
 
-    if ('seed' in seed !== 'seed' in target)
-        throw new errors.JoinedError(
-            new errors.SeedMatchError(),
-            new errors.PropertyError(mainBreadcrumbs, 'seed', 'seed' in seed)
-        );
+    if ('children' in model !== 'children' in candidate)
+        throw new errors.PropertyError(candidateBreadcrumbs, 'children', 'children' in model);
 
-    if ('seed' in seed && 'seed' in target) {
-        validateSeedMatch([...seedBreadcrumbs, 'seed'], [...mainBreadcrumbs, 'seed'], seed.seed, target.seed);
-    }
+    if ('children' in model && 'children' in candidate) {
+        // Validate parental properties
+        if ('poolId' in model !== 'poolId' in candidate)
+            throw new errors.PropertyError(candidateBreadcrumbs, 'poolId', 'poolId' in model);
 
-    if ('children' in seed !== 'children' in target)
-        throw new errors.JoinedError(
-            new errors.SeedMatchError(),
-            new errors.PropertyError(mainBreadcrumbs, 'children', 'children' in seed)
-        );
+        if (model.poolId !== candidate.poolId)
+            throw new errors.ValueError([...candidateBreadcrumbs, 'poolId'], candidate.poolId, [model.poolId]);
 
-    if ('children' in seed && 'children' in target) {
-        if ('seed' in seed) {
-            for (const [i, seedChild] of seed.children.entries()) {
-                for (const [j, child] of target.children.entries()) {
-                    validateSeedMatch(
-                        [...seedBreadcrumbs, 'children', i.toString()],
-                        [...mainBreadcrumbs, 'children', j.toString()],
-                        seedChild, child
+        if ('seed' in model !== 'seed' in candidate)
+            throw new errors.PropertyError(candidateBreadcrumbs, 'seed', 'seed' in model);
+
+        if ('seed' in model && 'seed' in candidate) {
+            validateMatch(
+                [...modelBreadcrumbs, 'seed'], model.seed,
+                [...candidateBreadcrumbs, 'seed'], candidate.seed
+            );
+        }
+
+        if ('seed' in model) {
+            for (const [i, seedChild] of model.children.entries()) {
+                for (const [j, child] of candidate.children.entries()) {
+                    validateMatch(
+                        [...modelBreadcrumbs, 'children', i.toString()], seedChild,
+                        [...candidateBreadcrumbs, 'children', j.toString()], child
                     );
                 }
             }
         } else {
-            if (seed.children.length !== target.children.length)
-                throw new errors.JoinedError(
-                    new errors.SeedMatchError(),
-                    new errors.ValueError([...mainBreadcrumbs, 'children', 'length'], target.children.length, [seed.children.length])
-                );
+            if (model.children.length !== candidate.children.length)
+                throw new errors.ValueError([...candidateBreadcrumbs, 'children', 'length'], candidate.children.length, [model.children.length]);
 
-            for (const [i, child] of target.children.entries()) {
-                validateSeedMatch(
-                    [...seedBreadcrumbs, 'children', i.toString()],
-                    [...mainBreadcrumbs, 'children', i.toString()],
-                    seed.children[i], child
+            for (const [i, child] of candidate.children.entries()) {
+                validateMatch(
+                    [...modelBreadcrumbs, 'children', i.toString()], model.children[i],
+                    [...candidateBreadcrumbs, 'children', i.toString()], child
                 );
             }
         }
@@ -385,79 +361,125 @@ function validateSeeds(breadcrumbs: string[], node: Node): void {
         const {children, seed} = node;
 
         for (const [i, child] of children.entries()) {
-            validateSeedMatch(
-                [...breadcrumbs, 'seed'],
-                [...breadcrumbs, 'children', i.toString()],
-                seed, child
-            );
-        }
-    }
-}
-
-function validatePredicate(breadcrumbs: Array<string>, child: Child): void {
-    switch (typeof child.predicate) {
-        case 'boolean':
-            break;
-
-        case 'function':
-            if (!child.predicate(child.value))
-                throw new errors.PredicateError([...breadcrumbs, 'predicate']);
-            break;
-
-        default:
-            const options = child.predicate;
-
-            if (options.length === 0)
-                throw new errors.JoinedError(
-                    new errors.NoOptionsError(),
-                    new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
+            try {
+                validateMatch(
+                    [...breadcrumbs, 'seed'], seed,
+                    [...breadcrumbs, 'children', i.toString()], child
                 );
-
-            const type = typeof options[0];
-
-            for (let i = 1; i < options.length; ++i) {
-                if (typeof options[i] !== type)
-                    throw new errors.JoinedError(
-                        new errors.MismatchedOptionsError(),
-                        new errors.TypeError([...breadcrumbs, 'predicate', i.toString()], typeof options[i], [type])
-                    );
+            } catch (e) {
+                throw new errors.JoinedError(new errors.SeedMatchError(), e);
             }
-
-            if (options.indexOf(child.value) === -1)
-                throw new errors.JoinedError(
-                    new errors.PredicateError([...breadcrumbs, 'predicate']),
-                    new errors.ValueError([...breadcrumbs, 'value'], child.value, options)
-                );
+        }
     }
 }
 
-function validatePredicates(breadcrumbs: string[], parent: Parent): void {
-    if ('seed' in parent) {
-        const {seed} = parent;
+function validatePredicates(root: Root): void {
+    function validateChild(breadcrumbs: Array<string>, child: Child): void {
+        switch (typeof child.predicate) {
+            case 'boolean':
+                break;
 
-        validatePredicate([...breadcrumbs, 'seed'], seed);
+            case 'function':
+                if (!child.predicate(child.value))
+                    throw new errors.PredicateError([...breadcrumbs, 'predicate']);
+                break;
 
-        if ('children' in seed) {
-            validatePredicates([...breadcrumbs, 'seed'], seed);
+            default:
+                const options = child.predicate;
+
+                if (options.length === 0)
+                    throw new errors.JoinedError(
+                        new errors.NoOptionsError(),
+                        new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
+                    );
+
+                const type = typeof options[0];
+
+                for (let i = 1; i < options.length; ++i) {
+                    if (typeof options[i] !== type)
+                        throw new errors.JoinedError(
+                            new errors.MismatchedOptionsError(),
+                            new errors.TypeError([...breadcrumbs, 'predicate', i.toString()], typeof options[i], [type])
+                        );
+                }
+
+                if (options.indexOf(child.value) === -1)
+                    throw new errors.JoinedError(
+                        new errors.PredicateError([...breadcrumbs, 'predicate']),
+                        new errors.ValueError([...breadcrumbs, 'value'], child.value, options)
+                    );
         }
     }
 
-    const {children} = parent;
+    function validateParent(breadcrumbs: string[], parent: Parent) {
+        if ('seed' in parent) {
+            const {seed} = parent;
 
-    if ('childPredicate' in parent && !parent.childPredicate(children))
-        throw new errors.PredicateError([...breadcrumbs, 'childPredicate']);
+            validateChild([...breadcrumbs, 'seed'], seed);
 
-    if ('descendantPredicate' in parent && !parent.descendantPredicate(children))
-        throw new errors.PredicateError([...breadcrumbs, 'descendantPredicate']);
-
-    for (const [i, child] of children.entries()) {
-        const childBreadcrumbs = [...breadcrumbs, 'children', i.toString()];
-
-        validatePredicate(childBreadcrumbs, child);
-
-        if ('children' in child) {
-            validatePredicates(childBreadcrumbs, child);
+            if ('children' in seed) {
+                validateParent([...breadcrumbs, 'seed'], seed);
+            }
         }
+
+        const {children} = parent;
+
+        if ('childPredicate' in parent && !parent.childPredicate(children))
+            throw new errors.PredicateError([...breadcrumbs, 'childPredicate']);
+
+        if ('descendantPredicate' in parent && !parent.descendantPredicate(children))
+            throw new errors.PredicateError([...breadcrumbs, 'descendantPredicate']);
+
+        for (const [i, child] of children.entries()) {
+            const childBreadcrumbs = [...breadcrumbs, 'children', i.toString()];
+
+            validateChild(childBreadcrumbs, child);
+
+            if ('children' in child) {
+                validateParent(childBreadcrumbs, child);
+            }
+        }
+    }
+
+    validateParent(['tree'], root);
+}
+
+function validatePools(root: Root) {
+    const pools: Array<[string[], Child]> = [];
+
+    function validateBranch(breadcrumbs: string[], node: Child): void {
+        if ('poolId' in node) {
+            if (!(node.poolId in pools)) {
+                if (node.poolId === root.poolId) {
+                    throw new errors.JoinedError(
+                        new errors.PoolMatchError(),
+                        new errors.RootPoolMatchError(breadcrumbs)
+                    );
+                }
+
+                pools[node.poolId] = [breadcrumbs, node];
+            } else {
+                try {
+                    validateMatch(
+                        ...pools[node.poolId],
+                        breadcrumbs, node
+                    );
+                } catch (e) {
+                    throw new errors.JoinedError(new errors.PoolMatchError(), e);
+                }
+            }
+        }
+
+        if ('children' in node) {
+            // Recurse
+            for (const [i, child] of node.children.entries()) {
+                validateBranch([...breadcrumbs, 'children', i.toString()], child);
+            }
+        }
+    }
+
+    for (const [i, child] of root.children.entries()) {
+        validateBranch(['tree', 'children', i.toString()], child);
     }
 }
 
@@ -472,7 +494,9 @@ function validateRoot(node: Root): void {
     validateSeeds(['tree'], node);
     validateForest(['tree', 'children'], validateSeeds, node.children);
 
-    validatePredicates(['tree'], node);
+    validatePredicates(node);
+
+    validatePools(node);
 }
 
 // Config type predicate helpers

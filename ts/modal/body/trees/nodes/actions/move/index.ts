@@ -13,57 +13,58 @@ import type Root from '../../root';
 import type Middle from '../../middle';
 import type Child from '../../child';
 
-import {validateSeedMatch} from '../../../../../../validation';
+interface PutTarget {
+    node: Root | Child;
+    button: HTMLButtonElement;
+    isParent: boolean;
+}
 
-const targets = [];
+interface MoveTarget {
+    child: Child;
+    parent: Middle | Root;
+    isPooled: boolean;
+}
 
-let activeNode: Child;
+const putTargets: Array<PutTarget> = [];
+
+let moveTarget: MoveTarget;
 
 export function reset() {
-    if (!activeNode) {
+    if (!moveTarget) {
         return;
     }
 
-    for (const {node, button, isParent} of targets) {
+    for (const {node, button, isParent} of putTargets) {
         focusBranch(false, node, isParent);
 
         button.remove();
     }
 
-    focusBranch(false, activeNode, false);
+    focusBranch(false, moveTarget.child, false);
 
-    targets.length = 0;
+    putTargets.length = 0;
 
-    setActive(activeNode, ACTION_ID, false);
+    setActive(moveTarget.child, ACTION_ID, false);
 
-    activeNode = undefined;
-}
-
-function isSeedMatch(seed) {
-    try {
-        validateSeedMatch([], [], seed, activeNode.getJSON());
-
-        return true;
-    } catch (e) {
-        return false;
-    }
+    moveTarget = undefined;
 }
 
 function doMove(node, button, isParent) {
-    const oldParent = activeNode.parent;
-    const index = activeNode.getIndex();
+    const oldParent = moveTarget.parent;
+    const index = moveTarget.child.getIndex();
     const newParent = isParent ? node : node.parent;
 
-    activeNode.move(newParent, isParent ? 0 : node);
+    moveTarget.child.move(newParent, isParent ? 0 : node);
 
     for (const parent of [oldParent, newParent]) {
         const response = getSubPredicateResponse(parent);
 
         if (response !== true) {
-            activeNode.move(oldParent, index);
+            // Revert
+            moveTarget.child.move(oldParent, index);
 
             if (typeof response === 'string') {
-                tooltip.show(response, button)
+                tooltip.show(response, button);
             }
 
             return;
@@ -74,13 +75,13 @@ function doMove(node, button, isParent) {
         }
     }
 
-    // Grab the reference before activeNode is wiped
-    const previousNode = activeNode;
+    // Grab the reference before it gets wiped
+    const movedNode = moveTarget.child;
 
     reset();
 
     // Show where the node's been moved to
-    previousNode.element.scrollIntoView();
+    movedNode.element.scrollIntoView();
 }
 
 function addTargetButton(node, isParent = true) {
@@ -104,31 +105,22 @@ function addTargetButton(node, isParent = true) {
 
     node.element.addButton(button);
 
-    targets.push({node, 'button': button, isParent});
+    putTargets.push({node, 'button': button, isParent});
 }
 
 function addButtons(parent: Root | Middle) {
-    const isCurrentParent = parent === activeNode.parent;
+    const isCurrentParent = parent === moveTarget.parent;
 
-    if (isCurrentParent || ('seed' in parent && isSeedMatch(parent.seed))) {
+    if (isCurrentParent || (moveTarget.isPooled && parent.poolId === moveTarget.parent.poolId)) {
         addTargetButton(parent);
 
         focusBranch(true, parent);
 
-        if (isCurrentParent) {
-            for (const child of parent.children) {
-                focusBranch(true, child, false);
+        // todo Check if no longer focusing the target node here has caused problems
+        for (const target of isCurrentParent ? moveTarget.child.getSiblings() : parent.children) {
+            focusBranch(true, target, false);
 
-                if (child !== activeNode) {
-                    addTargetButton(child, false);
-                }
-            }
-        } else {
-            for (const child of parent.children) {
-                focusBranch(true, child, false);
-
-                addTargetButton(child, false);
-            }
+            addTargetButton(target, false);
         }
     }
 
@@ -142,22 +134,40 @@ function addButtons(parent: Root | Middle) {
     }
 }
 
-function doAction(node: Child) {
-    const toggleOn = node !== activeNode;
+// TODO can you say 'poolId' in node.parent? If so replace this function call with that
+function isPooled(node) {
+    return typeof node.parent.poolId === 'number';
+}
+
+function doAction(node: Child, button) {
+    const toggleOn = !(moveTarget && node === moveTarget.child);
 
     reset();
 
     if (toggleOn) {
-        activeNode = node;
+        moveTarget = {
+            'child': node,
+            'parent': node.parent,
+            'isPooled': isPooled(node)
+        };
 
-        setActive(activeNode, ACTION_ID);
+        setActive(node, ACTION_ID);
 
-        addButtons(activeNode.getRoot());
+        focusBranch(true, node);
+
+        addButtons(node.getRoot());
+
+        // If the only valid target is the current parent
+        if (putTargets.length < 2) {
+            reset();
+
+            tooltip.show('No other valid locations found.', button)
+        }
     }
 }
 
 export function unmount(node) {
-    if (node === activeNode) {
+    if (node === moveTarget.child) {
         reset();
     }
 }
@@ -181,5 +191,5 @@ export function mount(node: Child): void {
 }
 
 export function shouldMount(node: Child): boolean {
-    return Boolean(node.parent.seed);
+    return Boolean(node.parent.seed) || isPooled(node);
 }

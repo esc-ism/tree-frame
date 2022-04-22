@@ -62,6 +62,13 @@ export default class Child {
         return this.parent.children.indexOf(this);
     }
 
+    getSiblings(): Array<Child> {
+        const index = this.getIndex();
+        const siblings = this.parent.children;
+
+        return [...siblings.slice(0, index), ...siblings.slice(index + 1)];
+    }
+
     updateDepthClass(classCount)  {
         this.element.addDepthClass(this.depth % classCount);
     }

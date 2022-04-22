@@ -69,12 +69,14 @@ interface _Parent {
     childPredicate?: SubPredicate;
     // Checked before any descendant's edited/added/deleted
     descendantPredicate?: SubPredicate;
+    // Children may be moved between nodes with poolId values that match their parent's
+    poolId?: number
 }
 
 // Node types
 
 export const LEAF_KEYS = ['label', 'value', 'predicate', 'input'] as const;
-export const ROOT_KEYS = ['children', 'seed', 'childPredicate', 'descendantPredicate'] as const;
+export const ROOT_KEYS = ['children', 'seed', 'childPredicate', 'descendantPredicate', 'poolId'] as const;
 export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
 
 export interface Leaf extends _Child {
