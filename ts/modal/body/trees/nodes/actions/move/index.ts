@@ -134,11 +134,6 @@ function addButtons(parent: Root | Middle) {
     }
 }
 
-// TODO can you say 'poolId' in node.parent? If so replace this function call with that
-function isPooled(node) {
-    return typeof node.parent.poolId === 'number';
-}
-
 function doAction(node: Child, button) {
     const toggleOn = !(moveTarget && node === moveTarget.child);
 
@@ -148,7 +143,7 @@ function doAction(node: Child, button) {
         moveTarget = {
             'child': node,
             'parent': node.parent,
-            'isPooled': isPooled(node)
+            'isPooled': 'poolId' in node.parent
         };
 
         setActive(node, ACTION_ID);
@@ -167,7 +162,7 @@ function doAction(node: Child, button) {
 }
 
 export function unmount(node) {
-    if (node === moveTarget.child) {
+    if (moveTarget && node === moveTarget.child) {
         reset();
     }
 }
@@ -191,5 +186,5 @@ export function mount(node: Child): void {
 }
 
 export function shouldMount(node: Child): boolean {
-    return Boolean(node.parent.seed) || isPooled(node);
+    return Boolean(node.parent.seed) || ('poolId' in node.parent);
 }
