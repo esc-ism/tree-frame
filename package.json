@@ -2,6 +2,7 @@
   "name": "tree-frame",
   "version": "1.0.0",
   "devDependencies": {
+    "copy-webpack-plugin": "^10.2.4",
     "ts-loader": "^9.2.6",
     "typescript": "^4.4.3",
     "webpack": "^5.54.0",
@@ -9,8 +10,7 @@
     "webpack-dev-server": "^4.3.0"
   },
   "scripts": {
-    "build": "tsc",
-    "webpack": "webpack",
-    "dev": "webpack serve"
+    "debug": "webpack serve --config-name DEVELOPMENT",
+    "build": "webpack build --config-name PRODUCTION"
   }
 }
