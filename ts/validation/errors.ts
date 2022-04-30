@@ -21,8 +21,10 @@ function getPath(breadcrumbs: string[]): string {
 // JoinedError definition
 
 export class JoinedError extends Error {
+    static separator = '\n\n';
+
     constructor(...errors: Error[]) {
-        super(errors.map(({message}) => message).join('\n\n'));
+        super(errors.map(({message}) => message).join(JoinedError.separator));
     }
 }
 
@@ -47,7 +49,7 @@ export class PropertyError extends Error {
 }
 
 export class ValueError extends Error {
-    constructor(breadcrumbs: string[], found: any, expected: readonly  any[]) {
+    constructor(breadcrumbs: string[], found: any, expected: readonly any[]) {
         super(`Found ${found} value at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
     }
 }
@@ -60,9 +62,21 @@ export class EmptyStringError extends Error {
     }
 }
 
+export class EmptyArrayError extends Error {
+    constructor(breadcrumbs: string[]) {
+        super(`Found illegal empty array at ${getPath(breadcrumbs)}.`);
+    }
+}
+
 export class PredicateError extends Error {
     constructor(breadcrumbs: string[]) {
         super(`Predicate failed at ${getPath(breadcrumbs)}. Predicates must succeed.`);
+    }
+}
+
+export class EvalError extends Error {
+    constructor(breadcrumbs: string[]) {
+        super(`String to function conversion failed at ${getPath(breadcrumbs)}.`);
     }
 }
 
@@ -72,17 +86,11 @@ export class SeedMatchError extends Error {
     }
 }
 
-export class PoolMatchError extends Error {
-    constructor() {
-        super('Nodes with the same poolId value must be structurally similar.');
-    }
-}
-
-export class RootPoolMatchError extends Error {
-    constructor(breadcrumbs: Array<string>) {
+export class PoolBranchError extends Error {
+    constructor(ancestorBreadcrumbs: Array<string>, descendantBreadcrumbs: Array<string>, poolId: number) {
         super(
-            `Node found at ${getPath(breadcrumbs)} with the same poolId value as the root.` +
-            `It\'s impossible for the root to be structurally similar to any other node.`
+            'No node may share a poolId value with its ancestor.' + JoinedError.separator +
+            `Found poolId value ${poolId} at ${getPath(ancestorBreadcrumbs)} and ${getPath(descendantBreadcrumbs)}.`
         );
     }
 }
@@ -102,5 +110,11 @@ export class MismatchedOptionsError extends Error {
 export class DeadRootError extends Error {
     constructor() {
         super('If the tree\'s root has no children, it must have a seed.');
+    }
+}
+
+export class NoNodeColourError extends Error {
+    constructor() {
+        super('If the node color property is included, at least one value must be defined.');
     }
 }

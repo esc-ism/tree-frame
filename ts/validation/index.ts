@@ -56,7 +56,7 @@ function hasValue<X extends {}>(breadcrumbs: string[], candidate: X): candidate 
 
     const type = typeof candidate.value;
 
-    if (!VALUE_TYPES.some((expectedType) => expectedType === type))
+    if (VALUE_TYPES.every((expectedType) => expectedType !== type))
         throw new errors.TypeError([...breadcrumbs, 'value'], type, VALUE_TYPES);
 
     return true;
@@ -65,14 +65,26 @@ function hasValue<X extends {}>(breadcrumbs: string[], candidate: X): candidate 
 function isOption(breadcrumbs: string[], option: unknown, index: number): option is Value {
     const type = typeof option;
 
-    if (!VALUE_TYPES.some((expectedType) => expectedType === type))
+    if (VALUE_TYPES.every((expectedType) => expectedType !== type))
         throw new errors.TypeError([...breadcrumbs, index.toString()], type, VALUE_TYPES);
 
     return true;
 }
 
+function convertPredicate(breadcrumbs: Array<string>, node: object, property: string) {
+    if (typeof node[property] === 'string') {
+        try {
+            node[property] = eval(node[property]);
+        } catch (e) {
+            throw new errors.JoinedError(new errors.EvalError([...breadcrumbs, property]), e);
+        }
+    }
+}
+
 function hasPredicate<X extends {}>(breadcrumbs: string[], candidate: X): candidate is X | X & Record<'predicate', Predicate> {
     if (hasOwnProperty(candidate, 'predicate')) {
+        convertPredicate(breadcrumbs, candidate, 'predicate');
+
         const {predicate} = candidate;
 
         switch (typeof predicate) {
@@ -107,6 +119,9 @@ function isStyles(breadcrumbs: string[], candidate: unknown): candidate is objec
     if (typeof candidate !== 'object')
         throw new errors.TypeError(breadcrumbs, typeof candidate, ['object']);
 
+    if (Array.isArray(candidate))
+        throw new errors.TypeError(breadcrumbs, 'array', ['object']);
+
     for (const [key, value] of Object.entries(candidate)) {
         switch (key) {
             // Colours
@@ -116,7 +131,6 @@ function isStyles(breadcrumbs: string[], candidate: unknown): candidate is objec
             case 'headButtonLabel':
             case 'headButtonLeaf':
             case 'headButtonStyle':
-            case 'nodeBase':
             case 'nodeButtonRemove':
             case 'nodeButtonCreate':
             case 'nodeButtonMove':
@@ -152,6 +166,23 @@ function isStyles(breadcrumbs: string[], candidate: unknown): candidate is objec
             case 'leafShowBorder':
                 if (typeof value !== 'boolean')
                     throw new errors.TypeError([...breadcrumbs, key], typeof value, ['boolean']);
+
+                break;
+
+            case 'nodeBase':
+                if (!Array.isArray(value))
+                    throw new errors.TypeError([...breadcrumbs, key], typeof value, ['array']);
+
+                if (value.length === 0)
+                    throw new errors.JoinedError(
+                        new errors.NoNodeColourError(),
+                        new errors.EmptyArrayError([...breadcrumbs, key])
+                    );
+
+                for (const [i, subValue] of value.entries()) {
+                    if (typeof subValue !== 'string')
+                        throw new errors.TypeError([...breadcrumbs, key, i.toString()], typeof subValue, ['string']);
+                }
         }
     }
 
@@ -167,9 +198,11 @@ function isParent(breadcrumbs: string[], candidate: object): candidate is Parent
     if (hasOwnProperty(candidate, 'seed') && !isChild([...breadcrumbs, 'seed'], candidate.seed))
         throw new errors.UnexpectedStateError();
 
+    convertPredicate(breadcrumbs, candidate, 'childPredicate');
     if (hasOwnProperty(candidate, 'childPredicate') && typeof candidate.childPredicate !== 'function')
         throw new errors.TypeError([...breadcrumbs, 'childPredicate'], typeof candidate.childPredicate, ['function']);
 
+    convertPredicate(breadcrumbs, candidate, 'descendantPredicate');
     if (hasOwnProperty(candidate, 'descendantPredicate') && typeof candidate.descendantPredicate !== 'function')
         throw new errors.TypeError([...breadcrumbs, 'descendantPredicate'], typeof candidate.descendantPredicate, ['function']);
 
@@ -200,7 +233,7 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
         if (typeof candidate.input !== 'string')
             throw new errors.TypeError([...breadcrumbs, 'input'], typeof candidate.input, ['string']);
 
-        if (!INPUT_TYPES.some((expectedType) => expectedType === candidate.input))
+        if (INPUT_TYPES.every((expectedType) => expectedType !== candidate.input))
             throw new errors.ValueError([...breadcrumbs, 'input'], typeof candidate.input, INPUT_TYPES);
     }
 
@@ -229,15 +262,31 @@ function isRoot(candidate: unknown): candidate is Root {
 }
 
 function isDefaultStyle(candidate: unknown): candidate is DefaultStyle {
-    return isStyles(['defaultStyle'], candidate);
+    if (!isStyles(['defaultStyle'], candidate))
+        throw new errors.UnexpectedStateError();
+
+    if (hasOwnProperty(candidate, 'name'))
+        throw new errors.PropertyError(['defaultStyle'], 'name', false);
+
+    if (hasOwnProperty(candidate, 'isActive'))
+        throw new errors.PropertyError(['defaultStyle'], 'isActive', false);
+
+    return true;
 }
 
 function isUserStyle(breadcrumbs: Array<string>, candidate: unknown): candidate is UserStyle {
     if (!isStyles(breadcrumbs, candidate))
         throw new errors.UnexpectedStateError();
 
-    if (!('name' in candidate))
-        new errors.PropertyError(breadcrumbs, 'name', true);
+    if (!hasOwnProperty(candidate, 'name'))
+        throw new errors.PropertyError(breadcrumbs, 'name', true);
+    if (typeof candidate.name === 'string')
+        throw new errors.TypeError([...breadcrumbs, 'name'], typeof candidate.name, ['string']);
+
+    if (!hasOwnProperty(candidate, 'isActive'))
+        throw new errors.PropertyError(breadcrumbs, 'isActive', true);
+    if (typeof candidate.isActive === 'boolean')
+        throw new errors.TypeError([...breadcrumbs, 'isActive'], typeof candidate.isActive, ['boolean']);
 
     return true;
 }
@@ -277,39 +326,36 @@ export function validateMatch(
     if ('predicate' in model !== 'predicate' in candidate)
         throw new errors.PropertyError(candidateBreadcrumbs, 'predicate', 'predicate' in model);
 
-    if ('predicate' in model) {
-        if (typeof model.predicate !== typeof candidate.predicate)
-            throw new errors.TypeError([...candidateBreadcrumbs, 'predicate'], typeof candidate.predicate, [typeof model.predicate]);
+    if (typeof model.predicate !== typeof candidate.predicate)
+        throw new errors.TypeError([...candidateBreadcrumbs, 'predicate'], typeof candidate.predicate, [typeof model.predicate]);
 
-        switch (typeof model.predicate) {
-            case 'boolean':
-                if (model.predicate !== candidate.predicate)
-                    throw new errors.ValueError([...candidateBreadcrumbs, 'predicate'], candidate.predicate, [model.predicate]);
+    switch (typeof model.predicate) {
+        case 'undefined':
+        case 'boolean':
+            if (model.predicate !== candidate.predicate)
+                throw new errors.ValueError([...candidateBreadcrumbs, 'predicate'], candidate.predicate, [model.predicate]);
 
-                if (model.predicate === false)
-                    if (model.value !== candidate.value) {
-                        throw new errors.ValueError([...candidateBreadcrumbs, 'value'], candidate.value, [model.value]);
-                    }
+            if (!model.predicate && model.value !== candidate.value)
+                throw new errors.ValueError([...candidateBreadcrumbs, 'value'], candidate.value, [model.value]);
 
-                break;
+            break;
 
-            case 'function':
-                if (!model.predicate(candidate.value))
-                    throw new errors.ValueError([...candidateBreadcrumbs, 'value'], candidate.value, ['unknown']);
+        case 'function':
+            if (!model.predicate(candidate.value))
+                throw new errors.ValueError([...candidateBreadcrumbs, 'value'], candidate.value, ['unknown']);
 
-                break;
+            break;
 
-            default:
-                const {length} = candidate.predicate as Array<string>;
+        default:
+            const {length} = candidate.predicate as Array<string>;
 
-                if (model.predicate.length !== length)
-                    throw new errors.ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
+            if (model.predicate.length !== length)
+                throw new errors.ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
 
-                for (const [i, option] of model.predicate.entries()) {
-                    if (candidate.predicate[i] !== option)
-                        throw new errors.ValueError([...candidateBreadcrumbs, 'predicate', i.toString()], candidate.predicate[i], [option]);
-                }
-        }
+            for (const [i, option] of model.predicate.entries()) {
+                if (candidate.predicate[i] !== option)
+                    throw new errors.ValueError([...candidateBreadcrumbs, 'predicate', i.toString()], candidate.predicate[i], [option]);
+            }
     }
 
     if ('children' in model !== 'children' in candidate)
@@ -377,7 +423,8 @@ function validatePredicates(root: Root): void {
     function validateChild(breadcrumbs: Array<string>, child: Child): void {
         switch (typeof child.predicate) {
             case 'boolean':
-                break;
+            case 'undefined':
+                return;
 
             case 'function':
                 if (!child.predicate(child.value))
@@ -390,7 +437,7 @@ function validatePredicates(root: Root): void {
                 if (options.length === 0)
                     throw new errors.JoinedError(
                         new errors.NoOptionsError(),
-                        new errors.TypeError([...breadcrumbs, 'predicate', '0'], 'undefined', ['string'])
+                        new errors.EmptyArrayError([...breadcrumbs, 'predicate'])
                     );
 
                 const type = typeof options[0];
@@ -444,42 +491,22 @@ function validatePredicates(root: Root): void {
     validateParent(['tree'], root);
 }
 
-function validatePools(root: Root) {
-    const pools: Array<[string[], Child]> = [];
+function validatePools(breadcrumbs: Array<string>, node: Node, ancestorPools: Array<Array<string>> = []) {
+    if ('poolId' in node) {
+        if (node.poolId in ancestorPools)
+            throw new errors.PoolBranchError(ancestorPools[node.poolId], breadcrumbs, node.poolId);
 
-    function validateBranch(breadcrumbs: string[], node: Child): void {
-        if ('poolId' in node) {
-            if (!(node.poolId in pools)) {
-                if (node.poolId === root.poolId) {
-                    throw new errors.JoinedError(
-                        new errors.PoolMatchError(),
-                        new errors.RootPoolMatchError(breadcrumbs)
-                    );
-                }
+        // Slice maintains empty entries, so the 'in' operator still works
+        ancestorPools = ancestorPools.slice();
 
-                pools[node.poolId] = [breadcrumbs, node];
-            } else {
-                try {
-                    validateMatch(
-                        ...pools[node.poolId],
-                        breadcrumbs, node
-                    );
-                } catch (e) {
-                    throw new errors.JoinedError(new errors.PoolMatchError(), e);
-                }
-            }
-        }
-
-        if ('children' in node) {
-            // Recurse
-            for (const [i, child] of node.children.entries()) {
-                validateBranch([...breadcrumbs, 'children', i.toString()], child);
-            }
-        }
+        ancestorPools[node.poolId] = breadcrumbs;
     }
 
-    for (const [i, child] of root.children.entries()) {
-        validateBranch(['tree', 'children', i.toString()], child);
+    if ('children' in node) {
+        // Recurse
+        for (const [i, child] of node.children.entries()) {
+            validatePools([...breadcrumbs, 'children', i.toString()], child, ancestorPools);
+        }
     }
 }
 
@@ -496,7 +523,7 @@ function validateRoot(node: Root): void {
 
     validatePredicates(node);
 
-    validatePools(node);
+    validatePools(['tree'], node);
 }
 
 // Config type predicate helpers
@@ -527,6 +554,8 @@ function hasUserStyles<X extends {}>(candidate: X): candidate is X & Record<'use
 
     if (!isArrayOf<UserStyle>(['userStyles'], candidate.userStyles, isUserStyle))
         throw new errors.UnexpectedStateError();
+
+    // You're not checking for multiple active styles, but it's probably fine
 
     return true;
 }

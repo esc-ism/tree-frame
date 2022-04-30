@@ -22,6 +22,8 @@ export function onInit({data}) {
                 'event': EVENTS.ERROR,
                 'reason': error.message
             }, '*');
+
+            return;
         }
 
         window.removeEventListener('message', onInit);
@@ -40,7 +42,7 @@ if (window.parent === window) {
 
     // Inform the frame's parent that it's ready to receive data
     window.parent.postMessage({
-        'event': EVENTS.START,
+        'events': EVENTS,
         'password': PASSWORD
     }, '*');
 }

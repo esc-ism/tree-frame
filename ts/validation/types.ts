@@ -96,7 +96,7 @@ export type Node = Root | Child;
 
 // Config type
 
-export const CONFIG_KEYS = ['title', 'tree', 'userStyles', 'devStyle'];
+export const CONFIG_KEYS = ['title', 'tree', 'userStyles', 'defaultStyle'];
 
 export interface Config {
     title: string;
