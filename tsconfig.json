@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
       "target": "es6",
-      "module": "esnext",
+      "module": "commonjs",
       "moduleResolution": "node",
       "sourceMap": false
     },
     "include": [
-      "./ts/**/*"
+      "./ts/**/*",
+      "./test/**/*"
     ],
 }
