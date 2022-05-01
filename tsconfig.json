@@ -1,12 +1,17 @@
 {
+  "include": [
+    "./ts/**/*",
+    "./test/**/*"
+  ],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": false
+  },
+  "ts-node": {
     "compilerOptions": {
-      "target": "es6",
       "module": "commonjs",
-      "moduleResolution": "node",
-      "sourceMap": false
-    },
-    "include": [
-      "./ts/**/*",
-      "./test/**/*"
-    ],
+    }
+  }
 }
