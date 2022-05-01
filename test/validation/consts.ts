@@ -88,27 +88,48 @@ export const VALID: Configs = {
         {
             'children': [],
             'seed': {
-                'label': 'Channel Regex',
-                'value': '^Channel Name$',
+                'label': '_',
+                'value': '_',
                 'children': [],
                 'seed': {
-                    'label': 'Video Regex',
-                    'value': '^Video Title$',
+                    'label': '_',
+                    'value': '_',
                     'children': [
                         {
-                            'label': 'Video Type',
-                            'value': 'test',
-                            'predicate': ['test']
+                            'label': '_',
+                            'value': '_',
+                            'predicate': ['_']
                         }
                     ],
                     'seed': {
-                        'label': 'Video Type',
-                        'value': 'test',
-                        'predicate': ['test']
+                        'label': '_',
+                        'value': '_',
+                        'predicate': ['_']
                     },
                     'childPredicate': () => true
                 }
             }
+        },
+        {
+            'children': [
+                {
+                    'label': '_',
+                    'value': '_',
+                    'predicate': true,
+                    'poolId': 1,
+                    'children': []
+                }
+            ],
+            'seed': {
+                'label': '_',
+                'value': '|',
+                'predicate': true,
+                'poolId': 1,
+                'children': []
+            },
+            'poolId': 0,
+            'descendantPredicate': ([{value}]) => value === '_',
+            'childPredicate': ({length}) => length === 1,
         }
     ],
     'USER_STYLES': [
@@ -287,6 +308,43 @@ export const INVALID = {
                 'value': '_',
                 'predicate': true
             }
+        },
+        {
+            'children': [{
+                'label': '_',
+                'value': '_',
+                'children': []
+            }],
+            'seed': {
+                'label': '_',
+                'value': '_',
+                'children': [],
+                'seed': {
+                    'label': '_',
+                    'value': '_',
+                }
+            }
+        },
+        // Pool errors
+        {
+            'children': [{
+                'label': '_',
+                'value': '_',
+                'poolId': 0
+            }],
+            'poolId': 0
+        },
+        {
+            'children': [{
+                'label': '_',
+                'value': '_',
+                'poolId': 0
+            }],
+            'seed': {
+                'label': '_',
+                'value': '_',
+                'poolId': 1
+            },
         }
     ],
     'USER_STYLES': [
