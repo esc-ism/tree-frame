@@ -8,6 +8,8 @@ import {setActive} from '../active';
 import type Child from '../../child';
 import type Middle from '../../middle';
 import type Root from '../../root';
+import {getPredicateResponse, resolvePredicatePromise} from '../../../../../../messaging';
+import {SubPredicate} from '../../../../../../validation/types';
 
 let activeNode: Child;
 
@@ -30,22 +32,6 @@ export function reset() {
     activeNode = undefined;
 }
 
-function getPredicateResponse(...predicates: Array<(...args: any) => unknown>): boolean | string {
-    for (const predicate of predicates) {
-        const response = predicate();
-
-        if (typeof response === 'string') {
-            return response;
-        }
-
-        if (!Boolean(response)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 function getValue(node) {
     const {value} = node.element.valueElement;
 
@@ -61,54 +47,59 @@ function getValue(node) {
     }
 }
 
-function getDescendantPredicateResponse(parent: Root | Middle): boolean | string {
-    if (parent.descendantPredicate) {
-        return getPredicateResponse(() => parent.descendantPredicate(parent.children));
-    }
-
-    if ('parent' in parent) {
-        return getDescendantPredicateResponse(parent.parent);
-    }
-
-    return true;
+function getSubPredicateResponse(predicate: SubPredicate, children: Array<Child>): Promise<void> {
+    return typeof predicate === 'number' ?
+        getPredicateResponse(predicate, children.map(child => child.getJSON())) :
+        new Promise((resolve, reject) => resolvePredicatePromise(predicate(children), resolve, reject));
 }
 
-function getChildPredicateResponse({childPredicate, children}: Root | Middle): boolean | string {
-    if (childPredicate) {
-        return getPredicateResponse(() => childPredicate(children));
+function getDescendantPredicateResponses(node: Root | Middle): Array<Promise<void>> {
+    const responses = [];
+    if ('descendantPredicate' in node) {
+        responses.push(getSubPredicateResponse(node.descendantPredicate, node.children));
     }
 
-    return true;
+    if ('parent' in node) {
+        responses.push(...getDescendantPredicateResponses(node.parent));
+    }
+
+    return responses;
 }
 
-export function getSubPredicateResponse(parent): boolean | string {
-    return getPredicateResponse(
-        () => getChildPredicateResponse(parent),
-        () => getDescendantPredicateResponse(parent)
-    );
+function getChildPredicateResponse(node: Root | Middle): Promise<void> {
+    if ('childPredicate' in node) {
+        return getSubPredicateResponse(node.childPredicate, node.children);
+    }
+
+    return Promise.resolve(null);
 }
 
-function getOwnPredicateResponse(node: Child): boolean | string {
+export function getSubPredicateResponses(parent): Array<Promise<void>> {
+    return [getChildPredicateResponse(parent), ...getDescendantPredicateResponses(parent)];
+}
+
+function getOwnPredicateResponse(node: Child): Promise<void> {
+    // No need to check for undefined - the button wouldn't have mounted if there were no predicate
     const {predicate} = node;
     const value = getValue(node);
 
     switch (typeof predicate) {
         case 'boolean':
-            return predicate;
+            return Promise[predicate ? 'resolve' : 'reject']();
+
+        case 'number':
+            return getPredicateResponse(predicate, value);
 
         case 'function':
-            return getPredicateResponse(() => predicate(value));
+            return new Promise((resolve, reject) => resolvePredicatePromise(predicate(value), resolve, reject));
 
         default:
-            return predicate.indexOf(value as string) !== -1;
+            return Promise[predicate.indexOf(value as string) === -1 ? 'reject' : 'resolve']();
     }
 }
 
-function getAllPredicateResponse(node: Child = activeNode): boolean | string {
-    return getPredicateResponse(
-        () => getOwnPredicateResponse(node),
-        () => getSubPredicateResponse(node.parent)
-    );
+function getAllPredicateResponses(node: Child = activeNode): Array<Promise<void>> {
+    return [getOwnPredicateResponse(node), ...getSubPredicateResponses(node.parent)];
 }
 
 export function update() {
@@ -116,23 +107,21 @@ export function update() {
 
     activeNode.value = getValue(activeNode);
 
-    const response = getAllPredicateResponse();
+    Promise.all(getAllPredicateResponses())
+        .then(() => {
+            activeNode.element.removeClass(INVALID_CLASS);
 
-    if (response === true) {
-        activeNode.element.removeClass(INVALID_CLASS);
-    } else {
-        activeNode.value = previousValue;
+            tooltip.hide();
+        })
+        .catch((reason) => {
+            activeNode.value = previousValue;
 
-        activeNode.element.addClass(INVALID_CLASS);
+            activeNode.element.addClass(INVALID_CLASS);
 
-        if (typeof response === 'string') {
-            tooltip.show(response);
-
-            return;
-        }
-    }
-
-    tooltip.hide();
+            if (reason) {
+                tooltip.show(reason);
+            }
+        });
 }
 
 export function unmount(node) {
@@ -150,17 +139,17 @@ export function doAction(node, button) {
         if (typeof node.value === 'boolean') {
             node.value = !node.value;
 
-            const response = getAllPredicateResponse(node);
+            Promise.all(getAllPredicateResponses(node))
+                .then(() => {
+                    node.element.render(node.value);
+                })
+                .catch((reason) => {
+                    node.value = !node.value;
 
-            if (response === true) {
-                node.element.render(node.value);
-            } else {
-                node.value = !node.value;
-
-                if (typeof response === 'string') {
-                    tooltip.show(response, button);
-                }
-            }
+                    if (reason) {
+                        tooltip.show(reason, button);
+                    }
+                });
         } else {
             activeNode = node;
 
@@ -198,11 +187,10 @@ export function mount(node: Child): void {
 }
 
 export function shouldMount(node: Child): boolean {
-    if (!node.predicate) {
-        return false;
-    }
-
     switch (typeof node.predicate) {
+        case 'undefined':
+            return false;
+
         case 'boolean':
             return node.predicate;
 

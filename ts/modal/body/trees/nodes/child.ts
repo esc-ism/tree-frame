@@ -7,7 +7,7 @@ import * as disconnect from './actions/delete';
 import * as focus from './actions/focus';
 import * as move from './actions/move';
 
-import type * as dataTypes from '../../../../validation/types';
+import type {Child as _Child, Value, Predicate, Input} from '../../../../validation/types';
 import {getDepthClassCount} from '../style/update/depth';
 
 const actions: Array<{
@@ -17,33 +17,34 @@ const actions: Array<{
 }> = [disconnect, focus, move, edit];
 
 export default class Child {
-    readonly label: string;
-    value: dataTypes.Value;
-    readonly predicate: dataTypes.Predicate;
-    readonly input?: dataTypes.Input;
+    value: Value;
 
-    readonly depth: number;
+    readonly label: string;
+    readonly predicate?: Predicate;
+    readonly input?: Input;
 
     parent: Root | Middle;
+    readonly depth: number;
+    readonly element: NodeElement;
 
-    readonly element: NodeElement = new NodeElement();
-
-    constructor({label, value, predicate, ...optional}: dataTypes.Middle | dataTypes.Leaf, parent: Root | Middle, index?: number) {
-        this.label = label;
-        this.value = value;
-        this.predicate = predicate;
-
+    constructor(data: _Child, parent: Root | Middle, index?: number) {
         this.depth = parent.depth + 1;
+        this.element = new NodeElement(data);
+        this.element.addDepthClass(this.depth % getDepthClassCount());
 
-        if ('input' in optional) {
-            this.input = optional.input;
+        this.value = data.value;
 
-            this.element.initialise(value, this.label, predicate, optional.input);
-        } else {
-            this.element.initialise(value, this.label, predicate);
+        if ('label' in data) {
+            this.label = data.label;
         }
 
-        this.element.addDepthClass(this.depth % getDepthClassCount());
+        if ('predicate' in data) {
+            this.predicate = data.predicate;
+        }
+
+        if ('input' in data) {
+            this.input = data.input;
+        }
 
         this.attach(parent, index);
 
@@ -109,7 +110,7 @@ export default class Child {
         this.detach();
     }
 
-    getJSON(): dataTypes.Child {
+    getJSON(): _Child {
         const {label, value, predicate} = this;
 
         return {label, value, predicate};

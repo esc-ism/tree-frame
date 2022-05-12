@@ -24,8 +24,8 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'nodeButtonMove': '#70c2db',
     'nodeButtonEdit': '#7cfc00',
 
-    'inputValid': '#d9ffc0',
-    'inputInvalid': '#ffb4be',
+    'validBackground': '#d9ffc0',
+    'invalidBackground': '#ffb4be',
 
     'leafShowBorder': false,
 }

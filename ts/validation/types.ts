@@ -3,13 +3,14 @@
 export const VALUE_TYPES = ['boolean', 'number', 'string'] as const;
 export type Value = boolean | string | number;
 
-export const INPUT_TYPES = ['color', 'date', 'datetime-local', 'email', 'month', 'password', 'search', 'tel', 'text', 'time', 'url', 'week'] as const;
-export type Input = typeof INPUT_TYPES[number];
-
+// 'number' is intentionally not included
 export const PREDICATE_TYPES = ['boolean', 'function', 'array'] as const;
-export type Predicate = boolean | ((value: Value) => unknown) | Array<Value>;
+export type Predicate = boolean | Array<Value> | number | /* For me :) */ ((value: Value) => unknown);
 
-export type SubPredicate = (children: Array<Child>) => unknown;
+export type SubPredicate = number | /* For me :) */ ((children: Array<Child>) => unknown);
+
+export const INPUT_FORMATS = ['color', 'date', 'datetime-local', 'email', 'month', 'password', 'search', 'tel', 'text', 'time', 'url', 'week'] as const;
+export type Input = typeof INPUT_FORMATS[number];
 
 export const CONTRAST_METHODS = ['Black / White', 'Invert'] as const;
 export type ContrastMethod = typeof CONTRAST_METHODS[number];
@@ -36,41 +37,43 @@ export interface DefaultStyle {
     nodeButtonMove?: string;
     nodeButtonEdit?: string;
 
-    inputValid?: string;
-    inputInvalid?: string;
+    validBackground?: string;
+    invalidBackground?: string;
 
     leafShowBorder?: boolean;
 }
 
 export interface UserStyle extends DefaultStyle {
     name: string;
-    isActive: boolean
+    isActive: boolean;
 }
 
 // Group types
 
-interface _Child {
-    // The node's purpose
-    label: string;
+export interface _Child {
     // The node's data
     value: Value;
+
+    // The node's purpose
+    label?: string;
     // A data validator
     predicate?: Predicate;
     // Indicates a preferred input type
     input?: Input;
 }
 
-interface _Parent {
+export interface _Parent {
     // The node's children
     children: Array<Child>;
+
     // A node that can be added to children
     seed?: Child;
-    // Checked before a child's edited/added/deleted
+    // Checked before children are modified
     childPredicate?: SubPredicate;
-    // Checked before any descendant's edited/added/deleted
+    // Checked before descendants are modified
     descendantPredicate?: SubPredicate;
     // Children may be moved between nodes with poolId values that match their parent's
-    poolId?: number
+    poolId?: number;
 }
 
 // Node types
@@ -96,11 +99,12 @@ export type Node = Root | Child;
 
 // Config type
 
-export const CONFIG_KEYS = ['title', 'tree', 'userStyles', 'defaultStyle'];
+export const CONFIG_KEYS = ['title', 'defaultTree', 'userTree', 'defaultStyle', 'userStyles'];
 
 export interface Config {
     title: string;
-    tree: Root;
-    userStyles: Array<UserStyle>;
+    defaultTree: Root;
+    userTree?: Root;
     defaultStyle?: DefaultStyle;
+    userStyles: Array<UserStyle>;
 }

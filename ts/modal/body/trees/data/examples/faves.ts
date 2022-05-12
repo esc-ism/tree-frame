@@ -37,7 +37,7 @@ function favePredicate(name: string, children: Array<Child>) {
 
 const config: Config = {
     'title': 'My Favourite Things',
-    'tree': {
+    'defaultTree': {
         'children': [
             {
                 'label': 'Category',

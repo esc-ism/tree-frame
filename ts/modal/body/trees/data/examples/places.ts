@@ -30,7 +30,7 @@ function getPerson(
     return {
         'label': 'Name',
         'value': name,
-        'predicate': (value) => value !== '',
+        'predicate': emptyStringPredicate,
         'children': [
             {
                 'label': 'Occupation',
@@ -90,7 +90,7 @@ function getMedia(
 
 const config: Config = {
     'title': 'Pop Atlas',
-    'tree': {
+    'defaultTree': {
         'children': [
             {
                 'label': 'Location',

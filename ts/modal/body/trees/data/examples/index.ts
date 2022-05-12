@@ -1,8 +1,5 @@
 export default function getConfig() {
-    const poolSize = 3;
-    const index = Math.floor(Math.random() / (1 / poolSize));
-
-    switch (index) {
+    switch (Math.floor(Math.random() * 3)) {
         case 0:
             return import('./faves');
 

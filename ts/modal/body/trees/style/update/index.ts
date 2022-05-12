@@ -59,5 +59,8 @@ export default function updateStylesheet({
 
     colourStyles.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
 
+    colourStyles.push(['--validFont', getContrast(colours.validBackground, nodeContrast)]);
+    colourStyles.push(['--invalidFont', getContrast(colours.invalidBackground, nodeContrast)]);
+
     addRule(':root', colourStyles);
 }

@@ -10,6 +10,7 @@ import {EVENTS} from '../../../../consts';
 
 import {getRoot as getDataTree} from '../../../body/trees/data';
 import {getUserStyles} from '../../../body/trees/style';
+import {sendMessage} from '../../../../messaging';
 
 function doAction() {
     // TODO Maybe add a white, 0.5 opacity foreground over everything with a loading symbol.
@@ -18,17 +19,11 @@ function doAction() {
     // Prevent further interaction
     document.body.classList.add(ACTION_ID);
 
-    console.log({
+    sendMessage({
         'event': EVENTS.STOP,
         'tree': getDataTree().getJSON(),
         'userStyles': getUserStyles()
-    })
-
-    window.parent.postMessage({
-        'event': EVENTS.STOP,
-        'tree': getDataTree().getJSON(),
-        'userStyles': getUserStyles()
-    }, '*');
+    });
 }
 
 export default function generate() {

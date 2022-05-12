@@ -18,7 +18,7 @@ function getPath(breadcrumbs: string[]): string {
     return `/${breadcrumbs.join('/')}`;
 }
 
-// JoinedError definition
+// Errors
 
 export class JoinedError extends Error {
     static separator = '\n\n';
@@ -27,8 +27,6 @@ export class JoinedError extends Error {
         super(errors.map(({message}) => message).join(JoinedError.separator));
     }
 }
-
-// Errors that may be used outside of JoinedError
 
 export class UnexpectedStateError extends Error {
     constructor() {
@@ -54,8 +52,6 @@ export class ValueError extends Error {
     }
 }
 
-// Errors to be used in conjunction with JoinedError
-
 export class EmptyStringError extends Error {
     constructor(breadcrumbs: string[]) {
         super(`Found illegal empty string at ${getPath(breadcrumbs)}.`);
@@ -71,12 +67,6 @@ export class EmptyArrayError extends Error {
 export class PredicateError extends Error {
     constructor(breadcrumbs: string[]) {
         super(`Predicate failed at ${getPath(breadcrumbs)}. Predicates must succeed.`);
-    }
-}
-
-export class EvalError extends Error {
-    constructor(breadcrumbs: string[]) {
-        super(`String to function conversion failed at ${getPath(breadcrumbs)}.`);
     }
 }
 
@@ -104,12 +94,6 @@ export class NoOptionsError extends Error {
 export class MismatchedOptionsError extends Error {
     constructor() {
         super('Values in array type validators must all be the same type.');
-    }
-}
-
-export class DeadRootError extends Error {
-    constructor() {
-        super('If the tree\'s root has no children, it must have a seed.');
     }
 }
 

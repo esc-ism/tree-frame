@@ -1,6 +1,7 @@
 import {PASSWORD, EVENTS} from './consts';
 
 import validate from './validation';
+import {setTarget} from './messaging';
 
 // Dynamic imports for smaller bundles
 
@@ -10,18 +11,20 @@ function start(config) {
     });
 }
 
-export function onInit({data}) {
-    const {password, ...config} = data;
+async function onInit(message) {
+    const {password, ...config} = message.data;
 
     // Ignore scripts that send messages to every frame
     if (password === PASSWORD) {
+        setTarget(message.origin);
+
         try {
-            validate(config);
+            await validate(config);
         } catch (error) {
             window.parent.postMessage({
                 'event': EVENTS.ERROR,
                 'reason': error.message
-            }, '*');
+            }, message.origin);
 
             return;
         }

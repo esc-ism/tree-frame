@@ -31,12 +31,17 @@ export default function generate() {
         ['max-width', '40%'],
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}:not([disabled])`, ['background', 'var(--valid)']);
+    addRule(
+        `.${ELEMENT_CLASSES.INPUT_VALUE}:not([disabled])`, [
+            ['background', 'var(--validBackground)'],
+            ['color', 'var(--validFont)'],
+    ]);
 
     addRule(
-        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_VALUE}`,
-        ['background', 'var(--invalid)']
-    );
+        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_VALUE}`, [
+        ['background', 'var(--invalidBackground)'],
+        ['color', 'var(--invalidFont)'],
+    ]);
 
     addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}[type=color]`, ['height', '1.2em']);
 

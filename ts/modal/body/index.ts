@@ -10,7 +10,7 @@ import {generateEave} from './trees/nodes/actions/focus';
 
 import type {Config} from '../../validation/types';
 
-export default function generate({tree, userStyles, defaultStyle}: Config) {
+export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config) {
     updateStylesheet(getActiveStyle(userStyles, defaultStyle));
 
     generateCSS();
@@ -20,7 +20,7 @@ export default function generate({tree, userStyles, defaultStyle}: Config) {
     element.id = MODAL_BODY_ID;
 
     element.append(
-        generateTrees(tree, userStyles, defaultStyle),
+        generateTrees(userTree ?? defaultTree, userStyles, defaultStyle),
         generateEave()
     );
 

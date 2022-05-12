@@ -3,7 +3,7 @@ import TEMPLATE from './button';
 import {addActionButton} from '../button';
 
 import type Child from '../../child';
-import {getSubPredicateResponse} from '../edit';
+import {getSubPredicateResponses} from '../edit';
 import * as tooltip from '../tooltip';
 
 function doAction(node: Child, button) {
@@ -12,15 +12,15 @@ function doAction(node: Child, button) {
 
     node.disconnect();
 
-    const response = getSubPredicateResponse(oldParent);
+    Promise.all(getSubPredicateResponses(oldParent))
+        .catch((reason) => {
+            node.attach(oldParent, index);
 
-    if (response !== true) {
-        node.attach(oldParent, index);
+            if ('string') {
+                tooltip.show(reason, button)
+            }
 
-        if (typeof response === 'string') {
-            tooltip.show(response, button)
-        }
-    }
+        });
 }
 
 export function mount(node: Child): void {

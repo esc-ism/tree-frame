@@ -5,7 +5,7 @@ import Child from './child';
 
 import * as create from './actions/create';
 
-import type * as dataTypes from '../../../../validation/types';
+import type {Middle as _Middle, Child as _Child, SubPredicate} from '../../../../validation/types';
 
 const actions: Array<{
     shouldMount: (node: Middle) => boolean,
@@ -14,14 +14,14 @@ const actions: Array<{
 }> = [create];
 
 export default class Middle extends Child {
-    readonly seed?: dataTypes.Child;
-    readonly childPredicate?: dataTypes.SubPredicate;
-    readonly descendantPredicate?: dataTypes.SubPredicate;
-    readonly poolId?: number;
-
     readonly children: Array<Middle | Child> = [];
 
-    constructor({children, ...other}: dataTypes.Middle, parent: Root | Middle, index?: number) {
+    readonly seed?: _Child;
+    readonly childPredicate?: SubPredicate;
+    readonly descendantPredicate?: SubPredicate;
+    readonly poolId?: number;
+
+    constructor({children, ...other}: _Middle, parent: Root | Middle, index?: number) {
         super(other, parent, index);
 
         if ('seed' in other) {
@@ -85,7 +85,7 @@ export default class Middle extends Child {
         }
     }
 
-    getJSON(): dataTypes.Middle {
+    getJSON(): _Middle {
         const {seed} = this;
 
         return {

@@ -1,7 +1,7 @@
 import TEMPLATE from './button';
 
 import {addActionButton} from '../button';
-import {getSubPredicateResponse} from '../edit';
+import {getSubPredicateResponses} from '../edit';
 import * as tooltip from '../tooltip';
 
 import Middle from '../../middle';
@@ -12,15 +12,14 @@ function doAction(parent: Root | Middle, button) {
     const {seed} = parent;
     const child = 'children' in seed ? new Middle(seed, parent, 0) : new Child(seed, parent, 0);
 
-    const response = getSubPredicateResponse(parent);
+    Promise.all(getSubPredicateResponses(parent))
+        .catch((reason) => {
+            child.disconnect();
 
-    if (response !== true) {
-        child.disconnect();
-
-        if (typeof response === 'string') {
-            tooltip.show(response, button)
-        }
-    }
+            if (reason) {
+                tooltip.show(reason, button)
+            }
+        });
 }
 
 export function mount(node: Root | Middle): void {

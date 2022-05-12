@@ -12,7 +12,7 @@ let mistakes = 0;
 
 const config: Config = {
     'title': 'Move Everything to the Goal!',
-    'tree': {
+    'defaultTree': {
         'children': [
             {
                 'label': 'Location',
@@ -21,17 +21,17 @@ const config: Config = {
                 'children': [
                     {
                         label,
-                        'value': NAMES[0],
+                        'value': NAMES[0]
                     },
                     {
                         label,
-                        'value': NAMES[1],
+                        'value': NAMES[1]
                     },
                     {
                         label,
-                        'value': NAMES[2],
+                        'value': NAMES[2]
                     }
-                ],
+                ]
             },
             {
                 'label': 'Location',

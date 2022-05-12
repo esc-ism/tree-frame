@@ -144,8 +144,8 @@ export const VALID: Configs = {
             'headButtonLeaf': '#0dc700',
             'headButtonStyle': '#ffd500',
             'headContrast': 'Black / White',
-            'inputInvalid': '#ffb4be',
-            'inputValid': '#d9ffc0',
+            'validBackground': '#d9ffc0',
+            'invalidBackground': '#ffb4be',
             'leafShowBorder': true,
             'modalOutline': '#ffffff',
             'nodeBase': ['#e8e8e8', '#ffffff'],
@@ -159,9 +159,9 @@ export const VALID: Configs = {
     ]
 };
 
-for (const {title, tree, defaultStyle} of [CONFIG_0, CONFIG_1, CONFIG_2]) {
+for (const {title, defaultTree, defaultStyle} of [CONFIG_0, CONFIG_1, CONFIG_2]) {
     VALID.TITLES.push(title);
-    VALID.TREES.push(tree);
+    VALID.TREES.push(defaultTree);
     VALID.DEV_STYLES.push(defaultStyle);
 }
 
@@ -184,7 +184,6 @@ export const INVALID = {
         // Missing property
         {},
         {'seed': VALID.TREES[0]},
-        {'children': []},
         {},
         // Unexpected property type
         {
@@ -214,21 +213,21 @@ export const INVALID = {
             'children': [{
                 'label': 1,
                 'value': '_',
-                'predicate': () => false
+                'predicate': () => true
             }]
         },
         {
             'children': [{
                 'label': '_',
                 'value': () => '_',
-                'predicate': () => false
+                'predicate': () => true
             }]
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': 4
+                'predicate': '_'
             }]
         },
         {
@@ -253,7 +252,7 @@ export const INVALID = {
         },
         {
             ...VALID.TREES[0],
-            'descendentPredicate': () => false
+            'descendantPredicate': () => false
         },
         {
             'children': [{
@@ -321,7 +320,7 @@ export const INVALID = {
                 'children': [],
                 'seed': {
                     'label': '_',
-                    'value': '_',
+                    'value': '_'
                 }
             }
         },
@@ -344,7 +343,7 @@ export const INVALID = {
                 'label': '_',
                 'value': '_',
                 'poolId': 1
-            },
+            }
         }
     ],
     'USER_STYLES': [

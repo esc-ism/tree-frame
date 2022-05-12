@@ -4,7 +4,7 @@ import {ACTION_ID} from './consts';
 import {addActionButton} from '../button';
 import {setActive} from '../active';
 import {focusBranch} from '../focus';
-import {getSubPredicateResponse} from '../edit';
+import {getSubPredicateResponses} from '../edit';
 import * as tooltip from '../tooltip';
 
 import {FOCUS_CLASS} from '../focus/consts';
@@ -56,32 +56,27 @@ function doMove(node, button, isParent) {
 
     moveTarget.child.move(newParent, isParent ? 0 : node);
 
-    for (const parent of [oldParent, newParent]) {
-        const response = getSubPredicateResponse(parent);
+    Promise.all([
+        ...getSubPredicateResponses(oldParent),
+        ...(oldParent === newParent ? [] : getSubPredicateResponses(newParent)),
+    ])
+        .then(() => {
+            // Grab the reference before it gets wiped
+            const movedNode = moveTarget.child;
 
-        if (response !== true) {
+            reset();
+
+            // Show where the node's been moved to
+            movedNode.element.scrollIntoView();
+        })
+        .catch((reason) => {
             // Revert
             moveTarget.child.move(oldParent, index);
 
-            if (typeof response === 'string') {
-                tooltip.show(response, button);
+            if (reason) {
+                tooltip.show(reason, button);
             }
-
-            return;
-        }
-
-        if (oldParent === newParent) {
-            break;
-        }
-    }
-
-    // Grab the reference before it gets wiped
-    const movedNode = moveTarget.child;
-
-    reset();
-
-    // Show where the node's been moved to
-    movedNode.element.scrollIntoView();
+        });
 }
 
 function addTargetButton(node, isParent = true) {

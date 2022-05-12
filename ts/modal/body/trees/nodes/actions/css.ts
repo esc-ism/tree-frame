@@ -56,7 +56,7 @@ export default function generate() {
         filter.setAttribute('y', '0');
 
         blur.setAttribute('in', 'SourceGraphic');
-        blur.setAttribute('stdDeviation', '0.8');
+        blur.setAttribute('stdDeviation', '0.9');
 
         filter.append(blur);
         defs.append(filter);
