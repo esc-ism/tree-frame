@@ -34,14 +34,6 @@ function validatePredicateMatch(
         throw new TypeError([...candidateBreadcrumbs, 'predicate'], typeof candidate.predicate, [typeof model.predicate]);
 
     switch (typeof model.predicate) {
-        case 'undefined':
-        case 'boolean':
-            // Check value matches if it can't be changed
-            if (!model.predicate && model.value !== candidate.value)
-                throw new ValueError([...candidateBreadcrumbs, 'value'], candidate.value, [model.value]);
-
-            // Intentional fallthrough
-
         case 'number':
             if (model.predicate !== candidate.predicate)
                 throw new ValueError([...candidateBreadcrumbs, 'predicate'], candidate.predicate, [model.predicate]);
