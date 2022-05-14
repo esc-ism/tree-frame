@@ -35,7 +35,7 @@ function getContrast(hex: string, method: ContrastMethod): string {
 }
 
 export default function updateStylesheet({
-    fontSize, leafShowBorder, headContrast, nodeBase, nodeContrast, ...colours
+    fontSize, borderLeaf, borderNode, headContrast, nodeBase, nodeContrast, ...colours
 }: DefaultStyle) {
     for (let i = STYLESHEET.cssRules.length - 1; i >= 0; --i) {
         STYLESHEET.deleteRule(i);
@@ -49,12 +49,14 @@ export default function updateStylesheet({
         ([property, value]: [string, string]): [string, string] => [`--${property}`, value]
     );
 
+    colourStyles.push([`--borderNode`, borderNode ? '1px' : '0']);
+    colourStyles.push([`--borderLeaf`, borderLeaf ? '5px' : borderNode ? '1px' : '0']);
+
     for (const [depth, baseColour] of nodeBase.entries()) {
         const contrastColour = getContrast(baseColour, nodeContrast);
 
         colourStyles.push([`--nodeBase${depth}`, baseColour]);
         colourStyles.push([`--nodeContrast${depth}`, contrastColour]);
-        colourStyles.push([`--leafBorder${depth}`, leafShowBorder ? contrastColour : 'transparent']);
     }
 
     colourStyles.push(['--headContrast', getContrast(colours.headBase, headContrast)]);

@@ -37,9 +37,8 @@ async function validateChild(breadcrumbs: Array<string>, child: Child): Promise<
             break;
 
         case 'function':
-            if (!child.predicate(child.value)) {
+            if (!child.predicate(child.value))
                 throw new PredicateError([...breadcrumbs, 'predicate']);
-            }
 
             return;
 

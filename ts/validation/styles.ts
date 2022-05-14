@@ -33,7 +33,8 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
 
             // Booleans
             case 'isActive':
-            case 'leafShowBorder':
+            case 'borderLeaf':
+            case 'borderNode':
                 if (typeof value !== 'boolean')
                     throw new TypeError([...breadcrumbs, key], typeof value, ['boolean']);
 

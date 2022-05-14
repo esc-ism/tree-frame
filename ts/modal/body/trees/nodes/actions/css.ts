@@ -52,7 +52,7 @@ export default function generate() {
         filter.setAttribute('y', '0');
 
         blur.setAttribute('in', 'SourceGraphic');
-        blur.setAttribute('stdDeviation', '0.9');
+        blur.setAttribute('stdDeviation', '0.75');
 
         filter.append(blur);
         defs.append(filter);
@@ -64,11 +64,16 @@ export default function generate() {
     // Svg appearance
 
     addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, [
-        ['display', 'inline-flex'],
-        ['height', '1.5em']
+        ['height', '100%'],
+        ['display', 'flex']
     ]);
 
     addRule(`.${BUTTON_CLASS} > svg`, ['height', '100%']);
+
+    addRule(`.${BUTTON_CLASS}:last-child`, [
+        // Separate from value
+        ['margin-right', '0.2em'],
+    ]);
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${HIGHLIGHT_SOURCE_CLASS}):not(${FOCUS_CLASS}) > ` +
@@ -89,9 +94,10 @@ export default function generate() {
     addDepthChangeListener((depth, addRule) => {
         const depthSelector = `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`;
 
-        addRule([
-            `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}) svg`,
-        ], ['stroke', `var(--nodeBase${depth})`]);
+        addRule(
+            [`${depthSelector} .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}) svg`],
+            ['stroke', `var(--nodeBase${depth})`]
+        );
 
         addRule([
             // Not active, focused

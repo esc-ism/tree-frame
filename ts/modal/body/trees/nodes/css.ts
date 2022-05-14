@@ -6,21 +6,21 @@ import {addRule} from '../../../css';
 
 export default function generate() {
     addDepthChangeListener((depth, addRule) => {
-        addRule(
-            `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
-            ['color', `var(--nodeContrast${depth})`]
-        );
+        addRule(`.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
+            ['color', `var(--nodeContrast${depth})`],
+            // Use outline to avoid gaps when transparent
+            ['border-bottom', `var(--borderNode) solid var(--nodeContrast${depth})`],
+        ]);
 
-        addRule(
-            `.${DEPTH_CLASS_PREFIX}${depth}`,
+        addRule(`.${DEPTH_CLASS_PREFIX}${depth}`, [
             ['background', `var(--nodeBase${depth})`]
-        );
+        ]);
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth}:not(.${ROOT_CLASS}):not(.${MIDDLE_CLASS}):last-child > ` +
-            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
-            ['border-bottom', `5px ridge var(--leafBorder${depth})`]
-        );
+            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
+            ['border-bottom', `var(--borderLeaf) ridge var(--nodeContrast${depth})`],
+        ]);
     });
 
     addRule(`.${ROOT_CLASS}`, ['flex-grow', '1']);
@@ -31,14 +31,12 @@ export default function generate() {
     );
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
-        // Prevents line break between buttons and input
+        ['height', '1.6em'],
         ['display', 'flex'],
-        // Ensures buttons are aligned with input if they have different heights
         ['align-items', 'center']
     ]);
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
-        // Prevent highlighting
         ['user-select', 'none']
     ]);
 }

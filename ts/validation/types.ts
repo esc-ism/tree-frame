@@ -39,7 +39,8 @@ export interface DefaultStyle {
     validBackground?: string;
     invalidBackground?: string;
 
-    leafShowBorder?: boolean;
+    borderLeaf?: boolean;
+    borderNode?: boolean;
 }
 
 export interface UserStyle extends DefaultStyle {

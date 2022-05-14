@@ -21,10 +21,11 @@ export const DEFAULT_STYLE: DefaultStyle = {
 
     'nodeButtonRemove': '#ff0000',
     'nodeButtonCreate': '#ffff00',
-    'nodeButtonMove': '#70c2db',
+    'nodeButtonMove': '#00ff00',
 
     'validBackground': '#d9ffc0',
     'invalidBackground': '#ffb4be',
 
-    'leafShowBorder': true
+    'borderLeaf': true,
+    'borderNode': true,
 };

@@ -54,15 +54,11 @@ export default function generate() {
 
     // Focus exclusion
 
-    addRule(
-        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
-        ['cursor', 'zoom-out']
-    );
+    addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, ['cursor', 'zoom-in']);
 
     addRule(
-        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
-        ['cursor', 'zoom-in']
+        `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        ['cursor', 'zoom-out']
     );
 
     addRule(

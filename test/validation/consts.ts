@@ -16,6 +16,7 @@ export const VALID: Configs = {
         'YouTube Sub Feed Filter'
     ],
     'TREES': [
+        {'children': [{}]},
         {
             'children': [{
                 'label': '_',
@@ -37,12 +38,10 @@ export const VALID: Configs = {
                 'children': [{
                     'label': '_',
                     'value': '1',
-                    'predicate': true
                 }],
                 'seed': {
                     'label': '_',
                     'value': '_',
-                    'predicate': true
                 }
             }]
         },
@@ -54,18 +53,15 @@ export const VALID: Configs = {
                     {
                         'label': '_',
                         'value': '1',
-                        'predicate': true
                     },
                     {
                         'label': '_',
                         'value': '2',
-                        'predicate': true
                     }
                 ],
                 'seed': {
                     'label': '_',
                     'value': '_',
-                    'predicate': true
                 }
             }]
         },
@@ -115,7 +111,6 @@ export const VALID: Configs = {
                 {
                     'label': '_',
                     'value': '_',
-                    'predicate': true,
                     'poolId': 1,
                     'children': []
                 }
@@ -123,7 +118,6 @@ export const VALID: Configs = {
             'seed': {
                 'label': '_',
                 'value': '|',
-                'predicate': true,
                 'poolId': 1,
                 'children': []
             },
@@ -146,11 +140,11 @@ export const VALID: Configs = {
             'headContrast': 'Black / White',
             'validBackground': '#d9ffc0',
             'invalidBackground': '#ffb4be',
-            'leafShowBorder': true,
+            'borderLeaf': true,
+            'borderNode': true,
             'modalOutline': '#ffffff',
             'nodeBase': ['#e8e8e8', '#ffffff'],
             'nodeButtonCreate': '#a000cc',
-            'nodeButtonEdit': '#209400',
             'nodeButtonMove': '#00a0d1',
             'nodeButtonRemove': '#d10000',
             'nodeContrast': 'Black / White',
@@ -182,9 +176,7 @@ export const INVALID = {
         1,
         [],
         // Missing property
-        {},
         {'seed': VALID.TREES[0]},
-        {},
         // Unexpected property type
         {
             'children': {
@@ -213,14 +205,12 @@ export const INVALID = {
             'children': [{
                 'label': 1,
                 'value': '_',
-                'predicate': () => true
             }]
         },
         {
             'children': [{
                 'label': '_',
                 'value': () => '_',
-                'predicate': () => true
             }]
         },
         {
@@ -231,12 +221,15 @@ export const INVALID = {
             }]
         },
         {
-            'children': [],
-            'seed': '_'
+            'children': [{
+                'label': '_',
+                'value': '_',
+                'predicate': true
+            }]
         },
         {
             'children': [],
-            'seed': []
+            'seed': '_'
         },
         // Predicate fail
         {
@@ -270,14 +263,14 @@ export const INVALID = {
             'seed': {
                 'label': '_',
                 'value': '_',
-                'predicate': true
+                'predicate': () => true
             }
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': true
+                'predicate': () => true
             }],
             'seed': {
                 'label': '_',
@@ -288,24 +281,24 @@ export const INVALID = {
             'children': [{
                 'label': '_',
                 'value': 1,
-                'predicate': true
+                'predicate': () => true
             }],
             'seed': {
                 'label': '_',
                 'value': '1',
-                'predicate': true
+                'predicate': () => true
             }
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': false
+                'predicate': ['_', '|']
             }],
             'seed': {
                 'label': '_',
                 'value': '_',
-                'predicate': true
+                'predicate': ['_', '/']
             }
         },
         {

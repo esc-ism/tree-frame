@@ -137,7 +137,7 @@ export function doAction(node) {
     if (previousNode !== node) {
         activeNode = node;
 
-        tooltip.setParent(node.element.valueElement);
+        tooltip.setParent(node.element.valueContainer);
 
         if (node.input === 'color') {
             node.element.valueElement.click();

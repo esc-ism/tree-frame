@@ -7,8 +7,7 @@ import {addRule} from '../../../../../css';
 export default function generate() {
     addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [
         ['flex-grow', '1'],
-        ['display', 'flex'],
-        ['align-items', 'center']
+        ['display', 'flex']
     ]);
 
     // Use pointer when the node has a value and isn't being edited
@@ -18,18 +17,19 @@ export default function generate() {
         `.${ELEMENT_CLASSES.VALUE_CONTAINER} ~ *`
     ], ['cursor', 'pointer']);
 
-    addRule([`.${ELEMENT_CLASSES.VALUE}`, `.${ELEMENT_CLASSES.LABEL}`], ['height', '1.2em']);
+    addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER} > :first-child`, ['margin-left', '0.3em'])
 
     addRule(`.${ELEMENT_CLASSES.VALUE}`, [
-        // Separate from buttons
-        ['margin', '0.2em 0.5em'],
-        // Add space between input & text
+        // Space input border from contents
         ['padding', '0 0.5em']
     ]);
 
     addRule(`.${ELEMENT_CLASSES.VALUE}:not([type="checkbox"])`, ['flex-grow', '1']);
 
-    addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, ['width', '2.5em']);
+    addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, [
+        ['width', '1.8em'],
+        ['height', '1em']
+    ]);
 
     addRule(`.${ELEMENT_CLASSES.LABEL}`, [
         ['padding-right', '0.4em'],

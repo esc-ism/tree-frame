@@ -144,8 +144,12 @@ export function toJSON(style: UserStyle): _Middle {
                         'label': 'Miscellaneous',
                         'children': [
                             {
+                                'label': 'Show Node Separator?',
+                                'value': filledStyle.borderNode
+                            },
+                            {
                                 'label': 'Show Leaf Separator?',
-                                'value': filledStyle.leafShowBorder
+                                'value': filledStyle.borderLeaf
                             },
                             {
                                 'label': 'Valid Color',
@@ -194,10 +198,11 @@ export function toRawStyle(json: _Middle): DefaultStyle {
         'nodeButtonCreate': bodyButtons[1].value as string,
         'nodeButtonMove': bodyButtons[2].value as string,
 
-        'leafShowBorder': bodyMisc[0].value as boolean,
-        'validBackground': bodyMisc[1].value as string,
-        'invalidBackground': bodyMisc[2].value as string,
-        'tooltipOutline': bodyMisc[3].value as string
+        'borderNode': bodyMisc[0].value as boolean,
+        'borderLeaf': bodyMisc[1].value as boolean,
+        'validBackground': bodyMisc[2].value as string,
+        'invalidBackground': bodyMisc[3].value as string,
+        'tooltipOutline': bodyMisc[4].value as string
     };
 }
 
