@@ -63,7 +63,6 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
 
     if (hasOwnProperty(candidate, 'predicate')) {
         switch (typeof candidate.predicate) {
-            case 'boolean':
             case 'function':
             case 'number':
                 break;

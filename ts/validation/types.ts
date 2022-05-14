@@ -1,10 +1,10 @@
 // Value types
 
 export const VALUE_TYPES = ['boolean', 'number', 'string'] as const;
-export type Value = boolean | string | number;
+export type Value = boolean | number | string;
 
 // 'number' is intentionally not included
-export const PREDICATE_TYPES = ['boolean', 'function', 'array'] as const;
+export const PREDICATE_TYPES = ['array', 'function'] as const;
 export type Predicate = Array<Value> | number | /* For me :) */ ((value: Value) => unknown);
 
 export type SubPredicate = number | /* For me :) */ ((children: Array<Child>) => unknown);
