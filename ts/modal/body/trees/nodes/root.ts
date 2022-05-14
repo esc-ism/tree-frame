@@ -21,28 +21,16 @@ export default class Root implements _Root {
     readonly depth: number = 0;
     readonly element: NodeElement;
 
-    constructor(data: _Root) {
-        this.element = new NodeElement({'value': ''});
+    constructor({children, ...data}: _Root) {
+        this.element = new NodeElement({});
         this.element.addClass(ROOT_CLASS);
         this.element.addDepthClass(0);
 
-        if ('seed' in data) {
-            this.seed = data.seed;
+        for (const [key, value] of Object.entries(data)) {
+            this[key] = value;
         }
 
-        if ('childPredicate' in data) {
-            this.childPredicate = data.childPredicate;
-        }
-
-        if ('descendantPredicate' in data) {
-            this.descendantPredicate = data.descendantPredicate;
-        }
-
-        if ('poolId' in data) {
-            this.poolId = data.poolId;
-        }
-
-        if (data.children.length === 0) {
+        if (children.length === 0) {
             if (this.seed) {
                 if ('children' in this.seed) {
                     new Middle(this.seed, this);
@@ -51,7 +39,7 @@ export default class Root implements _Root {
                 }
             }
         } else {
-            for (const child of data.children) {
+            for (const child of children) {
                 if ('children' in child) {
                     new Middle(child, this);
                 } else {
@@ -67,7 +55,7 @@ export default class Root implements _Root {
         }
     }
 
-    updateDepthClass(classCount)  {
+    updateDepthClass(classCount) {
         for (const child of this.children) {
             child.updateDepthClass(classCount);
         }

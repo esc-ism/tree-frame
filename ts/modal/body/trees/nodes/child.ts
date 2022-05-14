@@ -17,9 +17,8 @@ const actions: Array<{
 }> = [disconnect, focus, move, edit];
 
 export default class Child {
-    value: Value;
-
-    readonly label: string;
+    readonly label?: string;
+    value?: Value;
     readonly predicate?: Predicate;
     readonly input?: Input;
 
@@ -32,18 +31,8 @@ export default class Child {
         this.element = new NodeElement(data);
         this.element.addDepthClass(this.depth % getDepthClassCount());
 
-        this.value = data.value;
-
-        if ('label' in data) {
-            this.label = data.label;
-        }
-
-        if ('predicate' in data) {
-            this.predicate = data.predicate;
-        }
-
-        if ('input' in data) {
-            this.input = data.input;
+        for (const [key, value] of Object.entries(data)) {
+            this[key] = value;
         }
 
         this.attach(parent, index);
@@ -70,7 +59,7 @@ export default class Child {
         return [...siblings.slice(0, index), ...siblings.slice(index + 1)];
     }
 
-    updateDepthClass(classCount)  {
+    updateDepthClass(classCount) {
         this.element.addDepthClass(this.depth % classCount);
     }
 

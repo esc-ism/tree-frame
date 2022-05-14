@@ -5,7 +5,7 @@ export type Value = boolean | string | number;
 
 // 'number' is intentionally not included
 export const PREDICATE_TYPES = ['boolean', 'function', 'array'] as const;
-export type Predicate = boolean | Array<Value> | number | /* For me :) */ ((value: Value) => unknown);
+export type Predicate = Array<Value> | number | /* For me :) */ ((value: Value) => unknown);
 
 export type SubPredicate = number | /* For me :) */ ((children: Array<Child>) => unknown);
 
@@ -35,7 +35,6 @@ export interface DefaultStyle {
     nodeButtonRemove?: string;
     nodeButtonCreate?: string;
     nodeButtonMove?: string;
-    nodeButtonEdit?: string;
 
     validBackground?: string;
     invalidBackground?: string;
@@ -51,11 +50,10 @@ export interface UserStyle extends DefaultStyle {
 // Group types
 
 export interface _Child {
-    // The node's data
-    value: Value;
-
     // The node's purpose
     label?: string;
+    // The node's data
+    value?: Value;
     // A data validator
     predicate?: Predicate;
     // Indicates a preferred input type

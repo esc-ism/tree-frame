@@ -21,30 +21,18 @@ export default class Middle extends Child {
     readonly descendantPredicate?: SubPredicate;
     readonly poolId?: number;
 
-    constructor({children, ...other}: _Middle, parent: Root | Middle, index?: number) {
-        super(other, parent, index);
+    constructor({children, ...data}: _Middle, parent: Root | Middle, index?: number) {
+        super(data, parent, index);
 
-        if ('seed' in other) {
-            this.seed = other.seed;
-        }
-
-        if ('childPredicate' in other) {
-            this.childPredicate = other.childPredicate;
-        }
-
-        if ('descendantPredicate' in other) {
-            this.descendantPredicate = other.descendantPredicate;
-        }
-
-        if ('poolId' in other) {
-            this.poolId = other.poolId;
+        for (const [key, value] of Object.entries(data)) {
+            this[key] = value;
         }
 
         for (const child of children) {
             if ('children' in child) {
-                new Middle(child, this)
+                new Middle(child, this);
             } else {
-                new Child(child, this)
+                new Child(child, this);
             }
         }
 
@@ -77,7 +65,7 @@ export default class Middle extends Child {
         this.detach();
     }
 
-    updateDepthClass(classCount)  {
+    updateDepthClass(classCount) {
         super.updateDepthClass(classCount);
 
         for (const child of this.children) {

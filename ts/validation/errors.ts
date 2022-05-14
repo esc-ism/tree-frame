@@ -97,6 +97,12 @@ export class MismatchedOptionsError extends Error {
     }
 }
 
+export class HangingPredicateError extends Error {
+    constructor() {
+        super('If a predicate is declared, a value must also be present.');
+    }
+}
+
 export class NoNodeColourError extends Error {
     constructor() {
         super('If the node color property is included, at least one value must be defined.');

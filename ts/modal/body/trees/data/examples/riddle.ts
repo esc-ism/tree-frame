@@ -1,12 +1,6 @@
 import {Config, Middle} from '../../../../../validation/types';
 
-const NAMES = [
-    'Shield',
-    'Gladiator',
-    'Lion'
-];
-
-const label = 'Entity';
+const NAMES = ['Shield', 'Gladiator', 'Lion'];
 
 let mistakes = 0;
 
@@ -15,27 +9,16 @@ const config: Config = {
     'defaultTree': {
         'children': [
             {
-                'label': 'Location',
-                'value': 'Start',
+                'label': 'Start',
                 'poolId': 0,
                 'children': [
-                    {
-                        label,
-                        'value': NAMES[0]
-                    },
-                    {
-                        label,
-                        'value': NAMES[1]
-                    },
-                    {
-                        label,
-                        'value': NAMES[2]
-                    }
+                    {'label': NAMES[0]},
+                    {'label': NAMES[1]},
+                    {'label': NAMES[2]}
                 ]
             },
             {
-                'label': 'Location',
-                'value': 'Bandit\'s Camp',
+                'label': 'Bandit\'s Camp',
                 'children': [],
                 'poolId': 0,
                 'childPredicate': (children) => {
@@ -65,8 +48,7 @@ const config: Config = {
                 }
             },
             {
-                'label': 'Location',
-                'value': 'Goal',
+                'label': 'Goal',
                 'children': [],
                 'poolId': 0,
                 'childPredicate': (children) => {

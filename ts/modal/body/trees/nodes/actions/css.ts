@@ -1,7 +1,5 @@
 import {BUTTON_CLASS} from './consts';
 
-import {ACTION_ID as MOVE_ACTION_ID} from './move/consts';
-import {ACTION_ID as EDIT_ACTION_ID} from './edit/consts';
 import {FOCUS_CLASS, HIGHLIGHT_SOURCE_CLASS} from './focus/consts';
 
 import generateCreate from './create/css';
@@ -12,8 +10,6 @@ import generateFocus from './focus/css';
 import generateTooltip from './tooltip/css';
 
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../consts';
-
-import {TREE_CONTAINER_ID} from '../../consts';
 
 import {addDepthChangeListener} from '../../style/update/depth';
 
@@ -67,9 +63,12 @@ export default function generate() {
 
     // Svg appearance
 
-    addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, ['display', 'inline-flex']);
+    addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, [
+        ['display', 'inline-flex'],
+        ['height', '1.5em']
+    ]);
 
-    addRule(`.${BUTTON_CLASS} > svg`, ['width', '1.5em']);
+    addRule(`.${BUTTON_CLASS} > svg`, ['height', '100%']);
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${HIGHLIGHT_SOURCE_CLASS}):not(${FOCUS_CLASS}) > ` +
@@ -108,11 +107,4 @@ export default function generate() {
             ['fill', `var(--nodeBase${depth})`]
         );
     });
-
-    // Active action clash avoidance
-
-    addRule([
-        `#${TREE_CONTAINER_ID}.${EDIT_ACTION_ID} .${MOVE_ACTION_ID}`,
-        `#${TREE_CONTAINER_ID}.${MOVE_ACTION_ID} .${EDIT_ACTION_ID}`
-    ], ['display', 'none']);
 }

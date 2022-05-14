@@ -1,14 +1,11 @@
 import {Config, Child} from '../../../../../validation/types';
 
 const colourSeed: Child = {
-    'label': 'Colour',
     'value': '#1c8c00',
-    'predicate': true,
     'input': 'color'
 };
 
 const numberSeed: Child = {
-    'label': 'Number',
     'value': 29,
     'predicate': (value: number) => {
         if (Math.floor(value) !== value) {
@@ -40,15 +37,13 @@ const config: Config = {
     'defaultTree': {
         'children': [
             {
-                'label': 'Category',
-                'value': 'Favourite Colours',
+                'label': 'Favourite Colours',
                 'childPredicate': favePredicate.bind(null, 'colour'),
                 'children': [colourSeed],
                 'seed': colourSeed
             },
             {
-                'label': 'Category',
-                'value': 'Favourite Numbers',
+                'label': 'Favourite Numbers',
                 'childPredicate': (children) => {
                     if (children.map(({value}) => value).join('') === '80085') {
                         return 'Ha ha. Very funny.';
@@ -76,7 +71,6 @@ const config: Config = {
         'nodeButtonRemove': '#ff0000',
         'nodeButtonCreate': '#15ff00',
         'nodeButtonMove': '#9000ff',
-        'nodeButtonEdit': '#00bbd1',
         'tooltipOutline': '#c12d00',
     }
 };

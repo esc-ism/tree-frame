@@ -1,49 +1,50 @@
-import {ACTION_ID, INVALID_CLASS} from './consts';
-
-import {addColourRule} from '../css';
+import {INVALID_CLASS} from './consts';
 
 import {ELEMENT_CLASSES} from '../../consts';
 
 import {addRule} from '../../../../../css';
 
 export default function generate() {
-    addColourRule(ACTION_ID, '--nodeButtonEdit');
-
-    addRule(`.${ELEMENT_CLASSES.INPUT_CONTAINER}`, [
+    addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [
         ['flex-grow', '1'],
         ['display', 'flex'],
         ['align-items', 'center']
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}`, [
-        ['flex-grow', '1'],
+    // Use pointer when the node has a value and isn't being edited
+    addRule([
+        `.${ELEMENT_CLASSES.VALUE_CONTAINER}`,
+        `.${ELEMENT_CLASSES.VALUE}:not(:focus)`,
+        `.${ELEMENT_CLASSES.VALUE_CONTAINER} ~ *`
+    ], ['cursor', 'pointer']);
+
+    addRule([`.${ELEMENT_CLASSES.VALUE}`, `.${ELEMENT_CLASSES.LABEL}`], ['height', '1.2em']);
+
+    addRule(`.${ELEMENT_CLASSES.VALUE}`, [
         // Separate from buttons
         ['margin', '0.2em 0.5em'],
         // Add space between input & text
         ['padding', '0 0.5em']
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_LABEL}`, [
+    addRule(`.${ELEMENT_CLASSES.VALUE}:not([type="checkbox"])`, ['flex-grow', '1']);
+
+    addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, ['width', '2.5em']);
+
+    addRule(`.${ELEMENT_CLASSES.LABEL}`, [
         ['padding-right', '0.4em'],
         ['text-align', 'right'],
         ['position', 'absolute'],
-        ['right', '0'],
-        ['max-width', '40%'],
+        ['right', '0']
     ]);
 
-    addRule(
-        `.${ELEMENT_CLASSES.INPUT_VALUE}:not([disabled])`, [
-            ['background', 'var(--validBackground)'],
-            ['color', 'var(--validFont)'],
+    addRule(`.${ELEMENT_CLASSES.VALUE}:focus`, [
+        ['background', 'var(--validBackground)'],
+        ['color', 'var(--validFont)']
     ]);
 
-    addRule(
-        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_VALUE}`, [
+    addRule(`.${INVALID_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.VALUE}`, [
         ['background', 'var(--invalidBackground)'],
-        ['color', 'var(--invalidFont)'],
+        ['color', 'var(--invalidFont)']
     ]);
-
-    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}[type=color]`, ['height', '1.2em']);
-
-    addRule(`.${ELEMENT_CLASSES.INPUT_VALUE}[type=color]:not([disabled])`, ['cursor', 'pointer']);
 }

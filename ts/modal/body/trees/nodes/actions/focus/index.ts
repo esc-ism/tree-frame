@@ -3,7 +3,8 @@ import {
     FOCUS_CLASS, EAVE_ID
 } from './consts';
 
-import {actionIsActive} from '../active';
+import {isActive as moveIsActive} from '../move';
+import {isActive as editIsActive} from '../edit';
 
 import type Root from '../../root';
 import type Child from '../../child';
@@ -21,6 +22,8 @@ export function setTabIndexes(doAdd = true, node = activeNode) {
             button.setAttribute('tabIndex', doAdd && !button.disabled ? '1' : '-1');
         }
     }
+
+    node.element.valueElement?.setAttribute('tabIndex', doAdd ? '1' : '-1');
 }
 
 export function focus(doFocus: boolean = true, node = activeNode, doForce: boolean = true) {
@@ -57,7 +60,7 @@ export function doAction(node: Root | Child, doForce = false) {
     const toggleOn = node !== activeNode;
 
     // Avoid unfocusing a node that's being edited/moved
-    if (actionIsActive() || (doForce && !toggleOn)) {
+    if (moveIsActive() || (doForce && !toggleOn)) {
         return;
     }
 
@@ -83,9 +86,7 @@ const unfocusPrevious = (() => {
     let previousNode;
 
     return (newNode?) => {
-        if (previousNode) {
-            previousNode.element.removeClass(FOCUS_CLASS);
-        }
+        previousNode?.element.removeClass(FOCUS_CLASS);
 
         previousNode = newNode;
     };
@@ -97,12 +98,14 @@ export function mount(node: Root | Child): void {
     focusTarget.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        doAction(node);
+        if (focusTarget.isSameNode(event.target as HTMLElement)) {
+            doAction(node);
+        }
     });
 
     focusTarget.addEventListener('mouseenter', () => {
         // Avoid unfocusing an input
-        if (actionIsActive()) {
+        if (editIsActive()) {
             unfocusPrevious(node);
 
             node.element.addClass(FOCUS_CLASS);
@@ -145,12 +148,11 @@ export function shouldMount(): boolean {
     return true;
 }
 
-
 // Prevents zipping to the end of the tree when mousing over the bottom pixel
 export function generateEave() {
     const element = document.createElement('div');
 
     element.id = EAVE_ID;
 
-    return element
+    return element;
 }

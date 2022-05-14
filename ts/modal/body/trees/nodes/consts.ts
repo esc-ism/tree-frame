@@ -7,9 +7,9 @@ export const ELEMENT_CLASSES = {
     'INTERACTION_CONTAINER': 'node-interaction-container',
     'CHILD_CONTAINER': 'node-child-container',
     'BUTTON_CONTAINER': 'node-button-container',
-    'INPUT_CONTAINER': 'node-input-container',
-    'INPUT_VALUE': 'node-value',
-    'INPUT_LABEL': 'node-label',
+    'VALUE_CONTAINER': 'node-value-container',
+    'VALUE': 'node-value',
+    'LABEL': 'node-label',
 }
 
 export const DEPTH_CLASS_PREFIX = 'node-depth-';

@@ -25,7 +25,8 @@ function getPerson(
     occupation = '*occupation*',
     birthYear = 0,
     hairColour = '#3B2D25',
-    eyeColour = '#3c75e2'
+    eyeColour = '#3c75e2',
+    hasChildren = true
 ): Middle {
     return {
         'label': 'Name',
@@ -53,6 +54,10 @@ function getPerson(
                 'value': eyeColour,
                 'predicate': emptyStringPredicate,
                 'input': 'color',
+            },
+            {
+                'label': 'Has Children?',
+                'value': hasChildren,
             }
         ]
     };
@@ -70,7 +75,7 @@ function getMedia(
         'predicate': emptyStringPredicate,
         'children': [
             {
-                'label': 'input',
+                'label': 'Media Type',
                 'value': type,
                 'predicate': ['*type*', 'Movie', 'TV Show', 'Song', 'Album'],
             },
@@ -98,18 +103,14 @@ const config: Config = {
                 'predicate': emptyStringPredicate,
                 'children': [
                     {
-                        'label': 'Category',
-                        'value': 'Famous People',
-                        'predicate': false,
+                        'label': 'Famous People',
                         'seed': getPerson(),
                         'children': [
                             getPerson('William Shakespeare', 'Playwright', 1564, '#1b0600', '#391b00'),
                         ]
                     },
                     {
-                        'label': 'Category',
-                        'value': 'Famous Media',
-                        'predicate': false,
+                        'label': 'Famous Media',
                         'seed': getMedia(),
                         'children': [
                             getMedia('Doctor Who', 'TV Show', 1963, 'A time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
@@ -125,16 +126,12 @@ const config: Config = {
             'predicate': emptyStringPredicate,
             'children': [
                 {
-                    'label': 'Category',
-                    'value': 'Famous People',
-                    'predicate': false,
+                    'label': 'Famous People',
                     'seed': getPerson(),
                     'children': []
                 },
                 {
-                    'label': 'Category',
-                    'value': 'Famous Media',
-                    'predicate': false,
+                    'label': 'Famous Media',
                     'seed': getMedia(),
                     'children': []
                 }
@@ -154,7 +151,6 @@ const config: Config = {
         'nodeButtonRemove': '#ff0000',
         'nodeButtonCreate': '#15ff00',
         'nodeButtonMove': '#fff600',
-        'nodeButtonEdit': '#ad4aff',
     }
 }
 

@@ -10,8 +10,8 @@ import {ELEMENT_CLASSES, ROOT_CLASS} from '../../../body/trees/nodes/consts';
 
 export default function generate() {
     addRule([
-        `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.INPUT_LABEL}`,
-        `.${ROOT_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`
+        `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL}`,
+        `.${ROOT_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.LABEL}`
     ], ['display', 'none']);
 
     addColourRule(ACTION_ID, '--headButtonLabel');

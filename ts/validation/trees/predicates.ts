@@ -1,9 +1,8 @@
 import type {Child, Parent} from '../types';
 import {
-    TypeError, ValueError,
-    JoinedError,
-    MismatchedOptionsError, PredicateError,
-    EmptyArrayError, NoOptionsError
+    TypeError, ValueError, PropertyError,
+    JoinedError, EmptyArrayError, NoOptionsError,
+    MismatchedOptionsError, PredicateError, HangingPredicateError
 } from '../errors';
 
 import {getPredicateResponse} from '../../messaging';
@@ -17,11 +16,18 @@ function getPredicatePromise(id: number, arg: any, error: Error): Promise<void> 
 }
 
 async function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> {
-    switch (typeof child.predicate) {
-        case 'boolean':
-        case 'undefined':
-            return;
+    if (!('predicate' in child)) {
+        return;
+    }
 
+    if (!('value' in child)) {
+        throw new JoinedError(
+            new HangingPredicateError(),
+            new PropertyError(breadcrumbs, 'value', true)
+        );
+    }
+
+    switch (typeof child.predicate) {
         case 'number':
             await getPredicatePromise(
                 child.predicate, child.value,

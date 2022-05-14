@@ -5,62 +5,78 @@ import type {Child as _Child} from '../../../../validation/types';
 let count = 0;
 
 export default class Element {
-    elementContainer: HTMLElement = document.createElement('div');
+    readonly elementContainer: HTMLElement = document.createElement('div');
 
-    interactionContainer: HTMLElement = document.createElement('div');
+    readonly interactionContainer: HTMLElement = document.createElement('div');
 
-    buttonContainer: HTMLElement = document.createElement('span');
+    readonly buttonContainer: HTMLElement = document.createElement('span');
 
-    valueAligner: HTMLElement = document.createElement('span');
-    valueElement: HTMLInputElement = document.createElement('input');
+    readonly labelElement?: HTMLElement;
+    readonly valueContainer?: HTMLElement;
+    readonly valueWrapper?: HTMLElement;
+    readonly valueElement?: HTMLInputElement;
 
-    childContainer: HTMLElement = document.createElement('div');
+    readonly childContainer: HTMLElement = document.createElement('div');
 
     depthClass: string;
 
-    constructor({value, ...optional}: _Child) {
+    constructor(data: _Child) {
         this.elementContainer.classList.add(ELEMENT_CLASSES.ELEMENT_CONTAINER);
         this.interactionContainer.classList.add(ELEMENT_CLASSES.INTERACTION_CONTAINER);
         this.childContainer.classList.add(ELEMENT_CLASSES.CHILD_CONTAINER);
         this.buttonContainer.classList.add(ELEMENT_CLASSES.BUTTON_CONTAINER);
-        this.valueAligner.classList.add(ELEMENT_CLASSES.INPUT_CONTAINER);
-        this.valueElement.classList.add(ELEMENT_CLASSES.INPUT_VALUE);
 
         this.interactionContainer.setAttribute('tabIndex', '1');
 
-        this.valueElement.disabled = true;
-
-        this.valueAligner.appendChild(this.valueElement);
-
         this.interactionContainer.appendChild(this.buttonContainer);
-        this.interactionContainer.appendChild(this.valueAligner);
 
         this.elementContainer.appendChild(this.interactionContainer);
         this.elementContainer.appendChild(this.childContainer);
 
-        this.render(value);
+        if ('value' in data) {
+            this.valueElement = document.createElement('input');
+            this.valueContainer = document.createElement('span');
 
-        if ('label' in optional) {
-            const {label} = optional;
-            const labelElement = document.createElement('input');
+            this.valueContainer.classList.add(ELEMENT_CLASSES.VALUE_CONTAINER);
+            this.valueElement.classList.add(ELEMENT_CLASSES.VALUE);
 
-            labelElement.classList.add(ELEMENT_CLASSES.INPUT_LABEL);
+            this.valueElement.setAttribute('tabIndex', '-1');
 
-            labelElement.disabled = true;
+            if (typeof data.value === 'boolean') {
+                this.valueElement.type = 'checkbox';
 
-            this.render(label, labelElement);
+                // Solely for adding tooltips below checkboxes (input elements can't have children)
+                this.valueWrapper = document.createElement('span');
 
-            this.valueAligner.appendChild(labelElement);
+                this.valueWrapper.appendChild(this.valueElement);
+                this.valueContainer.appendChild(this.valueWrapper);
+                this.interactionContainer.appendChild(this.valueContainer);
+            } else {
+                if (typeof data.value === 'number') {
+                    this.valueElement.type = 'number';
+                } else if ('input' in data) {
+                    this.valueElement.type = data.input;
+                }
 
-            // In case the text is too long to fit
-            labelElement.title = label;
-            this.valueElement.title = label;
+                this.valueContainer.appendChild(this.valueElement);
+                this.interactionContainer.appendChild(this.valueContainer);
+            }
+
+            this.render(data.value);
         }
 
-        if ('predicate' in optional) {
-            const {predicate} = optional;
+        if ('label' in data) {
+            this.labelElement = document.createElement('span');
 
-            if (Array.isArray(predicate)) {
+            this.labelElement.classList.add(ELEMENT_CLASSES.LABEL);
+
+            this.labelElement.innerText = data.label
+
+            this.interactionContainer.appendChild(this.labelElement);
+        }
+
+        if ('predicate' in data) {
+            if (Array.isArray(data.predicate)) {
                 const optionsElement = document.createElement('datalist');
                 const id = `${OPTIONS_ID_PREFIX}${count++}`;
 
@@ -68,7 +84,7 @@ export default class Element {
                 this.valueElement.setAttribute('list', id);
                 optionsElement.id = id;
 
-                for (const option of predicate) {
+                for (const option of data.predicate) {
                     const optionElement = document.createElement('option');
 
                     optionElement.value = option.toString();
@@ -76,19 +92,17 @@ export default class Element {
                     optionsElement.appendChild(optionElement);
                 }
 
-                this.valueAligner.appendChild(optionsElement);
+                this.valueContainer.appendChild(optionsElement);
             }
-        }
-
-        if (typeof value === 'number') {
-            this.valueElement.type = 'number';
-        } else if ('input' in optional) {
-            this.valueElement.type = optional.input;
         }
     }
 
-    render(value: unknown, element = this.valueElement) {
-        element.value = value.toString();
+    render(value: unknown) {
+        if (typeof value === 'boolean') {
+            this.valueElement.checked = value;
+        } else {
+            this.valueElement.value = value.toString();
+        }
     }
 
     addClass(...names: string[]) {

@@ -58,10 +58,7 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
     if (hasOwnProperty(candidate, 'label') && typeof candidate.label !== 'string')
         throw new TypeError([...breadcrumbs, 'label'], typeof candidate.label, ['string']);
 
-    if (!hasOwnProperty(candidate, 'value'))
-        throw new PropertyError(breadcrumbs, 'value', true);
-
-    if (!(VALUE_TYPES as readonly string[]).includes(typeof candidate.value))
+    if (hasOwnProperty(candidate, 'value') && !(VALUE_TYPES as readonly string[]).includes(typeof candidate.value))
         throw new TypeError([...breadcrumbs, 'value'], typeof candidate.value, VALUE_TYPES);
 
     if (hasOwnProperty(candidate, 'predicate')) {

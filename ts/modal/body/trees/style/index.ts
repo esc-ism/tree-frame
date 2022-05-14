@@ -29,56 +29,42 @@ export function getActiveStyle(userStyles: Array<UserStyle>, devStyle?: DefaultS
 
 export function toJSON(style: UserStyle): _Middle {
     const filledStyle: UserStyle = {...DEFAULT_STYLE, ...style};
-    const toDepthColour: (string) => _Leaf = value => ({
-        'label': 'Depth Color',
-        value,
-        'input': 'color',
-        'predicate': true
-    });
-    const partLabel = 'Section';
-    const categoryLabel = 'Category';
+    const toDepthColour: (string) => _Leaf = value => ({value, 'input': 'color'});
 
     return {
         'label': 'Name',
         'value': filledStyle.name,
-        'predicate': true,
         'children': [
             {
                 'label': 'Style Is Active?',
-                'value': filledStyle.isActive,
-                'predicate': true
+                'value': filledStyle.isActive
             },
             {
-                'label': partLabel,
-                'value': 'Modal',
+                'label': 'Modal',
                 'children': [
                     {
                         'label': 'Font Size (px)',
                         'value': filledStyle.fontSize,
-                        'predicate': (value: number): Promise<void> =>
-                            value > 0 ? Promise.resolve() : Promise.reject('Font size must be greater than zero')
+                        'predicate': (value: number): true | string =>
+                            value > 0 ? true : 'Font size must be greater than zero'
                     },
                     {
                         'label': 'Outline Color',
                         'value': filledStyle.modalOutline,
-                        'input': 'color',
-                        'predicate': true
+                        'input': 'color'
                     }
                 ]
             },
             {
-                'label': partLabel,
-                'value': 'Header',
+                'label': 'Header',
                 'children': [
                     {
-                        'label': categoryLabel,
-                        'value': 'General',
+                        'label': 'General',
                         'children': [
                             {
                                 'label': 'Base Color',
                                 'value': filledStyle.headBase,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Contrast Method',
@@ -88,51 +74,44 @@ export function toJSON(style: UserStyle): _Middle {
                         ]
                     },
                     {
-                        'label': categoryLabel,
-                        'value': 'Buttons',
+                        'label': 'Buttons',
                         'children': [
                             {
                                 'label': 'Exit Color',
                                 'value': filledStyle.headButtonExit,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Label Color',
                                 'value': filledStyle.headButtonLabel,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Leaf Color',
                                 'value': filledStyle.headButtonLeaf,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Style Color',
                                 'value': filledStyle.headButtonStyle,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             }
                         ]
                     }
                 ]
             },
             {
-                'label': partLabel,
-                'value': 'Body',
+                'label': 'Body',
                 'children': [
                     {
-                        'label': categoryLabel,
-                        'value': 'General',
+                        'label': 'General',
                         'children': [
                             {
-                                'value': 'Depth Base Colors',
+                                'label': 'Depth Base Colors',
                                 'seed': toDepthColour(DEFAULT_STYLE.nodeBase[0]),
                                 'children': filledStyle.nodeBase.map(toDepthColour),
-                                'childPredicate': (children: Array<object>): Promise<void> =>
-                                    children.length > 0 ? Promise.resolve() : Promise.reject('At least one color must be provided.')
+                                'childPredicate': (children: Array<object>): true | string =>
+                                    children.length > 0 ? true : 'At least one color must be provided.'
                             },
                             {
                                 'label': 'Contrast Method',
@@ -142,61 +121,46 @@ export function toJSON(style: UserStyle): _Middle {
                         ]
                     },
                     {
-                        'label': categoryLabel,
-                        'value': 'Buttons',
+                        'label': 'Buttons',
                         'children': [
                             {
                                 'label': 'Delete Color',
                                 'value': filledStyle.nodeButtonRemove,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Create Color',
                                 'value': filledStyle.nodeButtonCreate,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Move Color',
                                 'value': filledStyle.nodeButtonMove,
-                                'input': 'color',
-                                'predicate': true
-                            },
-                            {
-                                'label': 'Edit Color',
-                                'value': filledStyle.nodeButtonEdit,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             }
                         ]
                     },
                     {
-                        'label': categoryLabel,
-                        'value': 'Miscellaneous',
+                        'label': 'Miscellaneous',
                         'children': [
                             {
                                 'label': 'Show Leaf Separator?',
-                                'value': filledStyle.leafShowBorder,
-                                'predicate': true
+                                'value': filledStyle.leafShowBorder
                             },
                             {
                                 'label': 'Valid Color',
                                 'value': filledStyle.validBackground,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Invalid Color',
                                 'value': filledStyle.invalidBackground,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             },
                             {
                                 'label': 'Tooltip Color',
                                 'value': filledStyle.tooltipOutline,
-                                'input': 'color',
-                                'predicate': true
+                                'input': 'color'
                             }
                         ]
                     }
@@ -229,7 +193,6 @@ export function toRawStyle(json: _Middle): DefaultStyle {
         'nodeButtonRemove': bodyButtons[0].value as string,
         'nodeButtonCreate': bodyButtons[1].value as string,
         'nodeButtonMove': bodyButtons[2].value as string,
-        'nodeButtonEdit': bodyButtons[3].value as string,
 
         'leafShowBorder': bodyMisc[0].value as boolean,
         'validBackground': bodyMisc[1].value as string,
@@ -266,22 +229,22 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
             'isActive': false,
             ...DEFAULT_STYLE
         }),
-        'descendantPredicate': (styleNodes: Array<_Middle>): Promise<void> => {
+        'descendantPredicate': (styleNodes: Array<_Middle>): true | string => {
             const activeStyles: Array<_Middle> = styleNodes.filter(({'children': [{value}]}) => value);
 
             switch (activeStyles.length) {
                 case 0:
                     updateStylesheet(defaultStyle);
 
-                    return Promise.resolve();
+                    return true;
 
                 case 1:
                     updateStylesheet(toRawStyle(activeStyles[0]));
 
-                    return Promise.resolve();
+                    return true;
 
                 default:
-                    return Promise.reject('Only one color scheme may be active at a time.');
+                    return 'Only one color scheme may be active at a time.';
             }
         }
     }, ROOT_ID);

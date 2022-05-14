@@ -13,25 +13,6 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
 
     for (const [key, value] of Object.entries(candidate)) {
         switch (key) {
-            // Colours
-            case 'modalOutline':
-            case 'headBase':
-            case 'headButtonExit':
-            case 'headButtonLabel':
-            case 'headButtonLeaf':
-            case 'headButtonStyle':
-            case 'nodeButtonRemove':
-            case 'nodeButtonCreate':
-            case 'nodeButtonMove':
-            case 'nodeButtonEdit':
-            case 'inputValid':
-            case 'inputInvalid':
-            case 'tooltipOutline':
-                if (typeof value !== 'string')
-                    throw new TypeError([...breadcrumbs, key], typeof value, ['string']);
-
-                break;
-
             // Numbers
             case 'fontSize':
                 if (typeof value !== 'number')
@@ -72,6 +53,13 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
                     if (typeof subValue !== 'string')
                         throw new TypeError([...breadcrumbs, key, i.toString()], typeof subValue, ['string']);
                 }
+
+                break;
+
+            // Colours
+            default:
+                if (typeof value !== 'string')
+                    throw new TypeError([...breadcrumbs, key], typeof value, ['string']);
         }
     }
 

@@ -2,8 +2,7 @@ import BUTTON, {BUTTON_SIBLING, BUTTON_PARENT} from './button';
 import {ACTION_ID} from './consts';
 
 import {addActionButton} from '../button';
-import {setActive} from '../active';
-import {focusBranch} from '../focus';
+import {focus, focusBranch, reset as resetFocus, setTabIndexes} from '../focus';
 import {getSubPredicateResponses} from '../edit';
 import * as tooltip from '../tooltip';
 
@@ -12,6 +11,7 @@ import {FOCUS_CLASS} from '../focus/consts';
 import type Root from '../../root';
 import type Middle from '../../middle';
 import type Child from '../../child';
+import {setActive as setTreeActive} from '../../../index';
 
 interface PutTarget {
     node: Root | Child;
@@ -29,6 +29,22 @@ const putTargets: Array<PutTarget> = [];
 
 let moveTarget: MoveTarget;
 
+export function isActive(): boolean {
+    return Boolean(moveTarget);
+}
+
+export function setActive(node: Child, doActivate = true) {
+    const button = node.element.buttonContainer.querySelector(`.${ACTION_ID}`);
+
+    setTreeActive(button, ACTION_ID, doActivate);
+
+    resetFocus();
+    focus(doActivate, node, false);
+    setTabIndexes(doActivate, node);
+
+    node.element.interactionContainer.focus();
+}
+
 export function reset() {
     if (!moveTarget) {
         return;
@@ -44,7 +60,9 @@ export function reset() {
 
     putTargets.length = 0;
 
-    setActive(moveTarget.child, ACTION_ID, false);
+    setActive(moveTarget.child, false);
+
+    moveTarget.child.element.valueElement.setAttribute('tabIndex', '1');
 
     moveTarget = undefined;
 }
@@ -82,6 +100,8 @@ function doMove(node, button, isParent) {
 function addTargetButton(node, isParent = true) {
     const button = (isParent ? BUTTON_PARENT : BUTTON_SIBLING).cloneNode(true) as HTMLButtonElement;
 
+    button.setAttribute('tabIndex', '1');
+
     button.addEventListener('focus', () => {
         node.element.addClass(FOCUS_CLASS);
     });
@@ -89,8 +109,6 @@ function addTargetButton(node, isParent = true) {
     button.addEventListener('blur', () => {
         node.element.removeClass(FOCUS_CLASS);
     });
-
-    button.setAttribute('tabIndex', '1');
 
     button.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -141,11 +159,13 @@ function doAction(node: Child, button) {
             'isPooled': 'poolId' in node.parent
         };
 
-        setActive(node, ACTION_ID);
+        setActive(node);
 
         focusBranch(true, node);
 
         addButtons(node.getRoot());
+
+        moveTarget.child.element.valueElement.setAttribute('tabIndex', '-1');
 
         // If the only valid target is the current parent
         if (putTargets.length < 2) {
@@ -170,14 +190,6 @@ window.addEventListener('keydown', (event) => {
 
 export function mount(node: Child): void {
     addActionButton(BUTTON, doAction, node);
-
-    node.element.valueElement.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === 'Escape') {
-            event.stopPropagation();
-
-            reset();
-        }
-    });
 }
 
 export function shouldMount(node: Child): boolean {

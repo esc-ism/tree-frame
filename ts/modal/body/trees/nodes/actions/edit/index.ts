@@ -1,17 +1,20 @@
-import TEMPLATE from './button';
-import {ACTION_ID, INVALID_CLASS} from './consts';
+import {INVALID_CLASS} from './consts';
 
 import * as tooltip from '../tooltip';
-import {addActionButton} from '../button';
-import {setActive} from '../active';
+import {reset as resetFocus} from '../focus';
 
 import type Child from '../../child';
 import type Middle from '../../middle';
 import type Root from '../../root';
+
 import {getPredicateResponse, resolvePredicatePromise} from '../../../../../../messaging';
-import {SubPredicate} from '../../../../../../validation/types';
+import type {SubPredicate, Value} from '../../../../../../validation/types';
 
 let activeNode: Child;
+
+export function isActive(): boolean {
+    return Boolean(activeNode);
+}
 
 export function reset() {
     if (!activeNode) {
@@ -20,30 +23,27 @@ export function reset() {
 
     activeNode.element.render(activeNode.value);
 
-    setActive(activeNode, ACTION_ID, false);
-
     activeNode.element.removeClass(INVALID_CLASS);
 
-    activeNode.element.valueElement.setAttribute('tabIndex', '-1');
-    activeNode.element.valueElement.disabled = true;
-
     tooltip.reset();
+
+    activeNode.element.valueElement.blur();
+
+    resetFocus();
 
     activeNode = undefined;
 }
 
-function getValue(node) {
-    const {value} = node.element.valueElement;
-
+function getValue(node): Value {
     switch (typeof node.value) {
-        case 'number':
-            return Number(value);
-
         case 'boolean':
-            return Boolean(value);
+            return Boolean(node.element.valueElement.checked);
+
+        case 'number':
+            return Number(node.element.valueElement.value);
 
         default:
-            return value;
+            return node.element.valueElement.value;
     }
 }
 
@@ -79,13 +79,12 @@ export function getSubPredicateResponses(parent): Array<Promise<void>> {
 }
 
 function getOwnPredicateResponse(node: Child): Promise<void> {
-    // No need to check for undefined - the button wouldn't have mounted if there were no predicate
     const {predicate} = node;
     const value = getValue(node);
 
     switch (typeof predicate) {
-        case 'boolean':
-            return Promise[predicate ? 'resolve' : 'reject']();
+        case 'undefined':
+            return Promise.resolve();
 
         case 'number':
             return getPredicateResponse(predicate, value);
@@ -130,38 +129,20 @@ export function unmount(node) {
     }
 }
 
-export function doAction(node, button) {
+export function doAction(node) {
     const previousNode = activeNode;
 
     reset();
 
     if (previousNode !== node) {
-        if (typeof node.value === 'boolean') {
-            node.value = !node.value;
+        activeNode = node;
 
-            Promise.all(getAllPredicateResponses(node))
-                .then(() => {
-                    node.element.render(node.value);
-                })
-                .catch((reason) => {
-                    node.value = !node.value;
+        tooltip.setParent(node.element.valueElement);
 
-                    if (reason) {
-                        tooltip.show(reason, button);
-                    }
-                });
-        } else {
-            activeNode = node;
-
-            tooltip.setParent(node.element.interactionContainer);
-
-            setActive(activeNode, ACTION_ID);
-
-            node.element.valueElement.setAttribute('tabIndex', '1');
-            node.element.valueElement.disabled = false;
-
-            node.element.valueElement.select();
+        if (node.input === 'color') {
             node.element.valueElement.click();
+        } else {
+            node.element.valueElement.select();
         }
     }
 }
@@ -173,32 +154,82 @@ window.addEventListener('keydown', (event) => {
 });
 
 export function mount(node: Child): void {
-    addActionButton(TEMPLATE, doAction, node);
+    if (typeof node.value === 'boolean') {
+        const checkbox = node.element.valueElement;
 
-    node.element.valueElement.addEventListener('input', update);
+        // Flip value
 
-    node.element.valueElement.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === 'Escape') {
+        checkbox.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            node.value = checkbox.checked;
+
+            Promise.all(getAllPredicateResponses(node))
+                .catch((reason) => {
+                    node.value = !node.value;
+
+                    checkbox.checked = node.value;
+
+                    if (reason) {
+                        tooltip.show(reason, node.element.valueWrapper);
+                    }
+                });
+        });
+
+        node.element.valueContainer.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            checkbox.click();
+        });
+    } else {
+        // Start
+
+        node.element.valueElement.addEventListener('focusin', (event) => {
+            event.stopPropagation();
+
+            doAction(node);
+        });
+
+        node.element.valueContainer.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            node.element.valueElement.focus();
+        });
+
+        // Process new value
+
+        node.element.valueElement.addEventListener('input', update);
+
+        // Stop
+
+        node.element.valueElement.addEventListener('focusout', (event) => {
             event.stopPropagation();
 
             reset();
+        });
+
+        if (node.input === 'color') {
+            node.element.valueElement.addEventListener('change', () => {
+                node.element.valueElement.blur();
+            });
         }
+
+        node.element.valueElement.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === 'Escape') {
+                event.stopPropagation();
+
+                node.element.valueElement.blur();
+            }
+        });
+    }
+
+    node.element.labelElement?.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        node.element.valueContainer.click();
     });
 }
 
 export function shouldMount(node: Child): boolean {
-    switch (typeof node.predicate) {
-        case 'undefined':
-            return false;
-
-        case 'boolean':
-            return node.predicate;
-
-        case 'object':
-            // Prevent editing if there are no other valid values
-            return node.predicate.length > 1;
-
-        default:
-            return true;
-    }
+    return 'value' in node;
 }

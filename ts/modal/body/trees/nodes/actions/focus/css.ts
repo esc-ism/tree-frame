@@ -9,7 +9,6 @@ import {addDepthChangeListener} from '../../../style/update/depth';
 import {addRule} from '../../../../../css';
 
 export default function generate() {
-
     // Background
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
@@ -24,7 +23,7 @@ export default function generate() {
         `.${HIGHLIGHT_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
     ], ['background-size', '100%']);
 
-    addRule(`.${ELEMENT_CLASSES.INPUT_LABEL}`, ['padding-left', '15%']);
+    addRule(`.${ELEMENT_CLASSES.LABEL}`, ['padding-left', '15%']);
 
     addDepthChangeListener((depth, addRule) => {
         addRule(`.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [
@@ -40,20 +39,31 @@ export default function generate() {
 
         // Label background
 
-        addRule(
-            `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`,
-            ['background-image', `linear-gradient(to left, var(--nodeBase${depth}) 60%, transparent)`]
-        );
+        addRule(`.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.LABEL}`, [
+            ['background-image', `linear-gradient(to left, var(--nodeBase${depth}) 60%, transparent)`],
+            ['background-size', 'auto']
+        ]);
 
         addRule([
             `.${DEPTH_CLASS_PREFIX}${depth}.${FOCUS_CLASS} >` +
-            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`,
+            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.LABEL}`,
             `.${DEPTH_CLASS_PREFIX}${depth}.${HIGHLIGHT_SOURCE_CLASS} >` +
-            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.INPUT_LABEL}`
+            `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.LABEL}`
         ], ['background-image', `linear-gradient(to left, var(--nodeContrast${depth}) 60%, transparent)`]);
     });
 
     // Focus exclusion
+
+    addRule(
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        ['cursor', 'zoom-out']
+    );
+
+    addRule(
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_SOURCE_CLASS}) > ` +
+        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`,
+        ['cursor', 'zoom-in']
+    );
 
     addRule(
         `.${ROOT_CLASS}.${HIGHLIGHT_BRANCH_CLASS} ` +
@@ -66,13 +76,6 @@ export default function generate() {
         `.${MOVE_ID} > .${ROOT_CLASS}.${HIGHLIGHT_BRANCH_CLASS} ` +
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_BRANCH_CLASS})`,
         ['display', 'none']
-    );
-
-    addRule(`.${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['transition', 'opacity 200ms']);
-
-    addRule(
-        `.${HIGHLIGHT_SOURCE_CLASS}.${HIGHLIGHT_BRANCH_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER}`,
-        ['opacity', '0.3']
     );
 
     // Bug fixer

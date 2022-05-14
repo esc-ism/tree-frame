@@ -40,6 +40,8 @@ function validatePredicateMatch(
             if (!model.predicate && model.value !== candidate.value)
                 throw new ValueError([...candidateBreadcrumbs, 'value'], candidate.value, [model.value]);
 
+            // Intentional fallthrough
+
         case 'number':
             if (model.predicate !== candidate.predicate)
                 throw new ValueError([...candidateBreadcrumbs, 'predicate'], candidate.predicate, [model.predicate]);
@@ -74,7 +76,6 @@ function validateValueMatch(
 // Tree validators
 
 export function validateParentMatch(
-    // Expect children, since the root can't match with anything but itself
     modelBreadcrumbs: string[], model: Parent,
     candidateBreadcrumbs: string[], candidate: Parent,
     isFrozen: boolean = true
@@ -106,7 +107,7 @@ export function validateParentMatch(
                 isFrozen
             );
         }
-    } else {
+    } else if (!('poolId' in model)) {
         if (model.children.length !== candidate.children.length)
             throw new ValueError([...candidateBreadcrumbs, 'children', 'length'], candidate.children.length, [model.children.length]);
 
@@ -120,12 +121,14 @@ export function validateParentMatch(
     }
 }
 
-export function validateChildMatch(
-    // Expect children, since the root can't match with anything but itself
+function validateChildMatch(
     modelBreadcrumbs: string[], model: Child,
     candidateBreadcrumbs: string[], candidate: Child,
     isFrozen: boolean = true
 ): void {
+    if ('value' in model !== 'value' in candidate)
+        throw new PropertyError(candidateBreadcrumbs, 'value', 'value' in model);
+
     if (typeof model.value !== typeof candidate.value)
         throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
 
