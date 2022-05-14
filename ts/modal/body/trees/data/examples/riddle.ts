@@ -1,4 +1,4 @@
-import {Config, Middle} from '../../../../../validation/types';
+import type {Config, Middle} from '../../../../../validation/types';
 
 const NAMES = ['Shield', 'Gladiator', 'Lion'];
 
