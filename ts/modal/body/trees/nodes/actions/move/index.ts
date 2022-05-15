@@ -38,7 +38,15 @@ export function setActive(node: Child, doActivate = true) {
 
     resetFocus();
     focus(doActivate, node, false);
-    setTabIndexes(doActivate, node);
+    focusBranch(doActivate, node, doActivate);
+
+    if (doActivate) {
+        setTabIndexes(false, node);
+
+        button.setAttribute('tabIndex', '1');
+    } else {
+        button.setAttribute('tabIndex', '-1');
+    }
 
     node.element.interactionContainer.focus();
 }
@@ -54,7 +62,8 @@ export function reset() {
         button.remove();
     }
 
-    focusBranch(false, moveTarget.child, false);
+    // Show where the node's been moved to
+    moveTarget.child.element.scrollIntoView();
 
     putTargets.length = 0;
 
@@ -74,15 +83,7 @@ function doMove(node, button, isParent) {
         ...getSubPredicateResponses(oldParent),
         ...(oldParent === newParent ? [] : getSubPredicateResponses(newParent)),
     ])
-        .then(() => {
-            // Grab the reference before it gets wiped
-            const movedNode = moveTarget.child;
-
-            reset();
-
-            // Show where the node's been moved to
-            movedNode.element.scrollIntoView();
-        })
+        .then(reset)
         .catch((reason) => {
             // Revert
             moveTarget.child.move(oldParent, index);
@@ -125,7 +126,7 @@ function addButtons(parent: Root | Middle) {
         }
     }
 
-    // Nodes can't be their own descendents
+    // Nodes can't be their own descendants
     if (!isCurrentParent) {
         for (const child of parent.children) {
             if ('children' in child) {
@@ -148,8 +149,6 @@ function doAction(node: Child, button) {
         };
 
         setActive(node);
-
-        focusBranch(true, node);
 
         addButtons(node.getRoot());
 
