@@ -1,5 +1,8 @@
 import {HIGHLIGHT_CLASS, EAVE_ID} from './consts';
+
 import {isActive as editIsActive} from '../edit';
+import {isActive as focusIsActive} from '../focus';
+import {isActive as moveIsActive} from '../move';
 
 let activeNode;
 
@@ -34,8 +37,7 @@ export function mount(node) {
     interactionContainer.addEventListener('mouseenter', (event) => {
         event.stopPropagation();
 
-        // Avoid unfocusing an input
-        if (editIsActive()) {
+        if (editIsActive() || focusIsActive() || moveIsActive()) {
             unfocus(node);
 
             node.element.addClass(HIGHLIGHT_CLASS);
