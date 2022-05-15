@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "debug": "webpack serve --config-name DEVELOPMENT",
+    "dev": "webpack serve --config-name DEVELOPMENT",
     "build": "webpack build --config-name PRODUCTION"
   }
 }
