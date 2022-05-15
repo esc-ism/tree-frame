@@ -17,9 +17,9 @@ export type ContrastMethod = typeof CONTRAST_METHODS[number];
 
 export interface DefaultStyle {
     fontSize?: number;
-    tooltipOutline?: string;
+    borderTooltip?: string;
 
-    modalOutline?: string;
+    borderModal?: string;
 
     headBase?: string;
     headContrast?: ContrastMethod;
@@ -39,8 +39,8 @@ export interface DefaultStyle {
     validBackground?: string;
     invalidBackground?: string;
 
-    borderLeaf?: boolean;
     borderNode?: boolean;
+    borderValue?: boolean;
 }
 
 export interface UserStyle extends DefaultStyle {

@@ -7,7 +7,8 @@ import {addRule} from '../../../../../css';
 export default function generate() {
     addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [
         ['flex-grow', '1'],
-        ['display', 'flex']
+        ['display', 'flex'],
+        ['margin', '0 0.2em']
     ]);
 
     // Use pointer when the node has a value and isn't being edited
@@ -16,8 +17,6 @@ export default function generate() {
         `.${ELEMENT_CLASSES.VALUE}:not(:focus)`,
         `.${ELEMENT_CLASSES.VALUE_CONTAINER} ~ *`
     ], ['cursor', 'pointer']);
-
-    addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER} > :first-child`, ['margin-left', '0.3em'])
 
     addRule(`.${ELEMENT_CLASSES.VALUE}`, [
         // Space input border from contents

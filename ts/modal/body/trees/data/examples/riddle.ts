@@ -70,8 +70,8 @@ const config: Config = {
             for (const {children} of locations) {
                 const register = [false, false, false];
 
-                for (const {value} of children) {
-                    register[NAMES.indexOf(value as string)] = true;
+                for (const {label} of children) {
+                    register[NAMES.indexOf(label)] = true;
                 }
 
                 if (!register[0] && register[1] && register[2]) {

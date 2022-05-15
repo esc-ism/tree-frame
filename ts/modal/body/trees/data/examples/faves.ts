@@ -67,12 +67,10 @@ const config: Config = {
         'headButtonStyle': '#ff75da',
         'nodeBase': ['#001946', '#001130'],
         'nodeContrast': 'Invert',
-        'borderLeaf': true,
-        'borderNode': true,
         'nodeButtonRemove': '#ff0000',
         'nodeButtonCreate': '#15ff00',
         'nodeButtonMove': '#9000ff',
-        'tooltipOutline': '#c12d00',
+        'borderTooltip': '#c12d00',
     }
 };
 

@@ -1,7 +1,6 @@
 import {INVALID_CLASS} from './consts';
 
 import * as tooltip from '../tooltip';
-import {reset as resetFocus} from '../focus';
 
 import type Child from '../../child';
 import type Middle from '../../middle';
@@ -28,8 +27,6 @@ export function reset() {
     tooltip.reset();
 
     activeNode.element.valueElement.blur();
-
-    resetFocus();
 
     activeNode = undefined;
 }
@@ -101,24 +98,24 @@ function getAllPredicateResponses(node: Child = activeNode): Array<Promise<void>
     return [getOwnPredicateResponse(node), ...getSubPredicateResponses(node.parent)];
 }
 
-export function update() {
-    const previousValue = activeNode.value;
+export function update(node) {
+    const previousValue = node.value;
 
-    activeNode.value = getValue(activeNode);
+    node.value = getValue(node);
 
     Promise.all(getAllPredicateResponses())
         .then(() => {
-            activeNode.element.removeClass(INVALID_CLASS);
+            node.element.removeClass(INVALID_CLASS);
 
             tooltip.hide();
         })
         .catch((reason) => {
-            activeNode.value = previousValue;
-
             activeNode.element.addClass(INVALID_CLASS);
 
+            activeNode.value = previousValue;
+
             if (reason) {
-                tooltip.show(reason);
+                tooltip.show(reason, node.element.valueWrapper);
             }
         });
 }
@@ -147,86 +144,71 @@ export function doAction(node) {
     }
 }
 
-window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        reset();
-    }
-});
-
 export function mount(node: Child): void {
+    const {valueElement, valueContainer, labelElement} = node.element;
+
     if (typeof node.value === 'boolean') {
-        const checkbox = node.element.valueElement;
-
-        // Flip value
-
-        checkbox.addEventListener('click', (event) => {
+        valueElement.addEventListener('click', (event) => {
             event.stopPropagation();
 
-            node.value = checkbox.checked;
-
-            Promise.all(getAllPredicateResponses(node))
-                .catch((reason) => {
-                    node.value = !node.value;
-
-                    checkbox.checked = node.value;
-
-                    if (reason) {
-                        tooltip.show(reason, node.element.valueWrapper);
-                    }
-                });
+            update(node);
         });
 
-        node.element.valueContainer.addEventListener('click', (event) => {
+        valueContainer.addEventListener('click', (event) => {
             event.stopPropagation();
 
-            checkbox.click();
+            valueElement.click();
         });
     } else {
         // Start
 
-        node.element.valueElement.addEventListener('focusin', (event) => {
+        valueElement.addEventListener('focusin', (event) => {
             event.stopPropagation();
 
             doAction(node);
         });
 
-        node.element.valueContainer.addEventListener('click', (event) => {
+        valueContainer.addEventListener('click', (event) => {
             event.stopPropagation();
 
-            node.element.valueElement.focus();
+            valueElement.focus();
         });
 
         // Process new value
 
-        node.element.valueElement.addEventListener('input', update);
+        valueElement.addEventListener('input', (event) => {
+            event.stopPropagation();
+
+            update(node);
+        });
 
         // Stop
 
-        node.element.valueElement.addEventListener('focusout', (event) => {
+        valueElement.addEventListener('focusout', (event) => {
             event.stopPropagation();
 
             reset();
         });
 
         if (node.input === 'color') {
-            node.element.valueElement.addEventListener('change', () => {
-                node.element.valueElement.blur();
+            valueElement.addEventListener('change', () => {
+                valueElement.blur();
             });
         }
 
-        node.element.valueElement.addEventListener('keydown', (event) => {
+        valueElement.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === 'Escape') {
                 event.stopPropagation();
 
-                node.element.valueElement.blur();
+                valueElement.blur();
             }
         });
     }
 
-    node.element.labelElement?.addEventListener('click', (event) => {
+    labelElement?.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        node.element.valueContainer.click();
+        valueContainer.click();
     });
 }
 

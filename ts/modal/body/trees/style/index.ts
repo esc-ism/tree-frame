@@ -50,7 +50,7 @@ export function toJSON(style: UserStyle): _Middle {
                     },
                     {
                         'label': 'Outline Color',
-                        'value': filledStyle.modalOutline,
+                        'value': filledStyle.borderModal,
                         'input': 'color'
                     }
                 ]
@@ -144,12 +144,12 @@ export function toJSON(style: UserStyle): _Middle {
                         'label': 'Miscellaneous',
                         'children': [
                             {
-                                'label': 'Show Node Separator?',
+                                'label': 'Show Node Outline?',
                                 'value': filledStyle.borderNode
                             },
                             {
-                                'label': 'Show Leaf Separator?',
-                                'value': filledStyle.borderLeaf
+                                'label': 'Show Value Outline?',
+                                'value': filledStyle.borderValue
                             },
                             {
                                 'label': 'Valid Color',
@@ -163,7 +163,7 @@ export function toJSON(style: UserStyle): _Middle {
                             },
                             {
                                 'label': 'Tooltip Color',
-                                'value': filledStyle.tooltipOutline,
+                                'value': filledStyle.borderTooltip,
                                 'input': 'color'
                             }
                         ]
@@ -181,7 +181,7 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 
     return {
         'fontSize': modal[0].value as number,
-        'modalOutline': modal[1].value as string,
+        'borderModal': modal[1].value as string,
 
         'headBase': headerGeneral[0].value as string,
         'headContrast': headerGeneral[1].value as ContrastMethod,
@@ -199,10 +199,10 @@ export function toRawStyle(json: _Middle): DefaultStyle {
         'nodeButtonMove': bodyButtons[2].value as string,
 
         'borderNode': bodyMisc[0].value as boolean,
-        'borderLeaf': bodyMisc[1].value as boolean,
+        'borderValue': bodyMisc[1].value as boolean,
         'validBackground': bodyMisc[2].value as string,
         'invalidBackground': bodyMisc[3].value as string,
-        'tooltipOutline': bodyMisc[4].value as string
+        'borderTooltip': bodyMisc[4].value as string
     };
 }
 

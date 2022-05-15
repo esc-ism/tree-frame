@@ -13,6 +13,8 @@ export default function generate() {
         ['height', '60vh'],
         ['overflow-y', 'auto'],
 
-        ['display', 'flex']
+        ['display', 'flex'],
+
+        ['background-color', `var(--nodeBase0)`]
     ]);
 }

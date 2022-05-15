@@ -44,7 +44,7 @@ export default function generate() {
         ['padding', '3px 8px'],
         ['border-radius', '1em'],
         ['width', '10em'],
-        ['outline', 'solid 3px var(--tooltipOutline)']
+        ['outline', 'solid 3px var(--borderTooltip)']
     ]);
 
     addDepthChangeListener((depth, addRule) => {
@@ -77,7 +77,7 @@ export default function generate() {
 
     addRule(`.${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`, [
         ['bottom', '100%'],
-        ['border-color', 'transparent transparent var(--tooltipOutline) transparent']
+        ['border-color', 'transparent transparent var(--borderTooltip) transparent']
     ]);
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, ['position', 'relative']);

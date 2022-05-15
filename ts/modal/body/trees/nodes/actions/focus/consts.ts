@@ -1,7 +1,3 @@
-export const HIGHLIGHT_SOURCE_CLASS = 'highlight-source';
+export const FOCUS_CLASS = 'node-focus';
 
-export const HIGHLIGHT_BRANCH_CLASS = 'highlight-branch';
-
-export const FOCUS_CLASS = 'focused';
-
-export const EAVE_ID = 'tree-eave';
+export const FOCUS_SOURCE_CLASS = 'node-focus-source';

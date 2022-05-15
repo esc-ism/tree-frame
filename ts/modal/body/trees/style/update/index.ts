@@ -35,7 +35,7 @@ function getContrast(hex: string, method: ContrastMethod): string {
 }
 
 export default function updateStylesheet({
-    fontSize, borderLeaf, borderNode, headContrast, nodeBase, nodeContrast, ...colours
+    fontSize, borderNode, borderValue, headContrast, nodeBase, nodeContrast, ...colours
 }: DefaultStyle) {
     for (let i = STYLESHEET.cssRules.length - 1; i >= 0; --i) {
         STYLESHEET.deleteRule(i);
@@ -50,7 +50,7 @@ export default function updateStylesheet({
     );
 
     colourStyles.push([`--borderNode`, borderNode ? '1px' : '0']);
-    colourStyles.push([`--borderLeaf`, borderLeaf ? '5px' : borderNode ? '1px' : '0']);
+    colourStyles.push([`--borderValue`, borderValue ? '1px' : '0']);
 
     for (const [depth, baseColour] of nodeBase.entries()) {
         const contrastColour = getContrast(baseColour, nodeContrast);

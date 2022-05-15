@@ -1,4 +1,4 @@
-import {ACTION_ID} from './consts';
+import {ACTION_ID, PUT_CLASS} from './consts';
 
 import {getNewButton} from '../button';
 
@@ -34,11 +34,15 @@ const gSibling = gMain.cloneNode(true) as SVGGElement;
 
 export const BUTTON_SIBLING = getNewButton(gSibling, ACTION_ID, 'Put After');
 
+BUTTON_SIBLING.classList.add(PUT_CLASS);
+
 const gParent = gMain.cloneNode(true) as SVGGElement;
 
 gParent.setAttribute('transform', 'rotate(-45 70 70)');
 
 export const BUTTON_PARENT = getNewButton(gParent, ACTION_ID, 'Put Into');
+
+BUTTON_PARENT.classList.add(PUT_CLASS);
 
 const arrowTopRight = arrowBottomLeft.cloneNode(true) as SVGLineElement;
 

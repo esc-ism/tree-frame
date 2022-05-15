@@ -6,7 +6,7 @@ import {getActiveStyle} from './trees/style';
 
 import updateStylesheet from './trees/style/update';
 
-import {generateEave} from './trees/nodes/actions/focus';
+import {generateEave} from './trees/nodes/actions/highlight';
 
 import type {Config} from '../../validation/types';
 

@@ -26,10 +26,7 @@ export default class Element {
         this.childContainer.classList.add(ELEMENT_CLASSES.CHILD_CONTAINER);
         this.buttonContainer.classList.add(ELEMENT_CLASSES.BUTTON_CONTAINER);
 
-        this.interactionContainer.setAttribute('tabIndex', '1');
-
         this.interactionContainer.appendChild(this.buttonContainer);
-
         this.elementContainer.appendChild(this.interactionContainer);
         this.elementContainer.appendChild(this.childContainer);
 

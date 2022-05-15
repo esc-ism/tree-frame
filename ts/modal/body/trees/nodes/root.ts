@@ -5,10 +5,11 @@ import {ROOT_CLASS} from './consts';
 
 import * as create from './actions/create';
 import * as focus from './actions/focus';
+import * as highlight from './actions/highlight';
 
 import type {Root as _Root, Child as _Child, SubPredicate} from '../../../../validation/types';
 
-const actions = [create, focus];
+const actions = [create, focus, highlight];
 
 export default class Root implements _Root {
     readonly children: Array<Middle | Child> = [];

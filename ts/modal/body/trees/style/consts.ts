@@ -4,9 +4,9 @@ export const ROOT_ID = 'root-style';
 
 export const DEFAULT_STYLE: DefaultStyle = {
     'fontSize': 18,
-    'tooltipOutline': '#570000',
+    'borderTooltip': '#570000',
 
-    'modalOutline': '#ffffff',
+    'borderModal': '#ffffff',
 
     'headBase': '#000000',
     'headContrast': 'Black / White',
@@ -26,6 +26,6 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'validBackground': '#d9ffc0',
     'invalidBackground': '#ffb4be',
 
-    'borderLeaf': true,
     'borderNode': true,
+    'borderValue': false
 };

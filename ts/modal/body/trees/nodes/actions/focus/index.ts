@@ -1,15 +1,18 @@
 import {
-    HIGHLIGHT_SOURCE_CLASS as SOURCE_CLASS, HIGHLIGHT_BRANCH_CLASS as BRANCH_CLASS,
-    FOCUS_CLASS, EAVE_ID
+    FOCUS_SOURCE_CLASS as SOURCE_CLASS,
+    FOCUS_CLASS as BRANCH_CLASS,
 } from './consts';
 
 import {isActive as moveIsActive} from '../move';
-import {isActive as editIsActive} from '../edit';
 
 import type Root from '../../root';
 import type Child from '../../child';
 
 let activeNode: Root | Child;
+
+export function isActive(): boolean {
+    return Boolean(activeNode);
+}
 
 export function setTabIndexes(doAdd = true, node = activeNode) {
     const buttons = node.element.buttonContainer.children;
@@ -82,77 +85,28 @@ export function unmount(node) {
     }
 }
 
-const unfocusPrevious = (() => {
-    let previousNode;
-
-    return (newNode?) => {
-        previousNode?.element.removeClass(FOCUS_CLASS);
-
-        previousNode = newNode;
-    };
-})();
-
 export function mount(node: Root | Child): void {
-    const focusTarget = node.element.interactionContainer;
+    const {elementContainer} = node.element;
 
-    focusTarget.addEventListener('click', (event) => {
+    // Handle mouse input
+
+    elementContainer.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        if (focusTarget.isSameNode(event.target as HTMLElement)) {
+        doAction(node);
+    });
+
+    // Handle keyboard input
+
+    elementContainer.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.stopPropagation();
+
             doAction(node);
-        }
-    });
-
-    focusTarget.addEventListener('mouseenter', () => {
-        // Avoid unfocusing an input
-        if (editIsActive()) {
-            unfocusPrevious(node);
-
-            node.element.addClass(FOCUS_CLASS);
-        } else {
-            focusTarget.focus();
-        }
-    });
-
-    focusTarget.addEventListener('focus', () => {
-        unfocusPrevious(node);
-
-        node.element.addClass(FOCUS_CLASS);
-    });
-
-    focusTarget.addEventListener('keydown', (event) => {
-        switch (event.key) {
-            case 'Enter':
-                event.stopPropagation();
-
-                doAction(node);
-
-                break;
-            case 'Escape':
-                event.stopPropagation();
-
-                if (activeNode) {
-                    reset();
-
-                    focusTarget.focus();
-                } else {
-                    unfocusPrevious();
-
-                    document.body.focus();
-                }
         }
     });
 }
 
 export function shouldMount(): boolean {
     return true;
-}
-
-// Prevents zipping to the end of the tree when mousing over the bottom pixel
-export function generateEave() {
-    const element = document.createElement('div');
-
-    element.id = EAVE_ID;
-
-    return element;
 }

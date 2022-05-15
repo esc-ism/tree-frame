@@ -53,7 +53,7 @@ export default function generate() {
         ['width', '80%'],
 
         ['font-family', 'Tahoma, Geneva, sans-serif'],
-        ['outline', 'var(--modalOutline) solid 2px'],
+        ['outline', 'var(--borderModal) solid 2px'],
         ['box-shadow', '1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065']
     ]);
 }
