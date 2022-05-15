@@ -2,6 +2,8 @@ import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, OPTIONS_ID_PREFIX} from './consts';
 
 import type {Child as _Child} from '../../../../validation/types';
 
+import './actions/index';
+
 let count = 0;
 
 export default class Element {
