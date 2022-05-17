@@ -21,7 +21,21 @@ export default function generate() {
         `.${FOCUS_SOURCE_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`
     ], ['background-size', '100%']);
 
-    addRule(`.${ELEMENT_CLASSES.LABEL}`, ['padding-left', '15%']);
+    addRule(`.${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
+        ['position', 'absolute'],
+        ['right', '0'],
+        ['text-align', 'right'],
+        ['padding-right', '0.4em'],
+        // Avoid overlapping node outlines
+        ['height', 'calc(100% - 1.5px)'],
+        // Vertical align
+        ['display', 'flex'],
+        ['align-items', 'center'],
+        // Extend the background further into the value
+        ['padding-left', '15%'],
+        // Fixes inconsistent modal outline overlap
+        ['margin-right', '0.5px']
+    ]);
 
     addRule(`.${BUTTON_CLASS}:last-child`, [
         ['border-top-right-radius', '50%'],
@@ -44,14 +58,14 @@ export default function generate() {
             ['color', `var(--nodeBase${depth})`]
         );
 
-        addRule(`${depthSelector} .${ELEMENT_CLASSES.LABEL}`, [
+        addRule(`${depthSelector} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
             ['background-image', `linear-gradient(to left, var(--nodeBase${depth}) 60%, transparent)`],
             ['background-size', 'auto']
         ]);
 
         addRule([
-            `.${HIGHLIGHT_CLASS}${depthSelector} > .${ELEMENT_CLASSES.LABEL}`,
-            `.${FOCUS_SOURCE_CLASS}${depthSelector} .${ELEMENT_CLASSES.LABEL}`
+            `.${HIGHLIGHT_CLASS}${depthSelector} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
+            `.${FOCUS_SOURCE_CLASS}${depthSelector} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`
         ], ['background-image', `linear-gradient(to left, var(--nodeContrast${depth}) 60%, transparent)`]);
     });
 

@@ -29,8 +29,7 @@ export default function generate() {
     ]);
 
     addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, [
-        ['outline-offset', '-1px'],
-        ['padding-top', '1px']
+        ['outline-offset', '-1px']
     ]);
 
     addRule(
@@ -42,8 +41,7 @@ export default function generate() {
         ['height', '1.6em'],
         ['display', 'flex'],
         ['align-items', 'center'],
-        ['outline-offset', '-1px'],
-        ['margin-top', '-1px'],
+        ['outline-offset', '-1px']
     ]);
 
     addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, [

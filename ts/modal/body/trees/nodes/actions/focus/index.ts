@@ -86,12 +86,14 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-    const {elementContainer} = node.element;
+    const {elementContainer, interactionContainer} = node.element;
 
     // Handle mouse input
 
     elementContainer.addEventListener('click', (event) => {
         event.stopPropagation();
+
+        interactionContainer.focus();
 
         doAction(node);
     });

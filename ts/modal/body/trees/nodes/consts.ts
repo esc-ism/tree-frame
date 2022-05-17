@@ -9,6 +9,7 @@ export const ELEMENT_CLASSES = {
     'BUTTON_CONTAINER': 'node-button-container',
     'VALUE_CONTAINER': 'node-value-container',
     'VALUE': 'node-value',
+    'LABEL_CONTAINER': 'node-label-container',
     'LABEL': 'node-label',
 }
 

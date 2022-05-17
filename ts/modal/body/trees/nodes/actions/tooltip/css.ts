@@ -21,7 +21,7 @@ export default function generate() {
     addRule(`.${TOOLTIP_CONTAINER_CLASS}`, [
         ['position', 'absolute'],
         ['text-align', 'center'],
-        ['z-index', '2'],
+        ['z-index', '1'],
         ['width', '100%'],
         ['pointer-events', 'none']
     ]);
@@ -72,7 +72,7 @@ export default function generate() {
 
     addRule(`.${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`, [
         ['top', '100%'],
-        ['border-color', 'var(--tooltipOutline) transparent transparent transparent']
+        ['border-color', 'var(--borderTooltip) transparent transparent transparent']
     ]);
 
     addRule(`.${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`, [

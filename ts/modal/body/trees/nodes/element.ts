@@ -13,9 +13,9 @@ export default class Element {
 
     readonly buttonContainer: HTMLElement = document.createElement('span');
 
+    readonly labelContainer?: HTMLElement;
     readonly labelElement?: HTMLElement;
     readonly valueContainer?: HTMLElement;
-    readonly valueWrapper?: HTMLElement;
     readonly valueElement?: HTMLInputElement;
 
     readonly childContainer: HTMLElement = document.createElement('div');
@@ -33,8 +33,8 @@ export default class Element {
         this.elementContainer.appendChild(this.childContainer);
 
         if ('value' in data) {
+            this.valueContainer = document.createElement('label');
             this.valueElement = document.createElement('input');
-            this.valueContainer = document.createElement('span');
 
             this.valueContainer.classList.add(ELEMENT_CLASSES.VALUE_CONTAINER);
             this.valueElement.classList.add(ELEMENT_CLASSES.VALUE);
@@ -43,35 +43,29 @@ export default class Element {
 
             if (typeof data.value === 'boolean') {
                 this.valueElement.type = 'checkbox';
-
-                // Solely for adding tooltips below checkboxes (input elements can't have children)
-                this.valueWrapper = document.createElement('span');
-
-                this.valueWrapper.appendChild(this.valueElement);
-                this.valueContainer.appendChild(this.valueWrapper);
-                this.interactionContainer.appendChild(this.valueContainer);
-            } else {
-                if (typeof data.value === 'number') {
-                    this.valueElement.type = 'number';
-                } else if ('input' in data) {
-                    this.valueElement.type = data.input;
-                }
-
-                this.valueContainer.appendChild(this.valueElement);
-                this.interactionContainer.appendChild(this.valueContainer);
+            } else if (typeof data.value === 'number') {
+                this.valueElement.type = 'number';
+            } else if ('input' in data) {
+                this.valueElement.type = data.input;
             }
+
+            this.valueContainer.appendChild(this.valueElement);
+            this.interactionContainer.appendChild(this.valueContainer);
 
             this.render(data.value);
         }
 
         if ('label' in data) {
+            this.labelContainer = document.createElement('div');
             this.labelElement = document.createElement('span');
 
+            this.labelContainer.classList.add(ELEMENT_CLASSES.LABEL_CONTAINER);
             this.labelElement.classList.add(ELEMENT_CLASSES.LABEL);
 
-            this.labelElement.innerText = data.label
+            this.labelElement.innerText = data.label;
 
-            this.interactionContainer.appendChild(this.labelElement);
+            this.labelContainer.appendChild(this.labelElement);
+            this.interactionContainer.appendChild(this.labelContainer);
         }
 
         if ('predicate' in data) {
@@ -118,7 +112,7 @@ export default class Element {
 
     addDepthClass(depth: number) {
         if (this.depthClass) {
-            this.removeClass(this.depthClass)
+            this.removeClass(this.depthClass);
         }
 
         const depthClass = `${DEPTH_CLASS_PREFIX}${depth}`;

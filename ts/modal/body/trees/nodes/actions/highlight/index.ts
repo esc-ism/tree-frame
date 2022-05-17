@@ -3,46 +3,74 @@ import {HIGHLIGHT_CLASS, EAVE_ID} from './consts';
 import {isActive as editIsActive} from '../edit';
 import {isActive as focusIsActive} from '../focus';
 import {isActive as moveIsActive} from '../move';
+import Root from '../../root';
+import Child from '../../child';
 
 let activeNode;
+
+export function focusHovered() {
+    if (activeNode) {
+        activeNode.element.interactionContainer.focus();
+    }
+}
 
 export function isActive(): boolean {
     return Boolean(activeNode);
 }
 
+function setActive(node = undefined, doFocus = false) {
+    if (activeNode) {
+        activeNode.element.removeClass(HIGHLIGHT_CLASS);
+    }
+
+    activeNode = node;
+
+    if (node) {
+        node.element.addClass(HIGHLIGHT_CLASS);
+
+        if (doFocus) {
+            node.element.interactionContainer.focus();
+        }
+    }
+}
+
 export function reset() {
+    setActive();
+
     // Blur focused node & reset focus index
     document.body.focus();
 }
 
-function unfocus(node) {
-    activeNode?.element.removeClass(HIGHLIGHT_CLASS);
-
-    activeNode = node;
-}
-
-export function mount(node) {
-    const {interactionContainer} = node.element;
+export function mount(node: Root | Child) {
+    const {interactionContainer, elementContainer} = node.element;
 
     interactionContainer.setAttribute('tabIndex', '1');
 
     interactionContainer.addEventListener('focusin', (event) => {
         event.stopPropagation();
 
-        unfocus(node);
-
-        node.element.addClass(HIGHLIGHT_CLASS);
+        setActive(node);
     });
 
     interactionContainer.addEventListener('mouseenter', (event) => {
         event.stopPropagation();
 
-        if (editIsActive() || focusIsActive() || moveIsActive()) {
-            unfocus(node);
+        setActive(node, !(editIsActive() || focusIsActive() || moveIsActive()));
+    });
 
-            node.element.addClass(HIGHLIGHT_CLASS);
+    elementContainer.addEventListener('mouseenter', (event) => {
+        event.stopPropagation();
+
+        setActive(node);
+    });
+
+    elementContainer.addEventListener('mouseleave', (event) => {
+        event.stopPropagation();
+
+        if ('parent' in node) {
+            setActive(node.parent);
         } else {
-            interactionContainer.focus();
+            setActive();
         }
     });
 }
