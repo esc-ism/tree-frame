@@ -152,7 +152,7 @@ export function doAction(node) {
 }
 
 export function mount(node: Child): void {
-    const {valueElement, valueContainer, labelElement} = node.element;
+    const {valueElement, valueContainer, labelContainer} = node.element;
 
     // Start
 
@@ -206,7 +206,7 @@ export function mount(node: Child): void {
         }
     });
 
-    labelElement?.addEventListener('click', (event) => {
+    labelContainer?.addEventListener('click', (event) => {
         event.stopPropagation();
 
         valueContainer.click();
