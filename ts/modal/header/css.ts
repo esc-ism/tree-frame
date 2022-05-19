@@ -10,7 +10,7 @@ export default function generate() {
         ['background', 'var(--headBase)'],
         ['color', 'var(--headContrast)'],
 
-        ['border-bottom', 'var(--modalOutline) solid 2px'],
+        ['border-bottom', '2px solid var(--borderModal)'],
 
         ['font-size', '1.6em'],
         ['text-align', 'center'],
