@@ -1,7 +1,10 @@
-import {INVALID_CLASS, VALID_CLASS} from './consts';
+import {
+    EDITABLE_CLASS, INVALID_CLASS, VALID_CLASS,
+    VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS
+} from './consts';
 
 import * as tooltip from '../tooltip';
-import {focusHovered} from '../highlight';
+import {focusHovered, setSustained} from '../highlight';
 
 import type Child from '../../child';
 import type Middle from '../../middle';
@@ -29,6 +32,8 @@ export function reset() {
     activeNode.element.valueElement.blur();
 
     tooltip.reset();
+
+    setSustained();
 
     activeNode = undefined;
 }
@@ -141,32 +146,55 @@ export function doAction(node) {
         activeNode.element.addClass(VALID_CLASS);
 
         // Input elements can't have children
-        tooltip.setParent(node.element.valueContainer);
+        tooltip.setParent(node.element.valueElement.parentElement);
 
         if (node.input === 'color') {
             node.element.valueElement.click();
         } else {
             node.element.valueElement.select();
         }
+
+        setSustained(node);
     }
 }
 
 export function mount(node: Child): void {
-    const {valueElement, valueContainer, labelContainer} = node.element;
+    const {backgroundContainer, valueElement, valueContainer, headContainer} = node.element;
+
+    node.element.addClass(EDITABLE_CLASS);
+
+    backgroundContainer.append(...(() => {
+        const valid = document.createElement('div');
+        const invalid = document.createElement('div');
+
+        valid.classList.add(VALID_BACKGROUND_CLASS);
+        invalid.classList.add(INVALID_BACKGROUND_CLASS);
+
+        return [valid, invalid];
+    })());
 
     // Start
 
     valueElement.addEventListener('focusin', (event) => {
         event.stopPropagation();
 
-        doAction(node);
+        if (activeNode !== node) {
+            doAction(node);
+        }
     });
-
-    // Process new value
 
     valueContainer.addEventListener('click', (event) => {
         event.stopPropagation();
     });
+
+    headContainer.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        valueElement.focus();
+        valueElement.click();
+    });
+
+    // Process new value
 
     if (typeof node.value === 'boolean') {
         valueElement.addEventListener('click', (event) => {
@@ -184,32 +212,22 @@ export function mount(node: Child): void {
         // Stop
 
         if (node.input === 'color') {
-            valueElement.addEventListener('change', () => {
-                valueElement.blur();
+            valueElement.addEventListener('change', (event) => {
+                event.stopPropagation();
+
+                reset();
             });
         }
     }
-
-    valueElement.addEventListener('focusout', (event) => {
-        event.stopPropagation();
-
-        reset();
-    });
 
     valueElement.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === 'Escape') {
             event.stopPropagation();
 
-            valueElement.blur();
+            reset();
 
             focusHovered();
         }
-    });
-
-    labelContainer?.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-        valueContainer.click();
     });
 }
 

@@ -9,13 +9,16 @@ import {TREE_CONTAINER} from '../../../index';
 
 let activeParent;
 
-function isAboveCenter(element) {
-    if (!element.classList.contains(ELEMENT_CLASSES.ELEMENT_CONTAINER)) {
-        return isAboveCenter(element.parentElement);
+function isAboveCenter(element, yPosition = 0) {
+    if (!element.isSameNode(TREE_CONTAINER)) {
+        if (element.classList.contains(ELEMENT_CLASSES.ELEMENT_CONTAINER)) {
+            yPosition += element.offsetTop;
+        }
+
+        return isAboveCenter(element.parentElement, yPosition);
     }
 
     const scrollPosition = TREE_CONTAINER.scrollTop + (TREE_CONTAINER.clientHeight / 2);
-    const yPosition = element.offsetTop - TREE_CONTAINER.offsetTop;
 
     return scrollPosition > yPosition;
 }
@@ -66,8 +69,6 @@ function getAnimated(parent?: HTMLElement) {
 export function show(message: string, parent?: HTMLElement) {
     const [container, element] = getAnimated(parent);
 
-    element.innerText = message;
-
     if (isAboveCenter(container)) {
         container.classList.remove(TOOLTIP_TOP_CLASS);
         container.classList.add(TOOLTIP_BOTTOM_CLASS);
@@ -75,6 +76,8 @@ export function show(message: string, parent?: HTMLElement) {
         container.classList.remove(TOOLTIP_BOTTOM_CLASS);
         container.classList.add(TOOLTIP_TOP_CLASS);
     }
+
+    element.innerText = message;
 }
 
 export function hide() {

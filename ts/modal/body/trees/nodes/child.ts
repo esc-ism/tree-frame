@@ -2,11 +2,11 @@ import type Root from './root';
 import type Middle from './middle';
 import NodeElement from './element';
 
+import * as highlight from './actions/highlight';
 import * as edit from './actions/edit';
 import * as disconnect from './actions/delete';
 import * as focus from './actions/focus';
 import * as move from './actions/move';
-import * as highlight from './actions/highlight';
 
 import type {Child as _Child, Value, Predicate, Input} from '../../../../validation/types';
 import {getDepthClassCount} from '../style/update/depth';
@@ -15,7 +15,7 @@ const actions: Array<{
     shouldMount: (node: Child) => boolean,
     mount: (node: Child) => void,
     unmount?: (node: Child) => void
-}> = [disconnect, focus, move, edit, highlight];
+}> = [highlight, disconnect, focus, move, edit];
 
 export default class Child {
     readonly label?: string;

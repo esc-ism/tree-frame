@@ -22,13 +22,13 @@ import {addRule} from '../../../../css';
 export function addColourRule(actionId: string, strokeVar: string) {
     addRule([
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
+        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} ` +
         `.${BUTTON_CLASS}.${actionId} > svg`
     ], ['fill', `var(${strokeVar})`]);
 
     addRule([
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
+        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} ` +
         `.${BUTTON_CLASS}.${actionId} > svg > g`
     ], ['stroke', `var(${strokeVar})`]);
 
@@ -44,10 +44,7 @@ export default function generate() {
     generateFocus();
     generateTooltip();
 
-    addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, [
-        ['height', '100%'],
-        ['display', 'flex']
-    ]);
+    addRule(`.${BUTTON_CLASS}`, ['height', '100%']);
 
     addRule(`.${BUTTON_CLASS} > svg`, [
         ['height', '100%'],
@@ -56,31 +53,28 @@ export default function generate() {
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${FOCUS_SOURCE_CLASS}):not(${HIGHLIGHT_CLASS}) > ` +
-        `${ELEMENT_CLASSES.INTERACTION_CONTAINER} circle`,
+        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > ${ELEMENT_CLASSES.BUTTON_CONTAINER} circle`,
         ['stroke', 'transparent']
     );
 
     addRule(
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.INTERACTION_CONTAINER} svg`, [
+        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} svg`, [
             ['fill', 'none']
         ]
     );
 
     addDepthChangeListener((depth, addRule) => {
-        const depthSelector = `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER}`;
+        const depthSelector = `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}`;
 
-        addRule(
-            [`${depthSelector} .${BUTTON_CLASS} svg`],
-            ['stroke', `var(--nodeBase${depth})`]
-        );
+        addRule(`${depthSelector} svg`, ['stroke', `var(--nodeBase${depth})`]);
 
         addRule([
             // Not active, focused
             `${depthSelector} .${BUTTON_CLASS}:focus > svg`,
             `${depthSelector} .${BUTTON_CLASS}:hover > svg`,
-            `${depthSelector} .${BUTTON_ACTIVE_CLASS} > svg`,
+            `${depthSelector} .${BUTTON_ACTIVE_CLASS} > svg`
         ], [
             ['stroke', `var(--nodeContrast${depth})`],
             ['fill', `var(--nodeBase${depth})`]

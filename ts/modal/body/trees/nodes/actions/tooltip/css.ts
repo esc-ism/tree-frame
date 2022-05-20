@@ -26,17 +26,8 @@ export default function generate() {
         ['pointer-events', 'none']
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER} > .${TOOLTIP_CONTAINER_CLASS}`, [
-        ['margin-left', '-5px']
-    ]);
-
-    addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`, [
-        ['bottom', '102%']
-    ]);
-
-    addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_BOTTOM_CLASS}`, [
-        ['top', '102%']
-    ]);
+    addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`, ['bottom', '102%']);
+    addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_BOTTOM_CLASS}`, ['top', '102%']);
 
     addRule(`.${TOOLTIP_CLASS}`, [
         ['margin', '0 auto'],
@@ -48,8 +39,7 @@ export default function generate() {
     ]);
 
     addDepthChangeListener((depth, addRule) => {
-        addRule(
-            `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${TOOLTIP_CLASS}`, [
+        addRule(`.${DEPTH_CLASS_PREFIX}${depth} > :not(.${ELEMENT_CLASSES.CHILD_CONTAINER}) .${TOOLTIP_CLASS}`, [
             ['background-color', `var(--nodeBase${depth})`],
             ['color', `var(--nodeContrast${depth})`]
         ]);
@@ -79,6 +69,4 @@ export default function generate() {
         ['bottom', '100%'],
         ['border-color', 'transparent transparent var(--borderTooltip) transparent']
     ]);
-
-    addRule(`.${ELEMENT_CLASSES.INTERACTION_CONTAINER}`, ['position', 'relative']);
 }

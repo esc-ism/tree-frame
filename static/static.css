@@ -25,10 +25,6 @@ input {
     border: none;
 }
 
-input[disabled]::selection {
-    background: none;
-}
-
 :focus-visible:not(button):not(input) {
     outline: none;
 }

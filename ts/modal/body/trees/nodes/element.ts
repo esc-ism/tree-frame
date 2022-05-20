@@ -2,21 +2,22 @@ import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, OPTIONS_ID_PREFIX} from './consts';
 
 import type {Child as _Child} from '../../../../validation/types';
 
-import './actions/index';
-
 let count = 0;
 
 export default class Element {
     readonly elementContainer: HTMLElement = document.createElement('div');
 
-    readonly interactionContainer: HTMLElement = document.createElement('div');
+    readonly backgroundContainer: HTMLElement = document.createElement('div');
+
+    readonly headContainer: HTMLElement = document.createElement('span');
 
     readonly buttonContainer: HTMLElement = document.createElement('span');
 
-    readonly labelContainer?: HTMLElement;
-    readonly labelElement?: HTMLElement;
     readonly valueContainer?: HTMLElement;
     readonly valueElement?: HTMLInputElement;
+
+    readonly labelContainer?: HTMLElement;
+    readonly labelElement?: HTMLElement;
 
     readonly childContainer: HTMLElement = document.createElement('div');
 
@@ -24,13 +25,14 @@ export default class Element {
 
     constructor(data: _Child) {
         this.elementContainer.classList.add(ELEMENT_CLASSES.ELEMENT_CONTAINER);
-        this.interactionContainer.classList.add(ELEMENT_CLASSES.INTERACTION_CONTAINER);
+        this.backgroundContainer.classList.add(ELEMENT_CLASSES.BACKGROUND_CONTAINER);
         this.childContainer.classList.add(ELEMENT_CLASSES.CHILD_CONTAINER);
+        this.headContainer.classList.add(ELEMENT_CLASSES.HEAD_CONTAINER);
         this.buttonContainer.classList.add(ELEMENT_CLASSES.BUTTON_CONTAINER);
 
-        this.interactionContainer.appendChild(this.buttonContainer);
-        this.elementContainer.appendChild(this.interactionContainer);
-        this.elementContainer.appendChild(this.childContainer);
+        this.elementContainer.appendChild(this.backgroundContainer);
+
+        this.headContainer.appendChild(this.buttonContainer);
 
         if ('value' in data) {
             this.valueContainer = document.createElement('label');
@@ -43,33 +45,27 @@ export default class Element {
 
             if (typeof data.value === 'boolean') {
                 this.valueElement.type = 'checkbox';
-            } else if (typeof data.value === 'number') {
-                this.valueElement.type = 'number';
-            } else if ('input' in data) {
-                this.valueElement.type = data.input;
+
+                // Positions tooltips below checkboxes
+                const valueWrapper = document.createElement('span');
+
+                valueWrapper.appendChild(this.valueElement);
+                this.valueContainer.appendChild(valueWrapper);
+            } else {
+                if (typeof data.value === 'number') {
+                    this.valueElement.type = 'number';
+                } else if ('input' in data) {
+                    this.valueElement.type = data.input;
+                }
+
+                this.valueContainer.appendChild(this.valueElement);
             }
 
-            this.valueContainer.appendChild(this.valueElement);
-            this.interactionContainer.appendChild(this.valueContainer);
-
             this.render(data.value);
-        }
 
-        if ('label' in data) {
-            this.labelContainer = document.createElement('div');
-            this.labelElement = document.createElement('span');
+            this.headContainer.appendChild(this.valueContainer);
 
-            this.labelContainer.classList.add(ELEMENT_CLASSES.LABEL_CONTAINER);
-            this.labelElement.classList.add(ELEMENT_CLASSES.LABEL);
-
-            this.labelElement.innerText = data.label;
-
-            this.labelContainer.appendChild(this.labelElement);
-            this.interactionContainer.appendChild(this.labelContainer);
-        }
-
-        if ('predicate' in data) {
-            if (Array.isArray(data.predicate)) {
+            if ('predicate' in data && Array.isArray(data.predicate)) {
                 const optionsElement = document.createElement('datalist');
                 const id = `${OPTIONS_ID_PREFIX}${count++}`;
 
@@ -88,6 +84,23 @@ export default class Element {
                 this.valueContainer.appendChild(optionsElement);
             }
         }
+
+        this.elementContainer.appendChild(this.headContainer);
+
+        if ('label' in data) {
+            this.labelContainer = document.createElement('div');
+            this.labelElement = document.createElement('span');
+
+            this.labelContainer.classList.add(ELEMENT_CLASSES.LABEL_CONTAINER);
+            this.labelElement.classList.add(ELEMENT_CLASSES.LABEL);
+
+            this.labelElement.innerText = data.label;
+
+            this.labelContainer.appendChild(this.labelElement);
+            this.headContainer.appendChild(this.labelContainer);
+        }
+
+        this.elementContainer.appendChild(this.childContainer);
     }
 
     render(value: unknown) {
@@ -135,6 +148,6 @@ export default class Element {
     }
 
     scrollIntoView() {
-        this.interactionContainer.scrollIntoView({'block': 'center'});
+        this.backgroundContainer.scrollIntoView({'block': 'center'});
     }
 }

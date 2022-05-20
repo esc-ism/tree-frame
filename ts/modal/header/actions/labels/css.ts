@@ -6,13 +6,13 @@ import {addRule} from '../../../css';
 
 import {TREE_CONTAINER_ID} from '../../../body/trees/consts';
 
-import {ELEMENT_CLASSES, ROOT_CLASS} from '../../../body/trees/nodes/consts';
+import {ELEMENT_CLASSES} from '../../../body/trees/nodes/consts';
 
 export default function generate() {
-    addRule([
+    addRule(
         `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL}`,
-        `.${ROOT_CLASS} > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} .${ELEMENT_CLASSES.LABEL}`
-    ], ['display', 'none']);
+        ['display', 'none']
+    );
 
     addColourRule(ACTION_ID, '--headButtonLabel');
 }

@@ -1,4 +1,5 @@
 import {BUTTON_CLASS} from './consts';
+import * as active from './active';
 
 import type Root from '../root';
 import type Child from '../child';
@@ -12,17 +13,21 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
     button.addEventListener('click', (event) => {
         event.stopPropagation();
 
+        active.register();
+
         doAction(node, button);
     });
 
     button.addEventListener('keydown', (event) => {
-        // Prevent button presses via the Enter key from unfocusing the node
+        // Prevent button presses via the Enter key from triggering actions
         if (event.key === 'Enter') {
             event.stopPropagation();
         }
     });
 
     node.element.addButton(button);
+
+    return button;
 }
 
 // Creates a template

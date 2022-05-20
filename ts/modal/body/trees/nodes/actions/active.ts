@@ -14,3 +14,7 @@ window.addEventListener('keydown', (event) => {
         }
     }
 });
+
+export function register() {
+    edit.reset();
+}

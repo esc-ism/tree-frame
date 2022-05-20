@@ -3,13 +3,13 @@ import Child from './child';
 import NodeElement from './element';
 import {ROOT_CLASS} from './consts';
 
+import * as highlight from './actions/highlight';
 import * as create from './actions/create';
 import * as focus from './actions/focus';
-import * as highlight from './actions/highlight';
 
 import type {Root as _Root, Child as _Child, SubPredicate} from '../../../../validation/types';
 
-const actions = [create, focus, highlight];
+const actions = [highlight, create, focus];
 
 export default class Root implements _Root {
     readonly children: Array<Middle | Child> = [];

@@ -1,4 +1,4 @@
-import {HIGHLIGHT_CLASS, EAVE_ID} from './consts';
+import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 
 import {isActive as editIsActive} from '../edit';
 import {isActive as focusIsActive} from '../focus';
@@ -6,11 +6,12 @@ import {isActive as moveIsActive} from '../move';
 import Root from '../../root';
 import Child from '../../child';
 
+let sustainedNode;
 let activeNode;
 
 export function focusHovered() {
     if (activeNode) {
-        activeNode.element.interactionContainer.focus();
+        activeNode.element.headContainer.focus();
     }
 }
 
@@ -18,8 +19,20 @@ export function isActive(): boolean {
     return Boolean(activeNode);
 }
 
-function setActive(node = undefined, doFocus = false) {
-    if (activeNode) {
+export function setSustained(node?) {
+    if (node === sustainedNode) {
+        return;
+    }
+
+    if (sustainedNode && sustainedNode !== activeNode) {
+        sustainedNode.element.removeClass(HIGHLIGHT_CLASS);
+    }
+
+    sustainedNode = node;
+}
+
+function setActive(node?, doFocus = false) {
+    if (activeNode && activeNode !== sustainedNode) {
         activeNode.element.removeClass(HIGHLIGHT_CLASS);
     }
 
@@ -29,7 +42,7 @@ function setActive(node = undefined, doFocus = false) {
         node.element.addClass(HIGHLIGHT_CLASS);
 
         if (doFocus) {
-            node.element.interactionContainer.focus();
+            node.element.headContainer.focus();
         }
     }
 }
@@ -42,17 +55,25 @@ export function reset() {
 }
 
 export function mount(node: Root | Child) {
-    const {interactionContainer, elementContainer} = node.element;
+    const {backgroundContainer, headContainer, elementContainer} = node.element;
 
-    interactionContainer.setAttribute('tabIndex', '1');
+    backgroundContainer.appendChild((() => {
+        const background = document.createElement('div');
 
-    interactionContainer.addEventListener('focusin', (event) => {
+        background.classList.add(HIGHLIGHT_BACKGROUND_CLASS);
+
+        return background;
+    })());
+
+    headContainer.setAttribute('tabIndex', '1');
+
+    headContainer.addEventListener('focusin', (event) => {
         event.stopPropagation();
 
         setActive(node);
     });
 
-    interactionContainer.addEventListener('mouseenter', (event) => {
+    headContainer.addEventListener('mouseenter', (event) => {
         event.stopPropagation();
 
         setActive(node, !(editIsActive() || focusIsActive() || moveIsActive()));

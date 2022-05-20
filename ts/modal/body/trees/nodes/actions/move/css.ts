@@ -13,7 +13,7 @@ export default function generate() {
 
     addDepthChangeListener((depth, addRule) => {
         addRule(
-            `.${DEPTH_CLASS_PREFIX}${depth}:not(.${FOCUS_CLASS}) > .${ELEMENT_CLASSES.INTERACTION_CONTAINER} ` +
+            `.${DEPTH_CLASS_PREFIX}${depth}:not(.${FOCUS_CLASS}) > .${ELEMENT_CLASSES.BUTTON_CONTAINER} ` +
             `.${PUT_CLASS}:not(:focus):not(:hover) svg > g`,
             ['stroke', `var(--nodeBase${depth})`]
         );

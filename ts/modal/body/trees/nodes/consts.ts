@@ -4,9 +4,10 @@ export const MIDDLE_CLASS = 'middle';
 
 export const ELEMENT_CLASSES = {
     'ELEMENT_CONTAINER': 'node',
-    'INTERACTION_CONTAINER': 'node-interaction-container',
+    'BACKGROUND_CONTAINER': 'node-background-container',
     'CHILD_CONTAINER': 'node-child-container',
     'BUTTON_CONTAINER': 'node-button-container',
+    'HEAD_CONTAINER': 'node-head-container',
     'VALUE_CONTAINER': 'node-value-container',
     'VALUE': 'node-value',
     'LABEL_CONTAINER': 'node-label-container',

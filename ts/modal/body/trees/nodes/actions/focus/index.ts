@@ -1,12 +1,14 @@
 import {
     FOCUS_SOURCE_CLASS as SOURCE_CLASS,
-    FOCUS_CLASS as BRANCH_CLASS,
+    FOCUS_CLASS as BRANCH_CLASS
 } from './consts';
 
 import {isActive as moveIsActive} from '../move';
+import * as active from '../active';
 
 import type Root from '../../root';
 import type Child from '../../child';
+import {setSustained} from '../highlight';
 
 let activeNode: Root | Child;
 
@@ -18,15 +20,13 @@ export function setTabIndexes(doAdd = true, node = activeNode) {
     const buttons = node.element.buttonContainer.children;
 
     for (let i = buttons.length - 1; i >= 0; --i) {
-        const button = buttons[i] as HTMLButtonElement;
+        const button = buttons[i];
 
         if (button) {
             // Must be set to -1 to prevent tabbing (removeAttribute sets it to 0)
-            button.setAttribute('tabIndex', doAdd && !button.disabled ? '1' : '-1');
+            button.setAttribute('tabIndex', doAdd ? '1' : '-1');
         }
     }
-
-    node.element.valueElement?.setAttribute('tabIndex', doAdd ? '1' : '-1');
 }
 
 export function focus(doFocus: boolean = true, node = activeNode, doForce: boolean = true) {
@@ -52,6 +52,8 @@ export function reset() {
     focus(false);
     focusBranch(false);
 
+    setSustained();
+
     setTabIndexes(false);
 
     activeNode.element.scrollIntoView();
@@ -62,18 +64,24 @@ export function reset() {
 export function doAction(node: Root | Child, doForce = false) {
     const toggleOn = node !== activeNode;
 
-    // Avoid unfocusing a node that's being edited/moved
+    // Avoid cancelling move actions
     if (moveIsActive() || (doForce && !toggleOn)) {
         return;
     }
 
     reset();
 
+    active.register();
+
     if (toggleOn) {
         activeNode = node;
 
+        node.element.headContainer.focus();
+
         focus();
         focusBranch();
+
+        setSustained(node);
 
         setTabIndexes();
     }
@@ -86,14 +94,12 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-    const {elementContainer, interactionContainer} = node.element;
+    const {elementContainer} = node.element;
 
     // Handle mouse input
 
     elementContainer.addEventListener('click', (event) => {
         event.stopPropagation();
-
-        interactionContainer.focus();
 
         doAction(node);
     });

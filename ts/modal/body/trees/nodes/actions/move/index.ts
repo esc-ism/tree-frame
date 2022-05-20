@@ -1,10 +1,10 @@
 import BUTTON, {BUTTON_SIBLING, BUTTON_PARENT} from './button';
 import {ACTION_ID} from './consts';
 
+import * as tooltip from '../tooltip';
 import {addActionButton} from '../button';
 import {focus, focusBranch, reset as resetFocus, setTabIndexes} from '../focus';
 import {getSubPredicateResponses} from '../edit';
-import * as tooltip from '../tooltip';
 
 import type Root from '../../root';
 import type Middle from '../../middle';
@@ -32,7 +32,7 @@ export function isActive(): boolean {
 }
 
 export function setActive(node: Child, doActivate = true) {
-    const button = node.element.buttonContainer.querySelector(`.${ACTION_ID}`);
+    const button = node.element.headContainer.querySelector(`.${ACTION_ID}`);
 
     setTreeActive(button, ACTION_ID, doActivate);
 
@@ -48,7 +48,7 @@ export function setActive(node: Child, doActivate = true) {
         button.setAttribute('tabIndex', '-1');
     }
 
-    node.element.interactionContainer.focus();
+    node.element.headContainer.focus();
 }
 
 export function reset() {
@@ -61,9 +61,6 @@ export function reset() {
 
         button.remove();
     }
-
-    // Show where the node's been moved to
-    moveTarget.child.element.scrollIntoView();
 
     putTargets.length = 0;
 
@@ -83,7 +80,12 @@ function doMove(node, button, isParent) {
         ...getSubPredicateResponses(oldParent),
         ...(oldParent === newParent ? [] : getSubPredicateResponses(newParent)),
     ])
-        .then(reset)
+        .then(() => {
+            reset();
+
+            // Show where the node's been moved to
+            moveTarget.child.element.scrollIntoView();
+        })
         .catch((reason) => {
             // Revert
             moveTarget.child.move(oldParent, index);
@@ -95,17 +97,13 @@ function doMove(node, button, isParent) {
 }
 
 function addTargetButton(node, isParent = true) {
-    const button = (isParent ? BUTTON_PARENT : BUTTON_SIBLING).cloneNode(true) as HTMLButtonElement;
+    const button = addActionButton(
+        isParent ? BUTTON_PARENT : BUTTON_SIBLING,
+        () => doMove(node, button, isParent),
+        node
+    );
 
     button.setAttribute('tabIndex', '1');
-
-    button.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-        doMove(node, button, isParent);
-    });
-
-    node.element.addButton(button);
 
     putTargets.push({node, 'button': button, isParent});
 }
@@ -148,8 +146,6 @@ function doAction(node: Child, button) {
             'isPooled': 'poolId' in node.parent
         };
 
-        setActive(node);
-
         addButtons(node.getRoot());
 
         // If the only valid target is the current parent
@@ -157,6 +153,8 @@ function doAction(node: Child, button) {
             reset();
 
             tooltip.show('No other valid locations found.', button)
+        } else {
+            setActive(node);
         }
     }
 }
