@@ -4,6 +4,18 @@ const NAMES = ['Shield', 'Gladiator', 'Lion'];
 
 let mistakes = 0;
 
+function getRegister(children) {
+    const register = [false, false, false];
+
+    for (const {label, isActive} of children) {
+        if (isActive) {
+            register[NAMES.indexOf(label)] = true;
+        }
+    }
+
+    return register;
+}
+
 const config: Config = {
     'title': 'Move Everything to the Goal!',
     'defaultTree': {
@@ -22,26 +34,18 @@ const config: Config = {
                 'children': [],
                 'poolId': 0,
                 'childPredicate': (children) => {
-                    if (children.length > 0) {
-                        let foundShield = false;
+                    const register = getRegister(children);
 
-                        for (const {value} of children) {
-                            switch (value) {
-                                case NAMES[2]:
-                                    mistakes++;
+                    if (register[2]) {
+                        mistakes++;
 
-                                    return `The ${NAMES[2].toLowerCase()} can't enter the bandit camp!`;
+                        return `The ${NAMES[2].toLowerCase()} can't enter the bandit camp!`;
+                    }
 
-                                case NAMES[0]:
-                                    foundShield = true;
-                            }
-                        }
+                    if (!register[0] && register[1]) {
+                        mistakes++;
 
-                        if (!foundShield) {
-                            mistakes++;
-
-                            return `The ${NAMES[1].toLowerCase()} can't enter the bandit camp without a ${NAMES[0].toLowerCase()}!`;
-                        }
+                        return `The ${NAMES[1].toLowerCase()} can't enter the bandit camp without a ${NAMES[0].toLowerCase()}!`;
                     }
 
                     return true;
@@ -52,7 +56,7 @@ const config: Config = {
                 'children': [],
                 'poolId': 0,
                 'childPredicate': (children) => {
-                    if (children.length === 3) {
+                    if (children.filter(({isActive}) => isActive).length === 3) {
                         // Wait for the element to move
                         window.setTimeout(
                             () => window.alert('You win!\n\n' + (
@@ -68,11 +72,7 @@ const config: Config = {
         ],
         'descendantPredicate': (locations: Array<Middle>) => {
             for (const {children} of locations) {
-                const register = [false, false, false];
-
-                for (const {label} of children) {
-                    register[NAMES.indexOf(label)] = true;
-                }
+                const register = getRegister(children);
 
                 if (!register[0] && register[1] && register[2]) {
                     mistakes++;

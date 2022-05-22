@@ -36,19 +36,19 @@ export class UnexpectedStateError extends Error {
 
 export class TypeError extends Error {
     constructor(breadcrumbs: string[], found: string, expected: readonly string[]) {
-        super(`Found ${found} type value at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
+        super(`Found a value of type '${found}' at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
     }
 }
 
 export class PropertyError extends Error {
     constructor(breadcrumbs: string[], property: string, shouldExist: boolean) {
-        super(`${shouldExist ? 'Missing' : 'Unexpected'} property '${property}' at ${getPath(breadcrumbs)}.`);
+        super(`${shouldExist ? 'Missing' : 'Unexpected'} property '${property}' found at ${getPath(breadcrumbs)}.`);
     }
 }
 
 export class ValueError extends Error {
     constructor(breadcrumbs: string[], found: any, expected: readonly any[]) {
-        super(`Found ${found} value at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
+        super(`Found a value of '${found}' at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
     }
 }
 
@@ -100,6 +100,12 @@ export class MismatchedOptionsError extends Error {
 export class HangingPredicateError extends Error {
     constructor() {
         super('If a predicate is declared, a value must also be present.');
+    }
+}
+
+export class DeactivatedError extends Error {
+    constructor() {
+        super('Nodes can\'t be deactivated unless their parent has a seed.');
     }
 }
 

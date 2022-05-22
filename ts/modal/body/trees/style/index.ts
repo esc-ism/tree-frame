@@ -49,7 +49,7 @@ export function toJSON(style: UserStyle): _Middle {
                             value > 0 ? true : 'Font size must be greater than zero'
                     },
                     {
-                        'label': 'Outline Color',
+                        'label': 'Border Color',
                         'value': filledStyle.borderModal,
                         'input': 'color'
                     }
@@ -95,6 +95,11 @@ export function toJSON(style: UserStyle): _Middle {
                                 'label': 'Style Color',
                                 'value': filledStyle.headButtonStyle,
                                 'input': 'color'
+                            },
+                            {
+                                'label': 'Hide Color',
+                                'value': filledStyle.headButtonHide,
+                                'input': 'color'
                             }
                         ]
                     }
@@ -137,6 +142,11 @@ export function toJSON(style: UserStyle): _Middle {
                                 'label': 'Move Color',
                                 'value': filledStyle.nodeButtonMove,
                                 'input': 'color'
+                            },
+                            {
+                                'label': 'Disable Color',
+                                'value': filledStyle.nodeButtonDisable,
+                                'input': 'color'
                             }
                         ]
                     },
@@ -144,12 +154,12 @@ export function toJSON(style: UserStyle): _Middle {
                         'label': 'Miscellaneous',
                         'children': [
                             {
-                                'label': 'Show Node Outline?',
+                                'label': 'Show Outer Border?',
                                 'value': filledStyle.borderNode
                             },
                             {
-                                'label': 'Show Value Outline?',
-                                'value': filledStyle.borderValue
+                                'label': 'Show Inner Border?',
+                                'value': filledStyle.borderHead
                             },
                             {
                                 'label': 'Valid Color',
@@ -190,16 +200,20 @@ export function toRawStyle(json: _Middle): DefaultStyle {
         'headButtonLabel': headerButtons[1].value as string,
         'headButtonLeaf': headerButtons[2].value as string,
         'headButtonStyle': headerButtons[3].value as string,
+        'headButtonHide': headerButtons[4].value as string,
 
-        'nodeBase': bodyGeneral[0].children.map(child => child.value as string),
+        'nodeBase': bodyGeneral[0].children
+            .filter(({isActive}) => isActive)
+            .map(child => child.value as string),
         'nodeContrast': bodyGeneral[1].value as ContrastMethod,
 
         'nodeButtonRemove': bodyButtons[0].value as string,
         'nodeButtonCreate': bodyButtons[1].value as string,
         'nodeButtonMove': bodyButtons[2].value as string,
+        'nodeButtonDisable': bodyButtons[3].value as string,
 
         'borderNode': bodyMisc[0].value as boolean,
-        'borderValue': bodyMisc[1].value as boolean,
+        'borderHead': bodyMisc[1].value as boolean,
         'validBackground': bodyMisc[2].value as string,
         'invalidBackground': bodyMisc[3].value as string,
         'borderTooltip': bodyMisc[4].value as string
@@ -235,7 +249,10 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
             ...DEFAULT_STYLE
         }),
         'descendantPredicate': (styleNodes: Array<_Middle>): true | string => {
-            const activeStyles: Array<_Middle> = styleNodes.filter(({'children': [{value}]}) => value);
+            const activeStyles: Array<_Middle> = styleNodes.filter(({
+                isActive,
+                'children': [{value}]
+            }) => isActive && value);
 
             switch (activeStyles.length) {
                 case 0:

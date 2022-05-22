@@ -1,7 +1,7 @@
 import type {Child, Node, Parent} from '../types';
 import {
     TypeError, ValueError, PropertyError,
-    JoinedError, SeedMatchError
+    JoinedError, SeedMatchError, DeactivatedError
 } from '../errors';
 
 function mutateMatch(
@@ -155,6 +155,15 @@ export function validateSeeds(breadcrumbs: string[], node: Node): void {
             }
 
             validateSeeds([...breadcrumbs, 'seed'], node.seed);
+        } else {
+            for (const [i, child] of node.children.entries()) {
+                if ('isActive' in child && !child.isActive) {
+                    throw new JoinedError(
+                        new DeactivatedError(),
+                        new ValueError([...breadcrumbs, 'children', i.toString(), 'isActive'], false, [true])
+                    );
+                }
+            }
         }
 
         for (const [i, child] of node.children.entries()) {

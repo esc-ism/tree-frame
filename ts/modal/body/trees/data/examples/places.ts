@@ -36,7 +36,7 @@ function getPerson(
             {
                 'label': 'Occupation',
                 'value': occupation,
-                'predicate': emptyStringPredicate,
+                'predicate': emptyStringPredicate
             },
             {
                 'label': 'Birth Year (AD)',
@@ -47,17 +47,17 @@ function getPerson(
                 'label': 'Hair Colour',
                 'value': hairColour,
                 'predicate': emptyStringPredicate,
-                'input': 'color',
+                'input': 'color'
             },
             {
                 'label': 'Eye Colour',
                 'value': eyeColour,
                 'predicate': emptyStringPredicate,
-                'input': 'color',
+                'input': 'color'
             },
             {
                 'label': 'Has Children?',
-                'value': hasChildren,
+                'value': hasChildren
             }
         ]
     };
@@ -77,7 +77,7 @@ function getMedia(
             {
                 'label': 'Media Type',
                 'value': type,
-                'predicate': ['*type*', 'Movie', 'TV Show', 'Song', 'Album'],
+                'predicate': ['*type*', 'Movie', 'TV Show', 'Song', 'Album']
             },
             {
                 'label': 'Release Year (AD)',
@@ -87,8 +87,8 @@ function getMedia(
             {
                 'label': 'Description',
                 'value': description,
-                'predicate': emptyStringPredicate,
-            },
+                'predicate': emptyStringPredicate
+            }
         ]
     };
 }
@@ -106,7 +106,7 @@ const config: Config = {
                         'label': 'Famous People',
                         'seed': getPerson(),
                         'children': [
-                            getPerson('William Shakespeare', 'Playwright', 1564, '#1b0600', '#391b00'),
+                            getPerson('William Shakespeare', 'Playwright', 1564, '#1b0600', '#391b00')
                         ]
                     },
                     {
@@ -114,11 +114,11 @@ const config: Config = {
                         'seed': getMedia(),
                         'children': [
                             getMedia('Doctor Who', 'TV Show', 1963, 'A time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
-                            getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.'),
+                            getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.')
                         ]
-                    },
+                    }
                 ]
-            },
+            }
         ],
         'seed': {
             'label': 'Location',
@@ -135,7 +135,7 @@ const config: Config = {
                     'seed': getMedia(),
                     'children': []
                 }
-            ],
+            ]
         }
     },
     'userStyles': [],
@@ -150,7 +150,8 @@ const config: Config = {
         'nodeButtonRemove': '#ff0000',
         'nodeButtonCreate': '#15ff00',
         'nodeButtonMove': '#fff600',
+        'nodeButtonDisable': '#a000ff'
     }
-}
+};
 
 export default config;

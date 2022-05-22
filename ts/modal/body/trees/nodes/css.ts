@@ -85,7 +85,7 @@ export default function generate() {
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`,
-            ['outline', `var(--borderValue) solid var(--nodeContrast${depth})`]
+            ['outline', `var(--borderHead) solid var(--nodeContrast${depth})`]
         );
     });
 }

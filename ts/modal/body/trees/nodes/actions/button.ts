@@ -25,6 +25,10 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
         }
     });
 
+    button.addEventListener('mouseleave', () => {
+        button.blur();
+    });
+
     node.element.addButton(button);
 
     return button;

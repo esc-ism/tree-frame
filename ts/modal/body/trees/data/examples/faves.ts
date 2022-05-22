@@ -21,7 +21,7 @@ const numberSeed: Child = {
 };
 
 function favePredicate(name: string, children: Array<Child>) {
-    if (children.length === 0) {
+    if (children.filter(({isActive}) => isActive).length === 0) {
         return `Come on, everyone has a favourite ${name}!`;
     }
 

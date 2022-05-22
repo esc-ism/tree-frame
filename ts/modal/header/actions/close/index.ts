@@ -22,7 +22,7 @@ function doAction() {
     sendMessage({
         'event': EVENTS.STOP,
         'tree': getDataTree().getJSON(),
-        'userStyles': getUserStyles()
+        'styles': getUserStyles()
     });
 }
 

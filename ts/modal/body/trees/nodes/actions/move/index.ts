@@ -5,10 +5,12 @@ import * as tooltip from '../tooltip';
 import {addActionButton} from '../button';
 import {focus, focusBranch, reset as resetFocus, setTabIndexes} from '../focus';
 import {getSubPredicateResponses} from '../edit';
+import {PENDING_CLASS} from '../consts';
 
 import type Root from '../../root';
 import type Middle from '../../middle';
 import type Child from '../../child';
+
 import {setActive as setTreeActive} from '../../../index';
 
 interface PutTarget {
@@ -71,24 +73,33 @@ export function reset() {
 
 function doMove(node, button, isParent) {
     const oldParent = moveTarget.parent;
-    const index = moveTarget.child.getIndex();
     const newParent = isParent ? node : node.parent;
+    const pending = moveTarget.child.duplicate();
 
-    moveTarget.child.move(newParent, isParent ? 0 : node);
+    pending.element.addClass(PENDING_CLASS);
+
+    pending.move(newParent, isParent ? 0 : node);
+
+    moveTarget.child.isActive = false;
 
     Promise.all([
         ...getSubPredicateResponses(oldParent),
         ...(oldParent === newParent ? [] : getSubPredicateResponses(newParent)),
     ])
         .then(() => {
+            pending.element.removeClass(PENDING_CLASS);
+
+            moveTarget.child.disconnect();
+
             reset();
 
             // Show where the node's been moved to
-            moveTarget.child.element.scrollIntoView();
+            pending.element.scrollIntoView();
         })
         .catch((reason) => {
-            // Revert
-            moveTarget.child.move(oldParent, index);
+            moveTarget.child.isActive = pending.isActive;
+
+            pending.disconnect();
 
             if (reason) {
                 tooltip.show(reason, button);

@@ -8,6 +8,7 @@ button {
     padding: 0;
     margin: 0;
     border: none;
+    outline-offset: -2px;
 }
 
 button * {

@@ -22,7 +22,7 @@ export function resolvePredicatePromise(response: any, resolve: Function, reject
 
 let count = 0;
 
-export function getPredicateResponse(predicateId: number, ...args: Array<any>): Promise<void> {
+export function getPredicateResponse(predicateId: number, arg: any): Promise<void> {
     return new Promise((resolve, reject) => {
         const messageId = count++;
 
@@ -34,15 +34,15 @@ export function getPredicateResponse(predicateId: number, ...args: Array<any>): 
             window.removeEventListener('message', listener);
 
             resolvePredicatePromise(message.data.predicateResponse, resolve, reject);
-        }
+        };
 
         window.addEventListener('message', listener);
 
-        window.parent.postMessage({
+        sendMessage({
             'event': EVENTS.PREDICATE,
             messageId,
             predicateId,
-            args,
-        }, target);
+            arg,
+        });
     });
 }

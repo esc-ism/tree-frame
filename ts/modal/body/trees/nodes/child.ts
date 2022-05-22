@@ -7,6 +7,7 @@ import * as edit from './actions/edit';
 import * as disconnect from './actions/delete';
 import * as focus from './actions/focus';
 import * as move from './actions/move';
+import * as disable from './actions/disable';
 
 import type {Child as _Child, Value, Predicate, Input} from '../../../../validation/types';
 import {getDepthClassCount} from '../style/update/depth';
@@ -15,13 +16,19 @@ const actions: Array<{
     shouldMount: (node: Child) => boolean,
     mount: (node: Child) => void,
     unmount?: (node: Child) => void
-}> = [highlight, disconnect, focus, move, edit];
+}> = [
+    // No button
+    highlight, focus, edit,
+    // Button
+    disconnect, disable, move
+];
 
 export default class Child {
     readonly label?: string;
     value?: Value;
     readonly predicate?: Predicate;
     readonly input?: Input;
+    isActive: boolean;
 
     parent: Root | Middle;
     readonly depth: number;
@@ -32,7 +39,7 @@ export default class Child {
         this.element = new NodeElement(data);
         this.element.addDepthClass(this.depth % getDepthClassCount());
 
-        for (const [key, value] of Object.entries(data)) {
+        for (const [key, value] of Object.entries({'isActive': true, ...data})) {
             this[key] = value;
         }
 
@@ -86,6 +93,10 @@ export default class Child {
         this.attach(parent, typeof to === 'number' ? to : to.getIndex() + 1);
     }
 
+    duplicate() {
+        return new Child(this.getJSON(), this.parent, this.getIndex());
+    }
+
     unmount() {
         for (const action of actions) {
             if ('unmount' in action) {
@@ -101,8 +112,14 @@ export default class Child {
     }
 
     getJSON(): _Child {
-        const {label, value, predicate} = this;
+        const data: any = {'isActive': this.isActive};
 
-        return {label, value, predicate};
+        for (const property of ['label', 'value', 'predicate', 'input']) {
+            if (property in this) {
+                data[property] = this[property];
+            }
+        }
+
+        return data;
     }
 }

@@ -23,6 +23,7 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
             case 'nodeButtonRemove':
             case 'nodeButtonCreate':
             case 'nodeButtonMove':
+            case 'nodeButtonDisable':
             case 'validBackground':
             case 'invalidBackground':
             case 'tooltipOutline':

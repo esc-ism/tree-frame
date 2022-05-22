@@ -45,6 +45,10 @@ export default class Middle extends Child {
         }
     }
 
+    duplicate() {
+        return new Middle(this.getJSON(), this.parent, this.getIndex());
+    }
+
     unmount() {
         super.unmount();
 
@@ -74,11 +78,14 @@ export default class Middle extends Child {
     }
 
     getJSON(): _Middle {
-        const {seed} = this;
+        const data: any = {'children': this.children.map(child => child.getJSON())};
+
+        if ('seed' in this) {
+            data.seed = this.seed;
+        }
 
         return {
-            'children': this.children.map(child => child.getJSON()),
-            ...(seed ? {seed} : {}),
+            ...data,
             ...super.getJSON()
         };
     }

@@ -4,12 +4,12 @@ import NodeElement from './element';
 import {ROOT_CLASS} from './consts';
 
 import * as highlight from './actions/highlight';
-import * as create from './actions/create';
 import * as focus from './actions/focus';
+import * as create from './actions/create';
 
 import type {Root as _Root, Child as _Child, SubPredicate} from '../../../../validation/types';
 
-const actions = [highlight, create, focus];
+const actions = [highlight, focus, create];
 
 export default class Root implements _Root {
     readonly children: Array<Middle | Child> = [];
@@ -31,21 +31,11 @@ export default class Root implements _Root {
             this[key] = value;
         }
 
-        if (children.length === 0) {
-            if (this.seed) {
-                if ('children' in this.seed) {
-                    new Middle(this.seed, this);
-                } else {
-                    new Child(this.seed, this);
-                }
-            }
-        } else {
-            for (const child of children) {
-                if ('children' in child) {
-                    new Middle(child, this);
-                } else {
-                    new Child(child, this);
-                }
+        for (const child of children) {
+            if ('children' in child) {
+                new Middle(child, this);
+            } else {
+                new Child(child, this);
             }
         }
 
@@ -63,11 +53,12 @@ export default class Root implements _Root {
     }
 
     getJSON(): _Root {
-        const {seed} = this;
+        const data: any = {'children': this.children.map(child => child.getJSON())};
 
-        return {
-            ...(seed ? {seed} : {}),
-            'children': this.children.map((child) => child.getJSON())
-        };
+        if ('seed' in this) {
+            data.seed = this.seed;
+        }
+
+        return data;
     }
 }

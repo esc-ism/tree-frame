@@ -28,6 +28,7 @@ export interface DefaultStyle {
     headButtonLabel?: string;
     headButtonLeaf?: string;
     headButtonStyle?: string;
+    headButtonHide?: string;
 
     nodeBase?: Array<string>;
     nodeContrast?: ContrastMethod;
@@ -35,12 +36,13 @@ export interface DefaultStyle {
     nodeButtonRemove?: string;
     nodeButtonCreate?: string;
     nodeButtonMove?: string;
+    nodeButtonDisable?: string;
 
     validBackground?: string;
     invalidBackground?: string;
 
     borderNode?: boolean;
-    borderValue?: boolean;
+    borderHead?: boolean;
 }
 
 export interface UserStyle extends DefaultStyle {
@@ -59,12 +61,13 @@ export interface _Child {
     predicate?: Predicate;
     // Indicates a preferred input type
     input?: Input;
+    // Indicates whether the data should ignored or not
+    isActive?: boolean;
 }
 
 export interface _Parent {
     // The node's children
     children: Array<Child>;
-
     // A node that can be added to children
     seed?: Child;
     // Checked before children are modified
@@ -77,7 +80,7 @@ export interface _Parent {
 
 // Node types
 
-export const LEAF_KEYS = ['label', 'value', 'predicate', 'input'] as const;
+export const LEAF_KEYS = ['label', 'value', 'predicate', 'input', 'isActive'] as const;
 export const ROOT_KEYS = ['children', 'seed', 'childPredicate', 'descendantPredicate', 'poolId'] as const;
 export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
 

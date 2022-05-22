@@ -86,6 +86,9 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
             throw new ValueError([...breadcrumbs, 'input'], candidate.input, INPUT_FORMATS);
     }
 
+    if (hasOwnProperty(candidate, 'isActive') && typeof candidate.isActive !== 'boolean')
+        throw new TypeError([...breadcrumbs, 'isActive'], typeof candidate.isActive, ['boolean']);
+
     if (hasOwnProperty(candidate, 'children')) {
         if (!isParent(breadcrumbs, candidate))
             throw new UnexpectedStateError();

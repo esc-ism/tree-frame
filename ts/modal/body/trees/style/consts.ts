@@ -15,17 +15,19 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'headButtonLabel': '#ffd189',
     'headButtonLeaf': '#65ff41',
     'headButtonStyle': '#ff75da',
+    'headButtonHide': '#00bfff',
 
     'nodeBase': ['#000000'],
     'nodeContrast': 'Black / White',
 
     'nodeButtonRemove': '#ff0000',
-    'nodeButtonCreate': '#ffff00',
-    'nodeButtonMove': '#00ff00',
+    'nodeButtonCreate': '#ff00ff',
+    'nodeButtonMove': '#00ffff',
+    'nodeButtonDisable': '#ffff00',
 
     'validBackground': '#d9ffc0',
     'invalidBackground': '#ffb4be',
 
     'borderNode': true,
-    'borderValue': false
+    'borderHead': false
 };

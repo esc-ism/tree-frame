@@ -54,7 +54,9 @@ function getValue(node): Value {
 function getSubPredicateResponse(predicate: SubPredicate, children: Array<Child>): Promise<void> {
     return typeof predicate === 'number' ?
         getPredicateResponse(predicate, children.map(child => child.getJSON())) :
-        new Promise((resolve, reject) => resolvePredicatePromise(predicate(children), resolve, reject));
+        new Promise((resolve, reject) =>
+            resolvePredicatePromise(predicate(children.map(child => child.getJSON())), resolve, reject)
+        );
 }
 
 function getDescendantPredicateResponses(node: Root | Middle): Array<Promise<void>> {
@@ -221,12 +223,14 @@ export function mount(node: Child): void {
     }
 
     valueElement.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === 'Escape') {
+        if (event.key === 'Enter' || event.key === 'Escape' || event.key === 'Tab') {
             event.stopPropagation();
 
             reset();
 
-            focusHovered();
+            if (event.key !== 'Tab') {
+                focusHovered();
+            }
         }
     });
 }

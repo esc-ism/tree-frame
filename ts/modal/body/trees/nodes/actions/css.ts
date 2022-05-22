@@ -10,6 +10,7 @@ import generateRemove from './delete/css';
 import generateHighlight from './highlight/css';
 import generateFocus from './focus/css';
 import generateTooltip from './tooltip/css';
+import generateDisable from './disable/css';
 
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../consts';
 
@@ -30,7 +31,7 @@ export function addColourRule(actionId: string, strokeVar: string) {
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
         `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} ` +
         `.${BUTTON_CLASS}.${actionId} > svg > g`
-    ], ['stroke', `var(${strokeVar})`]);
+    ], ['stroke', `none`]);
 
     addRule(`.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}.${actionId} > svg`, ['stroke', `var(${strokeVar}) !important`]);
 }
@@ -42,6 +43,7 @@ export default function generate() {
     generateRemove();
     generateHighlight();
     generateFocus();
+    generateDisable();
     generateTooltip();
 
     addRule(`.${BUTTON_CLASS}`, ['height', '100%']);

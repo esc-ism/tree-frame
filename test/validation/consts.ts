@@ -140,15 +140,15 @@ export const VALID: Configs = {
             'headContrast': 'Black / White',
             'validBackground': '#d9ffc0',
             'invalidBackground': '#ffb4be',
-            'borderLeaf': true,
+            'borderHead': true,
             'borderNode': true,
-            'modalOutline': '#ffffff',
+            'borderModal': '#ffffff',
             'nodeBase': ['#e8e8e8', '#ffffff'],
             'nodeButtonCreate': '#a000cc',
             'nodeButtonMove': '#00a0d1',
             'nodeButtonRemove': '#d10000',
             'nodeContrast': 'Black / White',
-            'tooltipOutline': '#570000'
+            'borderTooltip': '#570000'
         }
     ]
 };

@@ -11,9 +11,7 @@ export default function generate() {
     // Use pointer when the node has a value and isn't being edited
     addRule([
         `.${EDITABLE_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`,
-        `.${ELEMENT_CLASSES.VALUE_CONTAINER}`,
         `.${ELEMENT_CLASSES.VALUE}:not(:focus)`,
-        `.${ELEMENT_CLASSES.LABEL_CONTAINER}`
     ], ['cursor', 'pointer']);
 
     addRule(`.${ELEMENT_CLASSES.VALUE}`, [
@@ -22,9 +20,9 @@ export default function generate() {
         ['outline', 'none']
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`,[
+    addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, [
         ['height', '1em'],
-        ['width', '2.2em'],
+        ['width', '2.2em']
     ]);
 
     addRule(`.${ELEMENT_CLASSES.VALUE}[type="color"]`, ['height', '1.3em']);
@@ -35,15 +33,10 @@ export default function generate() {
 
     addRule(`.${INVALID_BACKGROUND_CLASS}`, ['background-color', 'var(--invalidBackground)']);
 
-    addRule(
+    addRule([
         `.${VALID_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${VALID_BACKGROUND_CLASS}`,
-        ['width', '100%']
-    );
-
-    addRule(
-        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${INVALID_BACKGROUND_CLASS}`,
-        ['width', '100%']
-    );
+        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${INVALID_BACKGROUND_CLASS}`
+    ], ['width', '100%']);
 
     addRule(
         `.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,

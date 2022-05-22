@@ -17,15 +17,15 @@ export function isActive(): boolean {
 }
 
 export function setTabIndexes(doAdd = true, node = activeNode) {
-    const buttons = node.element.buttonContainer.children;
+    const {'buttonContainer': {'children': buttons}, valueElement} = node.element;
 
     for (let i = buttons.length - 1; i >= 0; --i) {
-        const button = buttons[i];
+        // Must be set to -1 to prevent tabbing (removeAttribute sets it to 0)
+        buttons[i].setAttribute('tabIndex', doAdd ? '1' : '-1');
+    }
 
-        if (button) {
-            // Must be set to -1 to prevent tabbing (removeAttribute sets it to 0)
-            button.setAttribute('tabIndex', doAdd ? '1' : '-1');
-        }
+    if (valueElement) {
+        valueElement.setAttribute('tabIndex', doAdd ? '1' : '-1');
     }
 }
 
