@@ -1,6 +1,5 @@
 import generateCloser from './close';
 import generateLabelToggle from './labels';
-import generateLeafToggle from './leaves';
 import generateStyler from './style';
 import generateHider from './hide';
 import generateCSS from './css';
@@ -15,7 +14,6 @@ export default function generate() {
     element.id = BUTTON_CONTAINER_ID;
 
     element.append(generateHider());
-    element.append(generateLeafToggle());
     element.append(generateLabelToggle());
     element.append(generateStyler());
     element.append(generateCloser());
