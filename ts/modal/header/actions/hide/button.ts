@@ -22,15 +22,15 @@ const circle = document.createElementNS(SVG_NAMESPACE, 'circle');
 
 circle.setAttribute('cx', '0');
 circle.setAttribute('cy', '0');
-circle.setAttribute('r', '30');
+circle.setAttribute('r', '26');
 circle.setAttribute('stroke-width', '7');
 
 const line = document.createElementNS(SVG_NAMESPACE, 'line');
 
 line.setAttribute('stroke-linecap', 'round');
 line.setAttribute('stroke-width', '7');
-line.setAttribute('x1', '-30');
-line.setAttribute('x2', '30');
+line.setAttribute('x1', '-26');
+line.setAttribute('x2', '26');
 line.setAttribute('y1', '0');
 line.setAttribute('y2', '0');
 
