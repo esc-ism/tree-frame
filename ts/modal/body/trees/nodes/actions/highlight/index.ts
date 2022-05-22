@@ -3,10 +3,11 @@ import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 import {isActive as editIsActive} from '../edit';
 import {isActive as focusIsActive} from '../focus';
 import {isActive as moveIsActive} from '../move';
+
 import Root from '../../root';
 import Child from '../../child';
 
-let sustainedNode;
+let sustainedNodes = [];
 let activeNode;
 
 export function focusHovered() {
@@ -19,20 +20,23 @@ export function isActive(): boolean {
     return Boolean(activeNode);
 }
 
-export function setSustained(node?) {
-    if (node === sustainedNode) {
-        return;
-    }
+export function removeSustained(node) {
+    sustainedNodes.splice(sustainedNodes.indexOf(node), 1);
 
-    if (sustainedNode && sustainedNode !== activeNode) {
-        sustainedNode.element.removeClass(HIGHLIGHT_CLASS);
+    // Avoid unhighlighting if it's still sustained by another action
+    if (node !== activeNode && !sustainedNodes.includes(node)) {
+        node.element.removeClass(HIGHLIGHT_CLASS);
     }
+}
 
-    sustainedNode = node;
+export function addSustained(node) {
+    node.element.addClass(HIGHLIGHT_CLASS);
+
+    sustainedNodes.push(node);
 }
 
 function setActive(node?, doFocus = false) {
-    if (activeNode && activeNode !== sustainedNode) {
+    if (activeNode && !sustainedNodes.includes(activeNode)) {
         activeNode.element.removeClass(HIGHLIGHT_CLASS);
     }
 

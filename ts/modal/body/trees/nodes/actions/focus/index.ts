@@ -4,11 +4,11 @@ import {
 } from './consts';
 
 import {isActive as moveIsActive} from '../move';
+import {addSustained, removeSustained} from '../highlight';
 import * as active from '../active';
 
 import type Root from '../../root';
 import type Child from '../../child';
-import {setSustained} from '../highlight';
 
 let activeNode: Root | Child;
 
@@ -52,7 +52,7 @@ export function reset() {
     focus(false);
     focusBranch(false);
 
-    setSustained();
+    removeSustained(activeNode);
 
     setTabIndexes(false);
 
@@ -81,7 +81,7 @@ export function doAction(node: Root | Child, doForce = false) {
         focus();
         focusBranch();
 
-        setSustained(node);
+        addSustained(node);
 
         setTabIndexes();
     }

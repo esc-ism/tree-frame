@@ -4,7 +4,7 @@ import {
 } from './consts';
 
 import * as tooltip from '../tooltip';
-import {focusHovered, setSustained} from '../highlight';
+import {focusHovered, addSustained, removeSustained} from '../highlight';
 
 import type Child from '../../child';
 import type Middle from '../../middle';
@@ -33,7 +33,7 @@ export function reset() {
 
     tooltip.reset();
 
-    setSustained();
+    removeSustained(activeNode);
 
     activeNode = undefined;
 }
@@ -99,7 +99,7 @@ function getOwnPredicateResponse(node: Child): Promise<void> {
             return new Promise((resolve, reject) => resolvePredicatePromise(predicate(value), resolve, reject));
 
         default:
-            return Promise[predicate.indexOf(value as string) === -1 ? 'reject' : 'resolve']();
+            return Promise[predicate.indexOf(value as string) > -1 ? 'resolve' : 'reject']();
     }
 }
 
@@ -156,7 +156,7 @@ export function doAction(node) {
             node.element.valueElement.select();
         }
 
-        setSustained(node);
+        addSustained(node);
     }
 }
 

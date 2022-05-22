@@ -5,6 +5,7 @@ import * as tooltip from '../tooltip';
 import {addActionButton} from '../button';
 import {focus, focusBranch, reset as resetFocus, setTabIndexes} from '../focus';
 import {getSubPredicateResponses} from '../edit';
+import {addSustained, removeSustained} from '../highlight';
 import {PENDING_CLASS} from '../consts';
 
 import type Root from '../../root';
@@ -67,6 +68,8 @@ export function reset() {
     putTargets.length = 0;
 
     setActive(moveTarget.child, false);
+
+    removeSustained(moveTarget.child);
 
     moveTarget = undefined;
 }
@@ -158,6 +161,8 @@ function doAction(node: Child, button) {
         };
 
         addButtons(node.getRoot());
+
+        addSustained(node);
 
         // If the only valid target is the current parent
         if (putTargets.length < 2) {
