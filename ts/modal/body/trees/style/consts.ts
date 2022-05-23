@@ -16,6 +16,7 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'headButtonLeaf': '#65ff41',
     'headButtonStyle': '#ff75da',
     'headButtonHide': '#00bfff',
+    'headButtonAlt': '#ffea00',
 
     'nodeBase': ['#000000'],
     'nodeContrast': 'Black / White',
@@ -26,8 +27,5 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'nodeButtonDisable': '#ffff00',
 
     'validBackground': '#d9ffc0',
-    'invalidBackground': '#ffb4be',
-
-    'borderNode': true,
-    'borderHead': false
+    'invalidBackground': '#ffb4be'
 };

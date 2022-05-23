@@ -40,9 +40,6 @@ export interface DefaultStyle {
 
     validBackground?: string;
     invalidBackground?: string;
-
-    borderNode?: boolean;
-    borderHead?: boolean;
 }
 
 export interface UserStyle extends DefaultStyle {

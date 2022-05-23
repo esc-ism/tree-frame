@@ -100,6 +100,11 @@ export function toJSON(style: UserStyle): _Middle {
                                 'label': 'Hide Color',
                                 'value': filledStyle.headButtonHide,
                                 'input': 'color'
+                            },
+                            {
+                                'label': 'Alt Buttons Color',
+                                'value': filledStyle.headButtonAlt,
+                                'input': 'color'
                             }
                         ]
                     }
@@ -154,14 +159,6 @@ export function toJSON(style: UserStyle): _Middle {
                         'label': 'Miscellaneous',
                         'children': [
                             {
-                                'label': 'Show Outer Border?',
-                                'value': filledStyle.borderNode
-                            },
-                            {
-                                'label': 'Show Inner Border?',
-                                'value': filledStyle.borderHead
-                            },
-                            {
                                 'label': 'Valid Color',
                                 'value': filledStyle.validBackground,
                                 'input': 'color'
@@ -201,6 +198,7 @@ export function toRawStyle(json: _Middle): DefaultStyle {
         'headButtonLeaf': headerButtons[2].value as string,
         'headButtonStyle': headerButtons[3].value as string,
         'headButtonHide': headerButtons[4].value as string,
+        'headButtonAlt': headerButtons[5].value as string,
 
         'nodeBase': bodyGeneral[0].children
             .filter(({isActive}) => isActive)
@@ -212,11 +210,9 @@ export function toRawStyle(json: _Middle): DefaultStyle {
         'nodeButtonMove': bodyButtons[2].value as string,
         'nodeButtonDisable': bodyButtons[3].value as string,
 
-        'borderNode': bodyMisc[0].value as boolean,
-        'borderHead': bodyMisc[1].value as boolean,
-        'validBackground': bodyMisc[2].value as string,
-        'invalidBackground': bodyMisc[3].value as string,
-        'borderTooltip': bodyMisc[4].value as string
+        'validBackground': bodyMisc[0].value as string,
+        'invalidBackground': bodyMisc[1].value as string,
+        'borderTooltip': bodyMisc[2].value as string
     };
 }
 

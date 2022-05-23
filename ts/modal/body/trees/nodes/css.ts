@@ -11,6 +11,9 @@ export default function generate() {
         ['height', 'fit-content']
     ]);
 
+    // For head outline alignment
+    addRule(`.${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-top', '1px']);
+
     addRule(`:not(.${ROOT_CLASS}) > .${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-left', '1.8em']);
 
     addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, ['position', 'relative']);
@@ -47,7 +50,6 @@ export default function generate() {
     ]);
 
     addRule(`.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`, [
-        ['outline-offset', '-1px'],
         ['width', '100%'],
         ['height', '100%']
     ]);
@@ -80,12 +82,12 @@ export default function generate() {
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth}`,
-            ['outline', `var(--borderNode) solid var(--nodeContrast${depth})`]
+            ['outline', `1px solid var(--nodeContrast${depth})`]
         );
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`,
-            ['outline', `var(--borderHead) solid var(--nodeContrast${depth})`]
+            ['outline', `1px solid var(--nodeContrast${depth})`]
         );
     });
 }
