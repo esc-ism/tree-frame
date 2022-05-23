@@ -26,6 +26,6 @@ export default function generate() {
 
     // Makes it easy to focus down the tree
     addRule(`.${FOCUS_SOURCE_CLASS} .${MIDDLE_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
-        ['pointer-events', 'none'],
+        ['margin-left', '1.8em'],
     ]);
 }
