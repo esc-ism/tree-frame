@@ -10,7 +10,7 @@ import {ELEMENT_CLASSES} from '../../../body/trees/nodes/consts';
 
 export default function generate() {
     addRule(
-        `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL}`,
+        `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
         ['display', 'none']
     );
 
