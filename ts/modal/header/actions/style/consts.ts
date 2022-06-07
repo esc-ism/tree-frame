@@ -1,3 +1,3 @@
 export const ACTION_ID = 'modal-style';
 
-export const HOTKEY = 'c';
+export const HOTKEY = 'C';

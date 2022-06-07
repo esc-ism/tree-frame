@@ -223,14 +223,20 @@ export function mount(node: Child): void {
     }
 
     valueElement.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === 'Escape' || event.key === 'Tab') {
-            event.stopPropagation();
+        switch (event.key) {
+            case 'Enter':
+            case 'Escape':
+            case 'Tab':
+                reset();
 
-            reset();
-
-            if (event.key !== 'Tab') {
-                focusHovered();
-            }
+                if (event.key === 'Tab') {
+                    // Fixes weird tab behaviour
+                    headContainer.focus();
+                } else {
+                    focusHovered();
+                }
+            case 'Control':
+                event.stopPropagation();
         }
     });
 }

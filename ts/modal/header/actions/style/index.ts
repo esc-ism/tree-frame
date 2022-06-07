@@ -8,7 +8,7 @@ import {setActive} from '../../../body/trees';
 
 import {reset as resetFocus} from '../../../body/trees/nodes/actions/focus';
 import {reset as resetEdit} from '../../../body/trees/nodes/actions/edit';
-import {reset as resetMove} from '../../../body/trees/nodes/actions/move';
+import {reset as resetMove} from '../../../body/trees/nodes/actions/buttons/move';
 
 let isActive = false;
 

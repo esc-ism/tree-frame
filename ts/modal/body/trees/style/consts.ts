@@ -21,10 +21,11 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'nodeBase': ['#000000'],
     'nodeContrast': 'Black / White',
 
-    'nodeButtonRemove': '#ff0000',
-    'nodeButtonCreate': '#ff00ff',
-    'nodeButtonMove': '#00ffff',
-    'nodeButtonDisable': '#ffff00',
+    'nodeButtonCreate': '#40ff40',
+    'nodeButtonDuplicate': '#40ffff',
+    'nodeButtonMove': '#ac60ff',
+    'nodeButtonDisable': '#ffd000',
+    'nodeButtonDelete': '#ff1111',
 
     'validBackground': '#d9ffc0',
     'invalidBackground': '#ffb4be'

@@ -3,7 +3,7 @@ import {MIDDLE_CLASS} from './consts';
 import type Root from './root';
 import Child from './child';
 
-import * as create from './actions/create';
+import * as create from './actions/buttons/create';
 
 import type {Middle as _Middle, Child as _Child, SubPredicate} from '../../../../validation/types';
 
@@ -13,7 +13,7 @@ const actions: Array<{
     unmount?: (node: Middle) => void
 }> = [create];
 
-export default class Middle extends Child {
+export default class Middle extends Child implements _Middle {
     readonly children: Array<Middle | Child> = [];
 
     readonly seed?: _Child;
@@ -46,7 +46,7 @@ export default class Middle extends Child {
     }
 
     duplicate() {
-        return new Middle(this.getJSON(), this.parent, this.getIndex());
+        return new Middle(this.getJSON(), this.parent, this.getIndex() + 1);
     }
 
     unmount() {

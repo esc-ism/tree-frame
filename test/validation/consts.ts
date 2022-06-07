@@ -140,13 +140,11 @@ export const VALID: Configs = {
             'headContrast': 'Black / White',
             'validBackground': '#d9ffc0',
             'invalidBackground': '#ffb4be',
-            'borderHead': true,
-            'borderNode': true,
             'borderModal': '#ffffff',
             'nodeBase': ['#e8e8e8', '#ffffff'],
             'nodeButtonCreate': '#a000cc',
             'nodeButtonMove': '#00a0d1',
-            'nodeButtonRemove': '#d10000',
+            'nodeButtonDelete': '#d10000',
             'nodeContrast': 'Black / White',
             'borderTooltip': '#570000'
         }

@@ -1,13 +1,15 @@
 import {BUTTON_CLASS} from './consts';
-import * as active from './active';
+import * as active from '../active';
 
-import type Root from '../root';
-import type Child from '../child';
+import type Root from '../../root';
+import type Child from '../../child';
 
-import {SVG_NAMESPACE} from '../../../../consts';
+import {isActive as isAlt} from '../../../../../header/actions/alternate';
+
+import {SVG_NAMESPACE} from '../../../../../consts';
 
 // Creates an instantiation & adds it to the DOM
-export function addActionButton(template: HTMLButtonElement, doAction: Function, node: Root | Child) {
+export function addActionButton(template: HTMLButtonElement, onClick: Function, node: Root | Child) {
     const button = template.cloneNode(true) as HTMLButtonElement;
 
     button.addEventListener('click', (event) => {
@@ -15,7 +17,7 @@ export function addActionButton(template: HTMLButtonElement, doAction: Function,
 
         active.register();
 
-        doAction(node, button);
+        onClick(node, button, isAlt());
     });
 
     button.addEventListener('keydown', (event) => {
@@ -45,14 +47,12 @@ export const getNewButton = (function () {
     const svgTemplate = (() => {
         const circle = document.createElementNS(SVG_NAMESPACE, 'circle');
 
-        circle.setAttribute('cx', '70');
-        circle.setAttribute('cy', '70');
         circle.setAttribute('r', '50');
         circle.setAttribute('stroke-width', '10');
 
         const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
 
-        svg.setAttribute('viewBox', '0 0 140 140');
+        svg.setAttribute('viewBox', '-70 -70 140 140');
 
         svg.append(circle);
 

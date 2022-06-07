@@ -147,10 +147,6 @@ const config: Config = {
         'headButtonLeaf': '#7d721b',
         'headButtonStyle': '#ae00ff',
         'nodeBase': ['#000000', '#0a2400', '#0c3700', '#0d4800'],
-        'nodeButtonRemove': '#ff0000',
-        'nodeButtonCreate': '#15ff00',
-        'nodeButtonMove': '#fff600',
-        'nodeButtonDisable': '#a000ff'
     }
 };
 

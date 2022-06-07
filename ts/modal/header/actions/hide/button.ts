@@ -1,4 +1,4 @@
-import {ACTION_ID, HOTKEY} from './consts';
+import {ACTION_ID} from './consts';
 
 import {getNewButton} from '../button';
 
@@ -43,6 +43,6 @@ g.append(
     circle, line
 );
 
-const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Leaves', HOTKEY);
+const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Disabled Node Visibility');
 
 export default BUTTON;

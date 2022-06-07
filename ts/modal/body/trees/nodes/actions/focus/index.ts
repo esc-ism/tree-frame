@@ -3,7 +3,7 @@ import {
     FOCUS_CLASS as BRANCH_CLASS
 } from './consts';
 
-import {isActive as moveIsActive} from '../move';
+import {isActive as positionIsActive} from '../buttons/position';
 import {addSustained, removeSustained} from '../highlight';
 import * as active from '../active';
 
@@ -64,8 +64,8 @@ export function reset() {
 export function doAction(node: Root | Child, doForce = false) {
     const toggleOn = node !== activeNode;
 
-    // Avoid cancelling move actions
-    if (moveIsActive() || (doForce && !toggleOn)) {
+    // Avoid changing the view when it's already been focused
+    if (positionIsActive() || (doForce && !toggleOn)) {
         return;
     }
 

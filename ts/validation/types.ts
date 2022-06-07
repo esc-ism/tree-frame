@@ -29,14 +29,16 @@ export interface DefaultStyle {
     headButtonLeaf?: string;
     headButtonStyle?: string;
     headButtonHide?: string;
+    headButtonAlt?: string;
 
     nodeBase?: Array<string>;
     nodeContrast?: ContrastMethod;
 
-    nodeButtonRemove?: string;
     nodeButtonCreate?: string;
+    nodeButtonDuplicate?: string;
     nodeButtonMove?: string;
     nodeButtonDisable?: string;
+    nodeButtonDelete?: string;
 
     validBackground?: string;
     invalidBackground?: string;

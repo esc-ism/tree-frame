@@ -1,3 +1,3 @@
 export const ACTION_ID = 'modal-close';
 
-export const HOTKEY = 'x';
+export const HOTKEY = 'X';

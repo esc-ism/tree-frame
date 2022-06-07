@@ -5,7 +5,7 @@ import {ROOT_CLASS} from './consts';
 
 import * as highlight from './actions/highlight';
 import * as focus from './actions/focus';
-import * as create from './actions/create';
+import * as create from './actions/buttons/create';
 
 import type {Root as _Root, Child as _Child, SubPredicate} from '../../../../validation/types';
 
@@ -44,6 +44,10 @@ export default class Root implements _Root {
                 mount(this);
             }
         }
+    }
+
+    getRoot() {
+        return this;
     }
 
     updateDepthClass(classCount) {

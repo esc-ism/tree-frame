@@ -1,6 +1,6 @@
 import {EAVE_ID, HIGHLIGHT_CLASS, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 
-import {BUTTON_CLASS} from '../consts';
+import {BUTTON_CLASS} from '../buttons/consts';
 
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../../consts';
 

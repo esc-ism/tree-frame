@@ -11,8 +11,10 @@ export default function generate() {
         ['height', 'fit-content']
     ]);
 
-    // For head outline alignment
-    addRule(`.${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-top', '1px']);
+    addRule(
+        `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`,
+        ['margin-top', '0.7px']
+    );
 
     addRule(`:not(.${ROOT_CLASS}) > .${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-left', '1.8em']);
 
@@ -41,9 +43,7 @@ export default function generate() {
         ['position', 'absolute']
     ]);
 
-    addRule([
-        `.${ELEMENT_CLASSES.LABEL_CONTAINER}`
-    ], [
+    addRule(`.${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
         ['right', '0'],
         ['top', '0'],
         ['user-select', 'none']
@@ -64,14 +64,18 @@ export default function generate() {
         ['position', 'absolute']
     ]);
 
-    addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [
-        ['height', '100%'],
-    ]);
-
     addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
-        ['transition', 'color 500ms'],
         // Puts it above the backgrounds
         ['position', 'relative']
+    ]);
+
+    addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [
+        ['height', '100%']
+    ]);
+
+    addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [
+        ['transition-property', 'all'],
+        ['transition-duration', '500ms'],
     ]);
 
     addDepthChangeListener((depth, addRule) => {

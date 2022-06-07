@@ -3,7 +3,7 @@ import {BUTTON_CLASS} from './consts';
 import {SVG_NAMESPACE} from '../../consts';
 
 // Adds the template to the DOM
-export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey: string): Function {
+export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey?: string): Function {
     const bound = (event) => {
         event.stopPropagation();
 
@@ -14,11 +14,15 @@ export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey
 
     button.addEventListener('click', bound);
 
-    window.addEventListener('keydown', (event) => {
-        if (event.altKey && event.key.toLowerCase() === hotkey) {
-            bound(event);
-        }
-    });
+    if (hotkey) {
+        button.title += ` (Alt+${hotkey})`;
+
+        window.addEventListener('keydown', (event) => {
+            if (event.altKey && event.key.toUpperCase() === hotkey) {
+                bound(event);
+            }
+        });
+    }
 
     return bound;
 }
@@ -34,12 +38,12 @@ export const getNewButton = (function () {
 
     svgTemplate.setAttribute('viewBox', `-70 -70 140 140`);
 
-    return function (group: SVGGElement, actionId: string, description: string, hotkey: string): HTMLButtonElement {
+    return function (group: SVGGElement, actionId: string, description: string): HTMLButtonElement {
         const button = buttonTemplate.cloneNode(true) as HTMLButtonElement;
         const svg = svgTemplate.cloneNode(true) as SVGSVGElement;
 
         button.id = actionId;
-        button.title = `${description} (Alt+${hotkey.toUpperCase()})`;
+        button.title = description;
 
         svg.append(group);
         button.append(svg);

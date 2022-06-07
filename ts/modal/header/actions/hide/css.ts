@@ -6,7 +6,7 @@ import {addRule} from '../../../css';
 
 import {TREE_CONTAINER_ID} from '../../../body/trees/consts';
 
-import {DISABLED_CLASS} from '../../../body/trees/nodes/actions/disable/consts';
+import {DISABLED_CLASS} from '../../../body/trees/nodes/actions/buttons/disable/consts';
 
 export default function generate() {
     addRule(

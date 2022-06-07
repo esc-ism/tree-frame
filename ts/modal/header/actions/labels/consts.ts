@@ -1,3 +1,3 @@
 export const ACTION_ID = 'modal-labels';
 
-export const HOTKEY = 'n';
+export const HOTKEY = 'N';

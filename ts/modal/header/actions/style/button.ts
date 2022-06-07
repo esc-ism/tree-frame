@@ -1,4 +1,4 @@
-import {ACTION_ID, HOTKEY} from './consts';
+import {ACTION_ID} from './consts';
 
 import {getNewButton} from '../button';
 
@@ -55,6 +55,6 @@ const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(handle, frame, curveLeft, curveRight, roller);
 
-const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Style Editor', HOTKEY);
+const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Style Editor');
 
 export default BUTTON;

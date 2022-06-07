@@ -4,13 +4,15 @@ import NodeElement from './element';
 
 import * as highlight from './actions/highlight';
 import * as edit from './actions/edit';
-import * as disconnect from './actions/delete';
 import * as focus from './actions/focus';
-import * as move from './actions/move';
-import * as disable from './actions/disable';
 
-import type {Child as _Child, Value, Predicate, Input} from '../../../../validation/types';
+import * as disable from './actions/buttons/disable';
+import * as move from './actions/buttons/move';
+import * as duplicate from './actions/buttons/duplicate';
+
 import {getDepthClassCount} from '../style/update/depth';
+
+import type {Leaf, Child as _Child, Value, Predicate, Input} from '../../../../validation/types';
 
 const actions: Array<{
     shouldMount: (node: Child) => boolean,
@@ -20,10 +22,10 @@ const actions: Array<{
     // No button
     highlight, focus, edit,
     // Button
-    disconnect, disable, move
+    disable, move, duplicate
 ];
 
-export default class Child {
+export default class Child implements Leaf {
     readonly label?: string;
     value?: Value;
     readonly predicate?: Predicate;
@@ -53,7 +55,7 @@ export default class Child {
     }
 
     getRoot() {
-        return 'parent' in this.parent ? this.parent.getRoot() : this.parent;
+        return this.parent.getRoot();
     }
 
     getIndex() {
@@ -87,6 +89,7 @@ export default class Child {
         this.parent = parent;
     }
 
+    // TODO remove?
     move(parent: Middle | Root, to: number | Child) {
         this.detach();
 
@@ -94,7 +97,7 @@ export default class Child {
     }
 
     duplicate() {
-        return new Child(this.getJSON(), this.parent, this.getIndex());
+        return new Child(this.getJSON(), this.parent, this.getIndex() + 1);
     }
 
     unmount() {

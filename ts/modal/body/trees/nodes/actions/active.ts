@@ -1,11 +1,11 @@
 import * as edit from './edit';
-import * as move from './move';
 import * as highlight from './highlight';
 import * as focus from './focus';
+import * as position from './buttons/position';
 
 window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-        for (const action of [edit, move, focus, highlight]) {
+        for (const action of [edit, position, focus, highlight]) {
             if (action.isActive()) {
                 action.reset();
 

@@ -2,7 +2,7 @@ import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 
 import {isActive as editIsActive} from '../edit';
 import {isActive as focusIsActive} from '../focus';
-import {isActive as moveIsActive} from '../move';
+import {isActive as positionIsActive} from '../buttons/position';
 
 import Root from '../../root';
 import Child from '../../child';
@@ -80,7 +80,7 @@ export function mount(node: Root | Child) {
     headContainer.addEventListener('mouseenter', (event) => {
         event.stopPropagation();
 
-        setActive(node, !(editIsActive() || focusIsActive() || moveIsActive()));
+        setActive(node, !(editIsActive() || focusIsActive() || positionIsActive()));
     });
 
     elementContainer.addEventListener('mouseenter', (event) => {

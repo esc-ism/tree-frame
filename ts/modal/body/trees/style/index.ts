@@ -134,13 +134,13 @@ export function toJSON(style: UserStyle): _Middle {
                         'label': 'Buttons',
                         'children': [
                             {
-                                'label': 'Delete Color',
-                                'value': filledStyle.nodeButtonRemove,
+                                'label': 'Create Color',
+                                'value': filledStyle.nodeButtonCreate,
                                 'input': 'color'
                             },
                             {
-                                'label': 'Create Color',
-                                'value': filledStyle.nodeButtonCreate,
+                                'label': 'Duplicate Color',
+                                'value': filledStyle.nodeButtonDuplicate,
                                 'input': 'color'
                             },
                             {
@@ -152,7 +152,12 @@ export function toJSON(style: UserStyle): _Middle {
                                 'label': 'Disable Color',
                                 'value': filledStyle.nodeButtonDisable,
                                 'input': 'color'
-                            }
+                            },
+                            {
+                                'label': 'Delete Color',
+                                'value': filledStyle.nodeButtonDelete,
+                                'input': 'color'
+                            },
                         ]
                     },
                     {
@@ -205,10 +210,11 @@ export function toRawStyle(json: _Middle): DefaultStyle {
             .map(child => child.value as string),
         'nodeContrast': bodyGeneral[1].value as ContrastMethod,
 
-        'nodeButtonRemove': bodyButtons[0].value as string,
-        'nodeButtonCreate': bodyButtons[1].value as string,
+        'nodeButtonCreate': bodyButtons[0].value as string,
+        'nodeButtonDuplicate': bodyButtons[1].value as string,
         'nodeButtonMove': bodyButtons[2].value as string,
         'nodeButtonDisable': bodyButtons[3].value as string,
+        'nodeButtonDelete': bodyButtons[4].value as string,
 
         'validBackground': bodyMisc[0].value as string,
         'invalidBackground': bodyMisc[1].value as string,
