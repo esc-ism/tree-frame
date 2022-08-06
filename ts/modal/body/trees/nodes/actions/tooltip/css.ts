@@ -3,11 +3,11 @@ import {
     TOOLTIP_TOP_CLASS, TOOLTIP_BOTTOM_CLASS
 } from './consts';
 
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../../consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
 
-import {addDepthChangeListener} from '../../../style/update/depth';
+import {addDepthChangeListener} from '@/modal/body/trees/style/update/depth';
 
-import {addRule} from '../../../../../css';
+import {addRule} from '@/modal/css';
 
 //  Also you need tooltips for deletion/creation/movement.
 //  You'll need a different system to position tooltips underneath/above buttons.

@@ -1,4 +1,4 @@
-import type {Config, Middle} from '../../../../../validation/types';
+import type {Config, Middle} from '@types';
 
 const yearPredicate = (value: number): true | string => {
     if (value < 0) {

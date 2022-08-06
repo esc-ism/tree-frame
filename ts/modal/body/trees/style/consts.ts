@@ -1,4 +1,4 @@
-import {DefaultStyle} from '../../../../validation/types';
+import {DefaultStyle} from '@types';
 
 export const ROOT_ID = 'root-style';
 

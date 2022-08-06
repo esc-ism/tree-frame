@@ -1,7 +1,7 @@
 import {ALT_CLASS} from '../../consts';
 import {getNewButton} from '../../button';
 
-import {SVG_NAMESPACE} from '../../../../../../../consts';
+import {SVG_NAMESPACE} from '@/modal/consts';
 
 const G_ALT = (() => {
     const arrowTrunk = document.createElementNS(SVG_NAMESPACE, 'line');

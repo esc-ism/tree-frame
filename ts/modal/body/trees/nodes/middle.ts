@@ -5,7 +5,7 @@ import Child from './child';
 
 import * as create from './actions/buttons/create';
 
-import type {Middle as _Middle, Child as _Child, SubPredicate} from '../../../../validation/types';
+import type {Middle as _Middle, Child as _Child, SubPredicate} from '@/validation/types';
 
 const actions: Array<{
     shouldMount: (node: Middle) => boolean,

@@ -12,7 +12,7 @@ import * as duplicate from './actions/buttons/duplicate';
 
 import {getDepthClassCount} from '../style/update/depth';
 
-import type {Leaf, Child as _Child, Value, Predicate, Input} from '../../../../validation/types';
+import type {Leaf, Child as _Child, Value, Predicate, Input} from '@/validation/types';
 
 const actions: Array<{
     shouldMount: (node: Child) => boolean,

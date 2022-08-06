@@ -6,12 +6,13 @@ import {
 import * as tooltip from '../tooltip';
 import {focusHovered, addSustained, removeSustained} from '../highlight';
 
-import type Child from '../../child';
-import type Middle from '../../middle';
-import type Root from '../../root';
+import type Child from '@nodes/child';
+import type Middle from '@nodes/middle';
+import type Root from '@nodes/root';
 
-import {getPredicateResponse, resolvePredicatePromise} from '../../../../../../messaging';
-import type {SubPredicate, Value} from '../../../../../../validation/types';
+import {getPredicateResponse, resolvePredicatePromise} from '@/messaging';
+
+import type {SubPredicate, Value} from '@types';
 
 let activeNode: Child;
 

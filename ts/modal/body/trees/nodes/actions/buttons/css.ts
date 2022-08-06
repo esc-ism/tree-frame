@@ -1,23 +1,22 @@
 import {ALT_CLASS, BUTTON_CLASS, PROSPECTIVE_CLASS} from './consts';
 
-import {FOCUS_SOURCE_CLASS} from '../focus/consts';
-import {HIGHLIGHT_CLASS} from '../highlight/consts';
-
 import generateCreate from './create/css';
 import generateMove from './move/css';
 import generateDisable from './disable/css';
 import generateDuplicate from './duplicate/css';
 import generatePosition from './position/css';
 
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '../../consts';
+import {FOCUS_SOURCE_CLASS} from '../focus/consts';
+import {HIGHLIGHT_CLASS} from '../highlight/consts';
 
-import {addDepthChangeListener} from '../../../style/update/depth';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
 
-import {BUTTON_ACTIVE_CLASS} from '../../../../../consts';
+import {addDepthChangeListener} from '@/modal/body/trees/style/update/depth';
 
-import {addRule} from '../../../../../css';
+import {ACTION_ID as ALT_ID} from '@/modal/header/actions/alternate/consts';
 
-import {ACTION_ID as ALT_ID} from '../../../../../header/actions/alternate/consts';
+import {BUTTON_ACTIVE_CLASS} from '@/modal/consts';
+import {addRule} from '@/modal/css';
 
 export function addColourRule(actionId: string, strokeVar: string) {
     addRule([

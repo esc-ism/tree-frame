@@ -4,8 +4,8 @@ import {isActive as editIsActive} from '../edit';
 import {isActive as focusIsActive} from '../focus';
 import {isActive as positionIsActive} from '../buttons/position';
 
-import Root from '../../root';
-import Child from '../../child';
+import Root from '@nodes/root';
+import Child from '@nodes/child';
 
 let sustainedNodes = [];
 let activeNode;

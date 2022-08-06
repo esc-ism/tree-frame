@@ -4,7 +4,7 @@ import generateCSS from './css';
 import generateHeader from './header';
 import generateBody from './body';
 
-import {Config} from '../validation/types';
+import {Config} from '@types';
 
 export default function generate(config: Config) {
     generateCSS();

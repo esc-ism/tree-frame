@@ -1,15 +1,14 @@
-import TEMPLATE from './button';
 import {ACTION_ID} from './consts';
+import TEMPLATE from './button';
 
 import {PROSPECTIVE_CLASS} from '../consts';
+import {addActionButton} from '../button';
+import * as position from '../position';
 
 import {getSubPredicateResponses} from '../../edit';
 import {show as showTooltip} from '../../tooltip';
 
-import {addActionButton} from '../button';
-import * as position from '../position';
-
-import type Child from '../../../child';
+import type Child from '@nodes/child';
 
 let activeNode: Child;
 

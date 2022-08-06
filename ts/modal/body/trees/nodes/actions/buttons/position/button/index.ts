@@ -2,7 +2,7 @@ import {ACTION_ID} from '../consts';
 
 import {getNewButton} from '../../button';
 
-import {SVG_NAMESPACE} from '../../../../../../../consts';
+import {SVG_NAMESPACE} from '@/modal/consts';
 
 const arrowTrunk = document.createElementNS(SVG_NAMESPACE, 'line');
 

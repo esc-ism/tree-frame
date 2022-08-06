@@ -1,3 +1,4 @@
+import {ACTION_ID} from './consts';
 import {BUTTON_PARENT, BUTTON_SIBLING} from './button';
 
 import {addActionButton} from '../button';
@@ -5,16 +6,15 @@ import {addActionButton} from '../button';
 import {focus, focusBranch, reset as resetFocus, setTabIndexes} from '../../focus';
 import {addSustained, removeSustained} from '../../highlight';
 
-import type Root from '../../../root';
-import type Middle from '../../../middle';
-import type Child from '../../../child';
+import type Root from '@nodes/root';
+import type Middle from '@nodes/middle';
+import type Child from '@nodes/child';
 
-import {setActive as setTreeActive} from '../../../../index';
+import {setActive as setTreeActive} from '@/modal/body/trees';
 
-import {BUTTON_ACTIVE_CLASS} from '../../../../../../consts';
+import {BUTTON_ACTIVE_CLASS} from '@/modal/consts';
 
-import type {Child as _Child} from '../../../../../../../validation/types';
-import {ACTION_ID} from './consts';
+import type {Child as _Child} from '@types';
 
 interface Destination {
     node: Root | Child;

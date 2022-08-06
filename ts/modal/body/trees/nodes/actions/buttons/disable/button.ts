@@ -1,9 +1,9 @@
 import {ACTION_ID_ALT, ACTION_ID_DEFAULT} from './consts';
 
+import {ALT_CLASS} from '../consts';
 import {getNewButton} from '../button';
 
-import {SVG_NAMESPACE} from '../../../../../../consts';
-import {ALT_CLASS} from '../consts';
+import {SVG_NAMESPACE} from '@/modal/consts';
 
 const gDefault = (() => {
     const circle = document.createElementNS(SVG_NAMESPACE, 'circle');

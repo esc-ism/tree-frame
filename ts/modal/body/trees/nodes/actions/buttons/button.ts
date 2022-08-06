@@ -1,12 +1,13 @@
 import {BUTTON_CLASS} from './consts';
+
 import * as active from '../active';
 
 import type Root from '../../root';
 import type Child from '../../child';
 
-import {isActive as isAlt} from '../../../../../header/actions/alternate';
+import {SVG_NAMESPACE} from '@/modal/consts';
 
-import {SVG_NAMESPACE} from '../../../../../consts';
+import {isActive as isAlt} from '@/modal/header/actions/alternate';
 
 // Creates an instantiation & adds it to the DOM
 export function addActionButton(template: HTMLButtonElement, onClick: Function, node: Root | Child) {

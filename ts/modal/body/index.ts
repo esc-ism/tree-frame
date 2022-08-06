@@ -6,9 +6,9 @@ import {getActiveStyle} from './trees/style';
 
 import updateStylesheet from './trees/style/update';
 
-import {generateEave} from './trees/nodes/actions/highlight';
+import {generateEave} from '@nodes/actions/highlight';
 
-import type {Config} from '../../validation/types';
+import type {Config} from '@types';
 
 export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config) {
     updateStylesheet(getActiveStyle(userStyles, defaultStyle));

@@ -1,13 +1,14 @@
-import {BUTTON_DEFAULT as TEMPLATE_DEFAULT, BUTTON_ALT as TEMPLATE_ALT} from './button';
 import {DISABLED_CLASS} from './consts';
+import {BUTTON_DEFAULT as TEMPLATE_DEFAULT, BUTTON_ALT as TEMPLATE_ALT} from './button';
 
 import {addActionButton} from '../button';
+
 import {getSubPredicateResponses} from '../../edit';
 import * as tooltip from '../../tooltip';
 
-import type Child from '../../../child';
+import type Child from '@nodes/child';
 
-import {BUTTON_ACTIVE_CLASS} from '../../../../../../consts';
+import {BUTTON_ACTIVE_CLASS} from '@/modal/consts';
 
 function updateButton(button, isActive) {
     button.classList[isActive ? 'remove' : 'add'](BUTTON_ACTIVE_CLASS);

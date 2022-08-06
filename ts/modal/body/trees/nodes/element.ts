@@ -1,6 +1,6 @@
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, OPTIONS_ID_PREFIX} from './consts';
 
-import type {Child as _Child} from '../../../../validation/types';
+import type {Child as _Child} from '@/validation/types';
 
 let count = 0;
 

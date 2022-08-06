@@ -1,4 +1,4 @@
-import type {Config, Child} from '../../../../../validation/types';
+import type {Config, Child} from '@types';
 
 const colourSeed: Child = {
     'value': '#1c8c00',

@@ -4,13 +4,13 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {MODAL_BACKGROUND_ID} from '../../../consts';
+import {MODAL_BACKGROUND_ID} from '@/modal/consts';
 
-import {EVENTS} from '../../../../consts';
+import {EVENTS} from '@/consts';
 
-import {getRoot as getDataTree} from '../../../body/trees/data';
-import {getUserStyles} from '../../../body/trees/style';
-import {sendMessage} from '../../../../messaging';
+import {getRoot as getDataTree} from '@/modal/body/trees/data';
+import {getUserStyles} from '@/modal/body/trees/style';
+import {sendMessage} from '@/messaging';
 
 function doAction() {
     // TODO Maybe add a white, 0.5 opacity foreground over everything with a loading symbol.

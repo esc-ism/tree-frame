@@ -1,6 +1,6 @@
 import {ACTION_ID} from './consts';
 
-import {addRule} from '../../../css';
+import {addRule} from '@/modal/css';
 
 export default function generate() {
     addRule([

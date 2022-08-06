@@ -1,14 +1,14 @@
-import BUTTON from './button';
 import {ACTION_ID} from './consts';
+import BUTTON from './button';
 
-import * as position from '../position';
-import {addActionButton} from '../button';
 import {PROSPECTIVE_CLASS} from '../consts';
+import {addActionButton} from '../button';
+import * as position from '../position';
 
-import * as tooltip from '../../tooltip';
 import {getSubPredicateResponses} from '../../edit';
+import * as tooltip from '../../tooltip';
 
-import type Child from '../../../child';
+import type Child from '@nodes/child';
 
 let activeNode: Child;
 

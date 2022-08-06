@@ -2,11 +2,11 @@ import {ROOT_ID as ROOT_ID_STYLE} from './consts';
 
 import {TREE_CONTAINER_ID} from '../consts';
 
-import {addRule} from '../../../css';
-
 import {ROOT_ID as ROOT_ID_DATA} from '../data/consts';
 
-import {ACTION_ID} from '../../../header/actions/style/consts';
+import {addRule} from '@/modal/css';
+
+import {ACTION_ID} from '@/modal/header/actions/style/consts';
 
 export default function generate() {
     addRule(

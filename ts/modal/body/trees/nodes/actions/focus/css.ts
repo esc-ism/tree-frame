@@ -1,8 +1,8 @@
 import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from './consts';
 
-import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '../../consts';
+import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '@nodes/consts';
 
-import {addRule} from '../../../../../css';
+import {addRule} from '@/modal/css';
 
 export default function generate() {
     addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, ['cursor', 'zoom-in']);

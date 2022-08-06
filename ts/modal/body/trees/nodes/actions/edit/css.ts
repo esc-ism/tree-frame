@@ -3,9 +3,9 @@ import {
     VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS
 } from './consts';
 
-import {ELEMENT_CLASSES} from '../../consts';
+import {ELEMENT_CLASSES} from '@nodes/consts';
 
-import {addRule} from '../../../../../css';
+import {addRule} from '@/modal/css';
 
 export default function generate() {
     // Use pointer when the node has a value and isn't being edited

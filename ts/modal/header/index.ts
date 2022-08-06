@@ -3,7 +3,7 @@ import generateTitle from './title';
 import generateButtons from './actions';
 import generateCSS from './css';
 
-import {Config} from '../../validation/types';
+import {Config} from '@types';
 
 export default function generate({title}: Config) {
     generateCSS();

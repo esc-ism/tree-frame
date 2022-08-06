@@ -7,7 +7,7 @@ import Root from './nodes/root';
 
 import {BUTTON_ACTIVE_CLASS} from '../../consts';
 
-import {Root as RootJSON, DefaultStyle, UserStyle} from '../../../validation/types';
+import {Root as RootJSON, DefaultStyle, UserStyle} from '@types';
 
 interface RootRecord {
     [id: string]: Root;

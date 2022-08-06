@@ -1,7 +1,7 @@
 import {ROOTS} from '../../index';
 
-import {addRule as _addRule, generateStylesheet} from '../../../../css';
-import type {Selectors, Styles} from '../../../../css';
+import type {Selectors, Styles} from '@/modal/css';
+import {addRule as _addRule, generateStylesheet} from '@/modal/css';
 
 const STYLESHEET = generateStylesheet();
 

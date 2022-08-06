@@ -2,9 +2,9 @@ import {ACTION_ID} from './consts';
 
 import {FOCUS_CLASS} from '../../focus/consts';
 
-import {ELEMENT_CLASSES, ROOT_CLASS} from '../../../consts';
+import {ELEMENT_CLASSES, ROOT_CLASS} from '@nodes/consts';
 
-import {addRule} from '../../../../../../css';
+import {addRule} from '@/modal/css';
 
 export default function generate() {
     addRule(

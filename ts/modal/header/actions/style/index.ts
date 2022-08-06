@@ -4,11 +4,11 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {setActive} from '../../../body/trees';
+import {setActive} from '@/modal/body/trees';
 
-import {reset as resetFocus} from '../../../body/trees/nodes/actions/focus';
-import {reset as resetEdit} from '../../../body/trees/nodes/actions/edit';
-import {reset as resetMove} from '../../../body/trees/nodes/actions/buttons/move';
+import {reset as resetFocus} from '@nodes/actions/focus';
+import {reset as resetEdit} from '@nodes/actions/edit';
+import {reset as resetMove} from '@nodes/actions/buttons/move';
 
 let isActive = false;
 

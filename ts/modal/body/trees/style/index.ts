@@ -1,6 +1,6 @@
 import {DEFAULT_STYLE, ROOT_ID} from './consts';
-import updateStylesheet from './update';
 import generateCSS from './css';
+import updateStylesheet from './update';
 
 import {generateTree, ROOTS} from '..';
 
@@ -9,8 +9,8 @@ import type {
     DefaultStyle, UserStyle,
     // TODO Change all type imports to this format
     Leaf as _Leaf, Middle as _Middle
-} from '../../../../validation/types';
-import {CONTRAST_METHODS} from '../../../../validation/types';
+} from '@types';
+import {CONTRAST_METHODS} from '@types';
 
 export function getRoot() {
     return ROOTS[ROOT_ID];

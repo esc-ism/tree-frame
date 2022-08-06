@@ -2,7 +2,7 @@ import {ACTION_ID} from './consts';
 
 import {getNewButton} from '../button';
 
-import {SVG_NAMESPACE} from '../../../consts';
+import {SVG_NAMESPACE} from '@/modal/consts';
 
 const ALPHA = (2 * Math.PI) / 10;
 const RADIUS = 46;

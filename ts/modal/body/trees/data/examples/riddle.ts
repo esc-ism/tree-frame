@@ -1,4 +1,4 @@
-import type {Config, Middle} from '../../../../../validation/types';
+import type {Config, Middle} from '@types';
 
 const NAMES = ['Shield', 'Gladiator', 'Lion'];
 

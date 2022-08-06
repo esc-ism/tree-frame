@@ -2,11 +2,11 @@ import {ACTION_ID} from './consts';
 
 import {addColourRule} from '../css';
 
-import {addRule} from '../../../css';
+import {addRule} from '@/modal/css';
 
-import {TREE_CONTAINER_ID} from '../../../body/trees/consts';
+import {TREE_CONTAINER_ID} from '@/modal/body/trees/consts';
 
-import {ELEMENT_CLASSES} from '../../../body/trees/nodes/consts';
+import {ELEMENT_CLASSES} from '@nodes/consts';
 
 export default function generate() {
     addRule(

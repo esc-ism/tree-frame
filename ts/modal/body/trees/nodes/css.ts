@@ -2,7 +2,7 @@ import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, ROOT_CLASS} from './consts';
 
 import {addDepthChangeListener} from '../style/update/depth';
 
-import {addRule} from '../../../css';
+import {addRule} from '@/modal/css';
 
 export default function generate() {
     addRule(`.${ROOT_CLASS}`, [

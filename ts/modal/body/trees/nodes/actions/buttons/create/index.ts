@@ -1,16 +1,16 @@
+import {ACTION_ID} from './consts';
 import TEMPLATE from './button';
-import {PROSPECTIVE_CLASS} from '../consts';
 
+import {PROSPECTIVE_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
 import {getSubPredicateResponses} from '../../edit';
 import {show as showTooltip} from '../../tooltip';
 
-import Middle from '../../../middle';
-import Child from '../../../child';
-import type Root from '../../../root';
-import {ACTION_ID} from './consts';
+import Middle from '@nodes/middle';
+import Child from '@nodes/child';
+import type Root from '@nodes/root';
 
 let activeNode: Root | Middle;
 

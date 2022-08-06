@@ -2,11 +2,11 @@ import {ACTION_ID} from './consts';
 
 import {addColourRule} from '../css';
 
-import {addRule} from '../../../css';
+import {addRule} from '@/modal/css';
 
-import {TREE_CONTAINER_ID} from '../../../body/trees/consts';
+import {TREE_CONTAINER_ID} from '@/modal/body/trees/consts';
 
-import {DISABLED_CLASS} from '../../../body/trees/nodes/actions/buttons/disable/consts';
+import {DISABLED_CLASS} from '@nodes/actions/buttons/disable/consts';
 
 export default function generate() {
     addRule(

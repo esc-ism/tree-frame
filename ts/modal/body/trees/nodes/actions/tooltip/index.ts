@@ -3,9 +3,9 @@ import {
     TOOLTIP_BOTTOM_CLASS, TOOLTIP_TOP_CLASS, TOOLTIP_ANIMATION
 } from './consts';
 
-import {ELEMENT_CLASSES} from '../../consts';
+import {ELEMENT_CLASSES} from '@nodes/consts';
 
-import {TREE_CONTAINER} from '../../../index';
+import {TREE_CONTAINER} from '@/modal/body/trees';
 
 let activeParent;
 

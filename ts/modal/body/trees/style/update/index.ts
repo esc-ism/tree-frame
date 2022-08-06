@@ -1,9 +1,9 @@
 import {updateDepth} from './depth';
 
-import {addRule as _addRule, generateStylesheet} from '../../../../css';
-import type {Selectors, Styles} from '../../../../css';
+import type {Selectors, Styles} from '@/modal/css';
+import {addRule as _addRule, generateStylesheet} from '@/modal/css';
 
-import type {DefaultStyle, ContrastMethod} from '../../../../../validation/types';
+import type {DefaultStyle, ContrastMethod} from '@types';
 
 const STYLESHEET = generateStylesheet();
 

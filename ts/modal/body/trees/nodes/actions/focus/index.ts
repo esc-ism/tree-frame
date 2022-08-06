@@ -7,8 +7,8 @@ import {isActive as positionIsActive} from '../buttons/position';
 import {addSustained, removeSustained} from '../highlight';
 import * as active from '../active';
 
-import type Root from '../../root';
-import type Child from '../../child';
+import type Root from '@nodes/root';
+import type Child from '@nodes/child';
 
 let activeNode: Root | Child;
 

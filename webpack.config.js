@@ -1,10 +1,12 @@
 const path = require('path');
 const FileCopy = require('copy-webpack-plugin');
+const TsconfigPaths = require('tsconfig-paths-webpack-plugin');
 
 const shared = {
     entry: './ts',
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        plugins: [new TsconfigPaths()]
     },
     module: {
         rules: [

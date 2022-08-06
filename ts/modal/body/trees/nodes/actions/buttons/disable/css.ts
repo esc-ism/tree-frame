@@ -4,9 +4,9 @@ import {addColourRule} from '../css';
 
 import {HIGHLIGHT_CLASS} from '../../highlight/consts';
 
-import {ELEMENT_CLASSES} from '../../../consts';
+import {ELEMENT_CLASSES} from '@nodes/consts';
 
-import {addRule} from '../../../../../../css';
+import {addRule} from '@/modal/css';
 
 export default function generate() {
     addColourRule(ACTION_ID_DEFAULT, '--nodeButtonDisable');
