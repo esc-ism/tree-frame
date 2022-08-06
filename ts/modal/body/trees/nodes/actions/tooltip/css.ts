@@ -23,7 +23,8 @@ export default function generate() {
         ['text-align', 'center'],
         ['z-index', '1'],
         ['width', '100%'],
-        ['pointer-events', 'none']
+        ['pointer-events', 'none'],
+        ['white-space', 'normal']
     ]);
 
     addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`, ['bottom', '102%']);
