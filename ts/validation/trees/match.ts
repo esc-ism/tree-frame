@@ -70,7 +70,7 @@ function validateValueMatch(
 export function validateParentMatch(
     modelBreadcrumbs: string[], model: Parent,
     candidateBreadcrumbs: string[], candidate: Parent,
-    isFrozen: boolean = true
+    isFrozen: boolean = false
 ): void {
     if (isFrozen) {
         validateValueMatch('poolId', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
@@ -100,8 +100,12 @@ export function validateParentMatch(
             );
         }
     } else if (!('poolId' in model)) {
-        if (model.children.length !== candidate.children.length)
+        if (isFrozen && model.children.length !== candidate.children.length)
             throw new ValueError([...candidateBreadcrumbs, 'children', 'length'], candidate.children.length, [model.children.length]);
+
+        if (model.children.length < candidate.children.length) {
+            candidate.children = candidate.children.slice(0, model.children.length);
+        }
 
         for (const [i, child] of candidate.children.entries()) {
             validateChildMatch(
@@ -109,6 +113,10 @@ export function validateParentMatch(
                 [...candidateBreadcrumbs, 'children', i.toString()], child,
                 isFrozen
             );
+        }
+
+        if (model.children.length > candidate.children.length) {
+            candidate.children.push(...model.children.slice(candidate.children.length));
         }
     }
 }
@@ -118,16 +126,23 @@ function validateChildMatch(
     candidateBreadcrumbs: string[], candidate: Child,
     isFrozen: boolean = true
 ): void {
-    if ('value' in model !== 'value' in candidate)
-        throw new PropertyError(candidateBreadcrumbs, 'value', 'value' in model);
+    if ('value' in model !== 'value' in candidate) {
+        if (isFrozen || 'value' in candidate)
+            throw new PropertyError(candidateBreadcrumbs, 'value', false);
 
-    if (typeof model.value !== typeof candidate.value)
-        throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+        candidate.value = model.value;
+    } else {
+        if (typeof model.value !== typeof candidate.value)
+            throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+    }
 
     if (isFrozen) {
         validateValueMatch('label', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
         validatePredicateMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
     } else {
+        if (typeof model.value !== typeof candidate.value)
+            throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+
         mutateMatch(model, candidate, validateValueMatch.bind(null, 'label'), 'label');
         mutateMatch(model, candidate, validatePredicateMatch, 'predicate');
     }

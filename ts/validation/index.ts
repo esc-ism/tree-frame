@@ -103,7 +103,7 @@ function validateConfig({title, defaultTree, userTree}: Config): Promise<unknown
     validatePools(['defaultTree'], defaultTree);
 
     if (userTree) {
-        validateParentMatch(['defaultTree'], defaultTree, ['userTree'], userTree, false);
+        validateParentMatch(['defaultTree'], defaultTree, ['userTree'], userTree);
     }
 
     return Promise.all(validatePredicates(['defaultTree'], defaultTree));
