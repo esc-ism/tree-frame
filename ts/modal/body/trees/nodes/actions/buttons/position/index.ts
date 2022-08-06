@@ -140,17 +140,19 @@ export function hasDestinations(node: Child) {
     }
 
     const hasMatchingPool = (parent: Root | Middle, poolId: number) => {
-        if (parent.poolId === poolId) {
-            return true;
-        }
-
         if (parent !== node.parent) {
+            if (parent.poolId === poolId) {
+                return true;
+            }
+
             for (const child of parent.children) {
-                if ('children' in child) {
-                    hasMatchingPool(child, poolId);
+                if ('children' in child && hasMatchingPool(child, poolId)) {
+                    return true;
                 }
             }
         }
+
+        return false;
     };
 
     return hasMatchingPool(node.getRoot(), node.parent.poolId);
