@@ -1,7 +1,5 @@
-# Key-Based Config
+## Tree-Frame
 
-Run `tsc` and put the `out` directory on a web server.
+Hosted [here](https://callumlatham.com/tree-frame) at the time of writing.
 
-Hosted [here](http://ctl-bucket-1.s3-website.eu-west-2.amazonaws.com/key-based-config/) at the time of writing.
-
-GreasyFork interfacing script available [here](https://greasyfork.org/en/scripts/419978-key-based-config).
+Interfacing library for user scripts available [here](https://greasyfork.org/en/scripts/446506-tree-frame-2).
