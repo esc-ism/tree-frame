@@ -2,7 +2,6 @@ button {
     display: inline-flex;
     cursor: pointer;
 
-    /* Style stripping */
     background: none;
     font-size: inherit;
     padding: 0;
