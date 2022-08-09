@@ -63,7 +63,6 @@ const config: Config = {
         'headContrast': 'Black / White',
         'headButtonExit': '#f10000',
         'headButtonLabel': '#563b14',
-        'headButtonLeaf': '#f3ff00',
         'headButtonStyle': '#ff75da',
         'nodeBase': ['#001946', '#001130'],
         'nodeContrast': 'Invert',

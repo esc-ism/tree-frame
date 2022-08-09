@@ -18,7 +18,6 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
             case 'headBase':
             case 'headButtonExit':
             case 'headButtonLabel':
-            case 'headButtonLeaf':
             case 'headButtonStyle':
             case 'nodeButtonRemove':
             case 'nodeButtonCreate':

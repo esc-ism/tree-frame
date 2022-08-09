@@ -26,7 +26,6 @@ export interface DefaultStyle {
 
     headButtonExit?: string;
     headButtonLabel?: string;
-    headButtonLeaf?: string;
     headButtonStyle?: string;
     headButtonHide?: string;
     headButtonAlt?: string;

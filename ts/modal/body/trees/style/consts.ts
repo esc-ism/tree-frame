@@ -13,7 +13,6 @@ export const DEFAULT_STYLE: DefaultStyle = {
 
     'headButtonExit': '#f10000',
     'headButtonLabel': '#ffd189',
-    'headButtonLeaf': '#65ff41',
     'headButtonStyle': '#ff75da',
     'headButtonHide': '#00bfff',
     'headButtonAlt': '#ffea00',

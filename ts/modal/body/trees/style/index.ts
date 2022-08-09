@@ -87,11 +87,6 @@ export function toJSON(style: UserStyle): _Middle {
                                 'input': 'color'
                             },
                             {
-                                'label': 'Leaf Color',
-                                'value': filledStyle.headButtonLeaf,
-                                'input': 'color'
-                            },
-                            {
                                 'label': 'Style Color',
                                 'value': filledStyle.headButtonStyle,
                                 'input': 'color'
@@ -200,7 +195,6 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 
         'headButtonExit': headerButtons[0].value as string,
         'headButtonLabel': headerButtons[1].value as string,
-        'headButtonLeaf': headerButtons[2].value as string,
         'headButtonStyle': headerButtons[3].value as string,
         'headButtonHide': headerButtons[4].value as string,
         'headButtonAlt': headerButtons[5].value as string,
