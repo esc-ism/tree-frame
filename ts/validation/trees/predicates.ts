@@ -1,7 +1,7 @@
 import type {Child, Parent} from '../types';
 import {
     TypeError, ValueError, PropertyError,
-    JoinedError, EmptyArrayError, NoOptionsError,
+    JoinedError, EmptyArrayError, NoOptionsError, NonIntegerError,
     MismatchedOptionsError, PredicateError, HangingPredicateError
 } from '../errors';
 
@@ -84,6 +84,9 @@ export function validateParent(breadcrumbs: string[], parent: Parent) {
     }
 
     const {children} = parent;
+
+    if ('poolId' in parent && Math.floor(parent.poolId) !== parent.poolId)
+        throw new NonIntegerError([...breadcrumbs, 'poolId']);
 
     if ('childPredicate' in parent) {
         if (typeof parent.childPredicate === 'number') {

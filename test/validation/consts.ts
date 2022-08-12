@@ -135,7 +135,6 @@ export const VALID: Configs = {
             'headBase': '#ff0000',
             'headButtonExit': '#000000',
             'headButtonLabel': '#2432ff',
-            'headButtonLeaf': '#0dc700',
             'headButtonStyle': '#ffd500',
             'headContrast': 'Black / White',
             'validBackground': '#d9ffc0',
@@ -335,6 +334,13 @@ export const INVALID = {
                 'value': '_',
                 'poolId': 1
             }
+        },
+        {
+            'children': [{
+                'label': '_',
+                'value': '_',
+                'poolId': 1.5
+            }],
         }
     ],
     'USER_STYLES': [
