@@ -52,6 +52,12 @@ export class ValueError extends Error {
     }
 }
 
+export class NonIntegerError extends Error {
+    constructor(breadcrumbs: string[]) {
+        super(`Found illegal non-integer at ${getPath(breadcrumbs)}.`);
+    }
+}
+
 export class EmptyStringError extends Error {
     constructor(breadcrumbs: string[]) {
         super(`Found illegal empty string at ${getPath(breadcrumbs)}.`);
@@ -81,6 +87,15 @@ export class PoolBranchError extends Error {
         super(
             'No node may share a poolId value with its ancestor.' + JoinedError.separator +
             `Found poolId value ${poolId} at ${getPath(ancestorBreadcrumbs)} and ${getPath(descendantBreadcrumbs)}.`
+        );
+    }
+}
+
+export class PoolSizeError extends Error {
+    constructor(poolId: number, found: number, expected: number) {
+        super(
+            'Corresponding pools in the default & candidate trees must be the same size unless a pool parent or ancestor has a seed value.' + JoinedError.separator +
+            `Found a size of ${found} at pool ${poolId}. Expected a size of ${expected}.`
         );
     }
 }

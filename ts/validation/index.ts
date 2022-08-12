@@ -5,7 +5,7 @@ import {TypeError, PropertyError, EmptyStringError, UnexpectedStateError} from '
 import {isStyles} from './styles';
 import {validatePools} from './trees/pools';
 import {isRoot} from './trees/guards';
-import {validateParentMatch, validateSeeds} from './trees/match';
+import {validateParentMatch, validateSeeds, validatePoolSizeMatch} from './trees/match';
 import {validateParent as validatePredicates} from './trees/predicates';
 
 // Helpers
@@ -104,6 +104,9 @@ function validateConfig({title, defaultTree, userTree}: Config): Promise<unknown
 
     if (userTree) {
         validateParentMatch(['defaultTree'], defaultTree, ['userTree'], userTree);
+
+        // Has to be done after mutations since new pools may be created
+        validatePoolSizeMatch(defaultTree, userTree);
     }
 
     return Promise.all(validatePredicates(['defaultTree'], defaultTree));

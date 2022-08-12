@@ -1,7 +1,8 @@
-import type {Child, Node, Parent} from '../types';
+import type {Child, Node, Parent, Root} from '../types';
 import {
     TypeError, ValueError, PropertyError,
-    JoinedError, SeedMatchError, DeactivatedError
+    PoolSizeError,
+    JoinedError, SeedMatchError, DeactivatedError,
 } from '../errors';
 
 function mutateMatch(
@@ -184,5 +185,43 @@ export function validateSeeds(breadcrumbs: string[], node: Node): void {
         for (const [i, child] of node.children.entries()) {
             validateSeeds([...breadcrumbs, 'children', i.toString()], child);
         }
+    }
+}
+
+function getPoolSizes(node: Node, uncapped = false): Array<number> {
+    const poolSizes: Array<number> = [];
+
+    uncapped = uncapped || 'seed' in node;
+
+    if ('poolId' in node) {
+        poolSizes[node.poolId] = uncapped ? -1 : node.children.length;
+    }
+
+    if ('children' in node) {
+        for (const child of node.children) {
+            const subPoolSizes = getPoolSizes(child, uncapped);
+
+            for (const id in subPoolSizes) {
+                if (subPoolSizes[id] < 0) {
+                    poolSizes[id] = -1;
+                } else if (id in poolSizes) {
+                    poolSizes[id] += subPoolSizes[id];
+                } else {
+                    poolSizes[id] = subPoolSizes[id];
+                }
+            }
+        }
+    }
+
+    return poolSizes;
+}
+
+export function validatePoolSizeMatch(model: Root, candidate: Root): void {
+    const modelSizes = getPoolSizes(model);
+    const candidateSizes = getPoolSizes(candidate);
+
+    for (const id in modelSizes) {
+        if (modelSizes[id] !== candidateSizes[id])
+            throw new PoolSizeError(Number.parseInt(id), candidateSizes[id], modelSizes[id]);
     }
 }
