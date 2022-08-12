@@ -16,6 +16,7 @@
   "scripts": {
     "test": "mocha",
     "serve": "webpack s --config-name DEVELOPMENT",
-    "build": "webpack b --config-name PRODUCTION & echo. & echo Project built to the `bin` folder. & echo."
+    "build:debug": "webpack b --config-name DEVELOPMENT & echo. & echo Project built to `bin/debug`. & echo.",
+    "build:release": "webpack b --config-name PRODUCTION & echo. & echo Project built to `bin/release`. & echo."
   }
 }

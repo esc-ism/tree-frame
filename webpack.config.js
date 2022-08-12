@@ -17,10 +17,6 @@ const shared = {
             }
         ]
     },
-    output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'bin')
-    },
     plugins: [
         new FileCopy({
             patterns: [{from: './static'}]
@@ -37,11 +33,19 @@ module.exports = [
         devServer: {
             static: {directory: path.join(__dirname, 'bin')},
             port: 7777
-        }
+        },
+        output: {
+            filename: '[name].bundle.js',
+            path: path.resolve(__dirname, 'bin/debug')
+        },
     },
     {
         ...shared,
         name: 'PRODUCTION',
-        mode: 'production'
+        mode: 'production',
+        output: {
+            filename: '[name].bundle.js',
+            path: path.resolve(__dirname, 'bin/release')
+        },
     }
 ];
