@@ -236,7 +236,7 @@ export function mount(node: Child): void {
                 } else {
                     focusHovered();
                 }
-            case 'Control':
+
                 event.stopPropagation();
         }
     });
