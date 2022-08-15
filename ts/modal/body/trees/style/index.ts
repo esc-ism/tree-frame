@@ -195,9 +195,9 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 
         'headButtonExit': headerButtons[0].value as string,
         'headButtonLabel': headerButtons[1].value as string,
-        'headButtonStyle': headerButtons[3].value as string,
-        'headButtonHide': headerButtons[4].value as string,
-        'headButtonAlt': headerButtons[5].value as string,
+        'headButtonStyle': headerButtons[2].value as string,
+        'headButtonHide': headerButtons[3].value as string,
+        'headButtonAlt': headerButtons[4].value as string,
 
         'nodeBase': bodyGeneral[0].children
             .filter(({isActive}) => isActive)
@@ -242,7 +242,7 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
         'seed': toJSON({
             'name': 'New Style',
             'isActive': false,
-            ...DEFAULT_STYLE
+            ...defaultStyle
         }),
         'descendantPredicate': (styleNodes: Array<_Middle>): true | string => {
             const activeStyles: Array<_Middle> = styleNodes.filter(({
