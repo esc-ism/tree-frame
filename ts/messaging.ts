@@ -1,9 +1,13 @@
-import {EVENTS} from './consts';
+import {EVENTS, PASSWORD} from './consts';
 
 let target;
 
 export function setTarget(_target) {
     target = _target;
+}
+
+export function isEventMessage({origin, 'data': {password, event}}, targetEvent) {
+    return origin === target && password === PASSWORD && event === targetEvent;
 }
 
 export function sendMessage(message) {
@@ -20,14 +24,14 @@ export function resolvePredicatePromise(response: any, resolve: Function, reject
     }
 }
 
-let count = 0;
+let nextMessageId = 0;
 
 export function getPredicateResponse(predicateId: number, arg: any): Promise<void> {
     return new Promise((resolve, reject) => {
-        const messageId = count++;
+        const messageId = nextMessageId++;
 
         const listener = (message) => {
-            if (message.origin !== target || message.data.messageId !== messageId) {
+            if (!isEventMessage(message, EVENTS.PREDICATE) || message.data.messageId !== messageId) {
                 return;
             }
 

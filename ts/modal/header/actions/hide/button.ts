@@ -10,7 +10,7 @@ edgeTop.setAttribute('stroke-linecap', 'round');
 edgeTop.setAttribute('stroke-width', '6');
 edgeTop.setAttribute('d',
     'M -55, 0' +
-    'Q 0,80 55,0'
+    'Q 0,80 55,0',
 );
 edgeTop.setAttribute('fill', 'none');
 
@@ -40,7 +40,7 @@ const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(
     edgeTop, edgeBottom,
-    circle, line
+    circle, line,
 );
 
 const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Disabled Node Visibility');

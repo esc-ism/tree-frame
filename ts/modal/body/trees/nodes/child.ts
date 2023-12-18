@@ -22,7 +22,7 @@ const actions: Array<{
     // No button
     highlight, focus, edit,
     // Button
-    disable, move, duplicate
+    disable, move, duplicate,
 ];
 
 export default class Child implements Leaf {

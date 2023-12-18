@@ -22,19 +22,19 @@ export function addColourRule(actionId: string, strokeVar: string) {
     addRule([
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
         `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} ` +
-        `.${BUTTON_CLASS}.${actionId} > svg`
+        `.${BUTTON_CLASS}.${actionId} > svg`,
     ], ['fill', `var(${strokeVar})`]);
 
     addRule([
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
         `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} ` +
-        `.${BUTTON_CLASS}.${actionId}:not(.${BUTTON_ACTIVE_CLASS}) > svg > g`
+        `.${BUTTON_CLASS}.${actionId}:not(.${BUTTON_ACTIVE_CLASS}) > svg > g`,
     ], ['stroke', `none`]);
 
     addRule(
         `.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} > ` +
         `.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS} > svg > g`,
-        ['stroke', `var(${strokeVar})`]
+        ['stroke', `var(${strokeVar})`],
     );
 }
 
@@ -49,7 +49,7 @@ export default function generate() {
 
     addRule(`.${BUTTON_CLASS} > svg`, [
         ['height', '100%'],
-        ['transform', 'scale(1.05)']
+        ['transform', 'scale(1.05)'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, ['white-space', 'nowrap']);
@@ -57,15 +57,15 @@ export default function generate() {
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${FOCUS_SOURCE_CLASS}):not(${HIGHLIGHT_CLASS}) > ` +
         `.${ELEMENT_CLASSES.HEAD_CONTAINER} > ${ELEMENT_CLASSES.BUTTON_CONTAINER} circle`,
-        ['stroke', 'transparent']
+        ['stroke', 'transparent'],
     );
 
     addRule(
         // Not focused, not hovered
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_SOURCE_CLASS}):not(.${HIGHLIGHT_CLASS}) > ` +
         `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} svg`, [
-            ['fill', 'none']
-        ]
+            ['fill', 'none'],
+        ],
     );
 
     // Hide prospective nodes
@@ -85,10 +85,10 @@ export default function generate() {
             // Not active, focused
             `${depthSelector} .${BUTTON_CLASS}:focus > svg`,
             `${depthSelector} .${BUTTON_CLASS}:hover > svg`,
-            `.${HIGHLIGHT_CLASS}${depthSelector} .${BUTTON_ACTIVE_CLASS} > svg`
+            `.${HIGHLIGHT_CLASS}${depthSelector} .${BUTTON_ACTIVE_CLASS} > svg`,
         ], [
             ['stroke', `var(--nodeContrast${depth})`],
-            ['fill', `var(--nodeBase${depth})`]
+            ['fill', `var(--nodeBase${depth})`],
         ]);
     });
 }

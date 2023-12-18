@@ -15,7 +15,7 @@ outline.setAttribute('d',
     'L 20,30' +
 
     'L 50,0' +
-    'L 20,-30'
+    'L 20,-30',
 );
 
 const circle = document.createElementNS(SVG_NAMESPACE, 'circle');
@@ -32,7 +32,7 @@ loop.setAttribute('stroke-linecap', 'round');
 loop.setAttribute('stroke-width', '6');
 loop.setAttribute('d',
     'M 20,0' +
-    'C -70,50 -30,50 15,30'
+    'C -70,50 -30,50 15,30',
 );
 
 const g = document.createElementNS(SVG_NAMESPACE, 'g');

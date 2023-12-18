@@ -1,1 +1,1 @@
-export const ACTION_ID =  'node-create';
+export const ACTION_ID = 'node-create';

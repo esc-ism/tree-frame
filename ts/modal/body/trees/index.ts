@@ -50,7 +50,7 @@ export default function generate(data: RootJSON, userStyles: Array<UserStyle>, d
 
     TREE_CONTAINER.append(
         generateStyleTree(userStyles, defaultStyle),
-        generateDataTree(data)
+        generateDataTree(data),
     );
 
     return TREE_CONTAINER;

@@ -6,20 +6,20 @@ import {addRule} from '../../css';
 export function addColourRule(actionId: string, colour: string) {
     addRule(`#${actionId}.${BUTTON_ACTIVE_CLASS} > svg`, [
         ['stroke', `var(--headBase)`],
-        ['fill', `var(${colour})`]
+        ['fill', `var(${colour})`],
     ]);
 }
 
 export default function generate() {
     addRule(`#${BUTTON_CONTAINER_ID}`, [
         ['display', 'inline-flex'],
-        ['flex-direction', 'row']
+        ['flex-direction', 'row'],
     ]);
 
     addRule([
         `.${BUTTON_CLASS}:focus > svg`,
         `.${BUTTON_CLASS}:hover > svg`,
-        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`
+        `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`,
     ], ['background-color', `var(--headContrast)`]);
 
     addRule(`.${BUTTON_CLASS}`, ['border-left', '2px solid var(--headContrast)']);
@@ -27,12 +27,12 @@ export default function generate() {
     addRule([
         `.${BUTTON_CLASS}:not(:first-child):focus`,
         `.${BUTTON_CLASS}:not(:first-child):hover`,
-        `.${BUTTON_CLASS}:not(:first-child).${BUTTON_ACTIVE_CLASS}`
+        `.${BUTTON_CLASS}:not(:first-child).${BUTTON_ACTIVE_CLASS}`,
     ], ['border-color', 'var(--headBase)']);
 
     addRule([
         `.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
-        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`
+        `.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
     ], ['stroke', `var(--headBase)`]);
 
     addRule(`.${BUTTON_CLASS} > svg`, [
@@ -41,6 +41,6 @@ export default function generate() {
         ['fill', `var(--headContrast)`],
 
         // Fixes pixel gap between button border & svg
-        ['margin-left', '-0.5px']
+        ['margin-left', '-0.5px'],
     ]);
 }

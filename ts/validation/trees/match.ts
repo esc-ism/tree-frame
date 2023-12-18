@@ -9,9 +9,9 @@ function mutateMatch(
     model: Node, candidate: Node,
     validate: (
         modelBreadcrumbs: string[], model: Node,
-        candidateBreadcrumbs: string[], candidate: Node
+        candidateBreadcrumbs: string[], candidate: Node,
     ) => void,
-    property: string
+    property: string,
 ) {
     try {
         validate([], model, [], candidate);
@@ -25,8 +25,9 @@ function mutateMatch(
 }
 
 function validatePredicateMatch(
+    isFrozen: boolean,
     modelBreadcrumbs: string[], model: Child,
-    candidateBreadcrumbs: string[], candidate: Child
+    candidateBreadcrumbs: string[], candidate: Child,
 ) {
     if ('predicate' in model !== 'predicate' in candidate)
         throw new PropertyError(candidateBreadcrumbs, 'predicate', 'predicate' in model);
@@ -44,6 +45,10 @@ function validatePredicateMatch(
         case 'object':
             const {length} = candidate.predicate as Array<string>;
 
+            if (!isFrozen) {
+                candidate.value = model.predicate[(candidate.predicate as Array<string>).indexOf(candidate.value as string)];
+            }
+
             if (model.predicate.length !== length)
                 throw new ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
 
@@ -57,7 +62,7 @@ function validatePredicateMatch(
 function validateValueMatch(
     property: string,
     modelBreadcrumbs: string[], model: Node,
-    candidateBreadcrumbs: string[], candidate: Node
+    candidateBreadcrumbs: string[], candidate: Node,
 ) {
     if (property in model !== property in candidate)
         throw new PropertyError(candidateBreadcrumbs, property, property in model);
@@ -71,7 +76,7 @@ function validateValueMatch(
 export function validateParentMatch(
     modelBreadcrumbs: string[], model: Parent,
     candidateBreadcrumbs: string[], candidate: Parent,
-    isFrozen: boolean = false
+    isFrozen: boolean = false,
 ): void {
     if (isFrozen) {
         validateValueMatch('poolId', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
@@ -90,14 +95,14 @@ export function validateParentMatch(
         validateChildMatch(
             [...modelBreadcrumbs, 'seed'], model.seed,
             [...candidateBreadcrumbs, 'seed'], candidate.seed,
-            isFrozen
+            isFrozen,
         );
 
         for (const [i, child] of candidate.children.entries()) {
             validateChildMatch(
                 [...modelBreadcrumbs, 'seed'], model.seed,
                 [...candidateBreadcrumbs, 'children', i.toString()], child,
-                isFrozen
+                isFrozen,
             );
         }
     } else if (!('poolId' in model)) {
@@ -112,7 +117,7 @@ export function validateParentMatch(
             validateChildMatch(
                 [...modelBreadcrumbs, 'children', i.toString()], model.children[i],
                 [...candidateBreadcrumbs, 'children', i.toString()], child,
-                isFrozen
+                isFrozen,
             );
         }
 
@@ -125,7 +130,7 @@ export function validateParentMatch(
 function validateChildMatch(
     modelBreadcrumbs: string[], model: Child,
     candidateBreadcrumbs: string[], candidate: Child,
-    isFrozen: boolean = true
+    isFrozen: boolean = true,
 ): void {
     if ('value' in model !== 'value' in candidate) {
         if (isFrozen || 'value' in candidate)
@@ -139,13 +144,13 @@ function validateChildMatch(
 
     if (isFrozen) {
         validateValueMatch('label', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-        validatePredicateMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+        validatePredicateMatch(true, modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
     } else {
         if (typeof model.value !== typeof candidate.value)
             throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
 
         mutateMatch(model, candidate, validateValueMatch.bind(null, 'label'), 'label');
-        mutateMatch(model, candidate, validatePredicateMatch, 'predicate');
+        mutateMatch(model, candidate, validatePredicateMatch.bind(null, false), 'predicate');
     }
 
     if ('children' in model !== 'children' in candidate)
@@ -163,7 +168,7 @@ export function validateSeeds(breadcrumbs: string[], node: Node): void {
                 for (const [i, child] of node.children.entries()) {
                     validateChildMatch(
                         [...breadcrumbs, 'seed'], node.seed,
-                        [...breadcrumbs, 'children', i.toString()], child
+                        [...breadcrumbs, 'children', i.toString()], child,
                     );
                 }
             } catch (error) {
@@ -176,7 +181,7 @@ export function validateSeeds(breadcrumbs: string[], node: Node): void {
                 if ('isActive' in child && !child.isActive) {
                     throw new JoinedError(
                         new DeactivatedError(),
-                        new ValueError([...breadcrumbs, 'children', i.toString(), 'isActive'], false, [true])
+                        new ValueError([...breadcrumbs, 'children', i.toString(), 'isActive'], false, [true]),
                     );
                 }
             }

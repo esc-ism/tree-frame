@@ -1,7 +1,7 @@
 import type {Child, Parent, Root} from '../types';
 import {
     LEAF_KEYS, MIDDLE_KEYS, ROOT_KEYS,
-    VALUE_TYPES, INPUT_FORMATS, PREDICATE_TYPES
+    VALUE_TYPES, INPUT_FORMATS, PREDICATE_TYPES,
 } from '../types';
 import {TypeError, ValueError, PropertyError, UnexpectedStateError} from '../errors';
 import {hasOwnProperty, validateUnexpectedKeys} from '../index';

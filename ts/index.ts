@@ -1,7 +1,7 @@
 import {PASSWORD, EVENTS} from './consts';
 
 import validate from './validation';
-import {setTarget} from './messaging';
+import {setTarget, sendMessage} from './messaging';
 
 // Dynamic imports for smaller bundles
 
@@ -12,27 +12,53 @@ function start(config) {
 }
 
 async function onInit(message) {
-    const {password, ...config} = message.data;
+    const {password, event, ...config} = message.data;
 
     // Ignore scripts that send messages to every frame
-    if (password === PASSWORD) {
-        setTarget(message.origin);
+    if (password !== PASSWORD || event !== EVENTS.START) {
+        return;
+    }
 
+    setTarget(message.origin);
+
+    try {
         try {
             await validate(config);
+
+            // Config is valid
+            sendMessage({
+                'event': EVENTS.START,
+                'tree': config.userTree ?? config.defaultTree,
+            });
         } catch (error) {
-            window.parent.postMessage({
-                'event': EVENTS.ERROR,
-                'reason': error.message
-            }, message.origin);
+            if (config.userTree) {
+                delete config.userTree;
 
-            return;
+                await validate(config);
+
+                // Config is valid with userTree removed
+                sendMessage({
+                    'event': EVENTS.RESET,
+                    'tree': config.defaultTree,
+                    'reason': error.message,
+                });
+            } else {
+                throw {error};
+            }
         }
+    } catch (error) {
+        // Config is invalid (fatal)
+        sendMessage({
+            'event': EVENTS.ERROR,
+            'reason': error.message,
+        });
 
-        window.removeEventListener('message', onInit);
-
-        start(config);
+        return;
     }
+
+    window.removeEventListener('message', onInit);
+
+    start(config);
 }
 
 if (window.parent === window) {
@@ -46,6 +72,6 @@ if (window.parent === window) {
     // Inform the frame's parent that it's ready to receive data
     window.parent.postMessage({
         'events': EVENTS,
-        'password': PASSWORD
+        'password': PASSWORD,
     }, '*');
 }

@@ -1,6 +1,6 @@
 import {
     TOOLTIP_CLASS, TOOLTIP_CONTAINER_CLASS, TOOLTIP_PARENT_CLASS,
-    TOOLTIP_TOP_CLASS, TOOLTIP_BOTTOM_CLASS
+    TOOLTIP_TOP_CLASS, TOOLTIP_BOTTOM_CLASS,
 } from './consts';
 
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
@@ -15,7 +15,7 @@ import {addRule} from '@/modal/css';
 
 export default function generate() {
     addRule(`.${TOOLTIP_PARENT_CLASS}`, [
-        ['position', 'relative']
+        ['position', 'relative'],
     ]);
 
     addRule(`.${TOOLTIP_CONTAINER_CLASS}`, [
@@ -24,7 +24,7 @@ export default function generate() {
         ['z-index', '1'],
         ['width', '100%'],
         ['pointer-events', 'none'],
-        ['white-space', 'normal']
+        ['white-space', 'normal'],
     ]);
 
     addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`, ['bottom', '102%']);
@@ -36,20 +36,20 @@ export default function generate() {
         ['padding', '3px 8px'],
         ['border-radius', '1em'],
         ['width', '10em'],
-        ['outline', 'solid 3px var(--borderTooltip)']
+        ['outline', 'solid 3px var(--borderTooltip)'],
     ]);
 
     addDepthChangeListener((depth, addRule) => {
         addRule(`.${DEPTH_CLASS_PREFIX}${depth} > :not(.${ELEMENT_CLASSES.CHILD_CONTAINER}) .${TOOLTIP_CLASS}`, [
             ['background-color', `var(--nodeBase${depth})`],
-            ['color', `var(--nodeContrast${depth})`]
+            ['color', `var(--nodeContrast${depth})`],
         ]);
     });
 
     // Don't show when there's no hint to give
     addRule(
         [`.${TOOLTIP_CLASS}:empty`],
-        ['display', 'none']
+        ['display', 'none'],
     );
 
     addRule(`.${TOOLTIP_CLASS}::after`, [
@@ -58,16 +58,16 @@ export default function generate() {
         ['left', '50%'],
         ['margin-left', '-0.5em'],
         ['border-width', '0.5em'],
-        ['border-style', 'solid']
+        ['border-style', 'solid'],
     ]);
 
     addRule(`.${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`, [
         ['top', '100%'],
-        ['border-color', 'var(--borderTooltip) transparent transparent transparent']
+        ['border-color', 'var(--borderTooltip) transparent transparent transparent'],
     ]);
 
     addRule(`.${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`, [
         ['bottom', '100%'],
-        ['border-color', 'transparent transparent var(--borderTooltip) transparent']
+        ['border-color', 'transparent transparent var(--borderTooltip) transparent'],
     ]);
 }

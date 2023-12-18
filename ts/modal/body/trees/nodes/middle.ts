@@ -86,7 +86,7 @@ export default class Middle extends Child implements _Middle {
 
         return {
             ...data,
-            ...super.getJSON()
+            ...super.getJSON(),
         };
     }
 }

@@ -1,1 +1,1 @@
-export const ACTION_ID =  'node-position';
+export const ACTION_ID = 'node-position';

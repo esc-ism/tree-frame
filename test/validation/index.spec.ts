@@ -25,7 +25,7 @@ describe('Validation', function () {
             'title': VALID.TITLES[0],
             'defaultTree': VALID.TREES[0],
             'userStyles': VALID.USER_STYLES[0],
-            'defaultStyle': VALID.DEV_STYLES[0]
+            'defaultStyle': VALID.DEV_STYLES[0],
         };
 
         function test(property, values) {
@@ -35,8 +35,8 @@ describe('Validation', function () {
                         try {
                             await validate({
                                 ...validConfig,
-                                [property]: value
-                            })
+                                [property]: value,
+                            });
                         } catch (e) {
                             return;
                         }

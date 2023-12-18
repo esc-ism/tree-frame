@@ -1,6 +1,6 @@
 import {
     FOCUS_SOURCE_CLASS as SOURCE_CLASS,
-    FOCUS_CLASS as BRANCH_CLASS
+    FOCUS_CLASS as BRANCH_CLASS,
 } from './consts';
 
 import {isActive as positionIsActive} from '../buttons/position';

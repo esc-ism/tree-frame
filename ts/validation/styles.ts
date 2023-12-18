@@ -1,6 +1,6 @@
 import {
     ValueError, TypeError,
-    JoinedError, EmptyArrayError, NoNodeColourError
+    JoinedError, EmptyArrayError, NoNodeColourError,
 } from './errors';
 import {CONTRAST_METHODS} from './types';
 
@@ -64,7 +64,7 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
                 if (value.length === 0)
                     throw new JoinedError(
                         new NoNodeColourError(),
-                        new EmptyArrayError([...breadcrumbs, key])
+                        new EmptyArrayError([...breadcrumbs, key]),
                     );
 
                 for (const [i, subValue] of value.entries()) {

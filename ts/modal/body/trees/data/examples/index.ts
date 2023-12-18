@@ -1,12 +1,12 @@
 export default function getConfig() {
-    switch (Math.floor(Math.random() * 3)) {
+    switch (Math.floor(Math.random() * 2)) {
         case 0:
             return import('./faves');
 
-        case 1:
+        default:
             return import('./places');
 
-        default:
-            return import('./riddle');
+        // default:
+        //     return import('./riddle');
     }
 }

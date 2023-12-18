@@ -27,5 +27,5 @@ export const DEFAULT_STYLE: DefaultStyle = {
     'nodeButtonDelete': '#ff1111',
 
     'validBackground': '#d9ffc0',
-    'invalidBackground': '#ffb4be'
+    'invalidBackground': '#ffb4be',
 };

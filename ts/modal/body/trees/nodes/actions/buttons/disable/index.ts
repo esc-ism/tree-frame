@@ -29,7 +29,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
                 // TODO set up a way to confirm (tooltip + yes/no buttons? require extra button click?)
                 node.disconnect();
             } else {
-                updateButton(button,node.isActive);
+                updateButton(button, node.isActive);
             }
         })
         .catch((reason) => {
@@ -46,7 +46,7 @@ export function mount(node: Child): void {
     const defaultButton = addActionButton(TEMPLATE_DEFAULT, onClick, node);
 
     if (!node.isActive) {
-        node.element.addClass(DISABLED_CLASS)
+        node.element.addClass(DISABLED_CLASS);
 
         updateButton(defaultButton, false);
     }

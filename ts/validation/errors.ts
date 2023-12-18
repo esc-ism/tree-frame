@@ -6,12 +6,10 @@ function getOptionString(array: readonly string[]) {
     }
 
     if (array.length === 1) {
-        return array[0];
+        return `'${array[0]}'`;
     }
 
-    const lastIndex = array.length - 1;
-
-    return `${array.slice(0, lastIndex).join(', ')} or ${array[lastIndex]}`;
+    return `'${array.slice(0, -1).join('\', \'')}' or '${array[array.length - 1]}'`;
 }
 
 function getPath(breadcrumbs: string[]): string {
@@ -86,7 +84,7 @@ export class PoolBranchError extends Error {
     constructor(ancestorBreadcrumbs: Array<string>, descendantBreadcrumbs: Array<string>, poolId: number) {
         super(
             'No node may share a poolId value with its ancestor.' + JoinedError.separator +
-            `Found poolId value ${poolId} at ${getPath(ancestorBreadcrumbs)} and ${getPath(descendantBreadcrumbs)}.`
+            `Found poolId value ${poolId} at ${getPath(ancestorBreadcrumbs)} and ${getPath(descendantBreadcrumbs)}.`,
         );
     }
 }
@@ -95,7 +93,7 @@ export class PoolSizeError extends Error {
     constructor(poolId: number, found: number, expected: number) {
         super(
             'Corresponding pools in the default & candidate trees must be the same size unless a pool parent or ancestor has a seed value.' + JoinedError.separator +
-            `Found a size of ${found} at pool ${poolId}. Expected a size of ${expected}.`
+            `Found a size of ${found} at pool ${poolId}. Expected a size of ${expected}.`,
         );
     }
 }

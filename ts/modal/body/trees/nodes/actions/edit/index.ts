@@ -1,6 +1,6 @@
 import {
     EDITABLE_CLASS, INVALID_CLASS, VALID_CLASS,
-    VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS
+    VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
 } from './consts';
 
 import * as tooltip from '../tooltip';
@@ -56,7 +56,7 @@ function getSubPredicateResponse(predicate: SubPredicate, children: Array<Child>
     return typeof predicate === 'number' ?
         getPredicateResponse(predicate, children.map(child => child.getJSON())) :
         new Promise((resolve, reject) =>
-            resolvePredicatePromise(predicate(children.map(child => child.getJSON())), resolve, reject)
+            resolvePredicatePromise(predicate(children.map(child => child.getJSON())), resolve, reject),
         );
 }
 

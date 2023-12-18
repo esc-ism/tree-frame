@@ -24,7 +24,7 @@ const gDefault = (() => {
 
     g.append(circle, line);
 
-    return g
+    return g;
 })();
 
 export const BUTTON_DEFAULT = getNewButton(gDefault, ACTION_ID_DEFAULT, 'Toggle Enabled');

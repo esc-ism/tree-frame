@@ -12,7 +12,7 @@ export const ELEMENT_CLASSES = {
     'VALUE': 'node-value',
     'LABEL_CONTAINER': 'node-label-container',
     'LABEL': 'node-label',
-}
+};
 
 export const DEPTH_CLASS_PREFIX = 'node-depth-';
 

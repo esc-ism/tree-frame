@@ -1,5 +1,5 @@
 import BUTTON from './button';
-import {ACTION_ID, HOTKEY} from './consts';
+import {HOTKEY} from './consts';
 import generateCSS from './css';
 
 import {bindAction} from '../button';
@@ -12,17 +12,22 @@ import {getRoot as getDataTree} from '@/modal/body/trees/data';
 import {getUserStyles} from '@/modal/body/trees/style';
 import {sendMessage} from '@/messaging';
 
+import {reset as resetFocus} from '@nodes/actions/focus';
+import {reset as resetEdit} from '@nodes/actions/edit';
+import {reset as resetMove} from '@nodes/actions/buttons/move';
+
+// TODO Maybe add a white, 0.5 opacity foreground over everything with a loading symbol.
+//  Do the same when waiting for a config.
+//  Prevent interaction during loading by adding a stopPropagation click listener to the foreground.
 function doAction() {
-    // TODO Maybe add a white, 0.5 opacity foreground over everything with a loading symbol.
-    //  Do the same when waiting for a config.
-    //  Prevent interaction during loading by adding a stopPropagation click listener to the foreground.
-    // Prevent further interaction
-    document.body.classList.add(ACTION_ID);
+    resetFocus();
+    resetEdit();
+    resetMove();
 
     sendMessage({
         'event': EVENTS.STOP,
         'tree': getDataTree().getJSON(),
-        'styles': getUserStyles()
+        'styles': getUserStyles(),
     });
 }
 

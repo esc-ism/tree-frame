@@ -10,6 +10,6 @@ export default function generate() {
     addRule(
         `.${ACTION_ID} > .${ROOT_CLASS}.${FOCUS_CLASS} ` +
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_CLASS})`,
-        ['display', 'none']
+        ['display', 'none'],
     );
 }

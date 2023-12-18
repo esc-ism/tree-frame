@@ -2,7 +2,7 @@ import type {Config, Child} from '@types';
 
 const colourSeed: Child = {
     'value': '#1c8c00',
-    'input': 'color'
+    'input': 'color',
 };
 
 const numberSeed: Child = {
@@ -17,7 +17,7 @@ const numberSeed: Child = {
         }
 
         return true;
-    }
+    },
 };
 
 function favePredicate(name: string, children: Array<Child>) {
@@ -40,7 +40,7 @@ const config: Config = {
                 'label': 'Favourite Colours',
                 'childPredicate': favePredicate.bind(null, 'colour'),
                 'children': [colourSeed],
-                'seed': colourSeed
+                'seed': colourSeed,
             },
             {
                 'label': 'Favourite Numbers',
@@ -52,9 +52,9 @@ const config: Config = {
                     return favePredicate('number', children);
                 },
                 'children': [numberSeed],
-                'seed': numberSeed
-            }
-        ]
+                'seed': numberSeed,
+            },
+        ],
     },
     'userStyles': [],
     'defaultStyle': {
@@ -68,7 +68,7 @@ const config: Config = {
         'nodeContrast': 'Invert',
         'nodeButtonMove': '#9000ff',
         'borderTooltip': '#c12d00',
-    }
+    },
 };
 
 export default config;

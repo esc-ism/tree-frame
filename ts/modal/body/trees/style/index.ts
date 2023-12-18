@@ -8,7 +8,7 @@ import type {
     ContrastMethod,
     DefaultStyle, UserStyle,
     // TODO Change all type imports to this format
-    Leaf as _Leaf, Middle as _Middle
+    Leaf as _Leaf, Middle as _Middle,
 } from '@types';
 import {CONTRAST_METHODS} from '@types';
 
@@ -37,7 +37,7 @@ export function toJSON(style: UserStyle): _Middle {
         'children': [
             {
                 'label': 'Style Is Active?',
-                'value': filledStyle.isActive
+                'value': filledStyle.isActive,
             },
             {
                 'label': 'Modal',
@@ -46,14 +46,14 @@ export function toJSON(style: UserStyle): _Middle {
                         'label': 'Font Size (px)',
                         'value': filledStyle.fontSize,
                         'predicate': (value: number): true | string =>
-                            value > 0 ? true : 'Font size must be greater than zero'
+                            value > 0 ? true : 'Font size must be greater than zero',
                     },
                     {
                         'label': 'Border Color',
                         'value': filledStyle.borderModal,
-                        'input': 'color'
-                    }
-                ]
+                        'input': 'color',
+                    },
+                ],
             },
             {
                 'label': 'Header',
@@ -64,14 +64,14 @@ export function toJSON(style: UserStyle): _Middle {
                             {
                                 'label': 'Base Color',
                                 'value': filledStyle.headBase,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Contrast Method',
                                 'value': filledStyle.headContrast,
-                                'predicate': [...CONTRAST_METHODS]
-                            }
-                        ]
+                                'predicate': [...CONTRAST_METHODS],
+                            },
+                        ],
                     },
                     {
                         'label': 'Buttons',
@@ -79,31 +79,31 @@ export function toJSON(style: UserStyle): _Middle {
                             {
                                 'label': 'Exit Color',
                                 'value': filledStyle.headButtonExit,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Label Color',
                                 'value': filledStyle.headButtonLabel,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Style Color',
                                 'value': filledStyle.headButtonStyle,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Hide Color',
                                 'value': filledStyle.headButtonHide,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Alt Buttons Color',
                                 'value': filledStyle.headButtonAlt,
-                                'input': 'color'
-                            }
-                        ]
-                    }
-                ]
+                                'input': 'color',
+                            },
+                        ],
+                    },
+                ],
             },
             {
                 'label': 'Body',
@@ -116,14 +116,14 @@ export function toJSON(style: UserStyle): _Middle {
                                 'seed': toDepthColour(DEFAULT_STYLE.nodeBase[0]),
                                 'children': filledStyle.nodeBase.map(toDepthColour),
                                 'childPredicate': (children: Array<object>): true | string =>
-                                    children.length > 0 ? true : 'At least one color must be provided.'
+                                    children.length > 0 ? true : 'At least one color must be provided.',
                             },
                             {
                                 'label': 'Contrast Method',
                                 'value': filledStyle.nodeContrast,
-                                'predicate': [...CONTRAST_METHODS]
-                            }
-                        ]
+                                'predicate': [...CONTRAST_METHODS],
+                            },
+                        ],
                     },
                     {
                         'label': 'Buttons',
@@ -131,29 +131,29 @@ export function toJSON(style: UserStyle): _Middle {
                             {
                                 'label': 'Create Color',
                                 'value': filledStyle.nodeButtonCreate,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Duplicate Color',
                                 'value': filledStyle.nodeButtonDuplicate,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Move Color',
                                 'value': filledStyle.nodeButtonMove,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Disable Color',
                                 'value': filledStyle.nodeButtonDisable,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Delete Color',
                                 'value': filledStyle.nodeButtonDelete,
-                                'input': 'color'
+                                'input': 'color',
                             },
-                        ]
+                        ],
                     },
                     {
                         'label': 'Miscellaneous',
@@ -161,23 +161,23 @@ export function toJSON(style: UserStyle): _Middle {
                             {
                                 'label': 'Valid Color',
                                 'value': filledStyle.validBackground,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Invalid Color',
                                 'value': filledStyle.invalidBackground,
-                                'input': 'color'
+                                'input': 'color',
                             },
                             {
                                 'label': 'Tooltip Color',
                                 'value': filledStyle.borderTooltip,
-                                'input': 'color'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+                                'input': 'color',
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
     };
 }
 
@@ -212,7 +212,7 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 
         'validBackground': bodyMisc[0].value as string,
         'invalidBackground': bodyMisc[1].value as string,
-        'borderTooltip': bodyMisc[2].value as string
+        'borderTooltip': bodyMisc[2].value as string,
     };
 }
 
@@ -225,7 +225,7 @@ export function getUserStyles(): Array<UserStyle> {
         styles.push({
             'name': json.value as string,
             'isActive': json.children[0].value as boolean,
-            ...toRawStyle(json)
+            ...toRawStyle(json),
         });
     }
 
@@ -242,12 +242,12 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
         'seed': toJSON({
             'name': 'New Style',
             'isActive': false,
-            ...defaultStyle
+            ...defaultStyle,
         }),
         'descendantPredicate': (styleNodes: Array<_Middle>): true | string => {
             const activeStyles: Array<_Middle> = styleNodes.filter(({
                 isActive,
-                'children': [{value}]
+                'children': [{value}],
             }) => isActive && value);
 
             switch (activeStyles.length) {
@@ -264,6 +264,6 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
                 default:
                     return 'Only one color scheme may be active at a time.';
             }
-        }
+        },
     }, ROOT_ID);
 }

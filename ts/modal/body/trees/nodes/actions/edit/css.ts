@@ -1,6 +1,6 @@
 import {
     EDITABLE_CLASS, VALID_CLASS, INVALID_CLASS,
-    VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS
+    VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
 } from './consts';
 
 import {ELEMENT_CLASSES} from '@nodes/consts';
@@ -17,12 +17,12 @@ export default function generate() {
     addRule(`.${ELEMENT_CLASSES.VALUE}`, [
         ['flex-grow', '1'],
         ['padding', '0 0.6em'],
-        ['outline', 'none']
+        ['outline', 'none'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, [
         ['height', '1em'],
-        ['width', '2.2em']
+        ['width', '2.2em'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.VALUE}[type="color"]`, ['height', '1.3em']);
@@ -35,16 +35,16 @@ export default function generate() {
 
     addRule([
         `.${VALID_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${VALID_BACKGROUND_CLASS}`,
-        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${INVALID_BACKGROUND_CLASS}`
+        `.${INVALID_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${INVALID_BACKGROUND_CLASS}`,
     ], ['width', '100%']);
 
     addRule(
         `.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-        ['color', 'var(--validFont) !important']
+        ['color', 'var(--validFont) !important'],
     );
 
     addRule(
         `.${INVALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-        ['color', 'var(--invalidFont) !important']
+        ['color', 'var(--invalidFont) !important'],
     );
 }

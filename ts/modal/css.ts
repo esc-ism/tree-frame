@@ -6,7 +6,7 @@ export type Selectors = Selector | Array<Selector>;
 type Style = [string, string];
 export type Styles = Style | Array<Style>;
 
-export function generateStylesheet(): CSSStyleSheet  {
+export function generateStylesheet(): CSSStyleSheet {
     const wrapper = document.createElement('style');
 
     document.head.appendChild(wrapper);
@@ -43,7 +43,7 @@ export default function generate() {
         ['width', '100%'],
         ['height', '100%'],
 
-        ['background-color', '#0003']
+        ['background-color', '#0003'],
     ]);
 
     addRule(`#${MODAL_ID}`, [
@@ -54,6 +54,6 @@ export default function generate() {
 
         ['font-family', 'Tahoma, Geneva, sans-serif'],
         ['outline', 'var(--borderModal) solid 2px'],
-        ['box-shadow', '1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065']
+        ['box-shadow', '1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065'],
     ]);
 }

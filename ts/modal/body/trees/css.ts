@@ -15,6 +15,6 @@ export default function generate() {
 
         ['display', 'flex'],
 
-        ['background-color', `var(--nodeBase0)`]
+        ['background-color', `var(--nodeBase0)`],
     ]);
 }

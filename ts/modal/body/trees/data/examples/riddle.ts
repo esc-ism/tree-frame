@@ -26,8 +26,8 @@ const config: Config = {
                 'children': [
                     {'label': NAMES[0]},
                     {'label': NAMES[1]},
-                    {'label': NAMES[2]}
-                ]
+                    {'label': NAMES[2]},
+                ],
             },
             {
                 'label': 'Bandit\'s Camp',
@@ -49,7 +49,7 @@ const config: Config = {
                     }
 
                     return true;
-                }
+                },
             },
             {
                 'label': 'Goal',
@@ -62,13 +62,13 @@ const config: Config = {
                             () => window.alert('You win!\n\n' + (
                                 mistakes === 0 ? 'Perfect clear!' :
                                     `You made ${mistakes} mistake${mistakes === 1 ? '' : 's'}.`
-                            )), 1
+                            )), 1,
                         );
                     }
 
                     return true;
-                }
-            }
+                },
+            },
         ],
         'descendantPredicate': (locations: Array<Middle>) => {
             for (const {children} of locations) {
@@ -88,12 +88,12 @@ const config: Config = {
             }
 
             return true;
-        }
+        },
     },
     'userStyles': [],
     'defaultStyle': {
-        'fontSize': 20
-    }
+        'fontSize': 20,
+    },
 };
 
 export default config;

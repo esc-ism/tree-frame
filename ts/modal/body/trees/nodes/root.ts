@@ -31,17 +31,21 @@ export default class Root implements _Root {
             this[key] = value;
         }
 
+        this.addChildren(children);
+
+        for (const {shouldMount, mount} of actions) {
+            if (shouldMount(this)) {
+                mount(this);
+            }
+        }
+    }
+
+    addChildren(children) {
         for (const child of children) {
             if ('children' in child) {
                 new Middle(child, this);
             } else {
                 new Child(child, this);
-            }
-        }
-
-        for (const {shouldMount, mount} of actions) {
-            if (shouldMount(this)) {
-                mount(this);
             }
         }
     }

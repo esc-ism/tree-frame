@@ -26,7 +26,7 @@ function getPerson(
     birthYear = 0,
     hairColour = '#3B2D25',
     eyeColour = '#3c75e2',
-    hasChildren = true
+    hasChildren = true,
 ): Middle {
     return {
         'label': 'Name',
@@ -36,30 +36,30 @@ function getPerson(
             {
                 'label': 'Occupation',
                 'value': occupation,
-                'predicate': emptyStringPredicate
+                'predicate': emptyStringPredicate,
             },
             {
                 'label': 'Birth Year (AD)',
                 'value': birthYear,
-                'predicate': yearPredicate
+                'predicate': yearPredicate,
             },
             {
                 'label': 'Hair Colour',
                 'value': hairColour,
                 'predicate': emptyStringPredicate,
-                'input': 'color'
+                'input': 'color',
             },
             {
                 'label': 'Eye Colour',
                 'value': eyeColour,
                 'predicate': emptyStringPredicate,
-                'input': 'color'
+                'input': 'color',
             },
             {
                 'label': 'Has Children?',
-                'value': hasChildren
-            }
-        ]
+                'value': hasChildren,
+            },
+        ],
     };
 }
 
@@ -67,7 +67,7 @@ function getMedia(
     title = '*title*',
     type = '*type*',
     releaseYear = 0,
-    description = '*description*'
+    description = '*description*',
 ): Middle {
     return {
         'label': 'Title',
@@ -77,19 +77,19 @@ function getMedia(
             {
                 'label': 'Media Type',
                 'value': type,
-                'predicate': ['*type*', 'Movie', 'TV Show', 'Song', 'Album']
+                'predicate': ['*type*', 'Movie', 'TV Show', 'Song', 'Album'],
             },
             {
                 'label': 'Release Year (AD)',
                 'value': releaseYear,
-                'predicate': yearPredicate
+                'predicate': yearPredicate,
             },
             {
                 'label': 'Description',
                 'value': description,
-                'predicate': emptyStringPredicate
-            }
-        ]
+                'predicate': emptyStringPredicate,
+            },
+        ],
     };
 }
 
@@ -106,19 +106,19 @@ const config: Config = {
                         'label': 'Famous People',
                         'seed': getPerson(),
                         'children': [
-                            getPerson('William Shakespeare', 'Playwright', 1564, '#1b0600', '#391b00')
-                        ]
+                            getPerson('William Shakespeare', 'Playwright', 1564, '#1b0600', '#391b00'),
+                        ],
                     },
                     {
                         'label': 'Famous Media',
                         'seed': getMedia(),
                         'children': [
                             getMedia('Doctor Who', 'TV Show', 1963, 'A time-travelling alien struggles to cope with constantly saving the world, even on their days off.'),
-                            getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.')
-                        ]
-                    }
-                ]
-            }
+                            getMedia('The Wicker Man', 'Movie', 1973, 'Cultists exact a contrived scheme to ritualistically sacrifice a policeman.'),
+                        ],
+                    },
+                ],
+            },
         ],
         'seed': {
             'label': 'Location',
@@ -128,15 +128,15 @@ const config: Config = {
                 {
                     'label': 'Famous People',
                     'seed': getPerson(),
-                    'children': []
+                    'children': [],
                 },
                 {
                     'label': 'Famous Media',
                     'seed': getMedia(),
-                    'children': []
-                }
-            ]
-        }
+                    'children': [],
+                },
+            ],
+        },
     },
     'userStyles': [],
     'defaultStyle': {
@@ -146,7 +146,7 @@ const config: Config = {
         'headButtonLabel': '#001fff',
         'headButtonStyle': '#ae00ff',
         'nodeBase': ['#000000', '#0a2400', '#0c3700', '#0d4800'],
-    }
+    },
 };
 
 export default config;

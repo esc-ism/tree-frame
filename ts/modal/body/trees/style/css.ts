@@ -11,11 +11,11 @@ import {ACTION_ID} from '@/modal/header/actions/style/consts';
 export default function generate() {
     addRule(
         `#${TREE_CONTAINER_ID}.${ACTION_ID} > #${ROOT_ID_DATA}`,
-        ['display', 'none']
+        ['display', 'none'],
     );
 
     addRule(
         `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) > #${ROOT_ID_STYLE}`,
-        ['display', 'none']
+        ['display', 'none'],
     );
 }

@@ -13,7 +13,7 @@ export default function generate() {
         `.${ROOT_CLASS}.${FOCUS_CLASS} ` +
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_CLASS})` +
         `:not(.${FOCUS_SOURCE_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *)`,
-        ['display', 'none']
+        ['display', 'none'],
     );
 
     // Makes it easy to focus down the tree

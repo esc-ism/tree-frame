@@ -82,7 +82,7 @@ export function getButton(node, actionId, onClick, isParent) {
     const button = addActionButton(
         isParent ? BUTTON_PARENT : BUTTON_SIBLING,
         onClick,
-        node
+        node,
     );
 
     button.classList.add(actionId);
@@ -104,7 +104,7 @@ function addButtons(parent: Root | Middle, actionId: string, callback: Function,
         destinations.push({
             'node': parent,
             'isParent': true,
-            'button': getButton(parent, actionId, getBoundCallback(callback, parent, 0), true)
+            'button': getButton(parent, actionId, getBoundCallback(callback, parent, 0), true),
         });
 
         focusBranch(true, parent);
@@ -115,7 +115,7 @@ function addButtons(parent: Root | Middle, actionId: string, callback: Function,
             destinations.push({
                 'node': target,
                 'isParent': false,
-                'button': getButton(target, actionId, getBoundCallback(callback, target.parent, target.getIndex() + 1), false)
+                'button': getButton(target, actionId, getBoundCallback(callback, target.parent, target.getIndex() + 1), false),
             });
         }
     }
@@ -168,7 +168,7 @@ export function mount(source: Child | Root, child: _Child, parent: Root | Middle
         parent,
         'isPooled': 'poolId' in parent,
         button,
-        actionId
+        actionId,
     };
 
     addButtons(parent.getRoot(), actionId, callback.bind(null, source), includeSelf);

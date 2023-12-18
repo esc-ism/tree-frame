@@ -46,7 +46,7 @@ export default function updateStylesheet({
     addRule('body', ['font-size', `${fontSize}px`]);
 
     const colourStyles: Styles = Object.entries(colours).map(
-        ([property, value]: [string, string]): [string, string] => [`--${property}`, value]
+        ([property, value]: [string, string]): [string, string] => [`--${property}`, value],
     );
 
     for (const [depth, baseColour] of nodeBase.entries()) {

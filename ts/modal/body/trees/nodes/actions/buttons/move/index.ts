@@ -34,7 +34,7 @@ function doAction(node: Child, newParent, index, button) {
 
     Promise.all([
         ...getSubPredicateResponses(oldParent),
-        ...(oldParent === newParent ? [] : getSubPredicateResponses(newParent))
+        ...(oldParent === newParent ? [] : getSubPredicateResponses(newParent)),
     ])
         .then(() => {
             copy.element.removeClass(PROSPECTIVE_CLASS);

@@ -13,7 +13,7 @@ type Configs = {
 
 export const VALID: Configs = {
     'TITLES': [
-        'YouTube Sub Feed Filter'
+        'YouTube Sub Feed Filter',
     ],
     'TREES': [
         {'children': [{}]},
@@ -23,13 +23,13 @@ export const VALID: Configs = {
                 'value': '_',
                 'children': [{
                     'label': '_',
-                    'value': '_'
+                    'value': '_',
                 }],
                 'seed': {
                     'label': '_',
-                    'value': '_'
-                }
-            }]
+                    'value': '_',
+                },
+            }],
         },
         {
             'children': [{
@@ -42,8 +42,8 @@ export const VALID: Configs = {
                 'seed': {
                     'label': '_',
                     'value': '_',
-                }
-            }]
+                },
+            }],
         },
         {
             'children': [{
@@ -57,29 +57,29 @@ export const VALID: Configs = {
                     {
                         'label': '_',
                         'value': '2',
-                    }
+                    },
                 ],
                 'seed': {
                     'label': '_',
                     'value': '_',
-                }
-            }]
+                },
+            }],
         },
         {
             'children': [
                 {
                     'label': '_',
-                    'value': false
+                    'value': false,
                 },
                 {
                     'label': '_',
-                    'value': 1
+                    'value': 1,
                 },
                 {
                     'label': '_',
-                    'value': '2'
-                }
-            ]
+                    'value': '2',
+                },
+            ],
         },
         {
             'children': [],
@@ -94,17 +94,17 @@ export const VALID: Configs = {
                         {
                             'label': '_',
                             'value': '_',
-                            'predicate': ['_']
-                        }
+                            'predicate': ['_'],
+                        },
                     ],
                     'seed': {
                         'label': '_',
                         'value': '_',
-                        'predicate': ['_']
+                        'predicate': ['_'],
                     },
-                    'childPredicate': () => true
-                }
-            }
+                    'childPredicate': () => true,
+                },
+            },
         },
         {
             'children': [
@@ -112,22 +112,22 @@ export const VALID: Configs = {
                     'label': '_',
                     'value': '_',
                     'poolId': 1,
-                    'children': []
-                }
+                    'children': [],
+                },
             ],
             'seed': {
                 'label': '_',
                 'value': '|',
                 'poolId': 1,
-                'children': []
+                'children': [],
             },
             'poolId': 0,
             'descendantPredicate': ([{value}]) => value === '_',
             'childPredicate': ({length}) => length === 1,
-        }
+        },
     ],
     'USER_STYLES': [
-        []
+        [],
     ],
     'DEV_STYLES': [
         {
@@ -145,9 +145,9 @@ export const VALID: Configs = {
             'nodeButtonMove': '#00a0d1',
             'nodeButtonDelete': '#d10000',
             'nodeContrast': 'Black / White',
-            'borderTooltip': '#570000'
-        }
-    ]
+            'borderTooltip': '#570000',
+        },
+    ],
 };
 
 for (const {title, defaultTree, defaultStyle} of [CONFIG_0, CONFIG_1, CONFIG_2]) {
@@ -164,7 +164,7 @@ export const INVALID = {
         {},
         [],
         // Empty
-        ''
+        '',
     ],
     'TREES': [
         // Unexpected type
@@ -178,131 +178,131 @@ export const INVALID = {
         {
             'children': {
                 'label': '_',
-                'value': '_'
-            }
+                'value': '_',
+            },
         },
         {
             'children': [{
                 'label': '_',
-                'value': '_'
+                'value': '_',
             }],
-            'seed': []
+            'seed': [],
         },
         {
             'children': [{
                 'label': '_',
-                'value': '_'
+                'value': '_',
             }],
             'seed': [{
                 'label': '_',
-                'value': '_'
-            }]
+                'value': '_',
+            }],
         },
         {
             'children': [{
                 'label': 1,
                 'value': '_',
-            }]
+            }],
         },
         {
             'children': [{
                 'label': '_',
                 'value': () => '_',
-            }]
+            }],
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': '_'
-            }]
+                'predicate': '_',
+            }],
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': true
-            }]
+                'predicate': true,
+            }],
         },
         {
             'children': [],
-            'seed': '_'
+            'seed': '_',
         },
         // Predicate fail
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': () => false
-            }]
+                'predicate': () => false,
+            }],
         },
         {
             ...VALID.TREES[0],
-            'childPredicate': () => false
+            'childPredicate': () => false,
         },
         {
             ...VALID.TREES[0],
-            'descendantPredicate': () => false
+            'descendantPredicate': () => false,
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': ['|']
-            }]
+                'predicate': ['|'],
+            }],
         },
         // Seed match fail
         {
             'children': [{
                 'label': '_',
-                'value': '_'
+                'value': '_',
             }],
             'seed': {
                 'label': '_',
                 'value': '_',
-                'predicate': () => true
-            }
+                'predicate': () => true,
+            },
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': () => true
+                'predicate': () => true,
             }],
             'seed': {
                 'label': '_',
-                'value': '_'
-            }
+                'value': '_',
+            },
         },
         {
             'children': [{
                 'label': '_',
                 'value': 1,
-                'predicate': () => true
+                'predicate': () => true,
             }],
             'seed': {
                 'label': '_',
                 'value': '1',
-                'predicate': () => true
-            }
+                'predicate': () => true,
+            },
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'predicate': ['_', '|']
+                'predicate': ['_', '|'],
             }],
             'seed': {
                 'label': '_',
                 'value': '_',
-                'predicate': ['_', '/']
-            }
+                'predicate': ['_', '/'],
+            },
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'children': []
+                'children': [],
             }],
             'seed': {
                 'label': '_',
@@ -310,38 +310,38 @@ export const INVALID = {
                 'children': [],
                 'seed': {
                     'label': '_',
-                    'value': '_'
-                }
-            }
+                    'value': '_',
+                },
+            },
         },
         // Pool errors
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'poolId': 0
+                'poolId': 0,
             }],
-            'poolId': 0
+            'poolId': 0,
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'poolId': 0
+                'poolId': 0,
             }],
             'seed': {
                 'label': '_',
                 'value': '_',
-                'poolId': 1
-            }
+                'poolId': 1,
+            },
         },
         {
             'children': [{
                 'label': '_',
                 'value': '_',
-                'poolId': 1.5
+                'poolId': 1.5,
             }],
-        }
+        },
     ],
     'USER_STYLES': [
         // Unexpected type
@@ -352,20 +352,20 @@ export const INVALID = {
         // Missing property
         [{}],
         [{
-            'name': '_'
+            'name': '_',
         }],
         [{
-            'isValid': true
+            'isValid': true,
         }],
         // Unexpected property type
         [{
             ...VALID.USER_STYLES[0],
-            'name': 1
+            'name': 1,
         }],
         [{
             ...VALID.USER_STYLES[0],
-            'isValid': 1
-        }]
+            'isValid': 1,
+        }],
     ],
     'DEV_STYLES': [
         // Unexpected type
@@ -375,10 +375,10 @@ export const INVALID = {
         [],
         // Unexpected property
         {
-            'name': '_'
+            'name': '_',
         },
         {
-            'isActive': false
-        }
-    ]
+            'isActive': false,
+        },
+    ],
 };

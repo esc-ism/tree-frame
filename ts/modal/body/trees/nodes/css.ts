@@ -8,12 +8,12 @@ export default function generate() {
     addRule(`.${ROOT_CLASS}`, [
         ['flex-grow', '1'],
         // Apparently it maxes out at the viewport's height without a content-related height value
-        ['height', 'fit-content']
+        ['height', 'fit-content'],
     ]);
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`,
-        ['margin-top', '0.7px']
+        ['margin-top', '0.7px'],
     );
 
     addRule(`:not(.${ROOT_CLASS}) > .${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-left', '1.8em']);
@@ -22,36 +22,36 @@ export default function generate() {
 
     addRule(
         `.${ELEMENT_CLASSES.ELEMENT_CONTAINER} > :not(.${ELEMENT_CLASSES.CHILD_CONTAINER})`,
-        ['height', '1.6em']
+        ['height', '1.6em'],
     );
 
     addRule([
         `.${ELEMENT_CLASSES.HEAD_CONTAINER}`,
         `.${ELEMENT_CLASSES.VALUE_CONTAINER}`,
         `.${ELEMENT_CLASSES.LABEL_CONTAINER}`,
-        `.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`
+        `.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`,
     ], [
         ['flex-grow', '1'],
         ['display', 'flex'],
-        ['align-items', 'center']
+        ['align-items', 'center'],
     ]);
 
     addRule([
         `.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`,
-        `.${ELEMENT_CLASSES.LABEL_CONTAINER}`
+        `.${ELEMENT_CLASSES.LABEL_CONTAINER}`,
     ], [
-        ['position', 'absolute']
+        ['position', 'absolute'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
         ['right', '0'],
         ['top', '0'],
-        ['user-select', 'none']
+        ['user-select', 'none'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`, [
         ['width', '100%'],
-        ['height', '100%']
+        ['height', '100%'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > *`, [
@@ -61,16 +61,16 @@ export default function generate() {
         ['width', '0'],
         ['transition', 'width 500ms'],
         // Don't compete for space
-        ['position', 'absolute']
+        ['position', 'absolute'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
         // Puts it above the backgrounds
-        ['position', 'relative']
+        ['position', 'relative'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [
-        ['height', '100%']
+        ['height', '100%'],
     ]);
 
     addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [
@@ -81,17 +81,17 @@ export default function generate() {
     addDepthChangeListener((depth, addRule) => {
         addRule(`.${DEPTH_CLASS_PREFIX}${depth}`, [
             ['color', `var(--nodeContrast${depth})`],
-            ['background', `var(--nodeBase${depth})`]
+            ['background', `var(--nodeBase${depth})`],
         ]);
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth}`,
-            ['outline', `1px solid var(--nodeContrast${depth})`]
+            ['outline', `1px solid var(--nodeContrast${depth})`],
         );
 
         addRule(
             `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`,
-            ['outline', `1px solid var(--nodeContrast${depth})`]
+            ['outline', `1px solid var(--nodeContrast${depth})`],
         );
     });
 }

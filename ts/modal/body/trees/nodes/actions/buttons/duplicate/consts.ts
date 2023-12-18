@@ -1,1 +1,1 @@
-export const ACTION_ID =  'node-copy';
+export const ACTION_ID = 'node-copy';

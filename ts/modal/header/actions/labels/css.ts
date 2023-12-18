@@ -11,7 +11,7 @@ import {ELEMENT_CLASSES} from '@nodes/consts';
 export default function generate() {
     addRule(
         `#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
-        ['display', 'none']
+        ['display', 'none'],
     );
 
     addColourRule(ACTION_ID, '--headButtonLabel');
