@@ -45,7 +45,7 @@ function validatePredicateMatch(
         case 'object':
             const {length} = candidate.predicate as Array<string>;
 
-            if (!isFrozen) {
+            if (!isFrozen && !model.predicate.includes(candidate.value)) {
                 candidate.value = model.predicate[(candidate.predicate as Array<string>).indexOf(candidate.value as string)];
             }
 
