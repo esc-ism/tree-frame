@@ -1,7 +1,7 @@
 import {PASSWORD, EVENTS} from './consts';
 
 import validate from './validation';
-import {setTarget, sendMessage} from './messaging';
+import {setTarget, sendMessage, isEventMessage} from './messaging';
 
 // Dynamic imports for smaller bundles
 
@@ -12,12 +12,11 @@ function start(config) {
 }
 
 async function onInit(message) {
-    const {password, event, ...config} = message.data;
-
-    // Ignore scripts that send messages to every frame
-    if (password !== PASSWORD || event !== EVENTS.START) {
+    if (!isEventMessage(message, EVENTS.START)) {
         return;
     }
+
+    const {password, event, id, ...config} = message.data;
 
     setTarget(message.origin);
 
@@ -43,7 +42,7 @@ async function onInit(message) {
                     'reason': error.message,
                 });
             } else {
-                throw {error};
+                throw error;
             }
         }
     } catch (error) {
@@ -70,8 +69,8 @@ if (window.parent === window) {
     window.addEventListener('message', onInit);
 
     // Inform the frame's parent that it's ready to receive data
-    window.parent.postMessage({
+    sendMessage({
         'events': EVENTS,
         'password': PASSWORD,
-    }, '*');
+    });
 }
