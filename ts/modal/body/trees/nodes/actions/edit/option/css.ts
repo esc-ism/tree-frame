@@ -18,6 +18,7 @@ export default function generate() {
 		['bottom', '0'],
 		['display', 'flex'],
 		['width', '100%'],
+		['pointer-events', 'initial'],
 	]);
 	
 	addRule(`.${OPTION_PARENT_CLASS}`, [
