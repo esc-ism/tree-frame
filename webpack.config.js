@@ -1,6 +1,7 @@
 const path = require('path');
 const FileCopy = require('copy-webpack-plugin');
 const TsconfigPaths = require('tsconfig-paths-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 const shared = {
 	entry: './ts',
@@ -17,7 +18,7 @@ const shared = {
 			},
 		],
 	},
-	plugins: [new FileCopy({patterns: [{from: './static'}]})],
+	plugins: [new FileCopy({patterns: [{from: './static'}]}), new CleanWebpackPlugin()],
 };
 
 module.exports = [
