@@ -24,6 +24,13 @@ export function update(value: Value) {
 	for (const {parentElement, innerText} of activeOptions) {
 		parentElement.classList[regExp.test(innerText) ? 'add' : 'remove'](OPTION_SHOW_CLASS);
 	}
+	
+	const wrapper = activeOptions[0].parentElement.parentElement;
+	const [totalOffsetTop, root] = getTotalOffsetTop(wrapper);
+	
+	if (root.scrollTop + root.clientHeight < totalOffsetTop + wrapper.clientHeight) {
+		root.scroll({top: totalOffsetTop + wrapper.clientHeight - root.clientHeight});
+	}
 }
 
 function setValue(node: Child, value: string, doKill: boolean = false) {
@@ -50,6 +57,26 @@ function getTotalOffsetTop(from: HTMLElement) {
 	}
 	
 	return [offsetTop, node.parentElement];
+}
+
+export function reset() {
+	for (const {parentElement} of activeOptions) {
+		parentElement.classList.remove(OPTION_SHOW_CLASS);
+	}
+	
+	if (activeIndex >= 0) {
+		setActive(activeOptions[activeIndex].parentElement, false);
+		
+		activeIndex = -1;
+	}
+	
+	activeOptions.length = 0;
+}
+
+export function setNode(node: Child) {
+	activeOptions.push(...(node.element.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
+	
+	update(node.value);
 }
 
 export function generate(node: Child) {
@@ -187,24 +214,4 @@ export function generate(node: Child) {
 	wrapper.appendChild(parent);
 	
 	node.element.valueContainer.appendChild(wrapper);
-}
-
-export function reset() {
-	for (const {parentElement} of activeOptions) {
-		parentElement.classList.remove(OPTION_SHOW_CLASS);
-	}
-	
-	if (activeIndex >= 0) {
-		setActive(activeOptions[activeIndex].parentElement, false);
-		
-		activeIndex = -1;
-	}
-	
-	activeOptions.length = 0;
-}
-
-export function setNode(node: Child) {
-	activeOptions.push(...(node.element.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
-	
-	update(node.value);
 }
