@@ -20,29 +20,29 @@ import {reset as resetMove} from '@nodes/actions/buttons/move';
 //  Do the same when waiting for a config.
 //  Prevent interaction during loading by adding a stopPropagation click listener to the foreground.
 function doAction() {
-    resetFocus();
-    resetEdit();
-    resetMove();
-
-    sendMessage({
-        'event': EVENTS.STOP,
-        'tree': getDataTree().getJSON(),
-        'styles': getUserStyles(),
-    });
+	resetFocus();
+	resetEdit();
+	resetMove();
+	
+	sendMessage({
+		event: EVENTS.STOP,
+		tree: getDataTree().getJSON(),
+		styles: getUserStyles(),
+	});
 }
 
 export default function generate() {
-    generateCSS();
-
-    const background = document.getElementById(MODAL_BACKGROUND_ID);
-
-    bindAction(BUTTON, doAction, HOTKEY);
-
-    background.addEventListener('click', (event) => {
-        if (background.isSameNode(event.target as Node)) {
-            doAction();
-        }
-    });
-
-    return BUTTON;
+	generateCSS();
+	
+	const background = document.getElementById(MODAL_BACKGROUND_ID);
+	
+	bindAction(BUTTON, doAction, HOTKEY);
+	
+	background.addEventListener('click', (event) => {
+		if (background.isSameNode(event.target as Node)) {
+			doAction();
+		}
+	});
+	
+	return BUTTON;
 }

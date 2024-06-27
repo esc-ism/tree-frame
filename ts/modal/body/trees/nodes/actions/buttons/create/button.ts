@@ -19,6 +19,6 @@ const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(lineHorizontal, lineVertical);
 
-const BUTTON = getPositionedButton(g, ACTION_ID, 'Create', {'scale': '1 1.15'});
+const BUTTON = getPositionedButton(g, ACTION_ID, 'Create', {scale: '1 1.15'});
 
 export default BUTTON;

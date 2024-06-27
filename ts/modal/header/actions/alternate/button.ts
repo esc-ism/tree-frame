@@ -4,17 +4,17 @@ import {getNewButton} from '../button';
 
 import {SVG_NAMESPACE} from '@/modal/consts';
 
-const ALPHA = (2 * Math.PI) / 10;
+const ALPHA = Math.PI / 5;
 const RADIUS = 46;
 
 const points: number[][] = [];
 
 // https://stackoverflow.com/questions/14580033/algorithm-for-drawing-a-5-point-star
 for (let i = 0; i < 12; ++i) {
-    const r = RADIUS * (i % 2 + 1) / 2;
-    const omega = ALPHA * i;
-
-    points.push([r * Math.sin(omega), r * Math.cos(omega)]);
+	const r = RADIUS * (i % 2 + 1) / 2;
+	const omega = ALPHA * i;
+	
+	points.push([r * Math.sin(omega), r * Math.cos(omega)]);
 }
 
 const outline = document.createElementNS(SVG_NAMESPACE, 'path');

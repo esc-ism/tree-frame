@@ -13,22 +13,22 @@ import {reset as resetMove} from '@nodes/actions/buttons/move';
 let isActive = false;
 
 function doAction() {
-    isActive = !isActive;
-
-    setActive(BUTTON, ACTION_ID, isActive);
-
-    resetFocus();
-    resetEdit();
-    resetMove();
-
-    // Reset tab index
-    document.body.focus();
+	isActive = !isActive;
+	
+	setActive(BUTTON, ACTION_ID, isActive);
+	
+	resetFocus();
+	resetEdit();
+	resetMove();
+	
+	// Reset tab index
+	document.body.focus();
 }
 
 export default function generate() {
-    generateCSS();
-
-    bindAction(BUTTON, doAction, HOTKEY);
-
-    return BUTTON;
+	generateCSS();
+	
+	bindAction(BUTTON, doAction, HOTKEY);
+	
+	return BUTTON;
 }

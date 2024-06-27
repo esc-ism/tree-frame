@@ -9,20 +9,20 @@ import {ELEMENT_CLASSES} from '@nodes/consts';
 import {addRule} from '@/modal/css';
 
 export default function generate() {
-    addColourRule(ACTION_ID_DEFAULT, '--nodeButtonDisable');
-
-    addColourRule(ACTION_ID_ALT, '--nodeButtonDelete');
-
-    addRule([
-        // Self selectors
-        `.${DISABLED_CLASS}:not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-        `.${DISABLED_CLASS}:not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
-        // Descendant selectors
-        `.${DISABLED_CLASS} :not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-        `.${DISABLED_CLASS} :not(.${HIGHLIGHT_CLASS}) > ` +
-        `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
-    ], ['opacity', '0.5']);
+	addColourRule(ACTION_ID_DEFAULT, '--nodeButtonDisable');
+	
+	addColourRule(ACTION_ID_ALT, '--nodeButtonDelete');
+	
+	addRule([
+		// Self selectors
+		`.${DISABLED_CLASS}:not(.${HIGHLIGHT_CLASS}) > `
+		+ `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
+		`.${DISABLED_CLASS}:not(.${HIGHLIGHT_CLASS}) > `
+		+ `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
+		// Descendant selectors
+		`.${DISABLED_CLASS} :not(.${HIGHLIGHT_CLASS}) > `
+		+ `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
+		`.${DISABLED_CLASS} :not(.${HIGHLIGHT_CLASS}) > `
+		+ `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
+	], ['opacity', '0.5']);
 }

@@ -12,61 +12,61 @@ import type {Root as _Root, Child as _Child, SubPredicate} from '@/validation/ty
 const actions = [highlight, focus, create];
 
 export default class Root implements _Root {
-    readonly children: Array<Middle | Child> = [];
-
-    readonly seed?: _Child;
-    readonly childPredicate?: SubPredicate;
-    readonly descendantPredicate?: SubPredicate;
-    readonly poolId?: number;
-
-    readonly depth: number = 0;
-    readonly element: NodeElement;
-
-    constructor({children, ...data}: _Root) {
-        this.element = new NodeElement({});
-        this.element.addClass(ROOT_CLASS);
-        this.element.addDepthClass(0);
-
-        for (const [key, value] of Object.entries(data)) {
-            this[key] = value;
-        }
-
-        this.addChildren(children);
-
-        for (const {shouldMount, mount} of actions) {
-            if (shouldMount(this)) {
-                mount(this);
-            }
-        }
-    }
-
-    addChildren(children) {
-        for (const child of children) {
-            if ('children' in child) {
-                new Middle(child, this);
-            } else {
-                new Child(child, this);
-            }
-        }
-    }
-
-    getRoot() {
-        return this;
-    }
-
-    updateDepthClass(classCount) {
-        for (const child of this.children) {
-            child.updateDepthClass(classCount);
-        }
-    }
-
-    getJSON(): _Root {
-        const data: any = {'children': this.children.map(child => child.getJSON())};
-
-        if ('seed' in this) {
-            data.seed = this.seed;
-        }
-
-        return data;
-    }
+	readonly children: Array<Middle | Child> = [];
+	
+	readonly seed?: _Child;
+	readonly childPredicate?: SubPredicate;
+	readonly descendantPredicate?: SubPredicate;
+	readonly poolId?: number;
+	
+	readonly depth: number = 0;
+	readonly element: NodeElement;
+	
+	constructor({children, ...data}: _Root) {
+		this.element = new NodeElement({});
+		this.element.addClass(ROOT_CLASS);
+		this.element.addDepthClass(0);
+		
+		for (const [key, value] of Object.entries(data)) {
+			this[key] = value;
+		}
+		
+		this.addChildren(children);
+		
+		for (const {shouldMount, mount} of actions) {
+			if (shouldMount(this)) {
+				mount(this);
+			}
+		}
+	}
+	
+	addChildren(children) {
+		for (const child of children) {
+			if ('children' in child) {
+				new Middle(child, this);
+			} else {
+				new Child(child, this);
+			}
+		}
+	}
+	
+	getRoot() {
+		return this;
+	}
+	
+	updateDepthClass(classCount) {
+		for (const child of this.children) {
+			child.updateDepthClass(classCount);
+		}
+	}
+	
+	getJSON(): _Root {
+		const data: any = {children: this.children.map((child) => child.getJSON())};
+		
+		if ('seed' in this) {
+			data.seed = this.seed;
+		}
+		
+		return data;
+	}
 }

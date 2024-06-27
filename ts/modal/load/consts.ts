@@ -1,5 +1,4 @@
 export const BODY_CLASS = 'loading';
 
-export const ELEMENTS = {
-    //TODO
-};
+// TODO
+export const ELEMENTS = {};

@@ -8,17 +8,17 @@ import generateCSS from './css';
 import {BUTTON_CONTAINER_ID} from './consts';
 
 export default function generate() {
-    generateCSS();
-
-    const element = document.createElement('span');
-
-    element.id = BUTTON_CONTAINER_ID;
-
-    element.append(generateAltToggle());
-    element.append(generateHider());
-    element.append(generateLabelToggle());
-    element.append(generateStyler());
-    element.append(generateCloser());
-
-    return element;
+	generateCSS();
+	
+	const element = document.createElement('span');
+	
+	element.id = BUTTON_CONTAINER_ID;
+	
+	element.append(generateAltToggle());
+	element.append(generateHider());
+	element.append(generateLabelToggle());
+	element.append(generateStyler());
+	element.append(generateCloser());
+	
+	return element;
 }

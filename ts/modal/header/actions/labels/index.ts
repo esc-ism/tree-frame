@@ -9,17 +9,17 @@ import {setActive} from '@/modal/body/trees';
 let isActive = false;
 
 function doAction() {
-    isActive = !isActive;
-
-    setActive(BUTTON, ACTION_ID, isActive);
+	isActive = !isActive;
+	
+	setActive(BUTTON, ACTION_ID, isActive);
 }
 
 export default function generate() {
-    generateCSS();
-
-    bindAction(BUTTON, doAction, HOTKEY);
-
-    BUTTON.click();
-
-    return BUTTON;
+	generateCSS();
+	
+	bindAction(BUTTON, doAction, HOTKEY);
+	
+	BUTTON.click();
+	
+	return BUTTON;
 }

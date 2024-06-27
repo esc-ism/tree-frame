@@ -16,64 +16,64 @@ export const CONTRAST_METHODS = ['Black / White', 'Invert'] as const;
 export type ContrastMethod = typeof CONTRAST_METHODS[number];
 
 export interface DefaultStyle {
-    fontSize?: number;
-    borderTooltip?: string;
-
-    borderModal?: string;
-
-    headBase?: string;
-    headContrast?: ContrastMethod;
-
-    headButtonExit?: string;
-    headButtonLabel?: string;
-    headButtonStyle?: string;
-    headButtonHide?: string;
-    headButtonAlt?: string;
-
-    nodeBase?: Array<string>;
-    nodeContrast?: ContrastMethod;
-
-    nodeButtonCreate?: string;
-    nodeButtonDuplicate?: string;
-    nodeButtonMove?: string;
-    nodeButtonDisable?: string;
-    nodeButtonDelete?: string;
-
-    validBackground?: string;
-    invalidBackground?: string;
+	fontSize?: number;
+	borderTooltip?: string;
+	
+	borderModal?: string;
+	
+	headBase?: string;
+	headContrast?: ContrastMethod;
+	
+	headButtonExit?: string;
+	headButtonLabel?: string;
+	headButtonStyle?: string;
+	headButtonHide?: string;
+	headButtonAlt?: string;
+	
+	nodeBase?: Array<string>;
+	nodeContrast?: ContrastMethod;
+	
+	nodeButtonCreate?: string;
+	nodeButtonDuplicate?: string;
+	nodeButtonMove?: string;
+	nodeButtonDisable?: string;
+	nodeButtonDelete?: string;
+	
+	validBackground?: string;
+	invalidBackground?: string;
 }
 
 export interface UserStyle extends DefaultStyle {
-    name: string;
-    isActive: boolean;
+	name: string;
+	isActive: boolean;
 }
 
 // Group types
 
 export interface _Child {
-    // The node's purpose
-    label?: string;
-    // The node's data
-    value?: Value;
-    // A data validator
-    predicate?: Predicate;
-    // Indicates a preferred input type
-    input?: Input;
-    // Indicates whether the data should ignored or not
-    isActive?: boolean;
+	// The node's purpose
+	label?: string;
+	// The node's data
+	value?: Value;
+	// A data validator
+	predicate?: Predicate;
+	// Indicates a preferred input type
+	input?: Input;
+	// Indicates whether the data should ignored or not
+	isActive?: boolean;
 }
 
 export interface _Parent {
-    // The node's children
-    children: Array<Child>;
-    // A node that can be added to children
-    seed?: Child;
-    // Checked before children are modified
-    childPredicate?: SubPredicate;
-    // Checked before descendants are modified
-    descendantPredicate?: SubPredicate;
-    // Children may be moved between nodes with poolId values that match their parent's
-    poolId?: number;
+	// The node's children
+	children: Array<Child>;
+	// A node that can be added to children
+	seed?: Child;
+	// Checked before children are modified
+	childPredicate?: SubPredicate;
+	// Checked before descendants are modified
+	descendantPredicate?: SubPredicate;
+	// Children may be moved between nodes with poolId values that match their parent's
+	poolId?: number;
 }
 
 // Node types
@@ -102,9 +102,9 @@ export type Node = Root | Child;
 export const CONFIG_KEYS = ['title', 'defaultTree', 'userTree', 'defaultStyle', 'userStyles'];
 
 export interface Config {
-    title: string;
-    defaultTree: Root;
-    userTree?: Root;
-    defaultStyle?: DefaultStyle;
-    userStyles: Array<UserStyle>;
+	title: string;
+	defaultTree: Root;
+	userTree?: Root;
+	defaultStyle?: DefaultStyle;
+	userStyles: Array<UserStyle>;
 }
