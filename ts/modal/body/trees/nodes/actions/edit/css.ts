@@ -18,7 +18,6 @@ export default function generate() {
 		['flex-grow', '1'],
 		['padding', '0 0.6em'],
 		['outline', 'none'],
-		['pointer-events', 'none'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, [

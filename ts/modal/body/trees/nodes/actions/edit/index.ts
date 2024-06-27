@@ -220,6 +220,8 @@ export function mount(node: Child): void {
 		headContainer.addEventListener('click', (event) => {
 			event.stopPropagation();
 			
+			valueElement.checked = !valueElement.checked;
+			
 			update(node);
 		});
 	} else {
@@ -236,6 +238,8 @@ export function mount(node: Child): void {
 				event.stopPropagation();
 				
 				reset();
+				
+				focusHovered();
 			});
 		}
 	}
@@ -249,16 +253,11 @@ export function mount(node: Child): void {
 			case 'Enter':
 			case 'Escape':
 			case 'Tab':
+				event.stopPropagation();
+				
 				reset();
 				
-				if (event.key === 'Tab') {
-					// Fixes weird tab behaviour
-					headContainer.focus();
-				} else {
-					focusHovered();
-				}
-				
-				event.stopPropagation();
+				focusHovered();
 		}
 	});
 }

@@ -70,6 +70,7 @@ export default function generate() {
 		['transition-property', 'all'],
 		['transition-duration', '500ms'],
 		['position', 'relative'], // For tooltips
+		['pointer-events', 'none'], // For editing
 	]);
 	
 	addDepthChangeListener((depth, addRule) => {
