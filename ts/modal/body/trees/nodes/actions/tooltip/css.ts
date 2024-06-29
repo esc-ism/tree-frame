@@ -13,6 +13,8 @@ import {addRule} from '@/modal/css';
 //  you'll need a different system to position tooltips underneath/above buttons
 
 export default function generate() {
+	addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [['position', 'relative']]);
+	
 	addRule(`.${TOOLTIP_CONTAINER_CLASS}`, [
 		['position', 'absolute'],
 		['text-align', 'center'],

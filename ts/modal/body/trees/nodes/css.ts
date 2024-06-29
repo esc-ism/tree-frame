@@ -67,12 +67,6 @@ export default function generate() {
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [['height', '100%']]);
 	
-	addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [
-		['transition-property', 'all'],
-		['transition-duration', '500ms'],
-		['position', 'relative'], // For tooltips
-	]);
-	
 	addDepthChangeListener((depth, addRule) => {
 		addRule(`.${DEPTH_CLASS_PREFIX}${depth}`, [
 			['color', `var(--nodeContrast${depth})`],
