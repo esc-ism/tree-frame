@@ -45,6 +45,7 @@ export default function generate() {
 		['right', '0'],
 		['top', '0'],
 		['user-select', 'none'],
+		['pointer-events', 'none'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`, [
@@ -70,7 +71,6 @@ export default function generate() {
 		['transition-property', 'all'],
 		['transition-duration', '500ms'],
 		['position', 'relative'], // For tooltips
-		['pointer-events', 'none'], // For editing
 	]);
 	
 	addDepthChangeListener((depth, addRule) => {

@@ -23,6 +23,7 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, [
 		['height', '1em'],
 		['width', '2.2em'],
+		['cursor', 'pointer'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.VALUE}[type="color"]`, ['height', '1.3em']);

@@ -8,50 +8,49 @@ import {hasOwnProperty, validateUnexpectedKeys} from '../index';
 
 // Type predicates
 
-export function isParent(breadcrumbs: string[], candidate: object): candidate is Parent {
+export function isParent(breadcrumbs: string[], candidate: object, isUserTree: boolean = false): candidate is Parent {
 	if (!hasOwnProperty(candidate, 'children'))
 		throw new PropertyError(breadcrumbs, 'children', true);
 	
 	if (!Array.isArray(candidate.children))
 		throw new TypeError([...breadcrumbs, 'children'], typeof candidate.children, ['array']);
 	
-	if (hasOwnProperty(candidate, 'seed') && !isChild([...breadcrumbs, 'seed'], candidate.seed))
-		throw new UnexpectedStateError();
+	if (hasOwnProperty(candidate, 'seed')) {
+		if (isUserTree)
+			throw new PropertyError(breadcrumbs, 'descendantPredicate', false);
+		
+		if (!isChild([...breadcrumbs, 'seed'], candidate.seed))
+			throw new UnexpectedStateError();
+	}
 	
 	if (hasOwnProperty(candidate, 'childPredicate')) {
-		switch (typeof candidate.childPredicate) {
-			case 'number':
-			case 'function':
-				break;
-			
-			default:
-				throw new TypeError([...breadcrumbs, 'childPredicate'], typeof candidate.childPredicate, ['function']);
-		}
+		if (isUserTree)
+			throw new PropertyError(breadcrumbs, 'childPredicate', false);
+		
+		if (typeof candidate.childPredicate !== 'function')
+			throw new TypeError([...breadcrumbs, 'childPredicate'], typeof candidate.childPredicate, ['function']);
 	}
 	
 	if (hasOwnProperty(candidate, 'descendantPredicate')) {
-		switch (typeof candidate.descendantPredicate) {
-			case 'number':
-			case 'function':
-				break;
-			
-			default:
-				throw new TypeError([...breadcrumbs, 'descendantPredicate'], typeof candidate.descendantPredicate, ['function']);
-		}
+		if (isUserTree)
+			throw new PropertyError(breadcrumbs, 'descendantPredicate', false);
+		
+		if (typeof candidate.descendantPredicate !== 'function')
+			throw new TypeError([...breadcrumbs, 'descendantPredicate'], typeof candidate.descendantPredicate, ['function']);
 	}
 	
 	if (hasOwnProperty(candidate, 'poolId') && typeof candidate.poolId !== 'number')
 		throw new TypeError([...breadcrumbs, 'poolId'], typeof candidate.poolId, ['number']);
 	
 	for (const [i, child] of candidate.children.entries()) {
-		if (!isChild([...breadcrumbs, 'children', i.toString()], child))
+		if (!isChild([...breadcrumbs, 'children', i.toString()], child, isUserTree))
 			throw new UnexpectedStateError();
 	}
 	
 	return true;
 }
 
-function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child {
+function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean = false): candidate is Child {
 	if (typeof candidate !== 'object')
 		throw new TypeError([...breadcrumbs], typeof candidate, ['object']);
 	
@@ -62,19 +61,17 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
 		throw new TypeError([...breadcrumbs, 'value'], typeof candidate.value, VALUE_TYPES);
 	
 	if (hasOwnProperty(candidate, 'predicate')) {
-		switch (typeof candidate.predicate) {
-			case 'function':
-			case 'number':
-				break;
+		if (isUserTree)
+			throw new PropertyError(breadcrumbs, 'predicate', false);
+		
+		if (typeof candidate.predicate !== 'function') {
+			if (!Array.isArray(candidate.predicate))
+				throw new TypeError([...breadcrumbs, 'predicate'], typeof candidate.predicate, PREDICATE_TYPES);
 			
-			default:
-				if (!Array.isArray(candidate.predicate))
-					throw new TypeError([...breadcrumbs, 'predicate'], typeof candidate.predicate, PREDICATE_TYPES);
-				
-				for (const [i, option] of candidate.predicate.entries()) {
-					if (!(VALUE_TYPES as readonly string[]).includes(typeof option))
-						throw new TypeError([...breadcrumbs, 'predicate', i.toString()], typeof option, VALUE_TYPES);
-				}
+			for (const [i, option] of candidate.predicate.entries()) {
+				if (!(VALUE_TYPES as readonly string[]).includes(typeof option))
+					throw new TypeError([...breadcrumbs, 'predicate', i.toString()], typeof option, VALUE_TYPES);
+			}
 		}
 	}
 	
@@ -90,7 +87,7 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
 		throw new TypeError([...breadcrumbs, 'isActive'], typeof candidate.isActive, ['boolean']);
 	
 	if (hasOwnProperty(candidate, 'children')) {
-		if (!isParent(breadcrumbs, candidate))
+		if (!isParent(breadcrumbs, candidate, isUserTree))
 			throw new UnexpectedStateError();
 		
 		validateUnexpectedKeys(breadcrumbs, candidate, MIDDLE_KEYS);
@@ -101,11 +98,11 @@ function isChild(breadcrumbs: string[], candidate: unknown): candidate is Child 
 	return true;
 }
 
-export function isRoot(breadcrumbs: string[], candidate: unknown): candidate is Root {
+export function isRoot(breadcrumbs: string[], candidate: unknown, isUserTree: boolean = false): candidate is Root {
 	if (typeof candidate !== 'object')
 		throw new TypeError(breadcrumbs, typeof candidate, ['object']);
 	
-	if (!isParent(breadcrumbs, candidate))
+	if (!isParent(breadcrumbs, candidate, isUserTree))
 		throw new UnexpectedStateError();
 	
 	validateUnexpectedKeys(breadcrumbs, candidate, ROOT_KEYS);

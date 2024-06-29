@@ -1,8 +1,8 @@
-import type {Root, UserStyle, DefaultStyle} from '../../ts/validation/types';
+import type {Root, UserStyle, DefaultStyle} from '../../ts/library/validation/types';
 
-import CONFIG_0 from '../../ts/modal/body/trees/data/examples/faves';
-import CONFIG_1 from '../../ts/modal/body/trees/data/examples/riddle';
-import CONFIG_2 from '../../ts/modal/body/trees/data/examples/places';
+import CONFIG_0 from '../../ts/standalone/examples/faves';
+import CONFIG_1 from '../../ts/standalone/examples/riddle';
+import CONFIG_2 from '../../ts/standalone/examples/places';
 
 type Configs = {
 	TITLES: Array<string>;

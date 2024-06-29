@@ -51,13 +51,6 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 	}
 }
 
-export function reset() {
-	setActive();
-	
-	// Blur focused node & reset focus index
-	document.body.focus();
-}
-
 export function mount(node: Root | Child) {
 	const {backgroundContainer, headContainer, elementContainer} = node.element;
 	
@@ -105,10 +98,45 @@ export function shouldMount(): boolean {
 }
 
 // Prevents zipping to the end of the tree when mousing over the bottom pixel
-export function generateEave(): HTMLDivElement {
+export function generateEave(): HTMLElement {
 	const element = document.createElement('div');
 	
 	element.id = EAVE_ID;
 	
+	element.setAttribute('tabIndex', '3');
+	
+	// Prevent tabbing away from the modal
+	element.addEventListener('keydown', (event) => {
+		if (event.key === 'Tab' && !event.shiftKey && element.isSameNode(event.target as HTMLElement)) {
+			event.preventDefault();
+		}
+	});
+	
 	return element;
+}
+
+let socket: HTMLElement;
+
+// Blur focused node & reset focus index
+export function reset() {
+	setActive();
+	
+	socket.focus();
+}
+
+export function onMount(_socket) {
+	socket = _socket;
+	
+	socket.setAttribute('tabIndex', '1');
+	
+	// Prevent tabbing away from the modal
+	socket.addEventListener('keydown', (event) => {
+		if (event.key === 'Tab' && event.shiftKey && socket.isSameNode(event.target as HTMLElement)) {
+			event.preventDefault();
+		}
+	});
+	
+	socket.addEventListener('focusin', () => {
+		setActive();
+	});
 }

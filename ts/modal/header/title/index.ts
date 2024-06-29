@@ -1,7 +1,7 @@
 import {TITLE_CONTAINER_ID, TITLE_ID} from './consts';
 import generateCSS from './css';
 
-export default function generate(title: string) {
+export default function generate(title: string): HTMLElement {
 	generateCSS();
 	
 	const titleContainer = document.createElement('span');

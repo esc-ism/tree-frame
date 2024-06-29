@@ -1,5 +1,7 @@
 import type {Config, Middle} from '@types';
 
+const year = (new Date()).getFullYear();
+
 const yearPredicate = (value: number): true | string => {
 	if (value < 0) {
 		return 'Value must be positive';
@@ -7,6 +9,10 @@ const yearPredicate = (value: number): true | string => {
 	
 	if (Math.floor(value) !== value) {
 		return 'Value must be an integer';
+	}
+	
+	if (year < value) {
+		return `Value must not be greater than ${year}`;
 	}
 	
 	return true;

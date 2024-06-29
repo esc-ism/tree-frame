@@ -12,7 +12,7 @@ import * as duplicate from './actions/buttons/duplicate';
 
 import {getDepthClassCount} from '../style/update/depth';
 
-import type {Leaf, Child as _Child, Value, Predicate, Input} from '@/validation/types';
+import type {Leaf, Child as _Child, Value, Predicate, Input} from '@types';
 
 const actions: Array<{
 	shouldMount: (node: Child) => boolean;
@@ -124,7 +124,7 @@ export default class Child implements Leaf {
 	getJSON(): _Child {
 		const data: any = {isActive: this.isActive};
 		
-		for (const property of ['label', 'value', 'predicate', 'input']) {
+		for (const property of ['label', 'value', 'input']) {
 			if (property in this) {
 				data[property] = this[property];
 			}

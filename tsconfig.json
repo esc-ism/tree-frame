@@ -10,7 +10,7 @@
     "baseUrl": "ts",
     "paths": {
       "@/*": ["./*"],
-      "@types": ["./validation/types"],
+      "@types": ["./library/validation/types"],
       "@nodes/*": ["./modal/body/trees/nodes/*"],
     }
   },

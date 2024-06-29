@@ -4,7 +4,6 @@ const TsconfigPaths = require('tsconfig-paths-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 const shared = {
-	entry: './ts',
 	resolve: {
 		extensions: ['.ts', '.js'],
 		plugins: [new TsconfigPaths()],
@@ -18,12 +17,30 @@ const shared = {
 			},
 		],
 	},
-	plugins: [new FileCopy({patterns: [{from: './static'}]}), new CleanWebpackPlugin()],
+	plugins: [new FileCopy({patterns: [{from: './ts/standalone/index.html'}]}), new CleanWebpackPlugin()],
 };
 
 module.exports = [
 	{
 		...shared,
+		entry: './ts/library/$Config.js',
+		name: 'LIBRARY',
+		mode: 'development',
+		devtool: false,
+		output: {
+			filename: 'tree-frame.bundle.js',
+			path: path.resolve(__dirname, 'bin/lib'),
+			library: {
+				name: '$Config',
+				type: 'var',
+				export: 'default',
+			},
+		},
+		plugins: [new CleanWebpackPlugin()],
+	},
+	{
+		...shared,
+		entry: './ts/standalone',
 		name: 'DEVELOPMENT',
 		mode: 'development',
 		devtool: 'eval-source-map',
@@ -38,6 +55,7 @@ module.exports = [
 	},
 	{
 		...shared,
+		entry: './ts/standalone',
 		name: 'PRODUCTION',
 		mode: 'production',
 		output: {

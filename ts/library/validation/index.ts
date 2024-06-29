@@ -83,7 +83,7 @@ function isConfig(candidate: unknown): candidate is Config {
 	
 	// userTree
 	
-	if (hasOwnProperty(candidate, 'userTree') && !isRoot(['userTree'], candidate.userTree))
+	if (hasOwnProperty(candidate, 'userTree') && !isRoot(['userTree'], candidate.userTree, true))
 		throw new UnexpectedStateError();
 	
 	return true;
@@ -107,13 +107,6 @@ function validateConfig({title, defaultTree, userTree}: Config): Promise<unknown
 		
 		// Has to be done after mutations since new pools may be created
 		validatePoolSizeMatch(defaultTree, userTree);
-		
-		return Promise.all([
-			...validatePredicates(['defaultTree'], defaultTree),
-			// Can fail even when defaultTree passes if generated from a different defaultTree
-			// or userTree gets directly edited
-			...validatePredicates(['userTree'], userTree),
-		]);
 	}
 	
 	return Promise.all(validatePredicates(['defaultTree'], defaultTree));

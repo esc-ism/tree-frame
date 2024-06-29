@@ -1,6 +1,6 @@
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from './consts';
 
-import type {Child as _Child} from '@/validation/types';
+import type {Child as _Child} from '@types';
 
 export default class Element {
 	readonly elementContainer: HTMLElement = document.createElement('div');

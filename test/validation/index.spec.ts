@@ -2,9 +2,9 @@
 
 import {VALID, INVALID} from './consts';
 
-import validate from '../../ts/validation';
+import validate from '../../ts/library/validation';
 
-import type {Config} from '../../ts/validation/types';
+import type {Config} from '../../ts/library/validation/types';
 
 describe('Validation', function () {
 	// Tests pass if `validate` doesn't throw an error

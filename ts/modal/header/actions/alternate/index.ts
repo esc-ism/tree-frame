@@ -19,7 +19,7 @@ function doAction(doActivate = !_isActive) {
 	_isActive = doActivate;
 }
 
-export default function generate() {
+export default function generate(): HTMLElement {
 	generateCSS();
 	
 	bindAction(BUTTON, doAction);
@@ -44,6 +44,8 @@ export default function generate() {
 	
 	window.addEventListener('blur', () => {
 		if (keyHeld) {
+			keyHeld = false;
+			
 			doAction(false);
 		}
 	});

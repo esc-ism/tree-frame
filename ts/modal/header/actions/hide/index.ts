@@ -14,7 +14,7 @@ function doAction() {
 	setActive(BUTTON, ACTION_ID, isActive);
 }
 
-export default function generate() {
+export default function generate(): HTMLElement {
 	generateCSS();
 	
 	bindAction(BUTTON, doAction, HOTKEY);

@@ -5,16 +5,14 @@ import generateCSS from './css';
 
 import {Config} from '@types';
 
-export default function generate({title}: Config) {
+export default function generate({title}: Config, background: HTMLElement): HTMLElement {
 	generateCSS();
 	
 	const element = document.createElement('div');
 	
 	element.id = HEADER_ID;
 	
-	element.appendChild(generateTitle(title));
-	
-	element.append(generateButtons());
+	element.append(generateTitle(title), generateButtons(background));
 	
 	return element;
 }

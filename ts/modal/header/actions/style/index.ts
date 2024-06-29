@@ -25,7 +25,7 @@ function doAction() {
 	document.body.focus();
 }
 
-export default function generate() {
+export default function generate(): HTMLElement {
 	generateCSS();
 	
 	bindAction(BUTTON, doAction, HOTKEY);

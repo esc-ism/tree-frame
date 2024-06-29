@@ -232,7 +232,7 @@ export function getUserStyles(): Array<UserStyle> {
 	return styles;
 }
 
-export default function generate(userStyles: Array<UserStyle>, devStyle?: DefaultStyle) {
+export default function generate(userStyles: Array<UserStyle>, devStyle?: DefaultStyle): HTMLElement {
 	generateCSS();
 	
 	const defaultStyle = getFilledStyle(devStyle);

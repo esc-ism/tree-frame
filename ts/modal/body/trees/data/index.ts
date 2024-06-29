@@ -19,6 +19,6 @@ export function setTree(data: RootJSON) {
 	root.addChildren(data.children);
 }
 
-export default function generate(data: RootJSON) {
+export default function generate(data: RootJSON): HTMLElement {
 	return generateTree(data, ROOT_ID);
 }

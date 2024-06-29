@@ -7,14 +7,27 @@ import type Child from '@nodes/child';
 
 import {ROOT_CLASS} from '@nodes/consts';
 
-import type {Value} from '@/validation/types';
+import {TREE_CONTAINER} from '@/modal/body/trees';
+
+import type {Value} from '@types';
 
 const activeOptions: HTMLElement[] = [];
 
 let activeIndex: number = -1;
 
+function getTotalOffsetTop(from: HTMLElement): number {
+	let offsetTop = 2;
+	let node;
+	
+	for (node = from; !node.classList.contains(ROOT_CLASS); node = node.offsetParent) {
+		offsetTop += node.offsetTop;
+	}
+	
+	return offsetTop;
+}
+
 // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions#escaping
-function escapeRegExp(string) {
+function escapeRegExp(string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
@@ -26,10 +39,10 @@ export function update(value: Value) {
 	}
 	
 	const wrapper = activeOptions[0].parentElement.parentElement;
-	const [totalOffsetTop, root] = getTotalOffsetTop(wrapper);
+	const totalOffsetTop = getTotalOffsetTop(wrapper);
 	
-	if (root.scrollTop + root.clientHeight < totalOffsetTop + wrapper.clientHeight) {
-		root.scroll({top: totalOffsetTop + wrapper.clientHeight - root.clientHeight});
+	if (TREE_CONTAINER.scrollTop + TREE_CONTAINER.clientHeight < totalOffsetTop + wrapper.clientHeight) {
+		TREE_CONTAINER.scrollTop = totalOffsetTop + wrapper.clientHeight - TREE_CONTAINER.clientHeight;
 	}
 }
 
@@ -46,17 +59,6 @@ function setValue(node: Child, value: string, doKill: boolean = false) {
 
 function setActive(option: HTMLElement, isActive: boolean = true) {
 	option.classList[isActive ? 'add' : 'remove'](OPTION_ACTIVE_CLASS);
-}
-
-function getTotalOffsetTop(from: HTMLElement) {
-	let offsetTop = 2;
-	let node;
-	
-	for (node = from; !node.classList.contains(ROOT_CLASS); node = node.offsetParent) {
-		offsetTop += node.offsetTop;
-	}
-	
-	return [offsetTop, node.parentElement];
 }
 
 export function reset() {
@@ -142,13 +144,13 @@ export function generate(node: Child) {
 						const optionBottom = parentElement.offsetTop + parentElement.clientHeight;
 						
 						if (parentElement.parentElement.scrollTop < optionBottom) {
-							parentElement.parentElement.scroll({top: optionBottom - parentElement.parentElement.clientHeight});
+							parentElement.parentElement.scrollTop = optionBottom - parentElement.parentElement.clientHeight;
 						}
 						
-						const [totalOffsetTop, root] = getTotalOffsetTop(parentElement);
+						const totalOffsetTop = getTotalOffsetTop(parentElement);
 						
-						if (root.scrollTop + root.clientHeight < totalOffsetTop + parentElement.clientHeight - parentElement.parentElement.scrollTop) {
-							root.scroll({top: totalOffsetTop + parentElement.clientHeight - root.clientHeight - parentElement.parentElement.scrollTop});
+						if (TREE_CONTAINER.scrollTop + TREE_CONTAINER.clientHeight < totalOffsetTop + parentElement.clientHeight - parentElement.parentElement.scrollTop) {
+							TREE_CONTAINER.scrollTop = totalOffsetTop + parentElement.clientHeight - TREE_CONTAINER.clientHeight - parentElement.parentElement.scrollTop;
 						}
 						
 						break;
@@ -166,14 +168,14 @@ export function generate(node: Child) {
 						
 						// Scroll option list if necessary
 						if (parentElement.parentElement.scrollTop > parentElement.offsetTop) {
-							parentElement.parentElement.scroll({top: parentElement.offsetTop});
+							parentElement.parentElement.scrollTop = parentElement.offsetTop;
 						}
 						
-						const [totalOffsetTop, root] = getTotalOffsetTop(parentElement);
+						const totalOffsetTop = getTotalOffsetTop(parentElement);
 						
 						// Scroll modal body if necessary
-						if (root.scrollTop > totalOffsetTop - parentElement.parentElement.scrollTop) {
-							root.scroll({top: totalOffsetTop - parentElement.parentElement.scrollTop});
+						if (TREE_CONTAINER.scrollTop > totalOffsetTop - parentElement.parentElement.scrollTop) {
+							TREE_CONTAINER.scrollTop = totalOffsetTop - parentElement.parentElement.scrollTop;
 						}
 						
 						break;

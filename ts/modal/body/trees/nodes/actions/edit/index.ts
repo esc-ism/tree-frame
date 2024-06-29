@@ -12,7 +12,7 @@ import type Child from '@nodes/child';
 import type Middle from '@nodes/middle';
 import type Root from '@nodes/root';
 
-import {getPredicateResponse, resolvePredicatePromise} from '@/messaging';
+import {getPredicatePromise} from '@/predicate';
 
 import type {SubPredicate, Value} from '@types';
 
@@ -58,11 +58,7 @@ function getValue(node: Child): Value {
 }
 
 function getSubPredicateResponse(predicate: SubPredicate, children: Array<Child>): Promise<void> {
-	return typeof predicate === 'number' ?
-		getPredicateResponse(predicate, children.map((child) => child.getJSON())) :
-		new Promise((resolve, reject) =>
-			resolvePredicatePromise(predicate(children.map((child) => child.getJSON())), resolve, reject),
-		);
+	return getPredicatePromise(predicate(children.map((child) => child.getJSON())));
 }
 
 function getDescendantPredicateResponses(node: Root | Middle): Array<Promise<void>> {
@@ -98,12 +94,8 @@ function getOwnPredicateResponse(node: Child): Promise<void> {
 	const {predicate} = node;
 	const value = getValue(node);
 	
-	switch (typeof predicate) {
-		case 'number':
-			return getPredicateResponse(predicate, value);
-		
-		case 'function':
-			return new Promise((resolve, reject) => resolvePredicatePromise(predicate(value), resolve, reject));
+	if (typeof predicate === 'function') {
+		return getPredicatePromise(predicate(value));
 	}
 	
 	return Promise[predicate.indexOf(value as string) > -1 ? 'resolve' : 'reject']();
@@ -192,10 +184,6 @@ export function mount(node: Child): void {
 	
 	// Start
 	
-	valueElement.addEventListener('click', (event) => {
-		event.stopPropagation();
-	});
-	
 	valueElement.addEventListener('focus', (event) => {
 		event.stopPropagation();
 		
@@ -207,8 +195,6 @@ export function mount(node: Child): void {
 	headContainer.addEventListener('click', (event) => {
 		event.stopPropagation();
 		
-		valueElement.focus();
-		
 		if (activeNode !== node) {
 			doAction(node);
 		}
@@ -217,10 +203,8 @@ export function mount(node: Child): void {
 	// Process new value
 	
 	if (typeof node.value === 'boolean') {
-		headContainer.addEventListener('click', (event) => {
+		valueElement.addEventListener('click', (event) => {
 			event.stopPropagation();
-			
-			valueElement.checked = !valueElement.checked;
 			
 			update(node);
 		});

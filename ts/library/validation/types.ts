@@ -3,11 +3,10 @@
 export const VALUE_TYPES = ['boolean', 'number', 'string'] as const;
 export type Value = boolean | number | string;
 
-// 'number' is intentionally not included
 export const PREDICATE_TYPES = ['array', 'function'] as const;
-export type Predicate = Array<Value> | number | /* For me :) */ ((value: Value) => unknown);
+export type Predicate = Array<Value> | ((value: Value) => unknown);
 
-export type SubPredicate = number | /* For me :) */ ((children: Array<Child>) => unknown);
+export type SubPredicate = ((children: Array<Child>) => unknown);
 
 export const INPUT_FORMATS = ['color', 'date', 'datetime-local', 'email', 'month', 'password', 'search', 'tel', 'text', 'time', 'url', 'week'] as const;
 export type Input = typeof INPUT_FORMATS[number];

@@ -5,7 +5,7 @@ import Child from './child';
 
 import * as create from './actions/buttons/create';
 
-import type {Middle as _Middle, Child as _Child, SubPredicate} from '@/validation/types';
+import type {Middle as _Middle, Child as _Child, SubPredicate} from '@types';
 
 const actions: Array<{
 	shouldMount: (node: Middle) => boolean;
@@ -78,14 +78,8 @@ export default class Middle extends Child implements _Middle {
 	}
 	
 	getJSON(): _Middle {
-		const data: any = {children: this.children.map((child) => child.getJSON())};
-		
-		if ('seed' in this) {
-			data.seed = this.seed;
-		}
-		
 		return {
-			...data,
+			...{children: this.children.map((child) => child.getJSON())},
 			...super.getJSON(),
 		};
 	}

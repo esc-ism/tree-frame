@@ -7,13 +7,14 @@ import {setTree} from './trees/data';
 
 import updateStylesheet from './trees/style/update';
 
-import {generateEave} from '@nodes/actions/highlight';
+import {generateEave, onMount as onMountHighlight} from '@nodes/actions/highlight';
+import {onMount as onMountActive} from '@nodes/actions/active';
 
-import {EVENTS} from '@/consts';
-import {isEventMessage} from '@/messaging';
-import type {Config} from '@types';
+import type {Config, Root} from '@types';
 
-export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config) {
+let defaultTree: Root;
+
+export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config, socket: HTMLElement): HTMLElement {
 	updateStylesheet(getActiveStyle(userStyles, defaultStyle));
 	
 	generateCSS();
@@ -27,13 +28,12 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 		generateEave(),
 	);
 	
-	window.addEventListener('message', (message) => {
-		if (!isEventMessage(message, EVENTS.RESET)) {
-			return;
-		}
-		
-		setTree(defaultTree);
-	});
+	onMountHighlight(socket);
+	onMountActive(socket);
 	
 	return element;
+}
+
+export function reset() {
+	setTree(defaultTree);
 }

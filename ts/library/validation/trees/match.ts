@@ -35,27 +35,19 @@ function validatePredicateMatch(
 	if (typeof model.predicate !== typeof candidate.predicate)
 		throw new TypeError([...candidateBreadcrumbs, 'predicate'], typeof candidate.predicate, [typeof model.predicate]);
 	
-	switch (typeof model.predicate) {
-		case 'number':
-			if (model.predicate !== candidate.predicate)
-				throw new ValueError([...candidateBreadcrumbs, 'predicate'], candidate.predicate, [model.predicate]);
-			
-			break;
+	if (typeof model.predicate === 'object') {
+		const {length} = candidate.predicate as Array<string>;
 		
-		case 'object': {
-			const {length} = candidate.predicate as Array<string>;
-			
-			if (!isFrozen && !model.predicate.includes(candidate.value)) {
-				candidate.value = model.predicate[(candidate.predicate as Array<string>).indexOf(candidate.value as string)];
-			}
-			
-			if (model.predicate.length !== length)
-				throw new ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
-			
-			for (const [i, option] of model.predicate.entries()) {
-				if (candidate.predicate[i] !== option)
-					throw new ValueError([...candidateBreadcrumbs, 'predicate', i.toString()], candidate.predicate[i], [option]);
-			}
+		if (!isFrozen && !model.predicate.includes(candidate.value)) {
+			candidate.value = model.predicate[(candidate.predicate as Array<string>).indexOf(candidate.value as string)];
+		}
+		
+		if (model.predicate.length !== length)
+			throw new ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
+		
+		for (const [i, option] of model.predicate.entries()) {
+			if (candidate.predicate[i] !== option)
+				throw new ValueError([...candidateBreadcrumbs, 'predicate', i.toString()], candidate.predicate[i], [option]);
 		}
 	}
 }
@@ -85,19 +77,25 @@ export function validateParentMatch(
 		validateValueMatch('descendantPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
 	} else {
 		mutateMatch(model, candidate, validateValueMatch.bind(null, 'poolId'), 'poolId');
-		mutateMatch(model, candidate, validateValueMatch.bind(null, 'childPredicate'), 'childPredicate');
-		mutateMatch(model, candidate, validateValueMatch.bind(null, 'descendantPredicate'), 'descendantPredicate');
+		
+		if ('childPredicate' in model)
+			candidate.childPredicate = model.childPredicate;
+		
+		if ('descendantPredicate' in model)
+			candidate.descendantPredicate = model.descendantPredicate;
+		
+		if ('seed' in model)
+			candidate.seed = model.seed;
 	}
 	
-	if ('seed' in model !== 'seed' in candidate)
-		throw new PropertyError(candidateBreadcrumbs, 'seed', 'seed' in model);
-	
 	if ('seed' in model) {
-		validateChildMatch(
-			[...modelBreadcrumbs, 'seed'], model.seed,
-			[...candidateBreadcrumbs, 'seed'], candidate.seed,
-			isFrozen,
-		);
+		if (isFrozen) {
+			validateChildMatch(
+				[...modelBreadcrumbs, 'seed'], model.seed,
+				[...candidateBreadcrumbs, 'seed'], candidate.seed,
+				true,
+			);
+		}
 		
 		for (const [i, child] of candidate.children.entries()) {
 			validateChildMatch(
@@ -151,7 +149,9 @@ function validateChildMatch(
 			throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
 		
 		mutateMatch(model, candidate, validateValueMatch.bind(null, 'label'), 'label');
-		mutateMatch(model, candidate, validatePredicateMatch.bind(null, false), 'predicate');
+		
+		if ('predicate' in model)
+			candidate.predicate = model.predicate;
 	}
 	
 	if ('children' in model !== 'children' in candidate)

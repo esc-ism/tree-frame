@@ -29,7 +29,7 @@ export function setActive(button, actionId, doActivate = true) {
 	}
 }
 
-export function generateTree(data: RootJSON, id: string) {
+export function generateTree(data: RootJSON, id: string): HTMLElement {
 	if (ROOTS[id]) {
 		throw new Error(`Attempted to instantiate second tree with id '${id}'.`);
 	}
@@ -43,7 +43,7 @@ export function generateTree(data: RootJSON, id: string) {
 	return root.element.elementContainer;
 }
 
-export default function generate(data: RootJSON, userStyles: Array<UserStyle>, defaultStyle?: DefaultStyle) {
+export default function generate(data: RootJSON, userStyles: Array<UserStyle>, defaultStyle?: DefaultStyle): HTMLElement {
 	generateCSS();
 	
 	TREE_CONTAINER.id = TREE_CONTAINER_ID;

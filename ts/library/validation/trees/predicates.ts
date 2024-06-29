@@ -5,42 +5,31 @@ import {
 	MismatchedOptionsError, PredicateError, HangingPredicateError,
 } from '../errors';
 
-import {getPredicateResponse} from '../../messaging';
+import {getPredicatePromise} from '@/predicate';
 
-function getPredicatePromise(id: number, arg: any, error: Error): Promise<void> {
-	return new Promise((resolve, reject) => {
-		getPredicateResponse(id, arg)
-			.then(resolve)
-			.catch(() => reject(error));
-	});
+async function getBoundPredicatePromise(response, {message}: Error) {
+	try {
+		await getPredicatePromise(response);
+	} catch (cause) {
+		throw new Error(message/* , {cause} */);
+	}
 }
 
 async function validateValue(
 	valueBreadcrumbs: Array<string>, value: Value,
 	predicateBreadcrumbs: Array<string>, predicate: Predicate,
 ) {
-	switch (typeof predicate) {
-		case 'number':
-			await getPredicatePromise(
-				predicate, value,
-				new PredicateError(predicateBreadcrumbs),
-			);
-			
-			break;
+	if (typeof predicate === 'function') {
+		await getBoundPredicatePromise(predicate(value), new PredicateError(predicateBreadcrumbs));
 		
-		case 'function':
-			if (!predicate(value))
-				throw new PredicateError(predicateBreadcrumbs);
-			
-			break;
-		
-		default:
-			if (!predicate.includes(value))
-				throw new JoinedError(
-					new PredicateError(predicateBreadcrumbs),
-					new ValueError(valueBreadcrumbs, value, predicate),
-				);
+		return;
 	}
+	
+	if (!predicate.includes(value))
+		throw new JoinedError(
+			new PredicateError(predicateBreadcrumbs),
+			new ValueError(valueBreadcrumbs, value, predicate),
+		);
 }
 
 async function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> {
@@ -98,25 +87,17 @@ export function validateParent(breadcrumbs: string[], parent: Parent) {
 		throw new NonIntegerError([...breadcrumbs, 'poolId']);
 	
 	if ('childPredicate' in parent) {
-		if (typeof parent.childPredicate === 'number') {
-			promises.push(getPredicatePromise(
-				parent.childPredicate, children,
-				new PredicateError([...breadcrumbs, 'childPredicate']),
-			));
-		} else if (!parent.childPredicate(children)) {
-			throw new PredicateError([...breadcrumbs, 'childPredicate']);
-		}
+		promises.push(getBoundPredicatePromise(
+			parent.childPredicate(children),
+			new PredicateError([...breadcrumbs, 'childPredicate']),
+		));
 	}
 	
 	if ('descendantPredicate' in parent) {
-		if (typeof parent.descendantPredicate === 'number') {
-			promises.push(getPredicatePromise(
-				parent.descendantPredicate, children,
-				new PredicateError([...breadcrumbs, 'descendantPredicate']),
-			));
-		} else if (!parent.descendantPredicate(children)) {
-			throw new PredicateError([...breadcrumbs, 'descendantPredicate']);
-		}
+		promises.push(getBoundPredicatePromise(
+			parent.descendantPredicate(children),
+			new PredicateError([...breadcrumbs, 'descendantPredicate']),
+		));
 	}
 	
 	for (const [i, child] of children.entries()) {

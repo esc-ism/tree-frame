@@ -7,7 +7,7 @@ import * as highlight from './actions/highlight';
 import * as focus from './actions/focus';
 import * as create from './actions/buttons/create';
 
-import type {Root as _Root, Child as _Child, SubPredicate} from '@/validation/types';
+import type {Root as _Root, Child as _Child, SubPredicate} from '@types';
 
 const actions = [highlight, focus, create];
 
@@ -61,12 +61,6 @@ export default class Root implements _Root {
 	}
 	
 	getJSON(): _Root {
-		const data: any = {children: this.children.map((child) => child.getJSON())};
-		
-		if ('seed' in this) {
-			data.seed = this.seed;
-		}
-		
-		return data;
+		return {children: this.children.map((child) => child.getJSON())};
 	}
 }

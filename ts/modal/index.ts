@@ -6,7 +6,7 @@ import generateBody from './body';
 
 import {Config} from '@types';
 
-export default function generate(config: Config) {
+export default function generate(config: Config, socket: HTMLElement) {
 	generateCSS();
 	
 	const background = document.createElement('div');
@@ -17,8 +17,8 @@ export default function generate(config: Config) {
 	foreground.id = MODAL_ID;
 	
 	background.append(foreground);
-	document.body.append(background);
+	socket.append(background);
 	
-	foreground.append(generateHeader(config));
-	foreground.append(generateBody(config));
+	foreground.append(generateHeader(config, background));
+	foreground.append(generateBody(config, socket));
 }

@@ -4,17 +4,21 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {MODAL_BACKGROUND_ID} from '@/modal/consts';
-
-import {EVENTS} from '@/consts';
-
 import {getRoot as getDataTree} from '@/modal/body/trees/data';
 import {getUserStyles} from '@/modal/body/trees/style';
-import {sendMessage} from '@/messaging';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
 import {reset as resetEdit} from '@nodes/actions/edit';
 import {reset as resetMove} from '@nodes/actions/buttons/move';
+import {reset as resetHighlight} from '@nodes/actions/highlight';
+
+import {TREE_CONTAINER} from '@/modal/body/trees';
+
+let callback: Function;
+
+export function setCallback(_callback: Function) {
+	callback = _callback;
+}
 
 // TODO Maybe add a white, 0.5 opacity foreground over everything with a loading symbol.
 //  Do the same when waiting for a config.
@@ -23,18 +27,20 @@ function doAction() {
 	resetFocus();
 	resetEdit();
 	resetMove();
+	resetHighlight();
 	
-	sendMessage({
-		event: EVENTS.STOP,
+	TREE_CONTAINER.scroll(0, 0);
+	
+	callback?.({
 		tree: getDataTree().getJSON(),
 		styles: getUserStyles(),
 	});
+	
+	callback = undefined;
 }
 
-export default function generate() {
+export default function generate(background: HTMLElement): HTMLElement {
 	generateCSS();
-	
-	const background = document.getElementById(MODAL_BACKGROUND_ID);
 	
 	bindAction(BUTTON, doAction, HOTKEY);
 	
