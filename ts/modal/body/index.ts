@@ -12,9 +12,11 @@ import {onMount as onMountActive} from '@nodes/actions/active';
 
 import type {Config, Root} from '@types';
 
-let defaultTree: Root;
+let resetTree: Root;
 
-export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config, socket: HTMLElement): HTMLElement {
+export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config): HTMLElement {
+	resetTree = defaultTree;
+	
 	updateStylesheet(getActiveStyle(userStyles, defaultStyle));
 	
 	generateCSS();
@@ -28,12 +30,12 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 		generateEave(),
 	);
 	
-	onMountHighlight(socket);
-	onMountActive(socket);
+	onMountHighlight();
+	onMountActive();
 	
 	return element;
 }
 
 export function reset() {
-	setTree(defaultTree);
+	setTree(resetTree);
 }

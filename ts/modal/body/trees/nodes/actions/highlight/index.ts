@@ -7,6 +7,8 @@ import {isActive as positionIsActive} from '../buttons/position';
 import Root from '@nodes/root';
 import Child from '@nodes/child';
 
+import {getSocket} from '@/modal';
+
 let sustainedNodes = [];
 let activeNode: Root | Child;
 
@@ -115,17 +117,15 @@ export function generateEave(): HTMLElement {
 	return element;
 }
 
-let socket: HTMLElement;
-
 // Blur focused node & reset focus index
 export function reset() {
 	setActive();
 	
-	socket.focus();
+	getSocket().focus();
 }
 
-export function onMount(_socket) {
-	socket = _socket;
+export function onMount() {
+	const socket = getSocket();
 	
 	socket.setAttribute('tabIndex', '1');
 	

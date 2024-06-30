@@ -6,6 +6,16 @@ export type Selectors = Selector | Array<Selector>;
 type Style = [string, string];
 export type Styles = Style | Array<Style>;
 
+let targetWindow: Window = window;
+
+while (targetWindow.frameElement) {
+	targetWindow = window.parent;
+}
+
+export function getTargetWindow(): Window {
+	return targetWindow;
+}
+
 let rootSelector = 'body';
 
 export function setRootId(id: string) {
@@ -15,7 +25,7 @@ export function setRootId(id: string) {
 export function generateStylesheet(): CSSStyleSheet {
 	const wrapper = document.createElement('style');
 	
-	document.head.appendChild(wrapper);
+	getTargetWindow().document.head.appendChild(wrapper);
 	
 	return wrapper.sheet;
 }
@@ -32,7 +42,7 @@ function getStyleString([property, value]) {
 
 export function getRuleString(selectors: Selectors, rules: Style | Array<Style>) {
 	const styleString: string = isStyle(rules) ? getStyleString(rules) : rules.map(getStyleString).join('');
-	const selectorString = typeof selectors === 'string' ? selectors : selectors.join(',');
+	const selectorString = typeof selectors === 'string' ? selectors : selectors.join(`,${rootSelector} `);
 	
 	return `${rootSelector} ${selectorString}{${styleString}}`;
 }

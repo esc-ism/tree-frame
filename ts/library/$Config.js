@@ -1,4 +1,6 @@
-import * as $TreeFrame from './index';
+import {init, edit} from './index';
+import {getTargetWindow} from '../modal/css';
+import {reset} from '../modal/body';
 
 const VERSION = 0;
 
@@ -156,13 +158,7 @@ export default class $Config {
 				
 				target.style.display = 'none';
 				
-				let targetWindow = window;
-				
-				while (targetWindow.frameElement) {
-					targetWindow = window.parent;
-				}
-				
-				targetWindow.document.body.appendChild(target);
+				getTargetWindow().document.body.appendChild(target);
 				
 				return target;
 			})();
@@ -242,6 +238,8 @@ export default class $Config {
 				
 				// It may have previously been a rejected promise
 				this.ready = Promise.resolve();
+				
+				reset();
 			};
 			
 			/**
@@ -256,7 +254,7 @@ export default class $Config {
 				
 				open();
 				
-				const {tree, styles} = await $TreeFrame.edit();
+				const {tree, styles} = await edit();
 				
 				GM.setValue(KEY_TREE, tree);
 				GM.setValue(KEY_STYLES, styles);
@@ -270,7 +268,7 @@ export default class $Config {
 			// Pass data
 			
 			try {
-				const response = await $TreeFrame.init({
+				const response = await init({
 					userStyles,
 					defaultTree: TREE_DEFAULT,
 					title: TITLE,

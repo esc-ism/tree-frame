@@ -2,6 +2,8 @@ import {BUTTON_CLASS} from './consts';
 
 import {SVG_NAMESPACE} from '../../consts';
 
+import {getTargetWindow} from '@/modal/css';
+
 // Adds the template to the DOM
 export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey?: string): Function {
 	const bound = (event) => {
@@ -17,7 +19,7 @@ export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey
 	if (hotkey) {
 		button.title += ` (Alt+${hotkey})`;
 		
-		window.addEventListener('keydown', (event) => {
+		getTargetWindow().addEventListener('keydown', (event) => {
 			if (event.altKey && event.key.toUpperCase() === hotkey) {
 				bound(event);
 			}

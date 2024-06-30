@@ -6,6 +6,8 @@ import {bindAction} from '../button';
 
 import {setActive} from '@/modal/body/trees';
 
+import {getTargetWindow} from '@/modal/css';
+
 let _isActive = false;
 let keyHeld = false;
 
@@ -26,7 +28,9 @@ export default function generate(): HTMLElement {
 	
 	BUTTON.title += ' (Ctrl)';
 	
-	window.addEventListener('keydown', (event) => {
+	const targetWindow = getTargetWindow();
+	
+	targetWindow.addEventListener('keydown', (event) => {
 		if (event.key === 'Control') {
 			keyHeld = true;
 			
@@ -34,7 +38,7 @@ export default function generate(): HTMLElement {
 		}
 	});
 	
-	window.addEventListener('keyup', (event) => {
+	targetWindow.addEventListener('keyup', (event) => {
 		if (event.key === 'Control') {
 			keyHeld = false;
 			
@@ -42,7 +46,7 @@ export default function generate(): HTMLElement {
 		}
 	});
 	
-	window.addEventListener('blur', () => {
+	targetWindow.addEventListener('blur', () => {
 		if (keyHeld) {
 			keyHeld = false;
 			

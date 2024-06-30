@@ -2,7 +2,7 @@ import validate, {hasOwnProperty} from './validation';
 
 import type {Config} from '@types';
 
-import start from '../modal';
+import start, {getSocket} from '../modal';
 
 import {SOCKET_ID} from '../consts';
 
@@ -11,11 +11,7 @@ import {reset} from '../modal/body';
 
 import {setCallback as setOnClose} from '@/modal/header/actions/close';
 
-let socket: HTMLElement;
-
-async function init(config: unknown, _socket: HTMLElement, idPostfix: string) {
-	socket = _socket;
-	
+async function init(config: unknown, socket: HTMLElement, idPostfix: string) {
 	socket.id = `${SOCKET_ID}-${idPostfix}`;
 	
 	setRootId(socket.id);
@@ -23,7 +19,7 @@ async function init(config: unknown, _socket: HTMLElement, idPostfix: string) {
 	try {
 		await validate(config);
 		
-		start(config as Config, _socket);
+		start(config as Config, socket);
 		
 		// Config is valid
 		return {
@@ -51,7 +47,7 @@ async function init(config: unknown, _socket: HTMLElement, idPostfix: string) {
 }
 
 function edit() {
-	socket.focus();
+	getSocket().focus();
 	
 	return new Promise((resolve) => {
 		setOnClose(resolve);

@@ -6,7 +6,15 @@ import generateBody from './body';
 
 import {Config} from '@types';
 
-export default function generate(config: Config, socket: HTMLElement) {
+let socket: HTMLElement;
+
+export function getSocket(): HTMLElement {
+	return socket;
+}
+
+export default function generate(config: Config, _socket: HTMLElement) {
+	socket = _socket;
+	
 	generateCSS();
 	
 	const background = document.createElement('div');
@@ -20,5 +28,5 @@ export default function generate(config: Config, socket: HTMLElement) {
 	socket.append(background);
 	
 	foreground.append(generateHeader(config, background));
-	foreground.append(generateBody(config, socket));
+	foreground.append(generateBody(config));
 }

@@ -3,6 +3,8 @@ import * as highlight from './highlight';
 import * as focus from './focus';
 import * as position from './buttons/position';
 
+import {getSocket} from '@/modal';
+
 export function register() {
 	edit.reset();
 }
@@ -19,8 +21,8 @@ export function reset() {
 	return false;
 }
 
-export function onMount(socket: HTMLElement) {
-	socket.addEventListener('keydown', (event) => {
+export function onMount() {
+	getSocket().addEventListener('keydown', (event) => {
 		if (event.key === 'Escape' && reset()) {
 			event.stopPropagation();
 		}
