@@ -27,14 +27,16 @@ export function reset() {
 		return;
 	}
 	
-	activeNode.element.render(activeNode.value);
+	const {element} = activeNode;
 	
-	activeNode.element.removeClass(VALID_CLASS);
-	activeNode.element.removeClass(INVALID_CLASS);
+	element.render(activeNode.value);
 	
-	activeNode.element.valueElement.blur();
+	element.removeClass(VALID_CLASS);
+	element.removeClass(INVALID_CLASS);
 	
-	activeNode.element.valueContainer.classList.remove(ACTIVE_CLASS);
+	element.valueElement.blur();
+	
+	element.valueContainer.classList.remove(ACTIVE_CLASS);
 	
 	tooltip.reset();
 	option.reset();
@@ -192,6 +194,12 @@ export function mount(node: Child): void {
 		}
 	});
 	
+	valueElement.addEventListener('blur', (event) => {
+		event.stopPropagation();
+		
+		reset();
+	});
+	
 	headContainer.addEventListener('click', (event) => {
 		event.stopPropagation();
 		
@@ -236,10 +244,9 @@ export function mount(node: Child): void {
 		switch (event.key) {
 			case 'Enter':
 			case 'Escape':
-				focusHovered();
-			// eslint-disable-next-line no-fallthrough
-			case 'Tab':
 				event.stopPropagation();
+				
+				headContainer.focus();
 				
 				reset();
 		}
