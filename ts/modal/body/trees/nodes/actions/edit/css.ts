@@ -1,6 +1,7 @@
 import {
 	EDITABLE_CLASS, VALID_CLASS, INVALID_CLASS,
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
+	ACTIVE_CLASS,
 } from './consts';
 
 import {ELEMENT_CLASSES} from '@nodes/consts';
@@ -48,4 +49,6 @@ export default function generate() {
 		`.${INVALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
 		['color', 'var(--invalidFont) !important'],
 	);
+	
+	addRule(`.${ELEMENT_CLASSES.VALUE}:not(.${ACTIVE_CLASS} *)`, ['pointer-events', 'none']);
 }

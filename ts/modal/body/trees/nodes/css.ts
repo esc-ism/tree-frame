@@ -25,6 +25,8 @@ export default function generate() {
 		['height', '1.6em'],
 	);
 	
+	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, [['user-select', 'none']]);
+	
 	addRule([
 		`.${ELEMENT_CLASSES.HEAD_CONTAINER}`,
 		`.${ELEMENT_CLASSES.VALUE_CONTAINER}`,
@@ -44,9 +46,10 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
 		['right', '0'],
 		['top', '0'],
-		['user-select', 'none'],
 		['pointer-events', 'none'],
 	]);
+	
+	addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [['user-select', 'none']]);
 	
 	addRule(`.${ELEMENT_CLASSES.BACKGROUND_CONTAINER}`, [
 		['width', '100%'],
@@ -63,6 +66,7 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
 		// Puts it above the backgrounds
 		['position', 'relative'],
+		['user-select', 'none'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [['height', '100%']]);
