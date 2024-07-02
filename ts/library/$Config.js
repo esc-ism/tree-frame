@@ -81,7 +81,7 @@ const getError = (reason, error) => {
 /**
  * A style to pass to the config-editor.
  * @typedef {object} InnerStyle
- * @property {number} [fontSize] The base font size for the whole frame.
+ * @property {number} [fontSize] The base font size.
  * @property {string} [borderTooltip] The colour of tooltip borders.
  * @property {string} [borderModal] The colour of the modal's border.
  * @property {string} [headBase] The base colour of the modal's header.
@@ -109,7 +109,7 @@ export default class $Config {
 	 * @param {function(Array<ChildNode | (ChildNode & ParentNode)>): *} _getConfig Takes a root node's children and returns the data structure expected by your script.
 	 * @param {string} TITLE The heading to use in the config-editor.
 	 * @param {InnerStyle} [STYLE_INNER] A custom style to use as the default
-	 * @param {object} [_STYLE_OUTER] CSS to assign to the frame element. e.g. {zIndex: 9999}.
+	 * @param {object} [_STYLE_OUTER] CSS to assign to the element. e.g. {zIndex: 9999}.
 	 */
 	constructor(KEY_TREE, TREE_DEFAULT, _getConfig, TITLE, STYLE_INNER = {}, _STYLE_OUTER = {}) {
 		// PRIVATE FUNCTIONS
@@ -163,7 +163,7 @@ export default class $Config {
 				return target;
 			})();
 			
-			// Retrieve data & await frame load
+			// Retrieve data
 			
 			const [userTree, userStyles, version] = await Promise.all([
 				GM.getValue(KEY_TREE),
@@ -221,7 +221,7 @@ export default class $Config {
 			 */
 			this.reset = async () => {
 				if (isOpen) {
-					throw getError('Cannot reset while a frame is open.');
+					throw getError('Cannot reset while the UI is open.');
 				}
 				
 				if (typeof GM.deleteValue !== 'function') {
