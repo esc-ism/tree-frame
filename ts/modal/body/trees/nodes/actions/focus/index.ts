@@ -10,6 +10,7 @@ import * as active from '../active';
 import type Root from '@nodes/root';
 import type Child from '@nodes/child';
 
+let candidateNode: Root | Child;
 let activeNode: Root | Child;
 
 export function isActive(): boolean {
@@ -94,14 +95,38 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-	const {elementContainer} = node.element;
+	const {elementContainer, headContainer} = node.element;
 	
 	// Handle mouse input
 	
-	elementContainer.addEventListener('click', (event) => {
+	elementContainer.addEventListener('mousedown', (event) => {
 		event.stopPropagation();
 		
-		doAction(node);
+		candidateNode = node;
+	});
+	
+	headContainer.addEventListener('mouseup', (event) => {
+		event.stopPropagation();
+		
+		candidateNode = undefined;
+	});
+	
+	headContainer.addEventListener('dragstart', (event) => {
+		event.preventDefault();
+	});
+	
+	elementContainer.addEventListener('dragstart', (event) => {
+		event.preventDefault();
+	});
+	
+	elementContainer.addEventListener('mouseup', (event) => {
+		event.stopPropagation();
+		
+		if (node === candidateNode) {
+			doAction(node);
+		}
+		
+		candidateNode = undefined;
 	});
 	
 	// Handle keyboard input
