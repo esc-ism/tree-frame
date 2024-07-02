@@ -236,12 +236,12 @@ export function mount(node: Child): void {
 		switch (event.key) {
 			case 'Enter':
 			case 'Escape':
+				focusHovered();
+			// eslint-disable-next-line no-fallthrough
 			case 'Tab':
 				event.stopPropagation();
 				
 				reset();
-				
-				focusHovered();
 		}
 	});
 }
