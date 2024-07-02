@@ -79,7 +79,7 @@ const getError = (reason, error) => {
  */
 
 /**
- * A style to pass to the config-editor iFrame.
+ * A style to pass to the config-editor.
  * @typedef {object} InnerStyle
  * @property {number} [fontSize] The base font size for the whole frame.
  * @property {string} [borderTooltip] The colour of tooltip borders.
@@ -107,7 +107,7 @@ export default class $Config {
 	 * @param {string} KEY_TREE The identifier used to store and retrieve the user's config.
 	 * @param {ParentNode} TREE_DEFAULT The tree to use as a starting point for the user's config.
 	 * @param {function(Array<ChildNode | (ChildNode & ParentNode)>): *} _getConfig Takes a root node's children and returns the data structure expected by your script.
-	 * @param {string} TITLE The heading to use in the config-editor iFrame.
+	 * @param {string} TITLE The heading to use in the config-editor.
 	 * @param {InnerStyle} [STYLE_INNER] A custom style to use as the default
 	 * @param {object} [_STYLE_OUTER] CSS to assign to the frame element. e.g. {zIndex: 9999}.
 	 */
@@ -174,7 +174,7 @@ export default class $Config {
 			// Patch to current version
 			
 			(() => {
-				if (version !== -1) {
+				if (version !== -1 || !userTree) {
 					return;
 				}
 				
