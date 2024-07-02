@@ -54,7 +54,7 @@ export function addRule(selectors: Selectors, styles: Styles, stylesheet = STYLE
 export function addVariables(rules: Array<Style>, stylesheet = STYLESHEET) {
 	const styleString = rules.map(getStyleString).join('');
 	
-	stylesheet.insertRule(`:root {${styleString}}`);
+	stylesheet.insertRule(`:root{${styleString}}`);
 }
 
 export default function generate() {
