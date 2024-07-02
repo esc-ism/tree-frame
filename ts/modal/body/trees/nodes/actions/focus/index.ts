@@ -95,7 +95,7 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-	const {elementContainer, headContainer} = node.element;
+	const {elementContainer, valueContainer} = node.element;
 	
 	// Handle mouse input
 	
@@ -105,18 +105,10 @@ export function mount(node: Root | Child): void {
 		candidateNode = node;
 	});
 	
-	headContainer.addEventListener('mouseup', (event) => {
+	valueContainer?.addEventListener('mouseup', (event) => {
 		event.stopPropagation();
 		
 		candidateNode = undefined;
-	});
-	
-	headContainer.addEventListener('dragstart', (event) => {
-		event.preventDefault();
-	});
-	
-	elementContainer.addEventListener('dragstart', (event) => {
-		event.preventDefault();
 	});
 	
 	elementContainer.addEventListener('mouseup', (event) => {
