@@ -22,7 +22,7 @@ export function reset() {
 	activeNode = undefined;
 }
 
-function doAction(node: Child, newParent, index, button) {
+function doAction(node: Child, newParent, index, button, doScroll: boolean = true) {
 	const oldParent = node.parent;
 	const copy = node.duplicate();
 	
@@ -43,8 +43,10 @@ function doAction(node: Child, newParent, index, button) {
 			
 			reset();
 			
-			// Show where the node's been moved to
-			copy.element.scrollIntoView();
+			if (doScroll) {
+				// Show where the node's been moved to
+				copy.element.scrollIntoView();
+			}
 		})
 		.catch((reason) => {
 			node.isActive = copy.isActive;
@@ -66,7 +68,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 		const newIndex = node.getIndex() + 2;
 		
 		if (newIndex < node.parent.children.length + 1) {
-			doAction(node, node.parent, newIndex, button);
+			doAction(node, node.parent, newIndex, button, false);
 		} else {
 			tooltip.show('Node can not be moved down.', button);
 		}

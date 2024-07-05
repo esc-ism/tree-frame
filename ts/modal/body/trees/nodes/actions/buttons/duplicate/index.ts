@@ -22,15 +22,17 @@ export function reset() {
 	activeNode = undefined;
 }
 
-function validate(copy: Child, button: HTMLButtonElement) {
+function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = true) {
 	Promise.all(getSubPredicateResponses(copy.parent))
 		.then(() => {
 			copy.element.removeClass(PROSPECTIVE_CLASS);
 			
 			reset();
 			
-			// Show the new node
-			copy.element.scrollIntoView();
+			if (doScroll) {
+				// Show the new node
+				copy.element.scrollIntoView();
+			}
 		})
 		.catch((reason) => {
 			copy.disconnect();
@@ -63,7 +65,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 	reset();
 	
 	if (!isAlt) {
-		validate(getCopy(node), button);
+		validate(getCopy(node), button, false);
 	} else if (!previousNode || node !== previousNode) {
 		activeNode = node;
 		

@@ -33,7 +33,7 @@ function getChild(node: Root | Middle): Child {
 	return child;
 }
 
-function doAction(source: Middle | Root, parent: Middle | Root, index: number, button: HTMLButtonElement) {
+function doAction(source: Middle | Root, parent: Middle | Root, index: number, button: HTMLButtonElement, doScroll: boolean = true) {
 	const child = getChild(source);
 	
 	child.move(parent, index);
@@ -46,8 +46,10 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 			
 			reset();
 			
-			// Show the new node
-			child.element.scrollIntoView();
+			if (doScroll) {
+				// Show the new node
+				child.element.scrollIntoView();
+			}
 		})
 		.catch((reason) => {
 			child.disconnect();
@@ -64,7 +66,7 @@ function onClick(node: Root | Middle, button: HTMLButtonElement, isAlt: boolean)
 	reset();
 	
 	if (!isAlt) {
-		doAction(node, node, 0, button);
+		doAction(node, node, 0, button, false);
 	} else if (!previousNode || node !== previousNode) {
 		activeNode = node;
 		
