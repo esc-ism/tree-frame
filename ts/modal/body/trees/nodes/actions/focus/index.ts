@@ -95,26 +95,42 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-	const {elementContainer, valueContainer} = node.element;
+	const {elementContainer, headContainer} = node.element;
 	
-	// Handle mouse input
+	// Handle mouse down
 	
 	elementContainer.addEventListener('mousedown', (event) => {
 		event.stopPropagation();
 		
-		candidateNode = node;
+		if (elementContainer.isSameNode(event.target as HTMLElement)) {
+			candidateNode = node;
+		}
 	});
 	
-	valueContainer?.addEventListener('mouseup', (event) => {
+	headContainer.addEventListener('mousedown', (event) => {
 		event.stopPropagation();
 		
-		candidateNode = undefined;
+		if (headContainer.isSameNode(event.target as HTMLElement)) {
+			candidateNode = node;
+		}
 	});
+	
+	// Handle mouse up
 	
 	elementContainer.addEventListener('mouseup', (event) => {
 		event.stopPropagation();
 		
-		if (node === candidateNode) {
+		if (node === candidateNode && elementContainer.isSameNode(event.target as HTMLElement)) {
+			doAction(node);
+		}
+		
+		candidateNode = undefined;
+	});
+	
+	headContainer.addEventListener('mouseup', (event) => {
+		event.stopPropagation();
+		
+		if (node === candidateNode && headContainer.isSameNode(event.target as HTMLElement)) {
 			doAction(node);
 		}
 		
