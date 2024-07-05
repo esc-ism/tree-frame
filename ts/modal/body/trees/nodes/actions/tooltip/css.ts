@@ -9,9 +9,6 @@ import {addDepthChangeListener} from '@/modal/body/trees/style/update/depth';
 
 import {addRule} from '@/modal/css';
 
-// todo you need tooltips for deletion/creation/movement.
-//  you'll need a different system to position tooltips underneath/above buttons
-
 export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.VALUE_CONTAINER}`, [['position', 'relative']]);
 	

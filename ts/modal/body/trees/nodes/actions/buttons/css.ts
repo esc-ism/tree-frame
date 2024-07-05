@@ -45,7 +45,10 @@ export default function generate() {
 	generateDuplicate();
 	generatePosition();
 	
-	addRule(`.${BUTTON_CLASS}`, ['height', '100%']);
+	addRule(`.${BUTTON_CLASS}`, [
+		['height', '100%'],
+		['position', 'relative'],
+	]);
 	
 	addRule(`.${BUTTON_CLASS} > svg`, [
 		['height', '100%'],
