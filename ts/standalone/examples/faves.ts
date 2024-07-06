@@ -21,7 +21,7 @@ const numberSeed: Child = {
 };
 
 function favePredicate(name: string, children: Array<Child>) {
-	if (children.filter(({isActive}) => isActive).length === 0) {
+	if (children.filter(({isActive = true}) => isActive).length === 0) {
 		return `Come on, everyone has a favourite ${name}!`;
 	}
 	
@@ -45,7 +45,7 @@ const config: Config = {
 			{
 				label: 'Favourite Numbers',
 				childPredicate: (children) => {
-					if (children.map(({value}) => value).join('') === '80085') {
+					if (children.map(({value}) => `${value}`).join('') === '80085') {
 						return 'Ha ha. Very funny.';
 					}
 					

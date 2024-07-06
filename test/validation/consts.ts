@@ -14,7 +14,9 @@ type Configs = {
 export const VALID: Configs = {
 	TITLES: ['YouTube Sub Feed Filter'],
 	TREES: [
+		// 0
 		{children: [{}]},
+		// 1
 		{
 			children: [
 				{
@@ -33,6 +35,7 @@ export const VALID: Configs = {
 				},
 			],
 		},
+		// 2
 		{
 			children: [
 				{
@@ -51,6 +54,7 @@ export const VALID: Configs = {
 				},
 			],
 		},
+		// 3
 		{
 			children: [
 				{
@@ -73,6 +77,7 @@ export const VALID: Configs = {
 				},
 			],
 		},
+		// 4
 		{
 			children: [
 				{
@@ -89,6 +94,7 @@ export const VALID: Configs = {
 				},
 			],
 		},
+		// 5
 		{
 			children: [],
 			seed: {
@@ -114,6 +120,27 @@ export const VALID: Configs = {
 				},
 			},
 		},
+		// 6
+		{
+			children: [
+				{
+					label: '_',
+					value: '_',
+					predicate: [() => false, '_'],
+				},
+			],
+		},
+		// 7
+		{
+			children: [
+				{
+					label: '_',
+					value: '_',
+					predicate: [() => false, () => true],
+				},
+			],
+		},
+		// 8
 		{
 			children: [
 				{
@@ -272,6 +299,15 @@ export const INVALID = {
 					label: '_',
 					value: '_',
 					predicate: ['|'],
+				},
+			],
+		},
+		{
+			children: [
+				{
+					label: '_',
+					value: '_',
+					predicate: [() => false],
 				},
 			],
 		},
