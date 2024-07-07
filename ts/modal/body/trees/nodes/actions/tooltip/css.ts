@@ -15,7 +15,8 @@ export default function generate() {
 	addRule(`.${TOOLTIP_CONTAINER_CLASS}`, [
 		['position', 'absolute'],
 		['text-align', 'center'],
-		['z-index', '1'],
+		['padding', '0'],
+		['z-index', '2'],
 		['width', '100%'],
 		['pointer-events', 'none'],
 		['white-space', 'normal'],

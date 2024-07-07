@@ -12,7 +12,7 @@ import * as duplicate from './actions/buttons/duplicate';
 
 import {getDepthClassCount} from '../style/update/depth';
 
-import type {Leaf, Child as _Child, Value, Predicate, Input} from '@types';
+import type {Leaf, Child as _Child, Value, Input} from '@types';
 
 const actions: Array<{
 	shouldMount: (node: Child) => boolean;
@@ -32,7 +32,6 @@ const actions: Array<{
 export default class Child implements Leaf {
 	readonly label?: string;
 	value?: Value;
-	readonly predicate?: Predicate;
 	readonly input?: Input;
 	isActive: boolean;
 	
@@ -40,7 +39,8 @@ export default class Child implements Leaf {
 	readonly depth: number;
 	readonly element: NodeElement;
 	
-	readonly hasOptions: boolean;
+	readonly options: Array<Value> = [];
+	readonly predicates: Array<Function> = [];
 	
 	constructor(data: _Child, parent: Root | Middle, index?: number) {
 		this.depth = parent.depth + 1;
@@ -51,7 +51,20 @@ export default class Child implements Leaf {
 			this[key] = value;
 		}
 		
-		this.hasOptions = Array.isArray(data.predicate);
+		switch (typeof data.predicate) {
+			case 'function':
+				this.predicates.push(data.predicate);
+				
+				break;
+			case 'object':
+				for (const option of data.predicate) {
+					if (typeof option === 'function') {
+						this.predicates.push(option);
+					} else {
+						this.options.push(option);
+					}
+				}
+		}
 		
 		this.attach(parent, index);
 		

@@ -1,7 +1,7 @@
 import type {Child, Parent, Root} from '../types';
 import {
 	LEAF_KEYS, MIDDLE_KEYS, ROOT_KEYS,
-	VALUE_TYPES, INPUT_FORMATS, PREDICATE_TYPES,
+	VALUE_TYPES, INPUT_FORMATS, PREDICATE_TYPES, OPTION_TYPES,
 } from '../types';
 import {TypeError, ValueError, PropertyError, UnexpectedStateError} from '../errors';
 import {hasOwnProperty, validateUnexpectedKeys} from '../index';
@@ -69,7 +69,7 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 				throw new TypeError([...breadcrumbs, 'predicate'], typeof candidate.predicate, PREDICATE_TYPES);
 			
 			for (const [i, option] of candidate.predicate.entries()) {
-				if (!(VALUE_TYPES as readonly string[]).includes(typeof option))
+				if (!(OPTION_TYPES as readonly string[]).includes(typeof option))
 					throw new TypeError([...breadcrumbs, 'predicate', i.toString()], typeof option, VALUE_TYPES);
 			}
 		}

@@ -3,6 +3,8 @@ import {
 	TOOLTIP_BOTTOM_CLASS, TOOLTIP_TOP_CLASS, TOOLTIP_ANIMATION,
 } from './consts';
 
+import {isActive as forceAbove} from '../edit/option';
+
 import type Child from '@nodes/child';
 
 import {ELEMENT_CLASSES} from '@nodes/consts';
@@ -11,18 +13,18 @@ import {TREE_CONTAINER} from '@/modal/body/trees';
 
 let activeParent;
 
-function isAboveCenter(element, yPosition = 0) {
+function isBelowCenter(element, yPosition = 0) {
 	if (!element.isSameNode(TREE_CONTAINER)) {
 		if (element.classList.contains(ELEMENT_CLASSES.ELEMENT_CONTAINER)) {
 			yPosition += element.offsetTop;
 		}
 		
-		return isAboveCenter(element.parentElement, yPosition);
+		return isBelowCenter(element.parentElement, yPosition);
 	}
 	
 	const scrollPosition = TREE_CONTAINER.scrollTop + (TREE_CONTAINER.clientHeight / 2);
 	
-	return scrollPosition > yPosition;
+	return scrollPosition < yPosition;
 }
 
 function generate(parent: HTMLElement) {
@@ -68,12 +70,12 @@ function getAnimated(parent?: HTMLElement) {
 export function show(message: string, parent?: HTMLElement) {
 	const [container, element] = getAnimated(parent);
 	
-	if (isAboveCenter(container)) {
-		container.classList.remove(TOOLTIP_TOP_CLASS);
-		container.classList.add(TOOLTIP_BOTTOM_CLASS);
-	} else {
+	if (forceAbove() || isBelowCenter(container)) {
 		container.classList.remove(TOOLTIP_BOTTOM_CLASS);
 		container.classList.add(TOOLTIP_TOP_CLASS);
+	} else {
+		container.classList.remove(TOOLTIP_TOP_CLASS);
+		container.classList.add(TOOLTIP_BOTTOM_CLASS);
 	}
 	
 	element.innerText = message;
@@ -94,9 +96,9 @@ export function reset() {
 }
 
 export function setNode(node: Child) {
-	const {parentElement} = node.element.valueElement;
+	const {container} = node.element.contrast;
 	
-	generate(parentElement);
+	generate(container);
 	
-	activeParent = parentElement;
+	activeParent = container;
 }

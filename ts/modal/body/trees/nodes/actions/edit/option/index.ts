@@ -15,6 +15,10 @@ const activeOptions: HTMLElement[] = [];
 
 let activeIndex: number = -1;
 
+export function isActive(): boolean {
+	return activeOptions.some(({parentElement}) => parentElement.classList.contains(OPTION_SHOW_CLASS));
+}
+
 function getTotalOffsetTop(from: HTMLElement): number {
 	let offsetTop = 2;
 	let node;
@@ -31,29 +35,58 @@ function escapeRegExp(string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function deselect() {
+	if (activeIndex === -1) {
+		return;
+	}
+	
+	setActive(activeOptions[activeIndex].parentElement, false);
+	
+	activeIndex = -1;
+}
+
 export function update(value: Value) {
-	const regExp = new RegExp(escapeRegExp(value), 'i');
+	const regExp = new RegExp(escapeRegExp(`${value}`), 'i');
+	
+	let hasVisibleChild = false;
 	
 	for (const {parentElement, innerText} of activeOptions) {
-		parentElement.classList[regExp.test(innerText) ? 'add' : 'remove'](OPTION_SHOW_CLASS);
+		if (regExp.test(innerText)) {
+			parentElement.classList.add(OPTION_SHOW_CLASS);
+			
+			hasVisibleChild = true;
+		} else {
+			parentElement.classList.remove(OPTION_SHOW_CLASS);
+		}
 	}
 	
 	const wrapper = activeOptions[0].parentElement.parentElement;
+	
+	if (!hasVisibleChild) {
+		wrapper.style.setProperty('display', 'none');
+		
+		return;
+	}
+	
+	wrapper.style.removeProperty('display');
+	
 	const totalOffsetTop = getTotalOffsetTop(wrapper);
 	
 	if (TREE_CONTAINER.scrollTop + TREE_CONTAINER.clientHeight < totalOffsetTop + wrapper.clientHeight) {
 		TREE_CONTAINER.scrollTop = totalOffsetTop + wrapper.clientHeight - TREE_CONTAINER.clientHeight;
 	}
+	
+	deselect();
 }
 
 function setValue(node: Child, value: string, doKill: boolean = false) {
-	node.element.valueElement.value = value;
+	node.element.contrast.valueElement.value = value;
 	
 	node.value = value;
 	
 	if (doKill) {
 		// Simulate an 'enter' button press
-		node.element.valueElement.dispatchEvent(new KeyboardEvent('keydown', {key: 'Tab'}));
+		node.element.contrast.valueElement.dispatchEvent(new KeyboardEvent('keydown', {key: 'Tab'}));
 	}
 }
 
@@ -66,17 +99,13 @@ export function reset() {
 		parentElement.classList.remove(OPTION_SHOW_CLASS);
 	}
 	
-	if (activeIndex >= 0) {
-		setActive(activeOptions[activeIndex].parentElement, false);
-		
-		activeIndex = -1;
-	}
+	deselect();
 	
 	activeOptions.length = 0;
 }
 
 export function setNode(node: Child) {
-	activeOptions.push(...(node.element.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
+	activeOptions.push(...(node.element.contrast.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
 	
 	update(node.value);
 }
@@ -85,7 +114,7 @@ export function generate(node: Child) {
 	const wrapper = document.createElement('div');
 	const parent = document.createElement('div');
 	
-	for (const value of node.predicate as Array<string>) {
+	for (const value of node.options as Array<string>) {
 		const container = document.createElement('div');
 		const background = document.createElement('div');
 		const option = document.createElement('div');
@@ -99,11 +128,7 @@ export function generate(node: Child) {
 		container.append(background, option);
 		parent.appendChild(container);
 		
-		container.addEventListener('click', (event) => {
-			event.stopPropagation();
-			// Necessary to prevent re-focusing the input element
-			event.preventDefault();
-			
+		container.addEventListener('mousedown', () => {
 			setValue(node, value, true);
 		});
 		
@@ -120,7 +145,7 @@ export function generate(node: Child) {
 		});
 	}
 	
-	node.element.valueElement.addEventListener('keydown', ({key}) => {
+	node.element.contrast.valueElement.addEventListener('keydown', ({key}) => {
 		const priorIndex = activeIndex;
 		
 		let hasChanged = false;
@@ -215,5 +240,5 @@ export function generate(node: Child) {
 	
 	wrapper.appendChild(parent);
 	
-	node.element.valueContainer.appendChild(wrapper);
+	node.element.contrast.valueContainer.appendChild(wrapper);
 }

@@ -39,7 +39,7 @@ function validatePredicateMatch(
 		const {length} = candidate.predicate as Array<string>;
 		
 		if (!isFrozen && !model.predicate.includes(candidate.value)) {
-			candidate.value = model.predicate[(candidate.predicate as Array<string>).indexOf(candidate.value as string)];
+			candidate.value = model.value;
 		}
 		
 		if (model.predicate.length !== length)

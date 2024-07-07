@@ -1,23 +1,18 @@
-import {EAVE_ID, HIGHLIGHT_CLASS, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
+import {EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS, HIGHLIGHT_CLASS} from './consts';
 
 import {BUTTON_CLASS} from '../buttons/consts';
 
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS} from '@nodes/consts';
 
 import {addDepthChangeListener} from '@/modal/body/trees/style/update/depth';
 
 import {addRule} from '@/modal/css';
 
 export default function generate() {
-	addRule(
-		`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${HIGHLIGHT_BACKGROUND_CLASS}`,
-		['width', '100%'],
-	);
-	
 	addRule(`.${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
 		['padding-right', '0.4em'],
 		// Extend the background further into the value
-		['padding-left', '15%'],
+		['padding-left', '4em'],
 	]);
 	
 	addRule(`.${BUTTON_CLASS}:last-child`, [
@@ -25,12 +20,43 @@ export default function generate() {
 		['border-bottom-right-radius', '50%'],
 	]);
 	
+	addRule([`.${BASE_CLASS}`], [
+		['transition-property', 'width'],
+		['transition-duration', '500ms'],
+		['overflow', 'hidden'],
+		['right', '0'],
+	]);
+	
+	addRule([`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${BASE_CLASS}`], [['width', '0']]);
+	
+	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > *`, [
+		['margin-left', '-0.5em'],
+		['padding-left', '0.5em'],
+	]);
+	
+	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${HIGHLIGHT_BACKGROUND_CLASS}`, [
+		['transition-property', 'width, padding-left'],
+		['transition-duration', '500ms'],
+		['width', '0'],
+		['padding-left', '0'],
+	]);
+	
+	addRule([`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${HIGHLIGHT_BACKGROUND_CLASS}`], [
+		['width', '100%'],
+		['padding-left', '0.5em'],
+	]);
+	
+	addRule(`.${HIGHLIGHT_BACKGROUND_CLASS}`, [
+		['height', '100%'],
+		['width', '100%'],
+	]);
+	
 	addDepthChangeListener((depth, addRule) => {
 		const rootSelector = `.${DEPTH_CLASS_PREFIX}${depth}`;
 		const headSelector = `${rootSelector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`;
 		
 		addRule(
-			`${rootSelector} > .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${HIGHLIGHT_BACKGROUND_CLASS}`,
+			`${headSelector} .${HIGHLIGHT_BACKGROUND_CLASS}`,
 			['background-color', `var(--nodeContrast${depth})`],
 		);
 		
@@ -39,20 +65,16 @@ export default function generate() {
 			['background-color', `var(--nodeContrast${depth})`],
 		);
 		
-		addRule([
-			`.${HIGHLIGHT_CLASS}${headSelector} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-			`.${HIGHLIGHT_CLASS}${headSelector} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
-		], ['color', `var(--nodeBase${depth})`]);
-		
-		addRule(`${headSelector} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [
-			['background-image', `linear-gradient(to left, var(--nodeBase${depth}) 60%, transparent)`],
-			['background-size', 'auto'],
+		addRule([`${headSelector} .${BASE_CLASS}`], [
+			['color', `var(--nodeContrast${depth})`],
+			['background-color', `var(--nodeBase${depth})`],
 		]);
 		
-		addRule(
-			`.${HIGHLIGHT_CLASS}${headSelector} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
-			['background-image', `linear-gradient(to left, var(--nodeContrast${depth}) 60%, transparent)`],
-		);
+		addRule([`${headSelector} .${CONTRAST_CLASS}`], [['color', `var(--nodeBase${depth})`]]);
+		
+		addRule(`${headSelector} .${BASE_CLASS} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [['background-image', `linear-gradient(to right, transparent, 1.9em, var(--nodeBase${depth}) 3.8em)`]]);
+		
+		addRule(`${headSelector} .${CONTRAST_CLASS} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [['background-image', `linear-gradient(to right, transparent, 1.9em, var(--nodeContrast${depth}) 3.8em)`]]);
 	});
 	
 	// Bug fixer

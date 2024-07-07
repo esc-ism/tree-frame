@@ -34,9 +34,7 @@ export function reset() {
 	element.removeClass(VALID_CLASS);
 	element.removeClass(INVALID_CLASS);
 	
-	element.valueElement.blur();
-	
-	element.valueContainer.classList.remove(ACTIVE_CLASS);
+	element.removeClass(ACTIVE_CLASS);
 	
 	tooltip.reset();
 	option.reset();
@@ -49,13 +47,13 @@ export function reset() {
 function getValue(node: Child): Value {
 	switch (typeof node.value) {
 		case 'boolean':
-			return Boolean(node.element.valueElement.checked);
+			return Boolean(node.element.contrast.valueElement.checked);
 		
 		case 'number':
-			return Number(node.element.valueElement.value);
+			return Number(node.element.contrast.valueElement.value);
 		
 		default:
-			return node.element.valueElement.value;
+			return node.element.contrast.valueElement.value;
 	}
 }
 
@@ -93,14 +91,19 @@ function getOwnPredicateResponse(node: Child): Promise<void> {
 		return Promise.resolve();
 	}
 	
-	const {predicate} = node;
+	const {predicates, options} = node;
 	const value = getValue(node);
 	
-	if (typeof predicate === 'function') {
-		return getPredicatePromise(predicate(value));
+	if (options.includes(value)) {
+		return Promise.resolve();
 	}
 	
-	return Promise[predicate.indexOf(value as string) > -1 ? 'resolve' : 'reject']();
+	if (predicates.length === 0) {
+		return Promise.reject();
+	}
+	
+	return Promise.all(predicates.map((predicate) => getPredicatePromise(predicate(value))))
+		.then(() => Promise.resolve());
 }
 
 function getAllPredicateResponses(node: Child = activeNode): Array<Promise<void>> {
@@ -112,7 +115,7 @@ export function update(node: Child) {
 	
 	node.value = getValue(node);
 	
-	if (node.hasOptions) {
+	if (node.options.length > 0) {
 		option.update(node.value);
 	}
 	
@@ -149,20 +152,20 @@ export function doAction(node: Child) {
 	if (previousNode !== node) {
 		activeNode = node;
 		
-		activeNode.element.valueContainer.classList.add(ACTIVE_CLASS);
+		activeNode.element.addClass(ACTIVE_CLASS);
 		
 		activeNode.element.addClass(VALID_CLASS);
 		
 		tooltip.setNode(node);
 		
-		if (node.hasOptions) {
+		if (node.options.length > 0) {
 			option.setNode(node);
 		}
 		
 		if (node.input === 'color') {
-			node.element.valueElement.click();
+			node.element.contrast.valueElement.click();
 		} else {
-			node.element.valueElement.select();
+			node.element.contrast.valueElement.select();
 		}
 		
 		addSustained(node);
@@ -170,7 +173,7 @@ export function doAction(node: Child) {
 }
 
 export function mount(node: Child): void {
-	const {backgroundContainer, valueElement, headContainer} = node.element;
+	const {backgroundContainer, contrast: {valueElement}, headContainer} = node.element;
 	
 	node.element.addClass(EDITABLE_CLASS);
 	
@@ -236,7 +239,7 @@ export function mount(node: Child): void {
 		}
 	}
 	
-	if (node.hasOptions) {
+	if (node.options.length > 0) {
 		option.generate(node);
 	}
 	
@@ -245,8 +248,6 @@ export function mount(node: Child): void {
 			case 'Enter':
 			case 'Escape':
 				event.stopPropagation();
-				
-				headContainer.focus();
 				
 				reset();
 		}

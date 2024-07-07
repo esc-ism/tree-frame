@@ -1,26 +1,27 @@
 {
-  "include": [
-    "./ts/**/*"
-  ],
-  "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "sourceMap": false,
-    "baseUrl": "ts",
-    "paths": {
-      "@/*": ["./*"],
-      "@types": ["./library/validation/types"],
-      "@nodes/*": ["./modal/body/trees/nodes/*"],
-    }
-  },
-  "ts-node": {
-    "include": [
-      "./ts/**/*",
-      "./test/**/*"
-    ],
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  }
+	"include": [
+		"./ts/**/*"
+	],
+	"compilerOptions": {
+		"lib": ["es2021", "dom"],
+		"target": "es6",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"baseUrl": "ts",
+		"paths": {
+		"@/*": ["./*"],
+		"@types": ["./library/validation/types"],
+		"@nodes/*": ["./modal/body/trees/nodes/*"],
+		}
+	},
+	"ts-node": {
+		"include": [
+			"./ts/**/*",
+			"./test/**/*"
+		],
+		"compilerOptions": {
+			"module": "commonjs"
+		}
+	}
 }

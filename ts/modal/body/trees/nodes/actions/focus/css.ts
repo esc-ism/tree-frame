@@ -10,9 +10,7 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${FOCUS_SOURCE_CLASS}`, ['cursor', 'zoom-out']);
 	
 	addRule(
-		`.${ROOT_CLASS}.${FOCUS_CLASS} `
-		+ `.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_CLASS})`
-		+ `:not(.${FOCUS_SOURCE_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *)`,
+		`.${ROOT_CLASS}.${FOCUS_CLASS} .${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${FOCUS_CLASS}):not(.${FOCUS_SOURCE_CLASS} > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *)`,
 		['display', 'none'],
 	);
 	

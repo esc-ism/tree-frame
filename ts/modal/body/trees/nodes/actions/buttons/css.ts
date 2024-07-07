@@ -55,7 +55,10 @@ export default function generate() {
 		['transform', 'scale(1.05)'],
 	]);
 	
-	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, ['white-space', 'nowrap']);
+	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}`, [
+		['white-space', 'nowrap'],
+		['z-index', '1'],
+	]);
 	
 	addRule(
 		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(${FOCUS_SOURCE_CLASS}):not(${HIGHLIGHT_CLASS}) > `

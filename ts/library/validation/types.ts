@@ -3,8 +3,11 @@
 export const VALUE_TYPES = ['boolean', 'number', 'string'] as const;
 export type Value = boolean | number | string;
 
+export const OPTION_TYPES = [...VALUE_TYPES, 'function'] as const;
+export type Option = Value | Function;
+
 export const PREDICATE_TYPES = ['array', 'function'] as const;
-export type Predicate = Array<Value> | ((value: Value) => unknown);
+export type Predicate = Array<Value | Function> | ((value: Value) => unknown);
 
 export type SubPredicate = ((children: Array<Child>) => unknown);
 

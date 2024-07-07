@@ -13,7 +13,7 @@ import {addRule} from '@/modal/css';
 
 export default function generate() {
 	addRule(`.${OPTION_WRAPPER_CLASS}`, [
-		['z-index', '1'],
+		['z-index', '2'],
 		['position', 'absolute'],
 		['bottom', '0'],
 		['display', 'flex'],

@@ -1,6 +1,12 @@
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from './consts';
+import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS, CHECKBOX_WRAPPER_CLASS} from './consts';
 
 import type {Child as _Child} from '@types';
+
+type ValueElements = {
+	readonly container: HTMLElement;
+	readonly valueContainer?: HTMLElement;
+	readonly valueElement?: HTMLInputElement;
+};
 
 export default class Element {
 	readonly elementContainer: HTMLElement = document.createElement('div');
@@ -10,14 +16,12 @@ export default class Element {
 	readonly headContainer: HTMLElement = document.createElement('span');
 	
 	readonly buttonContainer: HTMLElement = document.createElement('span');
+	readonly infoContainer: HTMLElement = document.createElement('span');
 	
-	readonly valueContainer?: HTMLElement;
-	readonly valueElement?: HTMLInputElement;
+	readonly base: ValueElements = {container: document.createElement('span')};
+	readonly contrast: ValueElements = {container: document.createElement('span')};
 	
-	readonly labelContainer?: HTMLElement;
-	readonly labelElement?: HTMLElement;
-	
-	readonly childContainer: HTMLElement = document.createElement('div');
+	readonly childContainer = document.createElement('div');
 	
 	depthClass: string;
 	
@@ -25,71 +29,90 @@ export default class Element {
 		this.elementContainer.classList.add(ELEMENT_CLASSES.ELEMENT_CONTAINER);
 		this.backgroundContainer.classList.add(ELEMENT_CLASSES.BACKGROUND_CONTAINER);
 		this.childContainer.classList.add(ELEMENT_CLASSES.CHILD_CONTAINER);
+		this.infoContainer.classList.add(ELEMENT_CLASSES.INFO_CONTAINER);
 		this.headContainer.classList.add(ELEMENT_CLASSES.HEAD_CONTAINER);
 		this.buttonContainer.classList.add(ELEMENT_CLASSES.BUTTON_CONTAINER);
-		
-		this.elementContainer.appendChild(this.backgroundContainer);
-		
-		this.headContainer.appendChild(this.buttonContainer);
+		this.base.container.classList.add(BASE_CLASS);
+		this.contrast.container.classList.add(CONTRAST_CLASS);
 		
 		if ('value' in data) {
-			this.valueContainer = document.createElement('label');
-			this.valueElement = document.createElement('input');
-			
-			this.valueContainer.classList.add(ELEMENT_CLASSES.VALUE_CONTAINER);
-			this.valueElement.classList.add(ELEMENT_CLASSES.VALUE);
-			
-			this.valueElement.setAttribute('tabIndex', '-1');
-			
-			if (typeof data.value === 'boolean') {
-				this.valueElement.type = 'checkbox';
-				
-				// Positions tooltips below checkboxes
-				const valueWrapper = document.createElement('span');
-				
-				valueWrapper.appendChild(this.valueElement);
-				this.valueContainer.appendChild(valueWrapper);
-			} else {
-				if (typeof data.value === 'number') {
-					this.valueElement.type = 'number';
-					
-					// Disables a tooltip implying that decimal values are invalid
-					this.valueElement.step = 'any';
-				} else if ('input' in data) {
-					this.valueElement.type = data.input;
-				}
-				
-				this.valueContainer.appendChild(this.valueElement);
-			}
+			this.addValueContainer(this.contrast, data);
+			this.addValueContainer(this.base, data);
 			
 			this.render(data.value);
-			
-			this.headContainer.appendChild(this.valueContainer);
 		}
-		
-		this.elementContainer.appendChild(this.headContainer);
 		
 		if ('label' in data) {
-			this.labelContainer = document.createElement('div');
-			this.labelElement = document.createElement('span');
-			
-			this.labelContainer.classList.add(ELEMENT_CLASSES.LABEL_CONTAINER);
-			this.labelElement.classList.add(ELEMENT_CLASSES.LABEL);
-			
-			this.labelElement.innerText = data.label;
-			
-			this.labelContainer.appendChild(this.labelElement);
-			this.headContainer.appendChild(this.labelContainer);
+			this.addLabelContainer(this.contrast, data.label);
+			this.addLabelContainer(this.base, data.label);
 		}
+		
+		this.infoContainer.append(this.backgroundContainer, this.contrast.container, this.base.container);
+		this.headContainer.append(this.buttonContainer, this.infoContainer);
+		
+		this.elementContainer.appendChild(this.headContainer);
 		
 		this.elementContainer.appendChild(this.childContainer);
 	}
 	
+	addLabelContainer({container}, label) {
+		const labelContainer = document.createElement('div');
+		const labelElement = document.createElement('span');
+		
+		labelContainer.classList.add(ELEMENT_CLASSES.LABEL_CONTAINER);
+		labelElement.classList.add(ELEMENT_CLASSES.LABEL);
+		
+		labelElement.innerText = label;
+		
+		labelContainer.appendChild(labelElement);
+		container.appendChild(labelContainer);
+	}
+	
+	addValueContainer(field, data) {
+		field.valueContainer = document.createElement('label');
+		
+		field.valueContainer.classList.add(ELEMENT_CLASSES.VALUE_CONTAINER);
+		
+		if ('value' in data) {
+			field.valueElement = document.createElement('input');
+			
+			field.valueElement.classList.add(ELEMENT_CLASSES.VALUE);
+			field.valueElement.setAttribute('tabIndex', '-1');
+			
+			if (typeof data.value === 'boolean') {
+				field.valueElement.type = 'checkbox';
+				
+				// Positions tooltips below checkboxes
+				const valueWrapper = document.createElement('span');
+				
+				valueWrapper.classList.add(CHECKBOX_WRAPPER_CLASS);
+				
+				valueWrapper.appendChild(field.valueElement);
+				field.valueContainer.appendChild(valueWrapper);
+			} else {
+				if (typeof data.value === 'number') {
+					field.valueElement.type = 'number';
+					
+					// Disables a tooltip implying that decimal values are invalid
+					field.valueElement.step = 'any';
+				} else if ('input' in data) {
+					field.valueElement.type = data.input;
+				}
+				
+				field.valueContainer.appendChild(field.valueElement);
+			}
+		}
+		
+		field.container.appendChild(field.valueContainer);
+	}
+	
 	render(value: unknown) {
 		if (typeof value === 'boolean') {
-			this.valueElement.checked = value;
+			this.base.valueElement.checked = value;
+			this.contrast.valueElement.checked = value;
 		} else {
-			this.valueElement.value = value.toString();
+			this.base.valueElement.value = value.toString();
+			this.contrast.valueElement.value = value.toString();
 		}
 	}
 	

@@ -54,7 +54,13 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 }
 
 export function mount(node: Root | Child) {
-	const {backgroundContainer, headContainer, elementContainer} = node.element;
+	const {backgroundContainer, headContainer, elementContainer, infoContainer, base} = node.element;
+	
+	if (base.valueContainer) {
+		(new ResizeObserver(() => {
+			base.valueContainer.style.setProperty('width', `${infoContainer.clientWidth}px`);
+		})).observe(infoContainer);
+	}
 	
 	backgroundContainer.appendChild((() => {
 		const background = document.createElement('div');
@@ -69,7 +75,10 @@ export function mount(node: Root | Child) {
 	headContainer.addEventListener('focusin', (event) => {
 		event.stopPropagation();
 		
-		setActive(node);
+		// Filters out events fired from re-focusing the window
+		if (event.relatedTarget) {
+			setActive(node);
+		}
 	});
 	
 	headContainer.addEventListener('mouseenter', (event) => {

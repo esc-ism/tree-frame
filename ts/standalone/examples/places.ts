@@ -37,7 +37,7 @@ function getPerson(
 	return {
 		label: 'Name',
 		value: name,
-		predicate: emptyStringPredicate,
+		predicate: [emptyStringPredicate],
 		children: [
 			{
 				label: 'Occupation',
@@ -88,7 +88,7 @@ function getMedia(
 			{
 				label: 'Release Year (AD)',
 				value: releaseYear,
-				predicate: yearPredicate,
+				predicate: [yearPredicate, 3000],
 			},
 			{
 				label: 'Description',

@@ -18,7 +18,7 @@ export function isActive(): boolean {
 }
 
 export function setTabIndexes(doAdd = true, node = activeNode) {
-	const {'buttonContainer': {'children': buttons}, valueElement} = node.element;
+	const {'buttonContainer': {'children': buttons}, contrast: {valueElement}} = node.element;
 	
 	for (let i = buttons.length - 1; i >= 0; --i) {
 		// Must be set to -1 to prevent tabbing (removeAttribute sets it to 0)
@@ -34,6 +34,10 @@ export function focus(doFocus: boolean = true, node = activeNode, doForce: boole
 	// Avoid unfocusing the active node if not forced
 	if (doForce || node !== activeNode) {
 		node.element[`${doFocus ? 'add' : 'remove'}Class`](SOURCE_CLASS);
+	}
+	
+	if (!('children' in node)) {
+		return;
 	}
 }
 
@@ -97,34 +101,56 @@ export function unmount(node) {
 export function mount(node: Root | Child): void {
 	const {elementContainer, headContainer} = node.element;
 	
-	// Handle mouse down
+	// Handle keyboard input
+	
+	elementContainer.addEventListener('keydown', (event) => {
+		if (event.key === 'Enter') {
+			event.stopPropagation();
+			
+			doAction(node);
+		}
+	});
+	
+	// Handle side click
 	
 	elementContainer.addEventListener('mousedown', (event) => {
 		event.stopPropagation();
 		
-		if (elementContainer.isSameNode(event.target as HTMLElement)) {
-			candidateNode = node;
-		}
+		candidateNode = node;
 	});
-	
-	headContainer.addEventListener('mousedown', (event) => {
-		event.stopPropagation();
-		
-		if (headContainer.isSameNode(event.target as HTMLElement)) {
-			candidateNode = node;
-		}
-	});
-	
-	// Handle mouse up
 	
 	elementContainer.addEventListener('mouseup', (event) => {
 		event.stopPropagation();
 		
-		if (node === candidateNode && elementContainer.isSameNode(event.target as HTMLElement)) {
+		if (node === candidateNode) {
 			doAction(node);
 		}
 		
 		candidateNode = undefined;
+	});
+	
+	if ('value' in node) {
+		headContainer.addEventListener('mousedown', (event) => {
+			event.stopPropagation();
+			
+			candidateNode = undefined;
+		});
+		
+		headContainer.addEventListener('mouseup', (event) => {
+			event.stopPropagation();
+			
+			candidateNode = undefined;
+		});
+		
+		return;
+	}
+	
+	// Handle head click
+	
+	headContainer.addEventListener('mousedown', (event) => {
+		event.stopPropagation();
+		
+		candidateNode = node;
 	});
 	
 	headContainer.addEventListener('mouseup', (event) => {
@@ -135,16 +161,6 @@ export function mount(node: Root | Child): void {
 		}
 		
 		candidateNode = undefined;
-	});
-	
-	// Handle keyboard input
-	
-	elementContainer.addEventListener('keydown', (event) => {
-		if (event.key === 'Enter') {
-			event.stopPropagation();
-			
-			doAction(node);
-		}
 	});
 }
 
