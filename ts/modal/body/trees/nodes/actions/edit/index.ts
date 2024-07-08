@@ -149,6 +149,8 @@ export function doAction(node: Child) {
 	
 	reset();
 	
+	tooltip.kill();
+	
 	if (previousNode !== node) {
 		activeNode = node;
 		

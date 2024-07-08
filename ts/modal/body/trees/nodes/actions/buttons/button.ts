@@ -1,6 +1,7 @@
 import {BUTTON_CLASS} from './consts';
 
 import * as active from '../active';
+import {kill as killTooltip} from '../tooltip';
 
 import type Root from '../../root';
 import type Child from '../../child';
@@ -17,6 +18,8 @@ export function addActionButton(template: HTMLButtonElement, onClick: Function, 
 		event.stopPropagation();
 		
 		active.register();
+		
+		killTooltip();
 		
 		onClick(node, button, isAlt());
 	});

@@ -3,6 +3,7 @@ import {
 	FOCUS_CLASS as BRANCH_CLASS,
 } from './consts';
 
+import {kill as killTooltip} from '../tooltip';
 import {isActive as positionIsActive} from '../buttons/position';
 import {addSustained, removeSustained} from '../highlight';
 import * as active from '../active';
@@ -68,6 +69,8 @@ export function reset() {
 
 export function doAction(node: Root | Child, doForce = false) {
 	const toggleOn = node !== activeNode;
+	
+	killTooltip();
 	
 	// Avoid changing the view when it's already been focused
 	if (positionIsActive() || (doForce && !toggleOn)) {

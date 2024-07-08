@@ -12,6 +12,15 @@ import {ELEMENT_CLASSES} from '@nodes/consts';
 import {TREE_CONTAINER} from '@/modal/body/trees';
 
 let activeParent;
+let animation: Animation;
+
+export function kill() {
+	if (animation) {
+		animation.finish();
+		
+		animation = undefined;
+	}
+}
 
 function isBelowCenter(element, yPosition = 0) {
 	if (!element.isSameNode(TREE_CONTAINER)) {
@@ -48,20 +57,16 @@ function getAnimated(parent?: HTMLElement) {
 		return [element.parentElement, element];
 	}
 	
-	const oldElement = parent.querySelector(`.${TOOLTIP_CLASS}`) as HTMLElement;
-	
-	if (oldElement) {
-		const [animation] = oldElement.getAnimations();
-		
-		animation.currentTime = 0;
-		
-		return [oldElement.parentElement, oldElement];
-	}
-	
 	const [container, element] = generate(parent);
 	
-	element.animate(...TOOLTIP_ANIMATION).onfinish = () => {
+	parent.parentElement.style.setProperty('z-index', '2');
+	
+	animation = element.animate(...TOOLTIP_ANIMATION);
+	
+	animation.onfinish = () => {
 		container.remove();
+		
+		parent.parentElement.style.removeProperty('z-index');
 	};
 	
 	return [container, element];
