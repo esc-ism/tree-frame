@@ -105,7 +105,8 @@ export function reset() {
 }
 
 export function setNode(node: Child) {
-	activeOptions.push(...(node.element.contrast.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
+	// Using Array.from so typescript doesn't complain
+	activeOptions.push(...Array.from(node.element.contrast.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
 	
 	update(node.value);
 }
