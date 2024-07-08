@@ -16,8 +16,8 @@ export default function generate() {
 	]);
 	
 	addRule(`.${BUTTON_CLASS}:last-child`, [
-		['border-top-right-radius', '50%'],
-		['border-bottom-right-radius', '50%'],
+		['border-top-right-radius', '0.8em'],
+		['border-bottom-right-radius', '0.8em'],
 	]);
 	
 	addRule([`.${BASE_CLASS}`], [
@@ -29,10 +29,9 @@ export default function generate() {
 	
 	addRule([`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${BASE_CLASS}`], [['width', '0']]);
 	
-	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > *`, [
-		['margin-left', '-0.5em'],
-		['padding-left', '0.5em'],
-	]);
+	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > :not(.${HIGHLIGHT_BACKGROUND_CLASS})`, [['padding-left', '0.8em']]);
+	
+	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > *`, [['margin-left', '-0.8em']]);
 	
 	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${HIGHLIGHT_BACKGROUND_CLASS}`, [
 		['transition-property', 'width, padding-left'],
@@ -43,7 +42,7 @@ export default function generate() {
 	
 	addRule([`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${HIGHLIGHT_BACKGROUND_CLASS}`], [
 		['width', '100%'],
-		['padding-left', '0.5em'],
+		['padding-left', '0.8em'],
 	]);
 	
 	addRule(`.${HIGHLIGHT_BACKGROUND_CLASS}`, [
