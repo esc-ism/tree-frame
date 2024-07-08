@@ -173,7 +173,7 @@ export function doAction(node: Child) {
 }
 
 export function mount(node: Child): void {
-	const {backgroundContainer, contrast: {valueElement}, headContainer} = node.element;
+	const {backgroundContainer, contrast: {valueElement, valueContainer}, headContainer} = node.element;
 	
 	node.element.addClass(EDITABLE_CLASS);
 	
@@ -214,6 +214,21 @@ export function mount(node: Child): void {
 	// Process new value
 	
 	if (typeof node.value === 'boolean') {
+		headContainer.addEventListener('mousedown', (event) => {
+			event.stopPropagation();
+			event.preventDefault();
+		});
+		
+		headContainer.addEventListener('click', () => {
+			valueElement.checked = !valueElement.checked;
+			
+			update(node);
+		});
+		
+		valueContainer.addEventListener('click', (event) => {
+			event.stopPropagation();
+		});
+		
 		valueElement.addEventListener('click', (event) => {
 			event.stopPropagation();
 			
@@ -249,7 +264,7 @@ export function mount(node: Child): void {
 			case 'Escape':
 				event.stopPropagation();
 				
-				reset();
+				headContainer.focus();
 		}
 	});
 }
