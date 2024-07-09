@@ -6,14 +6,8 @@ async function getPredicateResponse(response: any) {
 	}
 }
 
-export async function getPredicatePromise(_response: any) {
-	const response = await getPredicateResponse(_response);
-	
-	if (typeof response === 'string') {
-		throw response;
-	} else if (response) {
-		return;
-	}
-	
-	throw null;
+export function getPredicatePromise(_response: any) {
+	return getPredicateResponse(_response)
+		.catch(() => Promise.reject())
+		.then((response) => typeof response === 'string' ? Promise.reject(response) : Promise[response ? 'resolve' : 'reject']());
 }

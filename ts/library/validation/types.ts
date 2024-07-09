@@ -83,7 +83,7 @@ export interface _Parent {
 
 // Node types
 
-export const LEAF_KEYS = ['label', 'value', 'predicate', 'input', 'isActive', 'onUpdate'] as const;
+export const LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input', 'isActive', 'onUpdate'] as const;
 export const ROOT_KEYS = ['children', 'seed', 'poolId', 'childPredicate', 'descendantPredicate', 'onChildUpdate', 'onDescendantUpdate'] as const;
 export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
 

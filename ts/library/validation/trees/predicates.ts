@@ -2,35 +2,26 @@ import type {Child, Parent} from '../types';
 import {
 	TypeError, PropertyError,
 	JoinedError, NonIntegerError,
-	OptionMatchError, PredicateError, HangingPredicateError, HangingOptionsError,
+	OptionMatchError, PredicateError,
+	HangingPredicateError, HangingOptionsError,
 } from '../errors';
 
 import {getPredicatePromise} from '../../../predicate';
 
-async function getBoundPredicatePromise(response, error: Error) {
-	try {
-		await getPredicatePromise(response);
-	} catch (_) {
-		throw error;
-	}
+function getBoundPredicatePromise(response, error: Error): Promise<void> {
+	return getPredicatePromise(response)
+		.catch(() => Promise.reject(error));
 }
 
 function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> {
-	if (!('value' in child)) {
-		if ('predicate' in child)
-			throw new JoinedError(
-				new HangingPredicateError(),
-				new PropertyError(breadcrumbs, 'value', true),
-			);
-		
-		if ('options' in child)
-			throw new JoinedError(
-				new HangingOptionsError(),
-				new PropertyError(breadcrumbs, 'value', true),
-			);
-		
+	if (!('options' in child) && !('predicate' in child))
 		return Promise.resolve();
-	}
+	
+	if (!('value' in child))
+		throw new JoinedError(
+			new ('predicate' in child ? HangingPredicateError : HangingOptionsError)(),
+			new PropertyError(breadcrumbs, 'value', true),
+		);
 	
 	if ('options' in child) {
 		const type = typeof child.value;
@@ -51,7 +42,10 @@ function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> 
 			return Promise.resolve();
 	}
 	
-	return getBoundPredicatePromise(child.predicate(child.value), new PredicateError([...breadcrumbs, 'predicate']));
+	if ('predicate' in child)
+		return getBoundPredicatePromise(child.predicate(child.value), new PredicateError([...breadcrumbs, 'predicate']));
+	
+	return Promise.reject();
 }
 
 export function validateParent(breadcrumbs: string[], parent: Parent) {

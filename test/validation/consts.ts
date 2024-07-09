@@ -108,13 +108,13 @@ export const VALID: Configs = {
 						{
 							label: '_',
 							value: '_',
-							predicate: ['_'],
+							options: ['_'],
 						},
 					],
 					seed: {
 						label: '_',
 						value: '_',
-						predicate: ['_'],
+						options: ['_'],
 					},
 					childPredicate: () => true,
 				},
@@ -126,17 +126,21 @@ export const VALID: Configs = {
 				{
 					label: '_',
 					value: '_',
-					predicate: [() => false, '_'],
+					options: ['_'],
 				},
 			],
 		},
 		// 7
 		{
+			onChildUpdate: () => null,
+			onDescendantUpdate: () => null,
 			children: [
 				{
 					label: '_',
 					value: '_',
-					predicate: [() => false, () => true],
+					options: ['_'],
+					predicate: () => false,
+					onUpdate: () => null,
 				},
 			],
 		},
@@ -160,6 +164,36 @@ export const VALID: Configs = {
 			descendantPredicate: ([{value}]) => value === '_',
 			childPredicate: ({length}) => length === 1,
 		},
+		// 9
+		{
+			children: [
+				{
+					label: '_',
+					value: '_',
+					options: ['|'],
+					predicate: () => true,
+				},
+			],
+		},
+		// 10
+		(() => {
+			const predicate = () => true;
+			
+			return {
+				children: [
+					{
+						label: '_',
+						value: '1',
+						predicate,
+					},
+				],
+				seed: {
+					label: '_',
+					value: '1',
+					predicate,
+				},
+			};
+		})(),
 	],
 	USER_STYLES: [[]],
 	DEV_STYLES: [
@@ -201,19 +235,26 @@ export const INVALID = {
 	],
 	TREES: [
 		// Unexpected type
+		// 0
 		'',
+		// 1
 		true,
+		// 2
 		1,
+		// 3
 		[],
 		// Missing property
+		// 4
 		{seed: VALID.TREES[0]},
 		// Unexpected property type
+		// 5
 		{
 			children: {
 				label: '_',
 				value: '_',
 			},
 		},
+		// 6
 		{
 			children: [
 				{
@@ -223,6 +264,7 @@ export const INVALID = {
 			],
 			seed: [],
 		},
+		// 7
 		{
 			children: [
 				{
@@ -237,6 +279,7 @@ export const INVALID = {
 				},
 			],
 		},
+		// 9
 		{
 			children: [
 				{
@@ -245,6 +288,7 @@ export const INVALID = {
 				},
 			],
 		},
+		// 10
 		{
 			children: [
 				{
@@ -253,15 +297,17 @@ export const INVALID = {
 				},
 			],
 		},
+		// 11
 		{
 			children: [
 				{
 					label: '_',
 					value: '_',
-					predicate: '_',
+					options: '_',
 				},
 			],
 		},
+		// 12
 		{
 			children: [
 				{
@@ -271,11 +317,13 @@ export const INVALID = {
 				},
 			],
 		},
+		// 13
 		{
 			children: [],
 			seed: '_',
 		},
 		// Predicate fail
+		// 14
 		{
 			children: [
 				{
@@ -285,33 +333,38 @@ export const INVALID = {
 				},
 			],
 		},
+		// 15
 		{
 			...VALID.TREES[0],
 			childPredicate: () => false,
 		},
+		// 16
 		{
 			...VALID.TREES[0],
 			descendantPredicate: () => false,
 		},
+		// 17
 		{
 			children: [
 				{
 					label: '_',
 					value: '_',
-					predicate: ['|'],
+					options: ['|'],
 				},
 			],
 		},
+		// 18
 		{
 			children: [
 				{
 					label: '_',
 					value: '_',
-					predicate: [() => false],
+					predicate: () => false,
 				},
 			],
 		},
 		// Seed match fail
+		// 19
 		{
 			children: [
 				{
@@ -325,6 +378,7 @@ export const INVALID = {
 				predicate: () => true,
 			},
 		},
+		// 20
 		{
 			children: [
 				{
@@ -338,11 +392,12 @@ export const INVALID = {
 				value: '_',
 			},
 		},
+		// 21
 		{
 			children: [
 				{
 					label: '_',
-					value: 1,
+					value: '1',
 					predicate: () => true,
 				},
 			],
@@ -352,20 +407,35 @@ export const INVALID = {
 				predicate: () => true,
 			},
 		},
+		// 22
+		{
+			children: [
+				{
+					label: '_',
+					value: 1,
+				},
+			],
+			seed: {
+				label: '_',
+				value: '1',
+			},
+		},
+		// 23
 		{
 			children: [
 				{
 					label: '_',
 					value: '_',
-					predicate: ['_', '|'],
+					options: ['_', '|'],
 				},
 			],
 			seed: {
 				label: '_',
 				value: '_',
-				predicate: ['_', '/'],
+				options: ['_', 'X'],
 			},
 		},
+		// 24
 		{
 			children: [
 				{
@@ -385,6 +455,7 @@ export const INVALID = {
 			},
 		},
 		// Pool errors
+		// 25
 		{
 			children: [
 				{
@@ -395,6 +466,7 @@ export const INVALID = {
 			],
 			poolId: 0,
 		},
+		// 26
 		{
 			children: [
 				{
@@ -409,6 +481,7 @@ export const INVALID = {
 				poolId: 1,
 			},
 		},
+		// 27
 		{
 			children: [
 				{

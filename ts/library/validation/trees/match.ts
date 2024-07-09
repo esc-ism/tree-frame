@@ -61,7 +61,7 @@ function validateValueMatch(
 function validateChildMatch(
 	modelBreadcrumbs: string[], model: Child,
 	candidateBreadcrumbs: string[], candidate: Child,
-	isUserTree: boolean = true,
+	isUserTree: boolean = false,
 ): void {
 	if (isUserTree) {
 		if ('value' in model !== 'value' in candidate) {
@@ -107,7 +107,7 @@ function validateChildMatch(
 export function validateParentMatch(
 	modelBreadcrumbs: string[], model: Parent,
 	candidateBreadcrumbs: string[], candidate: Parent,
-	isUserTree: boolean = false,
+	isUserTree: boolean = true,
 ): void {
 	if (isUserTree) {
 		for (const key of SCHEMA_KEYS) {
@@ -136,7 +136,6 @@ export function validateParentMatch(
 			validateChildMatch(
 				[...modelBreadcrumbs, 'seed'], model.seed,
 				[...candidateBreadcrumbs, 'seed'], candidate.seed,
-				true,
 			);
 		
 		for (const [i, child] of candidate.children.entries()) {
