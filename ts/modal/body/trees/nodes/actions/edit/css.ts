@@ -25,7 +25,10 @@ export default function generate() {
 		['min-width', '1em'],
 	]);
 	
-	addRule(`.${ELEMENT_CLASSES.VALUE}[type="color"]`, ['height', '1.3em']);
+	addRule(`.${ELEMENT_CLASSES.VALUE}[type="color"]`, [
+		['height', '1.3em'],
+		['cursor', 'pointer'],
+	]);
 	
 	addRule([`.${VALID_BACKGROUND_CLASS}`, `.${INVALID_BACKGROUND_CLASS}`], [
 		['right', '0'],
