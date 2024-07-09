@@ -98,9 +98,9 @@ export interface Middle extends _Child, _Parent {
 
 // Saved data info
 
-export const SAVED_KEYS = ['label', 'value', 'isActive'];
+export const SAVED_KEYS = ['label', 'value', 'isActive', 'children'];
 
-export const SCHEMA_KEYS = [...ROOT_KEYS, ...LEAF_KEYS.filter((key) => !SAVED_KEYS.includes(key))];
+export const SCHEMA_KEYS = [...ROOT_KEYS, ...LEAF_KEYS].filter((key) => !SAVED_KEYS.includes(key));
 
 // Node unions
 
