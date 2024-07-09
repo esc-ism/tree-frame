@@ -7,7 +7,7 @@ import * as highlight from './actions/highlight';
 import * as focus from './actions/focus';
 import * as create from './actions/buttons/create';
 
-import type {Root as _Root, Child as _Child, SubPredicate} from '@types';
+import type {Root as _Root, Child as _Child, ParentCallback} from '@types';
 
 const actions = [highlight, focus, create];
 
@@ -15,9 +15,11 @@ export default class Root implements _Root {
 	readonly children: Array<Middle | Child> = [];
 	
 	readonly seed?: _Child;
-	readonly childPredicate?: SubPredicate;
-	readonly descendantPredicate?: SubPredicate;
 	readonly poolId?: number;
+	readonly childPredicate?: ParentCallback;
+	readonly descendantPredicate?: ParentCallback;
+	readonly onChildUpdate?: ParentCallback;
+	readonly onDescendantUpdate?: ParentCallback;
 	
 	readonly depth: number = 0;
 	readonly element: NodeElement;

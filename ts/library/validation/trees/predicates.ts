@@ -1,8 +1,8 @@
 import type {Child, Parent} from '../types';
 import {
-	TypeError, ValueError, PropertyError,
-	JoinedError, EmptyArrayError, NoOptionsError, NonIntegerError,
-	MismatchedOptionsError, PredicateError, HangingPredicateError,
+	TypeError, PropertyError,
+	JoinedError, NonIntegerError,
+	OptionMatchError, PredicateError, HangingPredicateError, HangingOptionsError,
 } from '../errors';
 
 import {getPredicatePromise} from '../../../predicate';
@@ -16,64 +16,42 @@ async function getBoundPredicatePromise(response, error: Error) {
 }
 
 function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> {
-	if (!('predicate' in child)) {
-		return Promise.resolve();
-	}
-	
 	if (!('value' in child)) {
-		throw new JoinedError(
-			new HangingPredicateError(),
-			new PropertyError(breadcrumbs, 'value', true),
-		);
-	}
-	
-	if (typeof child.predicate === 'function')
-		return getBoundPredicatePromise(child.predicate(child.value), new PredicateError([...breadcrumbs, 'predicate']));
-	
-	if (child.predicate.length === 0)
-		throw new JoinedError(
-			new NoOptionsError(),
-			new EmptyArrayError([...breadcrumbs, 'predicate']),
-		);
-	
-	const functions = [];
-	let type;
-	let valueFound = false;
-	
-	for (const [i, option] of child.predicate.entries()) {
-		switch (typeof option) {
-			case 'function':
-				functions.push(i);
-				
-				break;
-			case type:
-				valueFound ||= child.value === option;
-				
-				break;
-			default:
-				if (type !== undefined)
-					throw new JoinedError(
-						new MismatchedOptionsError(),
-						new TypeError([...breadcrumbs, 'predicate', i.toString()], typeof option, [type]),
-					);
-				
-				type = typeof option;
-				
-				valueFound = child.value === option;
-		}
-	}
-	
-	if (valueFound)
+		if ('predicate' in child)
+			throw new JoinedError(
+				new HangingPredicateError(),
+				new PropertyError(breadcrumbs, 'value', true),
+			);
+		
+		if ('options' in child)
+			throw new JoinedError(
+				new HangingOptionsError(),
+				new PropertyError(breadcrumbs, 'value', true),
+			);
+		
 		return Promise.resolve();
+	}
 	
-	if (functions.length === 0)
-		throw new JoinedError(
-			new PredicateError([...breadcrumbs, 'predicate']),
-			new ValueError([...breadcrumbs, 'value'], child.value, child.predicate),
-		);
+	if ('options' in child) {
+		const type = typeof child.value;
+		let valueFound = false;
+		
+		for (const [i, option] of child.options.entries()) {
+			if (typeof option !== type) {
+				throw new JoinedError(
+					new OptionMatchError(),
+					new TypeError([...breadcrumbs, 'options', i.toString()], typeof option, [type]),
+				);
+			}
+			
+			valueFound ||= child.value === option;
+		}
+		
+		if (valueFound)
+			return Promise.resolve();
+	}
 	
-	return Promise.any(functions.map((i) => getBoundPredicatePromise(child.predicate[i](child.value), new PredicateError([...breadcrumbs, 'predicate', i.toString()]))))
-		.catch(([error]) => error);
+	return getBoundPredicatePromise(child.predicate(child.value), new PredicateError([...breadcrumbs, 'predicate']));
 }
 
 export function validateParent(breadcrumbs: string[], parent: Parent) {

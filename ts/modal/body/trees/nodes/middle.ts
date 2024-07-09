@@ -5,7 +5,7 @@ import Child from './child';
 
 import * as create from './actions/buttons/create';
 
-import type {Middle as _Middle, Child as _Child, SubPredicate} from '@types';
+import type {Middle as _Middle, Child as _Child, ParentCallback} from '@types';
 
 const actions: Array<{
 	shouldMount: (node: Middle) => boolean;
@@ -17,9 +17,11 @@ export default class Middle extends Child implements _Middle {
 	readonly children: Array<Middle | Child> = [];
 	
 	readonly seed?: _Child;
-	readonly childPredicate?: SubPredicate;
-	readonly descendantPredicate?: SubPredicate;
 	readonly poolId?: number;
+	readonly childPredicate?: ParentCallback;
+	readonly descendantPredicate?: ParentCallback;
+	readonly onChildUpdate?: ParentCallback;
+	readonly onDescendantUpdate?: ParentCallback;
 	
 	constructor({children, ...data}: _Middle, parent: Root | Middle, index?: number) {
 		super(data, parent, index);

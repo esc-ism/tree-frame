@@ -69,7 +69,7 @@ export function toJSON(style: UserStyle): _Middle {
 							{
 								label: 'Contrast Method',
 								value: filledStyle.headContrast,
-								predicate: [...CONTRAST_METHODS],
+								options: [...CONTRAST_METHODS],
 							},
 						],
 					},
@@ -121,7 +121,7 @@ export function toJSON(style: UserStyle): _Middle {
 							{
 								label: 'Contrast Method',
 								value: filledStyle.nodeContrast,
-								predicate: [...CONTRAST_METHODS],
+								options: [...CONTRAST_METHODS],
 							},
 						],
 					},
@@ -244,26 +244,27 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
 			isActive: false,
 			...defaultStyle,
 		}),
-		descendantPredicate: (styleNodes: Array<_Middle>): true | string => {
-			const activeStyles: Array<_Middle> = styleNodes.filter(({
-				isActive,
-				'children': [{value}],
-			}) => isActive && value);
+		descendantPredicate: (styles: Array<_Middle>): true | string => {
+			let count = 0;
 			
-			switch (activeStyles.length) {
-				case 0:
-					updateStylesheet(defaultStyle);
-					
-					return true;
-				
-				case 1:
-					updateStylesheet(toRawStyle(activeStyles[0]));
-					
-					return true;
-				
-				default:
+			for (const {isActive} of styles) {
+				if (isActive && ++count > 1) {
 					return 'Only one color scheme may be active at a time.';
+				}
 			}
+			
+			return true;
+		},
+		onDescendantUpdate: (styles) => {
+			for (const style of (styles as Array<_Middle>)) {
+				if (style.isActive && style.children[0].value) {
+					updateStylesheet(toRawStyle(style));
+					
+					return;
+				}
+			}
+			
+			updateStylesheet(defaultStyle);
 		},
 	}, ROOT_ID);
 }

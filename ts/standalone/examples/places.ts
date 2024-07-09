@@ -83,7 +83,7 @@ function getMedia(
 			{
 				label: 'Media Type',
 				value: type,
-				predicate: ['*type*', 'Movie', 'TV Show', 'Song', 'Album'],
+				options: ['*type*', 'Movie', 'TV Show', 'Song', 'Album'],
 			},
 			{
 				label: 'Release Year (AD)',

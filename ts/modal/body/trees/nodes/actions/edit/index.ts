@@ -14,7 +14,7 @@ import type Root from '@nodes/root';
 
 import {getPredicatePromise} from '@/predicate';
 
-import type {SubPredicate, Value} from '@types';
+import type {ParentCallback, Value} from '@types';
 
 let activeNode: Child;
 
@@ -57,77 +57,84 @@ function getValue(node: Child): Value {
 	}
 }
 
-function getSubPredicateResponse(predicate: SubPredicate, children: Array<Child>): Promise<void> {
+function getSubPredicateResponse(predicate: ParentCallback, children: Array<Child>): Promise<void> {
 	return getPredicatePromise(predicate(children.map((child) => child.getJSON())));
 }
 
-function getDescendantPredicateResponses(node: Root | Middle): Array<Promise<void>> {
+export function getSubPredicateResponses(node: Root | Middle, isParent = true): Array<Promise<void>> {
 	const responses = [];
+	
+	if (isParent && 'childPredicate' in node) {
+		responses.push(getSubPredicateResponse(node.childPredicate, node.children));
+	}
+	
 	if ('descendantPredicate' in node) {
 		responses.push(getSubPredicateResponse(node.descendantPredicate, node.children));
 	}
 	
+	return 'parent' in node ? [...responses, ...getSubPredicateResponses(node.parent, false)] : responses;
+}
+
+function getAllPredicateResponses(): Array<Promise<void>> {
+	if (activeNode.forceValid) {
+		return getSubPredicateResponses(activeNode.parent);
+	}
+	
+	const value = getValue(activeNode);
+	
+	if ('options' in activeNode && activeNode.options.includes(activeNode.value)) {
+		return getSubPredicateResponses(activeNode.parent);
+	}
+	
+	if ('predicate' in activeNode) {
+		return [getPredicatePromise(activeNode.predicate(value)), ...getSubPredicateResponses(activeNode.parent)];
+	}
+	
+	return [Promise.reject()];
+}
+
+function triggerSubUpdateCallbacks(node: Root | Middle, isParent = true) {
+	if (isParent && 'onChildUpdate' in node) {
+		node.onChildUpdate(node.children.map((child) => child.getJSON()));
+	}
+	
+	if ('onDescendantUpdate' in node) {
+		node.onDescendantUpdate(node.children.map((child) => child.getJSON()));
+	}
+	
 	if ('parent' in node) {
-		responses.push(...getDescendantPredicateResponses(node.parent));
+		triggerSubUpdateCallbacks(node.parent, false);
 	}
-	
-	return responses;
 }
 
-function getChildPredicateResponse(node: Root | Middle): Promise<void> {
-	if ('childPredicate' in node) {
-		return getSubPredicateResponse(node.childPredicate, node.children);
+function triggerAllUpdateCallbacks() {
+	if ('onUpdate' in activeNode) {
+		activeNode.onUpdate(activeNode.value);
 	}
 	
-	return Promise.resolve(null);
+	triggerSubUpdateCallbacks(activeNode.parent);
 }
 
-export function getSubPredicateResponses(parent: Root | Middle): Array<Promise<void>> {
-	return [getChildPredicateResponse(parent), ...getDescendantPredicateResponses(parent)];
-}
-
-function getOwnPredicateResponse(node: Child): Promise<void> {
-	if (!('predicate' in node)) {
-		return Promise.resolve();
-	}
+export function update() {
+	const previousValue = activeNode.value;
 	
-	const {predicates, options} = node;
-	const value = getValue(node);
+	activeNode.value = getValue(activeNode);
 	
-	if (options.includes(value)) {
-		return Promise.resolve();
-	}
-	
-	if (predicates.length === 0) {
-		return Promise.reject();
-	}
-	
-	return Promise.all(predicates.map((predicate) => getPredicatePromise(predicate(value))))
-		.then(() => Promise.resolve());
-}
-
-function getAllPredicateResponses(node: Child = activeNode): Array<Promise<void>> {
-	return [getOwnPredicateResponse(node), ...getSubPredicateResponses(node.parent)];
-}
-
-export function update(node: Child) {
-	const previousValue = node.value;
-	
-	node.value = getValue(node);
-	
-	if (node.options.length > 0) {
-		option.update(node.value);
+	if ('options' in activeNode) {
+		option.update(activeNode.value);
 	}
 	
 	Promise.all(getAllPredicateResponses())
 		.then(() => {
-			node.element.removeClass(INVALID_CLASS);
+			activeNode.element.removeClass(INVALID_CLASS);
 			activeNode.element.addClass(VALID_CLASS);
 			
 			tooltip.hide();
+			
+			triggerAllUpdateCallbacks();
 		})
 		.catch((reason) => {
-			node.element.removeClass(VALID_CLASS);
+			activeNode.element.removeClass(VALID_CLASS);
 			activeNode.element.addClass(INVALID_CLASS);
 			
 			activeNode.value = previousValue;
@@ -145,33 +152,37 @@ export function unmount(node: Child) {
 }
 
 export function doAction(node: Child) {
-	const previousNode = activeNode;
+	if (activeNode === node) {
+		return;
+	}
 	
 	reset();
 	
 	tooltip.kill();
 	
-	if (previousNode !== node) {
-		activeNode = node;
-		
-		activeNode.element.addClass(ACTIVE_CLASS);
-		
-		activeNode.element.addClass(VALID_CLASS);
-		
-		tooltip.setNode(node);
-		
-		if (node.options.length > 0) {
-			option.setNode(node);
-		}
-		
-		if (node.input === 'color') {
-			node.element.contrast.valueElement.click();
-		} else {
-			node.element.contrast.valueElement.select();
-		}
-		
-		addSustained(node);
+	activeNode = node;
+	
+	activeNode.element.addClass(ACTIVE_CLASS);
+	
+	activeNode.element.addClass(VALID_CLASS);
+	
+	tooltip.setNode(node);
+	
+	if ('options' in node) {
+		option.setNode(node);
 	}
+	
+	if (node.input === 'color') {
+		node.element.contrast.valueElement.click();
+	} else if (typeof node.value !== 'boolean') {
+		const input = node.element.contrast.valueElement;
+		
+		input.select();
+		
+		input.scrollLeft = input.scrollWidth;
+	}
+	
+	addSustained(node);
 }
 
 export function mount(node: Child): void {
@@ -194,7 +205,7 @@ export function mount(node: Child): void {
 	valueElement.addEventListener('focus', (event) => {
 		event.stopPropagation();
 		
-		if (event.relatedTarget && activeNode !== node) {
+		if (event.relatedTarget) {
 			doAction(node);
 		}
 	});
@@ -208,9 +219,7 @@ export function mount(node: Child): void {
 	headContainer.addEventListener('click', (event) => {
 		event.stopPropagation();
 		
-		if (activeNode !== node) {
-			doAction(node);
-		}
+		valueElement.focus();
 	});
 	
 	// Process new value
@@ -224,7 +233,7 @@ export function mount(node: Child): void {
 		headContainer.addEventListener('click', () => {
 			valueElement.checked = !valueElement.checked;
 			
-			update(node);
+			update();
 		});
 		
 		valueContainer.addEventListener('click', (event) => {
@@ -234,13 +243,13 @@ export function mount(node: Child): void {
 		valueElement.addEventListener('click', (event) => {
 			event.stopPropagation();
 			
-			update(node);
+			update();
 		});
 	} else {
 		valueElement.addEventListener('input', (event) => {
 			event.stopPropagation();
 			
-			update(node);
+			update();
 		});
 		
 		// Stop
@@ -256,7 +265,7 @@ export function mount(node: Child): void {
 		}
 	}
 	
-	if (node.options.length > 0) {
+	if ('options' in node) {
 		option.generate(node);
 	}
 	

@@ -3,6 +3,8 @@ import {
 	OPTION_BACKGROUND_CLASS, OPTION_SHOW_CLASS, OPTION_ACTIVE_CLASS,
 } from './consts';
 
+import {update as notify} from '../index';
+
 import type Child from '@nodes/child';
 
 import {ROOT_CLASS} from '@nodes/consts';
@@ -46,12 +48,13 @@ function deselect() {
 }
 
 export function update(value: Value) {
-	const regExp = new RegExp(escapeRegExp(`${value}`), 'i');
+	const stringValue = `${value}`;
+	const regExp = new RegExp(escapeRegExp(stringValue), 'i');
 	
 	let hasVisibleChild = false;
 	
 	for (const {parentElement, innerText} of activeOptions) {
-		if (regExp.test(innerText)) {
+		if (stringValue.length < innerText.length && regExp.test(innerText)) {
 			parentElement.classList.add(OPTION_SHOW_CLASS);
 			
 			hasVisibleChild = true;
@@ -79,15 +82,10 @@ export function update(value: Value) {
 	deselect();
 }
 
-function setValue(node: Child, value: string, doKill: boolean = false) {
+function setValue(node: Child, value: string) {
 	node.element.contrast.valueElement.value = value;
 	
-	node.value = value;
-	
-	if (doKill) {
-		// Simulate an 'enter' button press
-		node.element.contrast.valueElement.dispatchEvent(new KeyboardEvent('keydown', {key: 'Tab'}));
-	}
+	notify();
 }
 
 function setActive(option: HTMLElement, isActive: boolean = true) {
@@ -129,8 +127,15 @@ export function generate(node: Child) {
 		container.append(background, option);
 		parent.appendChild(container);
 		
-		container.addEventListener('mousedown', () => {
-			setValue(node, value, true);
+		container.addEventListener('mousedown', (event) => {
+			event.stopPropagation();
+			event.preventDefault();
+		});
+		
+		container.addEventListener('click', (event) => {
+			event.stopPropagation();
+			
+			setValue(node, value);
 		});
 		
 		container.addEventListener('mouseenter', (event) => {
@@ -146,15 +151,18 @@ export function generate(node: Child) {
 		});
 	}
 	
-	node.element.contrast.valueElement.addEventListener('keydown', ({key}) => {
+	node.element.contrast.valueElement.addEventListener('keydown', (event) => {
 		const priorIndex = activeIndex;
 		
 		let hasChanged = false;
 		
-		switch (key) {
+		switch (event.key) {
 			case 'Tab':
 			case 'Enter':
 				if (activeIndex >= 0) {
+					event.stopImmediatePropagation();
+					event.preventDefault();
+					
 					setValue(node, activeOptions[activeIndex].innerText);
 				}
 				

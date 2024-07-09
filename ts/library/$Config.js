@@ -2,7 +2,7 @@ import {init, edit} from './index';
 import {getTargetWindow} from '../modal/css';
 import {reset} from '../modal/body';
 
-const VERSION = 0;
+const VERSION = 1;
 
 const KEY_VERSION = 'TREE_FRAME_VERSION';
 
@@ -106,16 +106,12 @@ export default class $Config {
 	/**
 	 * @param {string} KEY_TREE The identifier used to store and retrieve the user's config.
 	 * @param {ParentNode} TREE_DEFAULT The tree to use as a starting point for the user's config.
-	 * @param {function(Array<ChildNode | (ChildNode & ParentNode)>): *} _getConfig Takes a root node's children and returns the data structure expected by your script.
+	 * @param {function(Array<ChildNode | (ChildNode & ParentNode)>): *} getConfig Takes a root node's children and returns the data structure expected by your script.
 	 * @param {string} TITLE The heading to use in the config-editor.
 	 * @param {InnerStyle} [STYLE_INNER] A custom style to use as the default
 	 * @param {object} [_STYLE_OUTER] CSS to assign to the element. e.g. {zIndex: 9999}.
 	 */
-	constructor(KEY_TREE, TREE_DEFAULT, _getConfig, TITLE, STYLE_INNER = {}, _STYLE_OUTER = {}) {
-		// PRIVATE FUNCTIONS
-		
-		const getConfig = ({children}) => _getConfig(getStrippedForest(children));
-		
+	constructor(KEY_TREE, TREE_DEFAULT, getConfig, TITLE, STYLE_INNER = {}, _STYLE_OUTER = {}) {
 		// CORE PERMISSION CHECKS
 		
 		if (typeof GM.getValue !== 'function') {
@@ -140,12 +136,6 @@ export default class $Config {
 		};
 		
 		// PUBLIC FUNCTIONS
-		
-		const setConfig = (tree) => {
-			const config = getConfig(tree);
-			
-			this.get = () => config;
-		};
 		
 		this.ready = async () => {
 			// Setup root element
@@ -174,24 +164,43 @@ export default class $Config {
 			// Patch to current version
 			
 			(() => {
-				if (version !== -1 || !userTree) {
+				if (!userTree) {
 					return;
 				}
 				
-				const patch = (node) => {
-					delete node.predicate;
-					delete node.childPredicate;
-					delete node.descendantPredicate;
-					delete node.seed;
-					
-					if ('children' in node) {
-						for (const child of node.children) {
-							patch(child);
-						}
+				switch (version) {
+					case -1:{
+						const patch = (node) => {
+							delete node.predicate;
+							delete node.childPredicate;
+							delete node.descendantPredicate;
+							delete node.seed;
+							
+							if ('children' in node) {
+								for (const child of node.children) {
+									patch(child);
+								}
+							}
+						};
+						
+						patch(userTree);
 					}
-				};
-				
-				patch(userTree);
+					
+					// eslint-disable-next-line no-fallthrough
+					case 0: {
+						const patch = (node) => {
+							delete node.input;
+							
+							if ('children' in node) {
+								for (const child of node.children) {
+									patch(child);
+								}
+							}
+						};
+						
+						patch(userTree);
+					}
+				}
 			})();
 			
 			// Listen for post-init communication
@@ -229,7 +238,9 @@ export default class $Config {
 				}
 				
 				try {
-					setConfig(TREE_DEFAULT);
+					const config = getConfig(getStrippedForest(TREE_DEFAULT));
+					
+					this.get = () => config;
 				} catch (error) {
 					throw getError('Unable to parse default config.', error);
 				}
@@ -260,7 +271,9 @@ export default class $Config {
 				GM.setValue(KEY_STYLES, styles);
 				GM.setValue(KEY_VERSION, VERSION);
 				
-				setConfig(tree);
+				const config = getConfig(tree);
+				
+				this.get = () => config;
 				
 				await open(false);
 			};
@@ -285,7 +298,9 @@ export default class $Config {
 					);
 				}
 				
-				setConfig(response.tree);
+				const config = getConfig(response.tree);
+				
+				this.get = () => config;
 			} catch (error) {
 				delete this.reset;
 				

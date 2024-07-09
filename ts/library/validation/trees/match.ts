@@ -1,8 +1,10 @@
 import type {Child, Node, Parent, Root} from '../types';
+import {SCHEMA_KEYS} from '../types';
 import {
 	TypeError, ValueError, PropertyError,
 	PoolSizeError,
 	JoinedError, SeedMatchError, DeactivatedError,
+	FunctionMatchError,
 } from '../errors';
 
 function mutateMatch(
@@ -24,30 +26,20 @@ function mutateMatch(
 	}
 }
 
-function validatePredicateMatch(
-	isFrozen: boolean,
+function validateOptionMatch(
 	modelBreadcrumbs: string[], model: Child,
 	candidateBreadcrumbs: string[], candidate: Child,
 ) {
-	if ('predicate' in model !== 'predicate' in candidate)
-		throw new PropertyError(candidateBreadcrumbs, 'predicate', 'predicate' in model);
+	if ('options' in model !== 'options' in candidate)
+		throw new PropertyError(candidateBreadcrumbs, 'options', 'options' in model);
 	
-	if (typeof model.predicate !== typeof candidate.predicate)
-		throw new TypeError([...candidateBreadcrumbs, 'predicate'], typeof candidate.predicate, [typeof model.predicate]);
-	
-	if (typeof model.predicate === 'object') {
-		const {length} = candidate.predicate as Array<string>;
+	if ('options' in model) {
+		if (model.options.length !== candidate.options.length)
+			throw new ValueError([...candidateBreadcrumbs, 'options', 'length'], candidate.options.length, [model.options.length]);
 		
-		if (!isFrozen && !model.predicate.includes(candidate.value)) {
-			candidate.value = model.value;
-		}
-		
-		if (model.predicate.length !== length)
-			throw new ValueError([...candidateBreadcrumbs, 'predicate', 'length'], length, [model.predicate.length]);
-		
-		for (const [i, option] of model.predicate.entries()) {
-			if (candidate.predicate[i] !== option)
-				throw new ValueError([...candidateBreadcrumbs, 'predicate', i.toString()], candidate.predicate[i], [option]);
+		for (const [i, option] of model.options.entries()) {
+			if (candidate.options[i] !== option)
+				throw new ValueError([...candidateBreadcrumbs, 'options', i.toString()], candidate.options[i], [option]);
 		}
 	}
 }
@@ -66,99 +58,109 @@ function validateValueMatch(
 
 // Tree validators
 
-export function validateParentMatch(
-	modelBreadcrumbs: string[], model: Parent,
-	candidateBreadcrumbs: string[], candidate: Parent,
-	isFrozen: boolean = false,
-): void {
-	if (isFrozen) {
-		validateValueMatch('poolId', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		validateValueMatch('childPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		validateValueMatch('descendantPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-	} else {
-		mutateMatch(model, candidate, validateValueMatch.bind(null, 'poolId'), 'poolId');
-		
-		if ('childPredicate' in model)
-			candidate.childPredicate = model.childPredicate;
-		
-		if ('descendantPredicate' in model)
-			candidate.descendantPredicate = model.descendantPredicate;
-		
-		if ('seed' in model)
-			candidate.seed = model.seed;
-	}
-	
-	if ('seed' in model) {
-		if (isFrozen) {
-			validateChildMatch(
-				[...modelBreadcrumbs, 'seed'], model.seed,
-				[...candidateBreadcrumbs, 'seed'], candidate.seed,
-				true,
-			);
-		}
-		
-		for (const [i, child] of candidate.children.entries()) {
-			validateChildMatch(
-				[...modelBreadcrumbs, 'seed'], model.seed,
-				[...candidateBreadcrumbs, 'children', i.toString()], child,
-				isFrozen,
-			);
-		}
-	} else if (!('poolId' in model)) {
-		if (isFrozen && model.children.length !== candidate.children.length)
-			throw new ValueError([...candidateBreadcrumbs, 'children', 'length'], candidate.children.length, [model.children.length]);
-		
-		if (model.children.length < candidate.children.length) {
-			candidate.children = candidate.children.slice(0, model.children.length);
-		}
-		
-		for (const [i, child] of candidate.children.entries()) {
-			validateChildMatch(
-				[...modelBreadcrumbs, 'children', i.toString()], model.children[i],
-				[...candidateBreadcrumbs, 'children', i.toString()], child,
-				isFrozen,
-			);
-		}
-		
-		if (model.children.length > candidate.children.length) {
-			candidate.children.push(...model.children.slice(candidate.children.length));
-		}
-	}
-}
-
 function validateChildMatch(
 	modelBreadcrumbs: string[], model: Child,
 	candidateBreadcrumbs: string[], candidate: Child,
-	isFrozen: boolean = true,
+	isUserTree: boolean = true,
 ): void {
-	if ('value' in model !== 'value' in candidate) {
-		if (isFrozen || 'value' in candidate)
-			throw new PropertyError(candidateBreadcrumbs, 'value', false);
-		
-		candidate.value = model.value;
-	} else {
-		if (typeof model.value !== typeof candidate.value)
+	if (isUserTree) {
+		if ('value' in model !== 'value' in candidate) {
+			if ('value' in candidate)
+				throw new PropertyError(candidateBreadcrumbs, 'value', false);
+			
+			candidate.value = model.value;
+		} else if (typeof model.value !== typeof candidate.value) {
 			throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
-	}
-	
-	if (isFrozen) {
-		validateValueMatch('label', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		validatePredicateMatch(true, modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-	} else {
-		if (typeof model.value !== typeof candidate.value)
-			throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+		}
 		
 		mutateMatch(model, candidate, validateValueMatch.bind(null, 'label'), 'label');
+	} else {
+		if ('value' in model !== 'value' in candidate)
+			throw new PropertyError(candidateBreadcrumbs, 'value', 'value' in model);
 		
-		if ('predicate' in model)
-			candidate.predicate = model.predicate;
+		if (typeof model.value !== typeof candidate.value)
+			throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+		
+		validateValueMatch('label', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		validateValueMatch('input', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		validateOptionMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		
+		try {
+			validateValueMatch('predicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+			validateValueMatch('onUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		} catch (error) {
+			throw new JoinedError(
+				new FunctionMatchError(),
+				error,
+			);
+		}
 	}
 	
 	if ('children' in model !== 'children' in candidate)
 		throw new PropertyError(candidateBreadcrumbs, 'children', 'children' in model);
 	
 	if ('children' in model) {
-		validateParentMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate as Parent, isFrozen);
+		validateParentMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate as Parent, isUserTree);
+	}
+}
+
+export function validateParentMatch(
+	modelBreadcrumbs: string[], model: Parent,
+	candidateBreadcrumbs: string[], candidate: Parent,
+	isUserTree: boolean = false,
+): void {
+	if (isUserTree) {
+		for (const key of SCHEMA_KEYS) {
+			if (key in model)
+				candidate[key] = model[key];
+		}
+	} else {
+		validateValueMatch('poolId', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		
+		try {
+			validateValueMatch('childPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+			validateValueMatch('onChildUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+			
+			validateValueMatch('descendantPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+			validateValueMatch('onDescendantUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		} catch (error) {
+			throw new JoinedError(
+				new FunctionMatchError(),
+				error,
+			);
+		}
+	}
+	
+	if ('seed' in model) {
+		if (!isUserTree)
+			validateChildMatch(
+				[...modelBreadcrumbs, 'seed'], model.seed,
+				[...candidateBreadcrumbs, 'seed'], candidate.seed,
+				true,
+			);
+		
+		for (const [i, child] of candidate.children.entries()) {
+			validateChildMatch(
+				[...modelBreadcrumbs, 'seed'], model.seed,
+				[...candidateBreadcrumbs, 'children', i.toString()], child,
+				isUserTree,
+			);
+		}
+	} else if (!('poolId' in model)) {
+		if (model.children.length !== candidate.children.length)
+			throw new ValueError([...candidateBreadcrumbs, 'children', 'length'], candidate.children.length, [model.children.length]);
+		
+		for (const [i, child] of candidate.children.entries()) {
+			validateChildMatch(
+				[...modelBreadcrumbs, 'children', i.toString()], model.children[i],
+				[...candidateBreadcrumbs, 'children', i.toString()], child,
+				isUserTree,
+			);
+		}
+		
+		if (model.children.length > candidate.children.length) {
+			candidate.children.push(...model.children.slice(candidate.children.length));
+		}
 	}
 }
 

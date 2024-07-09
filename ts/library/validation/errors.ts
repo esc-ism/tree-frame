@@ -98,21 +98,27 @@ export class PoolSizeError extends Error {
 	}
 }
 
-export class NoOptionsError extends Error {
+export class FunctionMatchError extends Error {
 	constructor() {
-		super('Array type validators may not be empty.');
+		super('Corresponding function values in seed & non-seed branches must be the same pointer.');
 	}
 }
 
-export class MismatchedOptionsError extends Error {
+export class OptionMatchError extends Error {
 	constructor() {
-		super('Values in array type validators must all be the same type.');
+		super('Options must have the same type as their node\'s value.');
+	}
+}
+
+export class HangingOptionsError extends Error {
+	constructor() {
+		super('Nodes without a value may not have options.');
 	}
 }
 
 export class HangingPredicateError extends Error {
 	constructor() {
-		super('If a predicate is declared, a value must also be present.');
+		super('Nodes without a value may not have a predicate.');
 	}
 }
 

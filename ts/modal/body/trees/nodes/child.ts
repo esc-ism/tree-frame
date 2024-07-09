@@ -12,7 +12,8 @@ import * as duplicate from './actions/buttons/duplicate';
 
 import {getDepthClassCount} from '../style/update/depth';
 
-import type {Leaf, Child as _Child, Value, Input} from '@types';
+import type {Leaf, Child as _Child, Value, Input, ChildCallback} from '@types';
+import {SAVED_KEYS} from '@types';
 
 const actions: Array<{
 	shouldMount: (node: Child) => boolean;
@@ -30,17 +31,20 @@ const actions: Array<{
 ];
 
 export default class Child implements Leaf {
-	readonly label?: string;
-	value?: Value;
-	readonly input?: Input;
 	isActive: boolean;
+	
+	value?: Value;
+	readonly label?: string;
+	readonly input?: Input;
+	readonly options?: Array<Value>;
+	readonly predicate?: ChildCallback;
+	readonly onUpdate?: ChildCallback;
+	
+	readonly forceValid: boolean;
 	
 	parent: Root | Middle;
 	readonly depth: number;
 	readonly element: NodeElement;
-	
-	readonly options: Array<Value> = [];
-	readonly predicates: Array<Function> = [];
 	
 	constructor(data: _Child, parent: Root | Middle, index?: number) {
 		this.depth = parent.depth + 1;
@@ -51,20 +55,7 @@ export default class Child implements Leaf {
 			this[key] = value;
 		}
 		
-		switch (typeof data.predicate) {
-			case 'function':
-				this.predicates.push(data.predicate);
-				
-				break;
-			case 'object':
-				for (const option of data.predicate) {
-					if (typeof option === 'function') {
-						this.predicates.push(option);
-					} else {
-						this.options.push(option);
-					}
-				}
-		}
+		this.forceValid = !('predicate' in data) && !('options' in data);
 		
 		this.attach(parent, index);
 		
@@ -135,11 +126,11 @@ export default class Child implements Leaf {
 	}
 	
 	getJSON(): _Child {
-		const data: any = {isActive: this.isActive};
+		const data: any = {};
 		
-		for (const property of ['label', 'value', 'input']) {
-			if (property in this) {
-				data[property] = this[property];
+		for (const key of SAVED_KEYS) {
+			if (key in this) {
+				data[key] = this[key];
 			}
 		}
 		
