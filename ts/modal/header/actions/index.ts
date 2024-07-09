@@ -15,11 +15,11 @@ export default function generate(background: HTMLElement): HTMLElement {
 	element.id = BUTTON_CONTAINER_ID;
 	
 	element.append(
-		generateAltToggle(),
-		generateHider(),
-		generateLabelToggle(),
-		generateStyler(),
 		generateCloser(background),
+		generateStyler(),
+		generateLabelToggle(),
+		generateHider(),
+		generateAltToggle(),
 	);
 	
 	return element;

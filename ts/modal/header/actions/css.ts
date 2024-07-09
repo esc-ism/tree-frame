@@ -13,7 +13,11 @@ export function addColourRule(actionId: string, colour: string) {
 export default function generate() {
 	addRule(`#${BUTTON_CONTAINER_ID}`, [
 		['display', 'inline-flex'],
-		['flex-direction', 'row'],
+		['flex-direction', 'row-reverse'],
+		['max-width', '80%'],
+		['overflow-x', 'scroll'],
+		['scrollbar-width', 'none'],
+		['scroll-behavior', 'smooth'],
 	]);
 	
 	addRule([

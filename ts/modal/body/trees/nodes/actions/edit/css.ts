@@ -9,7 +9,7 @@ import {ELEMENT_CLASSES} from '@nodes/consts';
 import {addRule} from '@/modal/css';
 
 export default function generate() {
-// Use pointer when the node has a value and isn't being edited
+	// Use pointer when the node has a value and isn't being edited
 	addRule(`.${EDITABLE_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, ['cursor', 'pointer']);
 	
 	addRule(`:not(.${ACTIVE_CLASS}) > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.INFO_CONTAINER}`, ['pointer-events', 'none']);
@@ -17,6 +17,7 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.VALUE}`, [
 		['flex-grow', '1'],
 		['outline', 'none'],
+		['min-width', '0'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.VALUE}[type="checkbox"]`, [
