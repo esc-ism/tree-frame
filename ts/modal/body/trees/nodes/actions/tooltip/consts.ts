@@ -6,6 +6,8 @@ export const TOOLTIP_TOP_CLASS = 'tooltip-above';
 
 export const TOOLTIP_BOTTOM_CLASS = 'tooltip-below';
 
+export const TOOLTIP_REVERSE_CLASS = 'tooltip-reverse';
+
 export const TOOLTIP_ANIMATION: [Array<Keyframe>, KeyframeAnimationOptions] = [
 	[
 		// keyframes

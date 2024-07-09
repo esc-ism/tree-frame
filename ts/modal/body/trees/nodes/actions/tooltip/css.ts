@@ -1,6 +1,7 @@
 import {
 	TOOLTIP_CLASS, TOOLTIP_CONTAINER_CLASS,
 	TOOLTIP_TOP_CLASS, TOOLTIP_BOTTOM_CLASS,
+	TOOLTIP_REVERSE_CLASS,
 } from './consts';
 
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
@@ -22,8 +23,14 @@ export default function generate() {
 		['white-space', 'normal'],
 	]);
 	
-	addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`, ['bottom', '102%']);
-	addRule(`.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_BOTTOM_CLASS}`, ['top', '102%']);
+	addRule([
+		`:not(.${TOOLTIP_REVERSE_CLASS}).${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`,
+		`.${TOOLTIP_REVERSE_CLASS}.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_BOTTOM_CLASS}`,
+	], ['bottom', '102%']);
+	addRule([
+		`:not(.${TOOLTIP_REVERSE_CLASS}).${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_BOTTOM_CLASS}`,
+		`.${TOOLTIP_REVERSE_CLASS}.${TOOLTIP_CONTAINER_CLASS}.${TOOLTIP_TOP_CLASS}`,
+	], ['top', '102%']);
 	
 	addRule(`.${TOOLTIP_CLASS}`, [
 		['margin', '0 auto'],
@@ -56,12 +63,18 @@ export default function generate() {
 		['border-style', 'solid'],
 	]);
 	
-	addRule(`.${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`, [
+	addRule([
+		`:not(.${TOOLTIP_REVERSE_CLASS}).${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`,
+		`.${TOOLTIP_REVERSE_CLASS}.${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`,
+	], [
 		['top', '100%'],
 		['border-color', 'var(--borderTooltip) transparent transparent transparent'],
 	]);
 	
-	addRule(`.${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`, [
+	addRule([
+		`:not(.${TOOLTIP_REVERSE_CLASS}).${TOOLTIP_BOTTOM_CLASS} > .${TOOLTIP_CLASS}::after`,
+		`.${TOOLTIP_REVERSE_CLASS}.${TOOLTIP_TOP_CLASS} > .${TOOLTIP_CLASS}::after`,
+	], [
 		['bottom', '100%'],
 		['border-color', 'transparent transparent var(--borderTooltip) transparent'],
 	]);

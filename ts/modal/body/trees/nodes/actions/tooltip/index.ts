@@ -1,6 +1,7 @@
 import {
 	TOOLTIP_CLASS, TOOLTIP_CONTAINER_CLASS,
-	TOOLTIP_BOTTOM_CLASS, TOOLTIP_TOP_CLASS, TOOLTIP_ANIMATION,
+	TOOLTIP_BOTTOM_CLASS, TOOLTIP_TOP_CLASS, TOOLTIP_REVERSE_CLASS,
+	TOOLTIP_ANIMATION,
 } from './consts';
 
 import {isActive as forceAbove} from '../edit/option';
@@ -36,12 +37,16 @@ function isBelowCenter(element, yPosition = 0) {
 	return scrollPosition < yPosition;
 }
 
-function generate(parent: HTMLElement) {
+function generate(parent: HTMLElement, doReverse: boolean = false) {
 	const container = document.createElement('div');
 	const element = document.createElement('div');
 	
 	container.classList.add(TOOLTIP_CONTAINER_CLASS);
 	element.classList.add(TOOLTIP_CLASS);
+	
+	if (doReverse) {
+		container.classList.add(TOOLTIP_REVERSE_CLASS);
+	}
 	
 	container.appendChild(element);
 	
@@ -101,9 +106,9 @@ export function reset() {
 }
 
 export function setNode(node: Child) {
-	const {container} = node.element.contrast;
+	const {container, valueElement} = node.element.contrast;
 	
-	generate(container);
+	generate(container, valueElement.type === 'color');
 	
 	activeParent = container;
 }
