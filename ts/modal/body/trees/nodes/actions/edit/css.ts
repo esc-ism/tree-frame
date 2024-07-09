@@ -30,20 +30,27 @@ export default function generate() {
 		['cursor', 'pointer'],
 	]);
 	
-	addRule([`.${VALID_BACKGROUND_CLASS}`, `.${INVALID_BACKGROUND_CLASS}`], [
-		['right', '0'],
-		['width', '0'],
-		['transition', 'width 500ms'],
-	]);
-	
 	addRule(`.${VALID_BACKGROUND_CLASS}`, ['background-color', 'var(--validBackground)']);
 	
 	addRule(`.${INVALID_BACKGROUND_CLASS}`, ['background-color', 'var(--invalidBackground)']);
+	
+	addRule([`.${VALID_BACKGROUND_CLASS}`, `.${INVALID_BACKGROUND_CLASS}`], [
+		['transition-property', 'width, padding-left'],
+		['transition-duration', '500ms'],
+		['right', '0'],
+		['width', '0'],
+		['padding-left', '0'],
+	]);
 	
 	addRule([
 		`.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${VALID_BACKGROUND_CLASS}`,
 		`.${INVALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${INVALID_BACKGROUND_CLASS}`,
 	], ['width', '100%']);
+	
+	addRule([
+		`.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${VALID_BACKGROUND_CLASS}`,
+		`.${INVALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${INVALID_BACKGROUND_CLASS}`,
+	], ['padding-left', '0.8em']);
 	
 	addRule(
 		`.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
