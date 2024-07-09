@@ -37,6 +37,10 @@ function escapeRegExp(string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function setActive(option: HTMLElement, isActive: boolean = true) {
+	option.classList[isActive ? 'add' : 'remove'](OPTION_ACTIVE_CLASS);
+}
+
 function deselect() {
 	if (activeIndex === -1) {
 		return;
@@ -86,10 +90,8 @@ function setValue(node: Child, value: string) {
 	node.element.contrast.valueElement.value = value;
 	
 	notify();
-}
-
-function setActive(option: HTMLElement, isActive: boolean = true) {
-	option.classList[isActive ? 'add' : 'remove'](OPTION_ACTIVE_CLASS);
+	
+	deselect();
 }
 
 export function reset() {
