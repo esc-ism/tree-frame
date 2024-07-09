@@ -19,11 +19,7 @@ const yearPredicate = (value: number): true | string => {
 };
 
 const emptyStringPredicate = (value: string): true | string => {
-	if (value === '') {
-		return 'Please provide a value';
-	}
-	
-	return true;
+	return value !== '' || 'Please provide a value';
 };
 
 function getPerson(
@@ -52,13 +48,11 @@ function getPerson(
 			{
 				label: 'Hair Colour',
 				value: hairColour,
-				predicate: emptyStringPredicate,
 				input: 'color',
 			},
 			{
 				label: 'Eye Colour',
 				value: eyeColour,
-				predicate: emptyStringPredicate,
 				input: 'color',
 			},
 			{
