@@ -169,7 +169,7 @@ export default class $Config {
 				}
 				
 				switch (version) {
-					case -1:{
+					case -1: {
 						const patch = (node) => {
 							delete node.predicate;
 							delete node.childPredicate;
@@ -271,7 +271,7 @@ export default class $Config {
 				GM.setValue(KEY_STYLES, styles);
 				GM.setValue(KEY_VERSION, VERSION);
 				
-				const config = getConfig(tree);
+				const config = getConfig(tree.children);
 				
 				this.get = () => config;
 				
@@ -298,7 +298,7 @@ export default class $Config {
 					);
 				}
 				
-				const config = getConfig(response.tree);
+				const config = getConfig(response.tree.children);
 				
 				this.get = () => config;
 			} catch (error) {
