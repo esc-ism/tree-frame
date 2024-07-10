@@ -17,7 +17,7 @@ const shared = {
 			},
 		],
 	},
-	plugins: [new FileCopy({patterns: [{from: './ts/standalone/index.html'}]}), new CleanWebpackPlugin()],
+	plugins: [new FileCopy({patterns: [{from: './ts/standalone/index.html'}, {from: './ts/standalone/background.jpeg'}]}), new CleanWebpackPlugin()],
 };
 
 module.exports = [

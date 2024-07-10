@@ -4,15 +4,15 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {getRoot as getDataTree} from '@/modal/body/trees/data';
-import {getUserStyles} from '@/modal/body/trees/style';
+import {getRoot as getDataTree} from '@/modal/body/data';
+import {getUserStyles} from '@/modal/body/style';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
 import {reset as resetEdit} from '@nodes/actions/edit';
 import {reset as resetMove} from '@nodes/actions/buttons/move';
 import {reset as resetHighlight} from '@nodes/actions/highlight';
 
-import {TREE_CONTAINER} from '@/modal/body/trees';
+import {element as scrollElement} from '@/modal/body';
 
 let callback: Function;
 
@@ -29,7 +29,7 @@ function doAction() {
 	resetMove();
 	resetHighlight();
 	
-	TREE_CONTAINER.scroll(0, 0);
+	scrollElement.scroll(0, 0);
 	
 	callback?.({
 		tree: getDataTree().getJSON(),

@@ -4,6 +4,8 @@ import generateCSS from './css';
 import generateHeader from './header';
 import generateBody from './body';
 
+import {generateEave} from '@nodes/actions/highlight';
+
 import {Config} from '@types';
 
 let socket: HTMLElement;
@@ -27,6 +29,5 @@ export default function generate(config: Config, _socket: HTMLElement) {
 	background.append(foreground);
 	socket.append(background);
 	
-	foreground.append(generateHeader(config, background));
-	foreground.append(generateBody(config));
+	foreground.append(generateHeader(config, background), generateBody(config), generateEave());
 }

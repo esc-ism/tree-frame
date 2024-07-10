@@ -4,7 +4,7 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {setActive} from '@/modal/body/trees';
+import {setActive} from '@/modal/body';
 
 import {getTargetWindow} from '@/modal/css';
 

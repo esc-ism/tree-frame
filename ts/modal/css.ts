@@ -66,17 +66,25 @@ export default function generate() {
 		['height', '100%'],
 		
 		['background-color', '#0003'],
+		
+		['display', 'flex'],
+		['align-content', 'center'],
+		['flex-wrap', 'wrap'],
+		['justify-content', 'center'],
 	]);
 	
 	addRule(`#${MODAL_ID}`, [
-		['position', 'relative'],
-		['margin', '12vh auto'],
-		['padding', '0'],
 		['width', '80%'],
+		['height', '80%'],
 		
 		['font-family', 'Tahoma, Geneva, sans-serif'],
 		['outline', 'var(--borderModal) solid 2px'],
 		['box-shadow', '1px 1px 10px 4px #00000015, 0 0 30px 10px #00000065'],
+		
+		['display', 'flex'],
+		['flex-direction', 'column'],
+		
+		['position', 'relative'],
 	]);
 	
 	addRule('button', [

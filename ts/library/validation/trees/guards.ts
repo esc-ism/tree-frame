@@ -5,45 +5,12 @@ import {hasOwnProperty, validateUnexpectedKeys} from '../index';
 
 // Type predicates
 
-export function isParent(breadcrumbs: string[], candidate: object, isUserTree: boolean = false): candidate is Parent {
-	if (!hasOwnProperty(candidate, 'children'))
-		throw new PropertyError(breadcrumbs, 'children', true);
-	
-	if (!Array.isArray(candidate.children))
-		throw new TypeError([...breadcrumbs, 'children'], typeof candidate.children, ['array']);
-	
-	if (hasOwnProperty(candidate, 'seed') && !isChild([...breadcrumbs, 'seed'], candidate.seed))
-		throw new UnexpectedStateError();
-	
-	if (hasOwnProperty(candidate, 'poolId') && typeof candidate.poolId !== 'number')
-		throw new TypeError([...breadcrumbs, 'poolId'], typeof candidate.poolId, ['number']);
-	
-	if (hasOwnProperty(candidate, 'childPredicate') && typeof candidate.childPredicate !== 'function')
-		throw new TypeError([...breadcrumbs, 'childPredicate'], typeof candidate.childPredicate, ['function']);
-	
-	if (hasOwnProperty(candidate, 'descendantPredicate') && typeof candidate.descendantPredicate !== 'function')
-		throw new TypeError([...breadcrumbs, 'descendantPredicate'], typeof candidate.descendantPredicate, ['function']);
-	
-	if (hasOwnProperty(candidate, 'onChildUpdate') && typeof candidate.onChildUpdate !== 'function')
-		throw new TypeError([...breadcrumbs, 'onChildUpdate'], typeof candidate.onChildUpdate, ['function']);
-	
-	if (hasOwnProperty(candidate, 'onDescendantUpdate') && typeof candidate.onDescendantUpdate !== 'function')
-		throw new TypeError([...breadcrumbs, 'onDescendantUpdate'], typeof candidate.onDescendantUpdate, ['function']);
-	
-	for (const [i, child] of candidate.children.entries()) {
-		if (!isChild([...breadcrumbs, 'children', i.toString()], child, isUserTree))
-			throw new UnexpectedStateError();
-	}
-	
-	return true;
-}
-
 function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean = false): candidate is Child {
 	if (typeof candidate !== 'object')
 		throw new TypeError([...breadcrumbs], typeof candidate, ['object']);
 	
 	if (isUserTree) {
-		validateUnexpectedKeys(breadcrumbs, candidate, [...SAVED_KEYS, 'children']);
+		validateUnexpectedKeys(breadcrumbs, candidate, SAVED_KEYS);
 	} else {
 		validateUnexpectedKeys(breadcrumbs, candidate, 'children' in candidate ? MIDDLE_KEYS : LEAF_KEYS);
 	}
@@ -83,6 +50,39 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 	
 	if (hasOwnProperty(candidate, 'children') && !isParent(breadcrumbs, candidate, isUserTree))
 		throw new UnexpectedStateError();
+	
+	return true;
+}
+
+export function isParent(breadcrumbs: string[], candidate: object, isUserTree: boolean = false): candidate is Parent {
+	if (!hasOwnProperty(candidate, 'children'))
+		throw new PropertyError(breadcrumbs, 'children', true);
+	
+	if (!Array.isArray(candidate.children))
+		throw new TypeError([...breadcrumbs, 'children'], typeof candidate.children, ['array']);
+	
+	if (hasOwnProperty(candidate, 'seed') && !isChild([...breadcrumbs, 'seed'], candidate.seed))
+		throw new UnexpectedStateError();
+	
+	if (hasOwnProperty(candidate, 'poolId') && typeof candidate.poolId !== 'number')
+		throw new TypeError([...breadcrumbs, 'poolId'], typeof candidate.poolId, ['number']);
+	
+	if (hasOwnProperty(candidate, 'childPredicate') && typeof candidate.childPredicate !== 'function')
+		throw new TypeError([...breadcrumbs, 'childPredicate'], typeof candidate.childPredicate, ['function']);
+	
+	if (hasOwnProperty(candidate, 'descendantPredicate') && typeof candidate.descendantPredicate !== 'function')
+		throw new TypeError([...breadcrumbs, 'descendantPredicate'], typeof candidate.descendantPredicate, ['function']);
+	
+	if (hasOwnProperty(candidate, 'onChildUpdate') && typeof candidate.onChildUpdate !== 'function')
+		throw new TypeError([...breadcrumbs, 'onChildUpdate'], typeof candidate.onChildUpdate, ['function']);
+	
+	if (hasOwnProperty(candidate, 'onDescendantUpdate') && typeof candidate.onDescendantUpdate !== 'function')
+		throw new TypeError([...breadcrumbs, 'onDescendantUpdate'], typeof candidate.onDescendantUpdate, ['function']);
+	
+	for (const [i, child] of candidate.children.entries()) {
+		if (!isChild([...breadcrumbs, 'children', i.toString()], child, isUserTree))
+			throw new UnexpectedStateError();
+	}
 	
 	return true;
 }

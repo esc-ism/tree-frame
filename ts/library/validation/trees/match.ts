@@ -1,5 +1,4 @@
 import type {Child, Node, Parent, Root} from '../types';
-import {SCHEMA_KEYS} from '../types';
 import {
 	TypeError, ValueError, PropertyError,
 	PoolSizeError,
@@ -7,24 +6,7 @@ import {
 	FunctionMatchError,
 } from '../errors';
 
-function mutateMatch(
-	model: Node, candidate: Node,
-	validate: (
-		modelBreadcrumbs: string[], model: Node,
-		candidateBreadcrumbs: string[], candidate: Node,
-	) => void,
-	property: string,
-) {
-	try {
-		validate([], model, [], candidate);
-	} catch (error) {
-		if (property in model) {
-			candidate[property] = model[property];
-		} else {
-			delete candidate[property];
-		}
-	}
-}
+// Helpers
 
 function validateOptionMatch(
 	modelBreadcrumbs: string[], model: Child,
@@ -56,93 +38,145 @@ function validateValueMatch(
 		throw new ValueError([...candidateBreadcrumbs, property], candidate[property], [model[property]]);
 }
 
-// Tree validators
+function assignKeys(from: Object, to: Object): void {
+	for (const key of Object.keys(from)) {
+		if (!(key in to)) {
+			to[key] = from[key];
+		}
+	}
+}
 
-function validateChildMatch(
+// Consistent userTree validators/enforcers
+
+function matchUserTreeChild(
 	modelBreadcrumbs: string[], model: Child,
 	candidateBreadcrumbs: string[], candidate: Child,
-	isUserTree: boolean = false,
-): void {
-	if (isUserTree) {
-		if ('value' in model !== 'value' in candidate) {
-			if ('value' in candidate)
-				throw new PropertyError(candidateBreadcrumbs, 'value', false);
-			
-			candidate.value = model.value;
-		} else if (typeof model.value !== typeof candidate.value) {
-			throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
-		}
+) {
+	if ('value' in model !== 'value' in candidate) {
+		if ('value' in candidate)
+			throw new PropertyError(candidateBreadcrumbs, 'value', false);
 		
-		mutateMatch(model, candidate, validateValueMatch.bind(null, 'label'), 'label');
+		candidate.value = model.value;
+	} else if (typeof model.value !== typeof candidate.value) {
+		throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+	}
+	
+	if ('label' in model) {
+		candidate.label = model.label;
 	} else {
-		if ('value' in model !== 'value' in candidate)
-			throw new PropertyError(candidateBreadcrumbs, 'value', 'value' in model);
-		
-		if (typeof model.value !== typeof candidate.value)
-			throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
-		
-		validateValueMatch('label', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		validateValueMatch('input', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		validateOptionMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		
-		try {
-			validateValueMatch('predicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-			validateValueMatch('onUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		} catch (error) {
-			throw new JoinedError(
-				new FunctionMatchError(),
-				error,
-			);
-		}
+		delete candidate.label;
 	}
 	
 	if ('children' in model !== 'children' in candidate)
 		throw new PropertyError(candidateBreadcrumbs, 'children', 'children' in model);
 	
 	if ('children' in model) {
-		validateParentMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate as Parent, isUserTree);
+		matchUserTreeParent(modelBreadcrumbs, model, candidateBreadcrumbs, candidate as Parent);
+	} else {
+		assignKeys(model, candidate);
 	}
 }
 
-export function validateParentMatch(
+export function matchUserTreeParent(
 	modelBreadcrumbs: string[], model: Parent,
 	candidateBreadcrumbs: string[], candidate: Parent,
-	isUserTree: boolean = true,
-): void {
-	if (isUserTree) {
-		for (const key of SCHEMA_KEYS) {
-			if (key in model)
-				candidate[key] = model[key];
-		}
-	} else {
-		validateValueMatch('poolId', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		
-		try {
-			validateValueMatch('childPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-			validateValueMatch('onChildUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-			
-			validateValueMatch('descendantPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-			validateValueMatch('onDescendantUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
-		} catch (error) {
-			throw new JoinedError(
-				new FunctionMatchError(),
-				error,
+) {
+	assignKeys(model, candidate);
+	
+	if ('seed' in model) {
+		for (const [i, child] of candidate.children.entries()) {
+			matchUserTreeChild(
+				[...modelBreadcrumbs, 'seed'], model.seed,
+				[...candidateBreadcrumbs, 'children', i.toString()], child,
 			);
 		}
+		
+		return;
+	}
+	
+	if ('poolId' in model) {
+		return;
+	}
+	
+	if (model.children.length !== candidate.children.length)
+		throw new ValueError([...candidateBreadcrumbs, 'children', 'length'], candidate.children.length, [model.children.length]);
+	
+	for (const [i, child] of candidate.children.entries()) {
+		matchUserTreeChild(
+			[...modelBreadcrumbs, 'children', i.toString()], model.children[i],
+			[...candidateBreadcrumbs, 'children', i.toString()], child,
+		);
+	}
+	
+	// Done after validation to avoid validating certain matches
+	if (model.children.length > candidate.children.length) {
+		candidate.children.push(...model.children.slice(candidate.children.length));
+	}
+}
+
+// defaultTree internal consistency validators
+
+function validateChildMatch(
+	modelBreadcrumbs: string[], model: Child,
+	candidateBreadcrumbs: string[], candidate: Child,
+): void {
+	if ('value' in model !== 'value' in candidate)
+		throw new PropertyError(candidateBreadcrumbs, 'value', 'value' in model);
+	
+	if (typeof model.value !== typeof candidate.value)
+		throw new TypeError([...candidateBreadcrumbs, 'value'], typeof candidate.value, [typeof model.value]);
+	
+	validateValueMatch('label', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+	validateValueMatch('input', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+	validateOptionMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+	
+	try {
+		validateValueMatch('predicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		validateValueMatch('onUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+	} catch (error) {
+		throw new JoinedError(
+			new FunctionMatchError(),
+			error,
+		);
+	}
+	
+	if ('children' in model !== 'children' in candidate)
+		throw new PropertyError(candidateBreadcrumbs, 'children', 'children' in model);
+	
+	if ('children' in model) {
+		validateParentMatch(modelBreadcrumbs, model, candidateBreadcrumbs, candidate as Parent);
+	}
+}
+
+function validateParentMatch(
+	modelBreadcrumbs: string[], model: Parent,
+	candidateBreadcrumbs: string[], candidate: Parent,
+): void {
+	validateValueMatch('poolId', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+	
+	try {
+		validateValueMatch('childPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		validateValueMatch('onChildUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		
+		validateValueMatch('descendantPredicate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+		validateValueMatch('onDescendantUpdate', modelBreadcrumbs, model, candidateBreadcrumbs, candidate);
+	} catch (error) {
+		throw new JoinedError(
+			new FunctionMatchError(),
+			error,
+		);
 	}
 	
 	if ('seed' in model) {
-		if (!isUserTree)
-			validateChildMatch(
-				[...modelBreadcrumbs, 'seed'], model.seed,
-				[...candidateBreadcrumbs, 'seed'], candidate.seed,
-			);
+		validateChildMatch(
+			[...modelBreadcrumbs, 'seed'], model.seed,
+			[...candidateBreadcrumbs, 'seed'], candidate.seed,
+		);
 		
 		for (const [i, child] of candidate.children.entries()) {
 			validateChildMatch(
 				[...modelBreadcrumbs, 'seed'], model.seed,
 				[...candidateBreadcrumbs, 'children', i.toString()], child,
-				isUserTree,
 			);
 		}
 	} else if (!('poolId' in model)) {
@@ -153,7 +187,6 @@ export function validateParentMatch(
 			validateChildMatch(
 				[...modelBreadcrumbs, 'children', i.toString()], model.children[i],
 				[...candidateBreadcrumbs, 'children', i.toString()], child,
-				isUserTree,
 			);
 		}
 		
@@ -162,6 +195,8 @@ export function validateParentMatch(
 		}
 	}
 }
+
+// Other validators
 
 export function validateSeeds(breadcrumbs: string[], node: Node): void {
 	if ('children' in node) {

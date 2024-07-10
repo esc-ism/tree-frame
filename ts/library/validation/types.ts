@@ -81,10 +81,17 @@ export interface _Parent {
 	onDescendantUpdate?: ParentCallback;
 }
 
+// Key categories
+
+export const SAVED_KEYS = ['label', 'value', 'isActive', 'children'];
+export const ROOT_PREDICATE_KEYS = ['childPredicate', 'descendantPredicate'] as const;
+export const ROOT_UPDATE_KEYS = ['onChildUpdate', 'onDescendantUpdate'] as const;
+export const ROOT_OTHER_KEYS = ['children', 'seed', 'poolId'] as const;
+
 // Node types
 
 export const LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input', 'isActive', 'onUpdate'] as const;
-export const ROOT_KEYS = ['children', 'seed', 'poolId', 'childPredicate', 'descendantPredicate', 'onChildUpdate', 'onDescendantUpdate'] as const;
+export const ROOT_KEYS = [...ROOT_PREDICATE_KEYS, ...ROOT_UPDATE_KEYS, ...ROOT_OTHER_KEYS] as const;
 export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
 
 export interface Leaf extends _Child {
@@ -95,12 +102,6 @@ export interface Root extends _Parent {
 
 export interface Middle extends _Child, _Parent {
 }
-
-// Saved data info
-
-export const SAVED_KEYS = ['label', 'value', 'isActive', 'children'];
-
-export const SCHEMA_KEYS = [...ROOT_KEYS, ...LEAF_KEYS].filter((key) => !SAVED_KEYS.includes(key));
 
 // Node unions
 

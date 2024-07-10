@@ -4,7 +4,7 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {setActive} from '@/modal/body/trees';
+import {setActive} from '@/modal/body';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
 import {reset as resetEdit} from '@nodes/actions/edit';

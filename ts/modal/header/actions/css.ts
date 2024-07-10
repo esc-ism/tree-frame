@@ -3,11 +3,12 @@ import {BUTTON_CLASS, BUTTON_CONTAINER_ID} from './consts';
 import {BUTTON_ACTIVE_CLASS} from '../../consts';
 import {addRule} from '../../css';
 
+const ACTIVE_SELECTOR = `.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS}`;
+
 export function addColourRule(actionId: string, colour: string) {
-	addRule(`#${actionId}.${BUTTON_ACTIVE_CLASS} > svg`, [
-		['stroke', `var(--headBase)`],
-		['fill', `var(${colour})`],
-	]);
+	addRule(`#${actionId}${ACTIVE_SELECTOR} > svg`, [['fill', `var(${colour})`]]);
+	
+	addRule([`#${actionId}${ACTIVE_SELECTOR}:not(:hover):not(:focus) > svg`], [['stroke', `var(${colour})`]]);
 }
 
 export default function generate() {
@@ -17,13 +18,13 @@ export default function generate() {
 		['max-width', '80%'],
 		['overflow-x', 'scroll'],
 		['scrollbar-width', 'none'],
-		['scroll-behavior', 'smooth'],
+		['overscroll-behavior', 'contain'],
 	]);
 	
 	addRule([
 		`.${BUTTON_CLASS}:focus > svg`,
 		`.${BUTTON_CLASS}:hover > svg`,
-		`.${BUTTON_CLASS}.${BUTTON_ACTIVE_CLASS} > svg`,
+		`${ACTIVE_SELECTOR} > svg`,
 	], ['background-color', `var(--headContrast)`]);
 	
 	addRule(`.${BUTTON_CLASS}`, ['border-left', '2px solid var(--headContrast)']);
@@ -31,16 +32,16 @@ export default function generate() {
 	addRule([
 		`.${BUTTON_CLASS}:not(:first-child):focus`,
 		`.${BUTTON_CLASS}:not(:first-child):hover`,
-		`.${BUTTON_CLASS}:not(:first-child).${BUTTON_ACTIVE_CLASS}`,
+		`${ACTIVE_SELECTOR}:not(:first-child)`,
 	], ['border-color', 'var(--headBase)']);
 	
 	addRule([
-		`.${BUTTON_CLASS}:focus:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
-		`.${BUTTON_CLASS}:hover:not(.${BUTTON_ACTIVE_CLASS}) > svg`,
+		`.${BUTTON_CLASS}:focus > svg`,
+		`.${BUTTON_CLASS}:hover > svg`,
 	], ['stroke', `var(--headBase)`]);
 	
 	addRule(`.${BUTTON_CLASS} > svg`, [
-		['width', '1.81em'],
+		['width', '1.7em'],
 		['stroke', 'var(--headContrast)'],
 		['fill', `var(--headContrast)`],
 		

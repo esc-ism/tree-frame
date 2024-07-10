@@ -4,13 +4,13 @@ import {addColourRule} from '../css';
 
 import {addRule} from '@/modal/css';
 
-import {TREE_CONTAINER_ID} from '@/modal/body/trees/consts';
+import {MODAL_BODY_ID} from '@/modal/body/consts';
 
 import {ELEMENT_CLASSES} from '@nodes/consts';
 
 export default function generate() {
 	addRule(
-		`#${TREE_CONTAINER_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
+		`#${MODAL_BODY_ID}:not(.${ACTION_ID}) .${ELEMENT_CLASSES.LABEL_CONTAINER}`,
 		['display', 'none'],
 	);
 	

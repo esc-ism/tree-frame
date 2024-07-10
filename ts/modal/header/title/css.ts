@@ -10,6 +10,6 @@ export default function generate() {
 		['overflow', 'hidden'],
 		['text-overflow', 'ellipsis'],
 		
-		['padding', '0 20px'],
+		['padding', '0 0.5em'],
 	]);
 }

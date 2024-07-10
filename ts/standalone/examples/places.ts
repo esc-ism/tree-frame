@@ -139,10 +139,6 @@ const config: Config = {
 	userStyles: [],
 	defaultStyle: {
 		borderTooltip: '#7f0000',
-		headBase: '#30ff00',
-		headButtonExit: '#d60000',
-		headButtonLabel: '#001fff',
-		headButtonStyle: '#ae00ff',
 		nodeBase: ['#000000', '#0a2400', '#0c3700', '#0d4800'],
 	},
 };

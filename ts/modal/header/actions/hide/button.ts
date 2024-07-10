@@ -7,10 +7,10 @@ import {SVG_NAMESPACE} from '@/modal/consts';
 const edgeTop = document.createElementNS(SVG_NAMESPACE, 'path');
 
 edgeTop.setAttribute('stroke-linecap', 'round');
-edgeTop.setAttribute('stroke-width', '6');
+edgeTop.setAttribute('stroke-width', '7');
 edgeTop.setAttribute('d',
 	'M -55, 0'
-	+ 'Q 0,80 55,0',
+	+ 'Q 0,60 55,0',
 );
 edgeTop.setAttribute('fill', 'none');
 
@@ -23,24 +23,13 @@ const circle = document.createElementNS(SVG_NAMESPACE, 'circle');
 circle.setAttribute('cx', '0');
 circle.setAttribute('cy', '0');
 circle.setAttribute('r', '26');
-circle.setAttribute('stroke-width', '7');
-
-const line = document.createElementNS(SVG_NAMESPACE, 'line');
-
-line.setAttribute('stroke-linecap', 'round');
-line.setAttribute('stroke-width', '7');
-line.setAttribute('x1', '-26');
-line.setAttribute('x2', '26');
-line.setAttribute('y1', '0');
-line.setAttribute('y2', '0');
-
-line.setAttribute('transform', 'rotate(45 0 0)');
+circle.setAttribute('stroke-width', '6');
 
 const g = document.createElementNS(SVG_NAMESPACE, 'g');
 
 g.append(
 	edgeTop, edgeBottom,
-	circle, line,
+	circle,
 );
 
 const BUTTON = getNewButton(g, ACTION_ID, 'Toggle Disabled Node Visibility');

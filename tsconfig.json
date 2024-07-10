@@ -12,7 +12,7 @@
 		"paths": {
 		"@/*": ["./*"],
 		"@types": ["./library/validation/types"],
-		"@nodes/*": ["./modal/body/trees/nodes/*"],
+		"@nodes/*": ["./modal/body/nodes/*"],
 		}
 	},
 	"ts-node": {

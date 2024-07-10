@@ -12,7 +12,7 @@ export default function generate() {
 		
 		['border-bottom', '2px solid var(--borderModal)'],
 		
-		['font-size', '1.6em'],
+		['font-size', '1.5em'],
 		['text-align', 'center'],
 	]);
 }
