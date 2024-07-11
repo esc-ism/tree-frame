@@ -68,25 +68,25 @@ const config: Config = {
 				},
 			},
 		],
-		// descendantPredicate: (locations: Array<Middle>) => {
-		// 	for (const {children} of locations) {
-		// 		const register = getRegister(children);
-		
-		// 		if (!register[0] && register[1] && register[2]) {
-		// 			mistakes++;
-		
-		// 			return `The ${NAMES[1].toLowerCase()} can't be left with the ${NAMES[2].toLowerCase()} without a ${NAMES[0].toLowerCase()}!`;
-		// 		}
-		
-		// 		if (register[0] && !register[1] && register[2]) {
-		// 			mistakes++;
-		
-		// 			return `The ${NAMES[2].toLowerCase()} will destroy the ${NAMES[0].toLowerCase()} if it's not with the ${NAMES[1].toLowerCase()}!`;
-		// 		}
-		// 	}
-		
-		// 	return true;
-		// },
+		descendantPredicate: (locations: Array<Middle>) => {
+			for (const {children} of locations) {
+				const register = getRegister(children);
+				
+				if (!register[0] && register[1] && register[2]) {
+					mistakes++;
+					
+					return `The ${NAMES[1].toLowerCase()} can't be left with the ${NAMES[2].toLowerCase()} without a ${NAMES[0].toLowerCase()}!`;
+				}
+				
+				if (register[0] && !register[1] && register[2]) {
+					mistakes++;
+					
+					return `The ${NAMES[2].toLowerCase()} will destroy the ${NAMES[0].toLowerCase()} if it's not with the ${NAMES[1].toLowerCase()}!`;
+				}
+			}
+			
+			return true;
+		},
 	},
 	userStyles: [],
 	defaultStyle: {fontSize: 20},
