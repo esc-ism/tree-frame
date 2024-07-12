@@ -13,8 +13,8 @@ import {ROOT_PREDICATE_KEYS, ROOT_UPDATE_KEYS, ROOT_OTHER_KEYS} from '@types';
 
 const actions = [highlight, focus, create];
 
-function getChildJson({children}: Root | Middle) {
-	return children.map((child) => child.getJSON());
+function getChildSaveJson({children}: Root | Middle) {
+	return children.map((child) => child.getSaveJSON());
 }
 
 function addChildren(children: _Child[]): void {
@@ -30,13 +30,13 @@ function addChildren(children: _Child[]): void {
 export function setup({children, ...data}: _Root): void {
 	for (const key of ROOT_PREDICATE_KEYS) {
 		if (key in data) {
-			this[key] = () => data[key](getChildJson(this));
+			this[key] = () => data[key](getChildSaveJson(this));
 		}
 	}
 	
 	for (const key of ROOT_UPDATE_KEYS) {
 		if (key in data) {
-			this[key] = () => onceVisualsUpdate(() => data[key](getChildJson(this)));
+			this[key] = () => onceVisualsUpdate(() => data[key](getChildSaveJson(this)));
 		}
 	}
 	
@@ -49,8 +49,8 @@ export function setup({children, ...data}: _Root): void {
 	addChildren.call(this, children);
 }
 
-export function getJSON(): _Root {
-	return {children: getChildJson(this)};
+export function getSaveJSON(): _Root {
+	return {children: getChildSaveJson(this)};
 }
 
 export default class Root implements _Root {
@@ -67,7 +67,7 @@ export default class Root implements _Root {
 	readonly element: NodeElement;
 	
 	readonly addChildren = addChildren.bind(this);
-	readonly getJSON = getJSON.bind(this);
+	readonly getSaveJSON = getSaveJSON.bind(this);
 	
 	constructor(data: _Root) {
 		this.element = new NodeElement({});

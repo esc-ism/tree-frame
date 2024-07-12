@@ -1,12 +1,15 @@
 import {MIDDLE_CLASS} from './consts';
 
 import type Root from './root';
-import {setup, getJSON} from './root';
+import {setup, getSaveJSON} from './root';
 import Child from './child';
 
 import * as create from './actions/buttons/create';
 
-import type {Middle as _Middle, Child as _Child} from '@types';
+import type {Middle as _Middle, Child as _Child, MiddleArg as _MiddleArg} from '@types';
+import {MIDDLE_KEYS as ALL_MIDDLE_KEYS} from '@types';
+
+const MIDDLE_KEYS = ALL_MIDDLE_KEYS.filter((key) => key !== 'children');
 
 const actions: Array<{
 	shouldMount: (node: Middle) => boolean;
@@ -72,9 +75,25 @@ export default class Middle extends Child implements _Middle {
 	}
 	
 	getJSON(): _Middle {
+		const data: any = {};
+		
+		for (const key of MIDDLE_KEYS) {
+			if (key in this) {
+				data[key] = this[key];
+			}
+		}
+		
 		return {
-			...getJSON.call(this),
 			...super.getJSON(),
+			...data,
+			children: this.children.map((child) => child.getJSON()),
+		};
+	}
+	
+	getSaveJSON(): _MiddleArg {
+		return {
+			...getSaveJSON.call(this),
+			...super.getSaveJSON(),
 		};
 	}
 }

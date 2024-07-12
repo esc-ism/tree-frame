@@ -9,3 +9,5 @@ export const INVALID_BACKGROUND_CLASS = 'background-invalid';
 export const VALID_BACKGROUND_CLASS = 'background-valid';
 
 export const ACTIVE_CLASS = 'edit-active';
+
+export const PENDING_CLASS = 'edit-pending';

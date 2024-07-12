@@ -12,7 +12,7 @@ import * as duplicate from './actions/buttons/duplicate';
 
 import {getDepthClassCount} from '../style/update/depth';
 
-import type {Leaf, Child as _Child, Value, Input, ChildCallback} from '@types';
+import type {Leaf, Child as _Child, Value, Input, ChildCallback, LeafArg as _LeafArg} from '@types';
 import {SAVED_KEYS as ALL_SAVED_KEYS, LEAF_KEYS} from '@types';
 
 const SAVED_KEYS = ALL_SAVED_KEYS.filter((key) => key !== 'children');
@@ -43,6 +43,7 @@ export default class Child implements Leaf {
 	readonly onUpdate?: ChildCallback;
 	
 	readonly forceValid: boolean;
+	lastAcceptedValue?: Value;
 	
 	parent: Root | Middle;
 	readonly depth: number;
@@ -134,6 +135,18 @@ export default class Child implements Leaf {
 	}
 	
 	getJSON(): _Child {
+		const data: any = {};
+		
+		for (const key of LEAF_KEYS) {
+			if (key in this) {
+				data[key] = this[key];
+			}
+		}
+		
+		return data;
+	}
+	
+	getSaveJSON(): _LeafArg {
 		const data: any = {};
 		
 		for (const key of SAVED_KEYS) {

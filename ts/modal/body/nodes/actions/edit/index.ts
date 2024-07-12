@@ -1,12 +1,13 @@
 import {
 	EDITABLE_CLASS, INVALID_CLASS, VALID_CLASS,
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
-	ACTIVE_CLASS,
+	ACTIVE_CLASS, PENDING_CLASS,
 } from './consts';
 
+import * as asyncPredicate from './async';
 import * as option from './option';
 import * as tooltip from '../tooltip';
-import {focusHovered, addSustained, removeSustained} from '../highlight';
+import {addSustained, removeSustained} from '../highlight';
 
 import type Child from '@nodes/child';
 import type Middle from '@nodes/middle';
@@ -23,11 +24,13 @@ export function isActive(): boolean {
 }
 
 export function reset() {
-	if (!activeNode) {
+	if (!activeNode || asyncPredicate.isOngoing()) {
 		return;
 	}
 	
 	const {element} = activeNode;
+	
+	activeNode.value = activeNode.lastAcceptedValue;
 	
 	element.render(activeNode.value);
 	
@@ -105,34 +108,50 @@ function triggerAllUpdateCallbacks() {
 	triggerSubUpdateCallbacks();
 }
 
-export function update() {
-	const previousValue = activeNode.value;
+export async function update() {
+	const value = getValue(activeNode);
 	
-	activeNode.value = getValue(activeNode);
+	activeNode.value = value;
 	
 	if ('options' in activeNode) {
 		option.update(activeNode.value);
 	}
 	
-	Promise.all(getAllPredicateResponses())
-		.then(() => {
-			activeNode.element.removeClass(INVALID_CLASS);
-			activeNode.element.addClass(VALID_CLASS);
-			
-			tooltip.hide();
-			
-			triggerAllUpdateCallbacks();
-		})
-		.catch((reason) => {
-			activeNode.element.removeClass(VALID_CLASS);
-			activeNode.element.addClass(INVALID_CLASS);
-			
-			activeNode.value = previousValue;
-			
-			if (reason) {
-				tooltip.show(reason);
-			}
-		});
+	const id = asyncPredicate.start();
+	
+	activeNode.element.addClass(PENDING_CLASS);
+	
+	try {
+		await Promise.all(getAllPredicateResponses());
+		
+		if (!asyncPredicate.resolve(id)) {
+			return;
+		}
+		
+		activeNode.lastAcceptedValue = value;
+		
+		activeNode.element.removeClass(INVALID_CLASS);
+		activeNode.element.addClass(VALID_CLASS);
+		
+		tooltip.hide();
+		
+		triggerAllUpdateCallbacks();
+	} catch (reason) {
+		if (!asyncPredicate.reject(id)) {
+			return;
+		}
+		
+		activeNode.element.removeClass(VALID_CLASS);
+		activeNode.element.addClass(INVALID_CLASS);
+		
+		if (reason) {
+			tooltip.show(reason);
+		}
+	}
+	
+	if (!asyncPredicate.isOngoing()) {
+		activeNode.element.removeClass(PENDING_CLASS);
+	}
 }
 
 export function unmount(node: Child) {
@@ -142,7 +161,7 @@ export function unmount(node: Child) {
 }
 
 export function doAction(node: Child) {
-	if (activeNode === node) {
+	if (activeNode === node || asyncPredicate.isOngoing()) {
 		return;
 	}
 	
@@ -177,6 +196,8 @@ export function doAction(node: Child) {
 
 export function mount(node: Child): void {
 	const {backgroundContainer, contrast: {valueElement, valueContainer}, headContainer} = node.element;
+	
+	node.lastAcceptedValue = node.value;
 	
 	node.element.addClass(EDITABLE_CLASS);
 	
@@ -241,18 +262,6 @@ export function mount(node: Child): void {
 			
 			update();
 		});
-		
-		// Stop
-		
-		if (node.input === 'color') {
-			valueElement.addEventListener('change', (event) => {
-				event.stopPropagation();
-				
-				reset();
-				
-				focusHovered();
-			});
-		}
 	}
 	
 	if ('options' in node) {
@@ -265,7 +274,11 @@ export function mount(node: Child): void {
 			case 'Escape':
 				event.stopPropagation();
 				
-				headContainer.focus();
+				if (asyncPredicate.isOngoing()) {
+					event.preventDefault();
+				} else {
+					headContainer.focus();
+				}
 		}
 	});
 }

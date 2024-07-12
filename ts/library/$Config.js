@@ -54,63 +54,7 @@ const getError = (reason, error) => {
 	return new Error(message);
 };
 
-/**
- * A node's value.
- * @typedef {boolean | number | string} NodeValue
- */
-
-/**
- * A child node.
- * @typedef {object} ChildNode
- * @property {string} [label] The node's purpose.
- * @property {boolean | number | string} [value] The node's data.
- * @property {Array<NodeValue> | function(NodeValue): boolean | string} [predicate] A data validator.
- * @property {"color" | "date" | "datetime-local" | "email" | "month" | "password" | "search" | "tel" | "text" | "time" | "url" | "week"} [input] The desired input type.
- */
-
-/**
- * A parent node.
- * @typedef {object} ParentNode
- * @property {Array<ChildNode | (ChildNode & ParentNode)>} children The node's children.
- * @property {ChildNode | (ChildNode & ParentNode)} [seed] - A node that may be added to children.
- * @property {function(Array<ChildNode>): boolean | string} [childPredicate] A child validator.
- * @property {function(Array<ChildNode>): boolean | string} [descendantPredicate] A descendant validator.
- * @property {number} [poolId] Children may be moved between nodes with poolId values that match their parent's.
- */
-
-/**
- * A style to pass to the config-editor.
- * @typedef {object} InnerStyle
- * @property {number} [fontSize] The base font size.
- * @property {string} [borderTooltip] The colour of tooltip borders.
- * @property {string} [borderModal] The colour of the modal's border.
- * @property {string} [headBase] The base colour of the modal's header.
- * @property {'Black / White' | 'Invert'} [headContrast] The method of generating a contrast colour for the modal's header.
- * @property {string} [headButtonExit] The colour of the modal header's exit button.
- * @property {string} [headButtonLabel] The colour of the modal header's exit button.
- * @property {string} [headButtonStyle] The colour of the modal header's style button.
- * @property {string} [headButtonHide] The colour of the modal header's node-hider button.
- * @property {string} [headButtonAlt] The colour of the modal header's alt button.
- * @property {Array<string>} [nodeBase] Base colours for nodes, depending on their depth.
- * @property {'Black / White' | 'Invert'} [nodeContrast] The method of generating a contrast colour for nodes.
- * @property {string} [nodeButtonCreate] The colour of nodes' add-child buttons.
- * @property {string} [nodeButtonDuplicate] The colour of nodes' duplicate buttons.
- * @property {string} [nodeButtonMove] The colour of nodes' move buttons.
- * @property {string} [nodeButtonDisable] The colour of nodes' toggle-active buttons.
- * @property {string} [nodeButtonDelete] The colour of nodes' delete buttons.
- * @property {string} [validBackground] The colour used to show that a node's value is valid.
- * @property {string} [invalidBackground] The colour used to show that a node's value is invalid.
- */
-
 export default class $Config {
-	/**
-	 * @param {string} KEY_TREE The identifier used to store and retrieve the user's config.
-	 * @param {ParentNode} TREE_DEFAULT The tree to use as a starting point for the user's config.
-	 * @param {function(Array<ChildNode | (ChildNode & ParentNode)>): *} getConfig Takes a root node's children and returns the data structure expected by your script.
-	 * @param {string} TITLE The heading to use in the config-editor.
-	 * @param {InnerStyle} [STYLE_INNER] A custom style to use as the default
-	 * @param {object} [_STYLE_OUTER] CSS to assign to the element. e.g. {zIndex: 9999}.
-	 */
 	constructor(KEY_TREE, TREE_DEFAULT, getConfig, TITLE, STYLE_INNER = {}, _STYLE_OUTER = {}) {
 		// CORE PERMISSION CHECKS
 		

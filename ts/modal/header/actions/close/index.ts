@@ -32,7 +32,7 @@ function doAction() {
 	scrollElement.scroll(0, 0);
 	
 	callback?.({
-		tree: getDataTree().getJSON(),
+		tree: getDataTree().getSaveJSON(),
 		styles: getUserStyles(),
 	});
 	
