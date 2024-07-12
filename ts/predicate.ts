@@ -1,5 +1,13 @@
 export async function getPredicatePromise(_response: any) {
-	return await _response
-		.catch((response) => response instanceof Error ? Promise.reject(response.message) : Promise.reject(typeof response === 'string' ? response : undefined))
-		.then((response) => typeof response === 'string' ? Promise.reject(response) : Promise[response ? 'resolve' : 'reject']());
+	try {
+		const response = await _response;
+		
+		return typeof response === 'string' ? Promise.reject(response) : Promise[response ? 'resolve' : 'reject']();
+	} catch (response) {
+		if (response instanceof Error) {
+			return Promise.reject(response.message);
+		}
+		
+		return Promise.reject(typeof response === 'string' ? response : undefined);
+	}
 }
