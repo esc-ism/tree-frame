@@ -42,20 +42,20 @@ const getStrippedForest = (children) => {
 	return stripped;
 };
 
-const getError = (reason, error) => {
-	const message = `[${TITLE}]${reason.includes('\n') ? '\n\n' : ' '}${reason}`;
-	
-	if (error) {
-		error.message = message;
-		
-		return error;
-	}
-	
-	return new Error(message);
-};
-
 export default class $Config {
 	constructor(KEY_TREE, TREE_DEFAULT, getConfig, TITLE, STYLE_INNER = {}, _STYLE_OUTER = {}) {
+		const getError = (reason, error) => {
+			const message = `[${TITLE}]${reason.includes('\n') ? '\n\n' : ' '}${reason}`;
+			
+			if (error) {
+				error.message = message;
+				
+				return error;
+			}
+			
+			return new Error(message);
+		};
+		
 		// CORE PERMISSION CHECKS
 		
 		if (typeof GM.getValue !== 'function') {
