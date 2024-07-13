@@ -25,6 +25,8 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 	
 	Promise.all(getSubPredicateResponses(node.getAncestors()))
 		.then(() => {
+			const ancestors = node.getAncestors();
+			
 			if (isAlt) {
 				// TODO set up a way to confirm (tooltip + yes/no buttons? require extra button click?)
 				node.disconnect();
@@ -32,7 +34,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 				updateButton(button, node.isActive);
 			}
 			
-			triggerSubUpdateCallbacks(node.getAncestors());
+			triggerSubUpdateCallbacks(ancestors);
 		})
 		.catch((reason) => {
 			toggle(node);
