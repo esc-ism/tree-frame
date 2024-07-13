@@ -1,3 +1,5 @@
+import {SOCKET_ID} from '../consts';
+
 import {init, edit} from './index';
 import {getTargetWindow} from '../modal/css';
 import {reset} from '../modal/body';
@@ -84,7 +86,20 @@ export default class $Config {
 		this.ready = async () => {
 			// Setup root element
 			const target = (() => {
+				const targetWindow = getTargetWindow();
+				const id = `${SOCKET_ID}-${KEY_TREE}`;
+				
+				for (const child of targetWindow.document.body.children) {
+					if (child.id === id) {
+						child.remove();
+						
+						break;
+					}
+				}
+				
 				const target = document.createElement('div');
+				
+				target.id = id;
 				
 				for (const [property, value] of Object.entries(styleOuter)) {
 					target.style[property] = value;
@@ -92,7 +107,7 @@ export default class $Config {
 				
 				target.style.display = 'none';
 				
-				getTargetWindow().document.body.appendChild(target);
+				targetWindow.document.body.appendChild(target);
 				
 				return target;
 			})();
@@ -231,7 +246,7 @@ export default class $Config {
 					title: TITLE,
 					defaultStyle: STYLE_INNER,
 					...(userTree ? {userTree} : {}),
-				}, target, KEY_TREE);
+				}, target);
 				
 				if (response.requireReset) {
 					throw getError(

@@ -4,16 +4,12 @@ import type {Config} from '@types';
 
 import start, {getSocket} from '../modal';
 
-import {SOCKET_ID} from '../consts';
-
 import {setRootId} from '../modal/css';
 import {reset} from '../modal/body';
 
 import {setCallback as setOnClose} from '@/modal/header/actions/close';
 
-async function init(config: unknown, socket: HTMLElement, idPostfix: string) {
-	socket.id = `${SOCKET_ID}-${idPostfix}`;
-	
+async function init(config: unknown, socket: HTMLElement) {
 	setRootId(socket.id);
 	
 	try {
