@@ -26,7 +26,7 @@ export default function generate() {
 	
 	addRule([`.${ELEMENT_CLASSES.INFO_CONTAINER} > *`], [
 		['position', 'absolute'],
-		['width', 'calc(100% - 0.4px)'],
+		['width', '100%'],
 		['height', '100%'],
 	]);
 	

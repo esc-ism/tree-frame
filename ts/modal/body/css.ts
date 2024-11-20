@@ -11,6 +11,7 @@ export default function generate() {
 	
 	addRule(`#${MODAL_BODY_ID}`, [
 		['overflow-y', 'auto'],
+		['overflow-x', 'hidden'],
 		['overscroll-behavior', 'contain'],
 		['background-color', `var(--nodeBase0)`],
 		['flex-grow', '1'],
