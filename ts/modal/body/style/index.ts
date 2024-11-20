@@ -212,7 +212,7 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 		
 		validBackground: bodyMisc[0].value as string,
 		invalidBackground: bodyMisc[1].value as string,
-		borderTooltip: bodyMisc[3].value as string,
+		borderTooltip: bodyMisc[2].value as string,
 	};
 }
 
