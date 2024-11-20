@@ -16,7 +16,7 @@ const STYLE_OUTER = {
 	width: '100vw',
 };
 
-const getStrippedForest = (children) => {
+const getStripped = (children) => {
 	const stripped = [];
 	
 	for (const child of children) {
@@ -35,7 +35,7 @@ const getStrippedForest = (children) => {
 		}
 		
 		if ('children' in child) {
-			data.children = getStrippedForest(child.children);
+			data.children = getStripped(child.children);
 		}
 		
 		stripped.push(data);
@@ -45,7 +45,9 @@ const getStrippedForest = (children) => {
 };
 
 export default class $Config {
-	constructor(KEY_TREE, TREE_DEFAULT, getConfig, TITLE, STYLE_INNER = {}, _STYLE_OUTER = {}) {
+	constructor(TITLE, KEY_TREE, TREE_DEFAULT, _getConfig, STYLE_INNER = {}, _STYLE_OUTER = {}) {
+		// PERMISSION CHECKS
+		
 		const getError = (reason, error) => {
 			const message = `[${TITLE}]${reason.includes('\n') ? '\n\n' : ' '}${reason}`;
 			
@@ -57,8 +59,6 @@ export default class $Config {
 			
 			return new Error(message);
 		};
-		
-		// CORE PERMISSION CHECKS
 		
 		if (typeof GM.getValue !== 'function') {
 			throw getError('Missing GM.getValue permission.');
@@ -72,7 +72,7 @@ export default class $Config {
 			throw getError(`'${KEY_TREE}' is not a valid storage key.`);
 		}
 		
-		// PRIVATE STATE
+		// PRIVATE
 		
 		let isOpen = false;
 		
@@ -81,7 +81,9 @@ export default class $Config {
 			..._STYLE_OUTER,
 		};
 		
-		// PUBLIC FUNCTIONS
+		const getConfig = ({children}) => _getConfig(getStripped(children));
+		
+		// PUBLIC
 		
 		this.ready = async () => {
 			// Setup root element
@@ -197,7 +199,7 @@ export default class $Config {
 				}
 				
 				try {
-					const config = getConfig(getStrippedForest(TREE_DEFAULT));
+					const config = getConfig(TREE_DEFAULT);
 					
 					this.get = () => config;
 				} catch (error) {
@@ -207,7 +209,7 @@ export default class $Config {
 				await GM.deleteValue(KEY_TREE);
 				
 				// It may have previously been a rejected promise
-				this.ready = Promise.resolve();
+				this.ready = () => Promise.resolve();
 				
 				reset();
 			};
@@ -230,7 +232,7 @@ export default class $Config {
 				GM.setValue(KEY_STYLES, styles);
 				GM.setValue(KEY_VERSION, VERSION);
 				
-				const config = getConfig(tree.children);
+				const config = getConfig(tree);
 				
 				this.get = () => config;
 				
@@ -257,13 +259,17 @@ export default class $Config {
 					);
 				}
 				
-				const config = getConfig(response.tree.children);
+				const config = getConfig(response.tree);
 				
 				this.get = () => config;
+				
+				this.ready = () => Promise.resolve();
 			} catch (error) {
 				delete this.reset;
 				
 				await disconnect();
+				
+				this.ready = () => Promise.reject();
 				
 				throw getError(
 					'Your config is invalid.'
