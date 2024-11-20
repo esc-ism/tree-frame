@@ -116,6 +116,16 @@ export default class Element {
 		}
 	}
 	
+	hasClass(...names: string[]): boolean {
+		for (const name of names) {
+			if (this.elementContainer.classList.contains(name)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	addClass(...names: string[]) {
 		for (const name of names) {
 			this.elementContainer.classList.add(name);

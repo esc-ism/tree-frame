@@ -1,4 +1,4 @@
-import {ALT_CLASS, BUTTON_CLASS, PROSPECTIVE_CLASS} from './consts';
+import {ALT_CLASS, BUTTON_CLASS, TEST_ADD_CLASS, TEST_REMOVE_CLASS} from './consts';
 
 import generateCreate from './create/css';
 import generateMove from './move/css';
@@ -59,7 +59,10 @@ export default function generate() {
 	]);
 	
 	// Hide prospective nodes
-	addRule(`.${PROSPECTIVE_CLASS}`, ['display', 'none']);
+	addRule([
+		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${TEST_ADD_CLASS}`,
+		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${TEST_REMOVE_CLASS}`,
+	], [['pointer-events', 'none']]);
 	
 	// Hide alt icon components
 	addRule(`.${ALT_CLASS}:not(.${ALT_ID} *)`, ['display', 'none']);

@@ -36,12 +36,16 @@ function isStyle(candidate): candidate is Style {
 	return candidate.length > 0 && typeof candidate[0] === 'string';
 }
 
-function getStyleString([property, value]) {
+function getStyleString([property, value]): string {
 	return `${property}:${value};`;
 }
 
-export function getRuleString(selectors: Selectors, rules: Style | Array<Style>) {
-	const styleString: string = isStyle(rules) ? getStyleString(rules) : rules.map(getStyleString).join('');
+function getRuleStrings(styles: Styles): string {
+	return isStyle(styles) ? getStyleString(styles) : styles.map(getStyleString).join('');
+}
+
+export function getRuleString(selectors: Selectors, styles: Styles) {
+	const styleString = getRuleStrings(styles);
 	const selectorString = typeof selectors === 'string' ? selectors : selectors.join(`,${rootSelector} `);
 	
 	return `${rootSelector} ${selectorString}{${styleString}}`;

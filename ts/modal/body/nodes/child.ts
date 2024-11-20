@@ -13,9 +13,7 @@ import * as duplicate from './actions/buttons/duplicate';
 import {getDepthClassCount} from '../style/update/depth';
 
 import type {Leaf, Child as _Child, Value, Input, ChildCallback, LeafArg as _LeafArg} from '@types';
-import {SAVED_KEYS as ALL_SAVED_KEYS, LEAF_KEYS} from '@types';
-
-const SAVED_KEYS = ALL_SAVED_KEYS.filter((key) => key !== 'children');
+import {SAVED_KEYS, LEAF_KEYS} from '@types';
 
 const actions: Array<{
 	shouldMount: (node: Child) => boolean;

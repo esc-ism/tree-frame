@@ -8,13 +8,23 @@ import * as highlight from './actions/highlight';
 import * as focus from './actions/focus';
 import * as create from './actions/buttons/create';
 
+import {TEST_REMOVE_CLASS, TEST_ADD_CLASS} from './actions/buttons/consts';
+
 import type {Root as _Root, Child as _Child} from '@types';
 import {ROOT_PREDICATE_KEYS, ROOT_UPDATE_KEYS, ROOT_OTHER_KEYS} from '@types';
 
 const actions = [highlight, focus, create];
 
-function getChildSaveJson({children}: Root | Middle) {
-	return children.map((child) => child.getSaveJSON());
+function getChildSaveJson({children}: Root | Middle, isSave) {
+	return children
+		.filter((child) => {
+			if (isSave) {
+				return !child.element.hasClass(TEST_ADD_CLASS);
+			}
+			
+			return (!('isActive' in child) || child.isActive) && !child.element.hasClass(TEST_REMOVE_CLASS);
+		})
+		.map((child) => child.getSaveJSON(isSave));
 }
 
 function addChildren(children: _Child[]): void {
@@ -30,13 +40,13 @@ function addChildren(children: _Child[]): void {
 export function setup({children, ...data}: _Root): void {
 	for (const key of ROOT_PREDICATE_KEYS) {
 		if (key in data) {
-			this[key] = () => data[key](getChildSaveJson(this));
+			this[key] = () => data[key](getChildSaveJson(this, false));
 		}
 	}
 	
 	for (const key of ROOT_UPDATE_KEYS) {
 		if (key in data) {
-			this[key] = () => onceVisualsUpdate(() => data[key](getChildSaveJson(this)));
+			this[key] = () => onceVisualsUpdate(() => data[key](getChildSaveJson(this, false)));
 		}
 	}
 	
@@ -49,8 +59,8 @@ export function setup({children, ...data}: _Root): void {
 	addChildren.call(this, children);
 }
 
-export function getSaveJSON(): _Root {
-	return {children: getChildSaveJson(this)};
+export function getSaveJSON(isSave = true): _Root {
+	return {children: getChildSaveJson(this, isSave)};
 }
 
 export default class Root implements _Root {

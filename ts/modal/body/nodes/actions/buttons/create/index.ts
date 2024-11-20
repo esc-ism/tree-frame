@@ -1,7 +1,7 @@
 import {ACTION_ID} from './consts';
 import TEMPLATE from './button';
 
-import {PROSPECTIVE_CLASS} from '../consts';
+import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
@@ -12,23 +12,15 @@ import Middle from '@nodes/middle';
 import Child from '@nodes/child';
 import type Root from '@nodes/root';
 
-let activeNode: Root | Middle;
-
 function reset() {
-	if (!activeNode) {
-		return;
-	}
-	
 	position.reset();
-	
-	activeNode = undefined;
 }
 
 function getChild(node: Root | Middle): Child {
 	const {seed} = node;
 	const child = 'children' in seed ? new Middle(seed, node, 0) : new Child(seed, node, 0);
 	
-	child.element.addClass(PROSPECTIVE_CLASS);
+	child.element.addClass(TEST_ADD_CLASS);
 	
 	return child;
 }
@@ -40,7 +32,7 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 	
 	Promise.all(getSubPredicateResponses(child.getAncestors()))
 		.then(() => {
-			child.element.removeClass(PROSPECTIVE_CLASS);
+			child.element.removeClass(TEST_ADD_CLASS);
 			
 			child.isActive = true;
 			
@@ -63,15 +55,11 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 }
 
 function onClick(node: Root | Middle, button: HTMLButtonElement, isAlt: boolean) {
-	const previousNode = activeNode;
-	
 	reset();
 	
 	if (!isAlt) {
 		doAction(node, node, 0, button, false);
-	} else if (!previousNode || node !== previousNode) {
-		activeNode = node;
-		
+	} else {
 		position.mount(node, node.seed, node, node.children, ACTION_ID, button, doAction, false);
 	}
 }

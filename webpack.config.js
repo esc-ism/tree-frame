@@ -17,7 +17,21 @@ const shared = {
 			},
 		],
 	},
-	plugins: [new FileCopy({patterns: [{from: './ts/standalone/index.html'}, {from: './ts/standalone/background.jpeg'}]}), new CleanWebpackPlugin()],
+	plugins: [new CleanWebpackPlugin()],
+};
+
+const standalone = {
+	...shared,
+	entry: './ts/standalone',
+	plugins: [
+		...shared.plugins,
+		new FileCopy({
+			patterns: [
+				{from: './ts/standalone/index.html'},
+				{from: './ts/standalone/background.jpeg'},
+			],
+		}),
+	],
 };
 
 module.exports = [
@@ -36,31 +50,28 @@ module.exports = [
 				export: 'default',
 			},
 		},
-		plugins: [new CleanWebpackPlugin()],
 	},
 	{
-		...shared,
-		entry: './ts/standalone',
-		name: 'DEVELOPMENT',
-		mode: 'development',
-		devtool: 'eval-source-map',
-		devServer: {
-			static: {directory: path.join(__dirname, 'bin')},
-			port: 7777,
-		},
-		output: {
-			filename: '[name].bundle.js',
-			path: path.resolve(__dirname, 'bin/debug'),
-		},
-	},
-	{
-		...shared,
-		entry: './ts/standalone',
-		name: 'PRODUCTION',
+		...standalone,
+		name: 'RELEASE',
 		mode: 'production',
 		output: {
 			filename: '[name].bundle.js',
 			path: path.resolve(__dirname, 'bin/release'),
+		},
+	},
+	{
+		...standalone,
+		name: 'DEBUG',
+		mode: 'development',
+		output: {
+			filename: '[name].bundle.js',
+			path: path.resolve(__dirname, 'bin/debug'),
+		},
+		devtool: 'eval-source-map',
+		devServer: {
+			static: {directory: path.join(__dirname, 'bin')},
+			port: 7777,
 		},
 	},
 ];

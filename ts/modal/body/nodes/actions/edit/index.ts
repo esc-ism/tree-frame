@@ -1,10 +1,8 @@
 import {
-	EDITABLE_CLASS, INVALID_CLASS, VALID_CLASS,
+	EDITABLE_CLASS, INVALID_CLASS, VALID_CLASS, ACTIVE_CLASS,
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
-	ACTIVE_CLASS, PENDING_CLASS,
 } from './consts';
 
-import * as asyncPredicate from './async';
 import * as option from './option';
 import * as tooltip from '../tooltip';
 import {addSustained, removeSustained} from '../highlight';
@@ -13,7 +11,7 @@ import type Child from '@nodes/child';
 import type Middle from '@nodes/middle';
 import type Root from '@nodes/root';
 
-import {getPredicatePromise} from '@/predicate';
+import {getPredicatePromise, isUnresolved} from '@/predicate';
 
 import type {Value} from '@types';
 
@@ -24,7 +22,7 @@ export function isActive(): boolean {
 }
 
 export function reset() {
-	if (!activeNode || asyncPredicate.isOngoing()) {
+	if (!activeNode) {
 		return;
 	}
 	
@@ -117,41 +115,32 @@ export async function update() {
 		option.update(activeNode.value);
 	}
 	
-	const id = asyncPredicate.start();
-	
-	activeNode.element.addClass(PENDING_CLASS);
+	activeNode.element.removeClass(INVALID_CLASS);
+	activeNode.element.removeClass(VALID_CLASS);
 	
 	try {
 		await Promise.all(getAllPredicateResponses());
-		
-		if (!asyncPredicate.resolve(id)) {
-			return;
-		}
-		
-		activeNode.lastAcceptedValue = value;
-		
-		activeNode.element.removeClass(INVALID_CLASS);
-		activeNode.element.addClass(VALID_CLASS);
-		
-		tooltip.hide();
-		
-		triggerAllUpdateCallbacks();
 	} catch (reason) {
-		if (!asyncPredicate.reject(id)) {
-			return;
-		}
-		
-		activeNode.element.removeClass(VALID_CLASS);
 		activeNode.element.addClass(INVALID_CLASS);
 		
 		if (reason) {
 			tooltip.show(reason);
 		}
+		
+		return;
 	}
 	
-	if (!asyncPredicate.isOngoing()) {
-		activeNode.element.removeClass(PENDING_CLASS);
+	if (isUnresolved()) {
+		return;
 	}
+	
+	activeNode.lastAcceptedValue = value;
+	
+	activeNode.element.addClass(VALID_CLASS);
+	
+	tooltip.hide();
+	
+	triggerAllUpdateCallbacks();
 }
 
 export function unmount(node: Child) {
@@ -161,7 +150,11 @@ export function unmount(node: Child) {
 }
 
 export function doAction(node: Child) {
-	if (activeNode === node || asyncPredicate.isOngoing()) {
+	if (activeNode === node || isUnresolved()) {
+		tooltip.showUnresolved(node.element.contrast.container);
+		
+		node.element.headContainer.focus();
+		
 		return;
 	}
 	
@@ -172,7 +165,6 @@ export function doAction(node: Child) {
 	activeNode = node;
 	
 	activeNode.element.addClass(ACTIVE_CLASS);
-	
 	activeNode.element.addClass(VALID_CLASS);
 	
 	tooltip.setNode(node);
@@ -224,6 +216,12 @@ export function mount(node: Child): void {
 	valueElement.addEventListener('blur', (event) => {
 		event.stopPropagation();
 		
+		if (isUnresolved()) {
+			valueElement.focus();
+			
+			return;
+		}
+		
 		reset();
 	});
 	
@@ -274,7 +272,7 @@ export function mount(node: Child): void {
 			case 'Escape':
 				event.stopPropagation();
 				
-				if (asyncPredicate.isOngoing()) {
+				if (isUnresolved()) {
 					event.preventDefault();
 				} else {
 					headContainer.focus();

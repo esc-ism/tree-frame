@@ -36,11 +36,11 @@
   "name": "tree-frame",
   "version": "1.0.0",
   "scripts": {
-    "test": "mocha",
-    "serve": "webpack s --config-name DEVELOPMENT",
+    "serve": "webpack s --config-name DEBUG",
+    "library": "webpack b --config-name LIBRARY && echo. && echo Project built to `bin/lib`. && echo.",
+    "standalone": "webpack b --config-name RELEASE && echo. && echo Project built to `bin/release`. && echo.",
+	 
     "eslint": "npx eslint --fix-dry-run ./ts/**/*.ts",
-    "build:lib": "webpack b --config-name LIBRARY && echo. && echo Project built to `bin/lib`. && echo.",
-    "build:debug": "webpack b --config-name DEVELOPMENT && echo. && echo Project built to `bin/debug`. && echo.",
-    "build:release": "webpack b --config-name PRODUCTION && echo. && echo Project built to `bin/release`. && echo."
+    "test": "mocha"
   }
 }

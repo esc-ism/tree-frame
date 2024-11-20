@@ -1,7 +1,6 @@
 import {
-	EDITABLE_CLASS, VALID_CLASS, INVALID_CLASS,
+	EDITABLE_CLASS, ACTIVE_CLASS, VALID_CLASS, INVALID_CLASS,
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
-	ACTIVE_CLASS,
 } from './consts';
 
 import {ELEMENT_CLASSES} from '@nodes/consts';
@@ -51,14 +50,4 @@ export default function generate() {
 		`.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${VALID_BACKGROUND_CLASS}`,
 		`.${INVALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${INVALID_BACKGROUND_CLASS}`,
 	], ['padding-left', '0.8em']);
-	
-	addRule(
-		`.${VALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-		['color', 'var(--validFont) !important'],
-	);
-	
-	addRule(
-		`.${INVALID_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${ELEMENT_CLASSES.VALUE_CONTAINER}`,
-		['color', 'var(--invalidFont) !important'],
-	);
 }

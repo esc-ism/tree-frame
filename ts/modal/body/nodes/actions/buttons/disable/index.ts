@@ -2,6 +2,7 @@ import {DISABLED_CLASS} from './consts';
 import {BUTTON_DEFAULT as TEMPLATE_DEFAULT, BUTTON_ALT as TEMPLATE_ALT} from './button';
 
 import {addActionButton} from '../button';
+import {TEST_REMOVE_CLASS} from '../consts';
 
 import {getSubPredicateResponses, triggerSubUpdateCallbacks} from '../../edit';
 import * as tooltip from '../../tooltip';
@@ -21,7 +22,11 @@ function toggle(node: Child) {
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	toggle(node);
+	if (isAlt) {
+		node.element.addClass(TEST_REMOVE_CLASS);
+	} else {
+		toggle(node);
+	}
 	
 	Promise.all(getSubPredicateResponses(node.getAncestors()))
 		.then(() => {
@@ -37,7 +42,11 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 			triggerSubUpdateCallbacks(ancestors);
 		})
 		.catch((reason) => {
-			toggle(node);
+			if (isAlt) {
+				node.element.removeClass(TEST_REMOVE_CLASS);
+			} else {
+				toggle(node);
+			}
 			
 			if (typeof reason === 'string') {
 				tooltip.show(reason, button);

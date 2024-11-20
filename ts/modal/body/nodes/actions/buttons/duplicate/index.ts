@@ -1,7 +1,7 @@
 import {ACTION_ID} from './consts';
 import TEMPLATE from './button';
 
-import {PROSPECTIVE_CLASS} from '../consts';
+import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
@@ -25,7 +25,7 @@ export function reset() {
 function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = true) {
 	Promise.all(getSubPredicateResponses(copy.getAncestors()))
 		.then(() => {
-			copy.element.removeClass(PROSPECTIVE_CLASS);
+			copy.element.removeClass(TEST_ADD_CLASS);
 			
 			reset();
 			
@@ -48,7 +48,7 @@ function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = tr
 function getCopy(node: Child): Child {
 	const copy = node.duplicate();
 	
-	copy.element.addClass(PROSPECTIVE_CLASS);
+	copy.element.addClass(TEST_ADD_CLASS);
 	
 	return copy;
 }

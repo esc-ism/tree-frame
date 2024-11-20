@@ -7,7 +7,7 @@ export default function generate() {
 		['display', 'flex'],
 		['align-items', 'center'],
 		
-		['background', 'var(--headBase)'],
+		['background-color', 'var(--headBase)'],
 		['color', 'var(--headContrast)'],
 		
 		['border-bottom', '2px solid var(--borderModal)'],

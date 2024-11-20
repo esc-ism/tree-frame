@@ -91,6 +91,10 @@ export function show(message: string, parent?: HTMLElement) {
 	element.innerText = message;
 }
 
+export function showUnresolved(parent: HTMLElement) {
+	show('Please wait for validation', parent);
+}
+
 export function hide() {
 	const element = activeParent.querySelector(`.${TOOLTIP_CLASS}`);
 	

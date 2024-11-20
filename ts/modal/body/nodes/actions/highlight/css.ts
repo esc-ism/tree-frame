@@ -1,6 +1,6 @@
 import {EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS, HIGHLIGHT_CLASS} from './consts';
 
-import {BUTTON_CLASS} from '../buttons/consts';
+import {BUTTON_CLASS, TEST_ADD_CLASS, TEST_REMOVE_CLASS} from '../buttons/consts';
 
 import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS} from '@nodes/consts';
 
@@ -27,20 +27,27 @@ export default function generate() {
 		['right', '0'],
 	]);
 	
-	addRule([`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${BASE_CLASS}`], [['width', '0']]);
+	addRule([
+		`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${BASE_CLASS}`,
+		`.${TEST_ADD_CLASS} .${BASE_CLASS}`,
+		`.${TEST_REMOVE_CLASS} .${BASE_CLASS}`,
+	], [['width', '0']]);
 	
 	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > *`, [['margin-left', '-0.8em']]);
 	
-	addRule(`.${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${HIGHLIGHT_BACKGROUND_CLASS}`, [
+	addRule(`.${HIGHLIGHT_BACKGROUND_CLASS}`, [
 		['transition-property', 'width, padding-left'],
 		['transition-duration', '500ms'],
-		['width', '0'],
+		['width', '100%'],
 	]);
 	
-	addRule([`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${HIGHLIGHT_BACKGROUND_CLASS}`], [
-		['width', '100%'],
-		['padding-left', '0.8em'],
-	]);
+	addRule(`:not(.${HIGHLIGHT_CLASS}) > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty):not(.${TEST_ADD_CLASS} *):not(.${TEST_REMOVE_CLASS} *) + * .${ELEMENT_CLASSES.BACKGROUND_CONTAINER} > .${HIGHLIGHT_BACKGROUND_CLASS}`, [['width', '0']]);
+	
+	addRule([
+		`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${HIGHLIGHT_BACKGROUND_CLASS}`,
+		`.${TEST_ADD_CLASS} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${HIGHLIGHT_BACKGROUND_CLASS}`,
+		`.${TEST_REMOVE_CLASS} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${HIGHLIGHT_BACKGROUND_CLASS}`,
+	], [['padding-left', '0.8em']]);
 	
 	addRule(`.${HIGHLIGHT_BACKGROUND_CLASS}`, [
 		['height', '100%'],

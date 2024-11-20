@@ -1,13 +1,11 @@
 export const EDITABLE_CLASS = 'editable';
 
-export const VALID_CLASS = 'valid';
+export const ACTIVE_CLASS = 'edit-active';
 
-export const INVALID_CLASS = 'invalid';
+export const VALID_CLASS = 'edit-valid';
 
-export const INVALID_BACKGROUND_CLASS = 'background-invalid';
+export const INVALID_CLASS = 'edit-invalid';
 
 export const VALID_BACKGROUND_CLASS = 'background-valid';
 
-export const ACTIVE_CLASS = 'edit-active';
-
-export const PENDING_CLASS = 'edit-pending';
+export const INVALID_BACKGROUND_CLASS = 'background-invalid';

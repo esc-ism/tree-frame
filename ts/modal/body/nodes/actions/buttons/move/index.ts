@@ -1,7 +1,7 @@
 import {ACTION_ID} from './consts';
 import BUTTON from './button';
 
-import {PROSPECTIVE_CLASS} from '../consts';
+import {TEST_ADD_CLASS, TEST_REMOVE_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
@@ -43,16 +43,16 @@ function getAncestorBranches(node: Child, copy: Child) {
 function doAction(node: Child, newParent, index, button, doScroll: boolean = true) {
 	const copy = node.duplicate();
 	
-	copy.element.addClass(PROSPECTIVE_CLASS);
-	copy.move(newParent, index);
+	node.element.addClass(TEST_REMOVE_CLASS);
+	copy.element.addClass(TEST_ADD_CLASS);
 	
-	node.isActive = false;
+	copy.move(newParent, index);
 	
 	const ancestorBranches = getAncestorBranches(node, copy);
 	
 	Promise.all(ancestorBranches.map((branch) => Promise.all(getSubPredicateResponses(branch))))
 		.then(() => {
-			copy.element.removeClass(PROSPECTIVE_CLASS);
+			copy.element.removeClass(TEST_ADD_CLASS);
 			
 			node.disconnect();
 			
@@ -68,6 +68,8 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 			}
 		})
 		.catch((reason) => {
+			node.element.removeClass(TEST_REMOVE_CLASS);
+			
 			node.isActive = copy.isActive;
 			
 			copy.disconnect();

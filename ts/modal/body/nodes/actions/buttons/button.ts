@@ -1,7 +1,7 @@
 import {BUTTON_CLASS} from './consts';
 
 import * as active from '../active';
-import {kill as killTooltip} from '../tooltip';
+import {kill as killTooltip, showUnresolved} from '../tooltip';
 
 import type Root from '../../root';
 import type Child from '../../child';
@@ -10,12 +10,20 @@ import {SVG_NAMESPACE} from '@/modal/consts';
 
 import {isActive as isAlt} from '@/modal/header/actions/alternate';
 
+import {isUnresolved} from '@/predicate';
+
 // Creates an instantiation & adds it to the DOM
 export function addActionButton(template: HTMLButtonElement, onClick: Function, node: Root | Child) {
 	const button = template.cloneNode(true) as HTMLButtonElement;
 	
 	button.addEventListener('click', (event) => {
 		event.stopPropagation();
+		
+		if (isUnresolved()) {
+			showUnresolved(button);
+			
+			return;
+		}
 		
 		active.register();
 		

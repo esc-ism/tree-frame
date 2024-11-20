@@ -11,10 +11,7 @@ export default function generate() {
 		['height', 'fit-content'],
 	]);
 	
-	addRule(
-		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`,
-		['margin-top', '0.7px'],
-	);
+	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`, ['margin-top', '0.7px']);
 	
 	addRule(`:not(.${ROOT_CLASS}) > .${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-left', '1.8em']);
 	
@@ -29,7 +26,7 @@ export default function generate() {
 	
 	addRule([`.${ELEMENT_CLASSES.INFO_CONTAINER} > *`], [
 		['position', 'absolute'],
-		['width', '100%'],
+		['width', 'calc(100% - 0.4px)'],
 		['height', '100%'],
 	]);
 	
@@ -38,11 +35,7 @@ export default function generate() {
 		['white-space', 'nowrap'],
 	]);
 	
-	addRule(`.${ELEMENT_CLASSES.INFO_CONTAINER}`, [
-		['width', '100%'],
-		['height', '100%'],
-		['position', 'relative'],
-	]);
+	addRule(`.${ELEMENT_CLASSES.INFO_CONTAINER}`, [['position', 'relative']]);
 	
 	addRule([`.${BASE_CLASS} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`], [
 		['position', 'absolute'],
@@ -98,7 +91,7 @@ export default function generate() {
 	addDepthChangeListener((depth, addRule) => {
 		addRule(`.${DEPTH_CLASS_PREFIX}${depth}`, [
 			['color', `var(--nodeContrast${depth})`],
-			['background', `var(--nodeBase${depth})`],
+			['background-color', `var(--nodeBase${depth})`],
 		]);
 		
 		addRule(

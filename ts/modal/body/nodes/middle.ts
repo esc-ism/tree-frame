@@ -90,10 +90,11 @@ export default class Middle extends Child implements _Middle {
 		};
 	}
 	
-	getSaveJSON(): _MiddleArg {
+	// typescript doesn't recognise Middle as a valid Child unless I make the argument optional
+	getSaveJSON(isSave?): _MiddleArg {
 		return {
-			...getSaveJSON.call(this),
 			...super.getSaveJSON(),
+			...getSaveJSON.call(this, isSave),
 		};
 	}
 }
