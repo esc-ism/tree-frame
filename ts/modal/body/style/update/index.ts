@@ -1,11 +1,13 @@
 import {updateDepth} from './depth';
 
 import type {Styles} from '@/modal/css';
-import {addVariables, addRule, generateStylesheet} from '@/modal/css';
+import {addVariables, addRule, registerStyleNode} from '@/modal/css';
 
 import type {DefaultStyle, ContrastMethod} from '@types';
 
-const STYLESHEET = generateStylesheet();
+const styleNode = document.createElement('style');
+
+registerStyleNode(styleNode);
 
 function getContrast(hex: string, method: ContrastMethod): string {
 	const r = parseInt(hex.slice(1, 3), 16);
@@ -31,13 +33,13 @@ function getContrast(hex: string, method: ContrastMethod): string {
 }
 
 export default function updateStylesheet({fontSize, headContrast, nodeBase, nodeContrast, ...colours}: DefaultStyle) {
-	for (let i = STYLESHEET.cssRules.length - 1; i >= 0; --i) {
-		STYLESHEET.deleteRule(i);
+	for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
+		styleNode.sheet.deleteRule(i);
 	}
 	
 	updateDepth(nodeBase.length);
 	
-	addRule('', ['font-size', `${fontSize}px`], STYLESHEET);
+	addRule('body', ['font-size', `${fontSize}px`], styleNode.sheet);
 	
 	const colourStyles: Styles = Object.entries(colours).map(
 		([property, value]: [string, string]): [string, string] => [`--${property}`, value],
@@ -52,5 +54,5 @@ export default function updateStylesheet({fontSize, headContrast, nodeBase, node
 	
 	colourStyles.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
 	
-	addVariables(colourStyles, STYLESHEET);
+	addVariables(colourStyles, styleNode.sheet);
 }

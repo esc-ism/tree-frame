@@ -6,7 +6,7 @@ import {bindAction} from '../button';
 
 import {setActive} from '@/modal/body';
 
-import {getTargetWindow} from '@/modal/css';
+import {getSocket} from '@/modal';
 
 let _isActive = false;
 let keyHeld = false;
@@ -28,9 +28,9 @@ export default function generate(): HTMLElement {
 	
 	BUTTON.title += ' (Ctrl)';
 	
-	const targetWindow = getTargetWindow();
+	const {ownerDocument: target} = getSocket();
 	
-	targetWindow.addEventListener('keydown', (event) => {
+	target.addEventListener('keydown', (event) => {
 		if (event.key === 'Control') {
 			keyHeld = true;
 			
@@ -38,7 +38,7 @@ export default function generate(): HTMLElement {
 		}
 	});
 	
-	targetWindow.addEventListener('keyup', (event) => {
+	target.addEventListener('keyup', (event) => {
 		if (event.key === 'Control') {
 			keyHeld = false;
 			
@@ -46,7 +46,7 @@ export default function generate(): HTMLElement {
 		}
 	});
 	
-	targetWindow.addEventListener('blur', () => {
+	target.addEventListener('blur', () => {
 		if (keyHeld) {
 			keyHeld = false;
 			

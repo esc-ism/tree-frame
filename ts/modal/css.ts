@@ -1,4 +1,5 @@
 import {MODAL_BACKGROUND_ID, MODAL_ID} from './consts';
+import {getSocket} from './index';
 
 type Selector = string;
 export type Selectors = Selector | Array<Selector>;
@@ -6,31 +7,21 @@ export type Selectors = Selector | Array<Selector>;
 type Style = [string, string];
 export type Styles = Style | Array<Style>;
 
-let targetWindow: Window = window;
+const styleNode = document.createElement('style');
 
-while (targetWindow.frameElement) {
-	targetWindow = window.parent;
+const undockedStyleNodes: Array<HTMLStyleElement> = [styleNode];
+
+export function registerStyleNode(node: HTMLStyleElement) {
+	undockedStyleNodes.push(node);
 }
 
-export function getTargetWindow(): Window {
-	return targetWindow;
-}
-
-let rootSelector = 'body';
-
-export function setRootId(id: string) {
-	rootSelector = `#${id}`;
-}
-
-export function generateStylesheet(): CSSStyleSheet {
-	const wrapper = document.createElement('style');
+function mountStyleNodes() {
+	const {head} = getSocket().ownerDocument;
 	
-	getTargetWindow().document.head.appendChild(wrapper);
-	
-	return wrapper.sheet;
+	for (const node of undockedStyleNodes) {
+		head.appendChild(node);
+	}
 }
-
-const STYLESHEET = generateStylesheet();
 
 function isStyle(candidate): candidate is Style {
 	return candidate.length > 0 && typeof candidate[0] === 'string';
@@ -46,22 +37,24 @@ function getRuleStrings(styles: Styles): string {
 
 export function getRuleString(selectors: Selectors, styles: Styles) {
 	const styleString = getRuleStrings(styles);
-	const selectorString = typeof selectors === 'string' ? selectors : selectors.join(`,${rootSelector} `);
+	const selectorString = typeof selectors === 'string' ? selectors : selectors.join(',');
 	
-	return `${rootSelector} ${selectorString}{${styleString}}`;
+	return `${selectorString}{${styleString}}`;
 }
 
-export function addRule(selectors: Selectors, styles: Styles, stylesheet = STYLESHEET) {
+export function addRule(selectors: Selectors, styles: Styles, stylesheet = styleNode.sheet) {
 	stylesheet.insertRule(getRuleString(selectors, styles));
 }
 
-export function addVariables(rules: Array<Style>, stylesheet = STYLESHEET) {
+export function addVariables(rules: Array<Style>, stylesheet = styleNode.sheet) {
 	const styleString = rules.map(getStyleString).join('');
 	
 	stylesheet.insertRule(`:root{${styleString}}`);
 }
 
 export default function generate() {
+	mountStyleNodes();
+	
 	addRule(`#${MODAL_BACKGROUND_ID}`, [
 		['position', 'fixed'],
 		['left', '0'],

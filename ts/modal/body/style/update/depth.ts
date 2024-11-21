@@ -1,9 +1,11 @@
 import {ROOTS} from '../../index';
 
 import type {Selectors, Styles} from '@/modal/css';
-import {addRule as _addRule, generateStylesheet} from '@/modal/css';
+import {addRule as _addRule, registerStyleNode} from '@/modal/css';
 
-const STYLESHEET = generateStylesheet();
+const styleNode = document.createElement('style');
+
+registerStyleNode(styleNode);
 
 const callbacks = [];
 
@@ -14,7 +16,7 @@ export function getDepthClassCount() {
 }
 
 function addDepthRule(selectors: Selectors, styles: Styles) {
-	_addRule(selectors, styles, STYLESHEET);
+	_addRule(selectors, styles, styleNode.sheet);
 }
 
 export function addDepthChangeListener(callback: (depth: number, adder: (Selectors, Styles) => void) => void) {
@@ -26,8 +28,8 @@ export function addDepthChangeListener(callback: (depth: number, adder: (Selecto
 }
 
 export function updateDepth(depth: number) {
-	for (let i = STYLESHEET.cssRules.length - 1; i >= 0; --i) {
-		STYLESHEET.deleteRule(i);
+	for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
+		styleNode.sheet.deleteRule(i);
 	}
 	
 	for (const root of Object.values(ROOTS)) {

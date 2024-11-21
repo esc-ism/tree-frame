@@ -1,7 +1,6 @@
 import {SOCKET_ID} from '../consts';
 
 import {init, edit} from './index';
-import {getTargetWindow} from '../modal/css';
 import {reset} from '../modal/body';
 
 const VERSION = 1;
@@ -88,7 +87,12 @@ export default class $Config {
 		this.ready = async () => {
 			// Setup root element
 			const target = (() => {
-				const targetWindow = getTargetWindow();
+				let targetWindow = window;
+				
+				while (targetWindow.frameElement) {
+					targetWindow = window.parent;
+				}
+				
 				const id = `${SOCKET_ID}-${KEY_TREE}`;
 				
 				for (const child of targetWindow.document.body.children) {
@@ -99,7 +103,7 @@ export default class $Config {
 					}
 				}
 				
-				const target = document.createElement('div');
+				const target = document.createElement('iframe');
 				
 				target.id = id;
 				
@@ -248,7 +252,7 @@ export default class $Config {
 					title: TITLE,
 					defaultStyle: STYLE_INNER,
 					...(userTree ? {userTree} : {}),
-				}, target);
+				}, target.contentDocument.body);
 				
 				if (response.requireReset) {
 					throw getError(

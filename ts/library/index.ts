@@ -4,14 +4,11 @@ import type {Config} from '@types';
 
 import start, {getSocket} from '../modal';
 
-import {setRootId} from '../modal/css';
 import {reset} from '../modal/body';
 
 import {setCallback as setOnClose} from '@/modal/header/actions/close';
 
 async function init(config: unknown, socket: HTMLElement) {
-	setRootId(socket.id);
-	
 	try {
 		await validate(config);
 		
