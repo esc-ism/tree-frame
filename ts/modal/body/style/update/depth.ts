@@ -1,7 +1,7 @@
 import {ROOTS} from '../../index';
 
 import type {Selectors, Styles} from '@/modal/css';
-import {addRule as _addRule, registerStyleNode} from '@/modal/css';
+import {addRule, registerStyleNode} from '@/modal/css';
 
 const styleNode = document.createElement('style');
 
@@ -16,7 +16,7 @@ export function getDepthClassCount() {
 }
 
 function addDepthRule(selectors: Selectors, styles: Styles) {
-	_addRule(selectors, styles, styleNode.sheet);
+	addRule(selectors, styles, styleNode);
 }
 
 export function addDepthChangeListener(callback: (depth: number, adder: (Selectors, Styles) => void) => void) {

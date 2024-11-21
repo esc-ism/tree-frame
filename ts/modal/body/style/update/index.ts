@@ -39,7 +39,7 @@ export default function updateStylesheet({fontSize, headContrast, nodeBase, node
 	
 	updateDepth(nodeBase.length);
 	
-	addRule('body', ['font-size', `${fontSize}px`], styleNode.sheet);
+	addRule('body', ['font-size', `${fontSize}px`], styleNode);
 	
 	const colourStyles: Styles = Object.entries(colours).map(
 		([property, value]: [string, string]): [string, string] => [`--${property}`, value],
@@ -54,5 +54,5 @@ export default function updateStylesheet({fontSize, headContrast, nodeBase, node
 	
 	colourStyles.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
 	
-	addVariables(colourStyles, styleNode.sheet);
+	addVariables(colourStyles, styleNode);
 }

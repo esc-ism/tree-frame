@@ -42,14 +42,14 @@ export function getRuleString(selectors: Selectors, styles: Styles) {
 	return `${selectorString}{${styleString}}`;
 }
 
-export function addRule(selectors: Selectors, styles: Styles, stylesheet = styleNode.sheet) {
-	stylesheet.insertRule(getRuleString(selectors, styles));
+export function addRule(selectors: Selectors, styles: Styles, {sheet}: HTMLStyleElement = styleNode) {
+	sheet.insertRule(getRuleString(selectors, styles));
 }
 
-export function addVariables(rules: Array<Style>, stylesheet = styleNode.sheet) {
+export function addVariables(rules: Array<Style>, {sheet}: HTMLStyleElement = styleNode) {
 	const styleString = rules.map(getStyleString).join('');
 	
-	stylesheet.insertRule(`:root{${styleString}}`);
+	sheet.insertRule(`:root{${styleString}}`);
 }
 
 export default function generate() {
