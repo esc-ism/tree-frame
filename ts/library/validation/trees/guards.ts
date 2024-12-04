@@ -1,7 +1,21 @@
 import type {Child, Parent, Root} from '../types';
 import {LEAF_KEYS, MIDDLE_KEYS, ROOT_KEYS, VALUE_TYPES, INPUT_FORMATS, SAVED_KEYS} from '../types';
-import {TypeError, ValueError, PropertyError, UnexpectedStateError} from '../errors';
+import {TypeError, ValueError, PropertyError, UnexpectedStateError, JoinedError, DependenceError} from '../errors';
 import {hasOwnProperty, validateUnexpectedKeys} from '../index';
+
+function hasDependee<X extends {}, Y extends PropertyKey>(breadcrumbs: string[], candidate: unknown, property: Y, dependence: string): candidate is X & Record<Y, unknown> {
+	if (!hasOwnProperty(candidate, property)) {
+		return false;
+	}
+	
+	if (hasOwnProperty(candidate, dependence))
+		return true;
+	
+	throw new JoinedError(
+		new DependenceError(property, dependence),
+		new PropertyError([...breadcrumbs], dependence, true),
+	);
+}
 
 // Type predicates
 
@@ -21,7 +35,7 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 	if (hasOwnProperty(candidate, 'value') && !(VALUE_TYPES as readonly string[]).includes(typeof candidate.value))
 		throw new TypeError([...breadcrumbs, 'value'], typeof candidate.value, VALUE_TYPES);
 	
-	if (hasOwnProperty(candidate, 'options')) {
+	if (hasDependee(breadcrumbs, candidate, 'options', 'value')) {
 		if (!Array.isArray(candidate.options))
 			throw new TypeError([...breadcrumbs, 'options'], typeof candidate.options, ['array']);
 		
@@ -31,19 +45,32 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 		}
 	}
 	
-	if (hasOwnProperty(candidate, 'predicate') && typeof candidate.predicate !== 'function')
+	if (hasDependee(breadcrumbs, candidate, 'predicate', 'value') && typeof candidate.predicate !== 'function')
 		throw new TypeError([...breadcrumbs, 'predicate'], typeof candidate.predicate, ['function']);
 	
-	if (hasOwnProperty(candidate, 'onUpdate') && typeof candidate.onUpdate !== 'function')
+	if (hasDependee(breadcrumbs, candidate, 'onUpdate', 'value') && typeof candidate.onUpdate !== 'function')
 		throw new TypeError([...breadcrumbs, 'onUpdate'], typeof candidate.onUpdate, ['function']);
 	
-	if (hasOwnProperty(candidate, 'input')) {
+	if (hasDependee(breadcrumbs, candidate, 'listeners', 'value')) {
+		if (typeof candidate.listeners !== 'object')
+			throw new TypeError([...breadcrumbs, 'listeners'], typeof candidate.listeners, ['object']);
+		
+		for (const [event, callback] of Object.entries(candidate.listeners)) {
+			if (typeof callback !== 'function')
+				throw new TypeError([...breadcrumbs, 'listeners', event], typeof callback, ['function']);
+		}
+	}
+	
+	if (hasDependee(breadcrumbs, candidate, 'input', 'value')) {
 		if (typeof candidate.input !== 'string')
 			throw new TypeError([...breadcrumbs, 'input'], typeof candidate.input, ['string']);
 		
 		if (!(INPUT_FORMATS as readonly string[]).includes(candidate.input))
 			throw new ValueError([...breadcrumbs, 'input'], candidate.input, INPUT_FORMATS);
 	}
+	
+	if (hasOwnProperty(candidate, 'get') && typeof candidate.get !== 'function')
+		throw new TypeError([...breadcrumbs, 'get'], typeof candidate.get, ['function']);
 	
 	if (hasOwnProperty(candidate, 'isActive') && typeof candidate.isActive !== 'boolean')
 		throw new TypeError([...breadcrumbs, 'isActive'], typeof candidate.isActive, ['boolean']);

@@ -1,7 +1,7 @@
 import {MIDDLE_CLASS} from './consts';
 
 import type Root from './root';
-import {setup, getSaveJSON} from './root';
+import {setup, getPredicateData, getSaveData} from './root';
 import Child from './child';
 
 import * as create from './actions/buttons/create';
@@ -43,7 +43,7 @@ export default class Middle extends Child implements _Middle {
 	}
 	
 	duplicate() {
-		return new Middle(this.getJSON(), this.parent, this.getIndex() + 1);
+		return new Middle(this.getSeedData(), this.parent, this.getIndex() + 1);
 	}
 	
 	unmount() {
@@ -74,7 +74,8 @@ export default class Middle extends Child implements _Middle {
 		}
 	}
 	
-	getJSON(): _Middle {
+	// for duplication
+	getSeedData(): _Middle {
 		const data: any = {};
 		
 		for (const key of MIDDLE_KEYS) {
@@ -84,17 +85,32 @@ export default class Middle extends Child implements _Middle {
 		}
 		
 		return {
-			...super.getJSON(),
+			...super.getSeedData(),
 			...data,
-			children: this.children.map((child) => child.getJSON()),
+			children: this.children.map((child) => child.getSeedData()),
 		};
 	}
 	
-	// typescript doesn't recognise Middle as a valid Child unless I make the argument optional
-	getSaveJSON(isSave?): _MiddleArg {
+	getPredicateData(): _MiddleArg {
 		return {
-			...super.getSaveJSON(),
-			...getSaveJSON.call(this, isSave),
+			...super.getPredicateData(),
+			...getPredicateData.call(this),
 		};
+	}
+	
+	getSaveData(isActiveBranch: boolean) {
+		const data = getSaveData.call(this, isActiveBranch);
+		const tree = {...super.getPredicateData(), ...data.tree};
+		
+		if (isActiveBranch) {
+			const activeTree = {...tree, ...data.activeTree};
+			return {
+				tree,
+				activeTree,
+				configs: 'get' in this ? [this.get(activeTree, data.configs)] : data.configs,
+			};
+		}
+		
+		return {tree};
 	}
 }

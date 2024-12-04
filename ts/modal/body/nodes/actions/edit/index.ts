@@ -233,6 +233,12 @@ export function mount(node: Child): void {
 	
 	// Process new value
 	
+	if ('listeners' in node) {
+		for (const [event, callback] of Object.entries(node.listeners)) {
+			valueElement.addEventListener(event, callback);
+		}
+	}
+	
 	if (typeof node.value === 'boolean') {
 		headContainer.addEventListener('mousedown', (event) => {
 			event.stopPropagation();

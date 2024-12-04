@@ -218,7 +218,7 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 
 // For returning updated styles to the userscript
 export function getUserStyles(): Array<UserStyle> {
-	const {'children': styleNodes} = getRoot().getSaveJSON();
+	const {activeTree: {'children': styleNodes}} = getRoot().getSaveData();
 	const styles: Array<UserStyle> = [];
 	
 	for (const json of styleNodes as Array<_Middle>) {

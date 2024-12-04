@@ -8,6 +8,12 @@ export function getRoot() {
 	return ROOTS[ROOT_ID];
 }
 
+export function getSaveData() {
+	const {tree, config} = getRoot().getSaveData();
+	
+	return {tree, config};
+}
+
 export function setTree(data: RootJSON) {
 	const root = getRoot();
 	

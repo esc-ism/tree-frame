@@ -3,9 +3,9 @@ import generateTitle from './title';
 import generateButtons from './actions';
 import generateCSS from './css';
 
-import {Config} from '@types';
+import {Page} from '@types';
 
-export default function generate({title}: Config, background: HTMLElement): HTMLElement {
+export default function generate({title}: Page, background: HTMLElement): HTMLElement {
 	generateCSS();
 	
 	const element = document.createElement('div');

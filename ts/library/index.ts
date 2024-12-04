@@ -1,42 +1,42 @@
 import validate, {hasOwnProperty} from './validation';
 
-import type {Config} from '@types';
+import type {Page} from '@types';
 
 import start, {getSocket} from '../modal';
 
 import {reset} from '../modal/body';
 
-import {setCallback as setOnClose} from '@/modal/header/actions/close';
+import {getSaveData} from '../modal/body/data';
 
-async function init(config: unknown, socket: HTMLElement) {
+import {setCallback as setOnClose} from '../modal/header/actions/close';
+
+async function init(page: unknown, socket: HTMLElement) {
+	const response: any = {};
+	
 	try {
-		await validate(config);
+		await validate(page);
 		
-		start(config as Config, socket);
+		start(page as Page, socket);
 		
 		// Config is valid
-		return {
-			requireReset: false,
-			tree: (config as Config).userTree ?? (config as Config).defaultTree,
-		};
+		response.requireReset = false;
 	} catch (error) {
-		if (typeof config !== 'object' || !hasOwnProperty(config, 'userTree')) {
+		if (typeof page !== 'object' || !hasOwnProperty(page, 'userTree')) {
 			throw error;
 		}
 		
-		delete config.userTree;
+		delete page.userTree;
 		
-		await validate(config);
+		// Test validity after reset
+		await validate(page);
 		
-		start(config as Config, socket);
+		start(page as Page, socket);
 		
-		// Config is valid with userTree removed
-		return {
-			requireReset: true,
-			tree: (config as Config).defaultTree,
-			error,
-		};
+		response.requireReset = true;
+		response.error = error;
 	}
+	
+	return {...response, ...getSaveData()};
 }
 
 function edit() {

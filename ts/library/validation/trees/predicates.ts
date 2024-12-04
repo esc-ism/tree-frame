@@ -1,10 +1,5 @@
 import type {Child, Parent} from '../types';
-import {
-	TypeError, PropertyError,
-	JoinedError, NonIntegerError,
-	OptionMatchError, PredicateError,
-	HangingPredicateError, HangingOptionsError,
-} from '../errors';
+import {TypeError, JoinedError, NonIntegerError, OptionMatchError, PredicateError} from '../errors';
 
 import {getPredicatePromise} from '../../../predicate';
 
@@ -16,12 +11,6 @@ function getBoundPredicatePromise(response, error: Error): Promise<void> {
 function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> {
 	if (!('options' in child) && !('predicate' in child))
 		return Promise.resolve();
-	
-	if (!('value' in child))
-		throw new JoinedError(
-			new ('predicate' in child ? HangingPredicateError : HangingOptionsError)(),
-			new PropertyError(breadcrumbs, 'value', true),
-		);
 	
 	if ('options' in child) {
 		const type = typeof child.value;

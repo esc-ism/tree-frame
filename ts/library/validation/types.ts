@@ -8,7 +8,13 @@ export type Value = boolean | number | string;
 //  strings, thrown errors and rejected promises indicate failure & get presented to users
 //  otherwise, truthy values indicate success and falsy values indicate failure
 export type ChildCallback = (value: Value) => unknown;
-export type ParentCallback = (children: ParentCallbackArg) => unknown;
+export type ParentCallback = (children: Array<MiddleArg | LeafArg>) => unknown;
+
+export interface Listeners {
+	[name: string]: (event: Event) => unknown;
+}
+
+export type Getter = (self: RootArg | MiddleArg | LeafArg, config: Array<unknown>) => unknown;
 
 export const INPUT_FORMATS = ['color', 'date', 'datetime-local', 'email', 'month', 'password', 'search', 'tel', 'text', 'time', 'url', 'week'] as const;
 export type Input = typeof INPUT_FORMATS[number];
@@ -74,6 +80,10 @@ export interface _Child extends _ChildArg {
 	input?: Input;
 	// Called after the node is modified
 	onUpdate?: ChildCallback;
+	// Called after the node is modified
+	listeners?: Listeners;
+	// Derives a config from the node
+	get?: Getter;
 }
 
 export interface _Parent extends _ParentArg {
@@ -90,6 +100,8 @@ export interface _Parent extends _ParentArg {
 	onChildUpdate?: ParentCallback;
 	// Called after a descendant is modified
 	onDescendantUpdate?: ParentCallback;
+	// Derives a config from the node
+	get?: Getter;
 }
 
 // Key categories
@@ -97,13 +109,16 @@ export interface _Parent extends _ParentArg {
 export const SAVED_KEYS = ['label', 'value', 'isActive', 'children'];
 export const ROOT_PREDICATE_KEYS = ['childPredicate', 'descendantPredicate'] as const;
 export const ROOT_UPDATE_KEYS = ['onChildUpdate', 'onDescendantUpdate'] as const;
-export const ROOT_OTHER_KEYS = ['children', 'seed', 'poolId'] as const;
+export const ROOT_OTHER_KEYS = ['children', 'seed', 'poolId', 'get'] as const;
 
 // Node types
 
-export const LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input', 'isActive', 'onUpdate'] as const;
+// hacky code to avoid a duplicate "get" in MIDDLE_KEYS
+const _LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input', 'isActive', 'onUpdate', 'listeners', 'key'];
+
+export const LEAF_KEYS = [..._LEAF_KEYS, 'get'] as const;
 export const ROOT_KEYS = [...ROOT_PREDICATE_KEYS, ...ROOT_UPDATE_KEYS, ...ROOT_OTHER_KEYS] as const;
-export const MIDDLE_KEYS = [...LEAF_KEYS, ...ROOT_KEYS] as const;
+export const MIDDLE_KEYS = [..._LEAF_KEYS, ...ROOT_KEYS] as const;
 
 export interface Leaf extends _Child {}
 export interface Root extends _Parent {}
@@ -119,13 +134,11 @@ export type Child = Middle | Leaf;
 export type Parent = Root | Middle;
 export type Node = Root | Child;
 
-type ParentCallbackArg = Array<MiddleArg | LeafArg>;
-
 // Config type
 
-export const CONFIG_KEYS = ['title', 'defaultTree', 'userTree', 'defaultStyle', 'userStyles'];
+export const PAGE_KEYS = ['title', 'defaultTree', 'userTree', 'defaultStyle', 'userStyles'];
 
-export interface Config {
+export interface Page {
 	title: string;
 	defaultTree: Root;
 	userTree?: Root;

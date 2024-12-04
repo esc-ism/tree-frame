@@ -6,7 +6,7 @@ import generateBody from './body';
 
 import {generateEave} from '@nodes/actions/highlight';
 
-import {Config} from '@types';
+import {Page} from '@types';
 
 let socket: HTMLElement;
 
@@ -14,7 +14,7 @@ export function getSocket(): HTMLElement {
 	return socket;
 }
 
-export default function generate(config: Config, _socket: HTMLElement) {
+export default function generate(config: Page, _socket: HTMLElement) {
 	socket = _socket;
 	
 	generateCSS();

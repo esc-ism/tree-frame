@@ -1,4 +1,4 @@
-import type {Config, Child} from '@types';
+import type {Page, Child} from '@types';
 
 const colourSeed: Child = {
 	value: '#1c8c00',
@@ -32,7 +32,7 @@ function favePredicate(name: string, children: Array<Child>) {
 	return true;
 }
 
-const config: Config = {
+const config: Page = {
 	title: 'My Favourite Things',
 	defaultTree: {
 		children: [

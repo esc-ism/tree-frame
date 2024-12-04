@@ -1,4 +1,4 @@
-import type {Config, Middle} from '@types';
+import type {Page, Middle} from '@types';
 
 const year = (new Date()).getFullYear();
 
@@ -93,7 +93,7 @@ function getMedia(
 	};
 }
 
-const config: Config = {
+const config: Page = {
 	title: 'Pop Atlas',
 	defaultTree: {
 		children: [

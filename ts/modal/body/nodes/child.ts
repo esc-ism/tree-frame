@@ -12,7 +12,7 @@ import * as duplicate from './actions/buttons/duplicate';
 
 import {getDepthClassCount} from '../style/update/depth';
 
-import type {Leaf, Child as _Child, Value, Input, ChildCallback, LeafArg as _LeafArg} from '@types';
+import type {Leaf, Child as _Child, Value, Input, ChildCallback, Listeners, Getter, LeafArg as _LeafArg} from '@types';
 import {SAVED_KEYS, LEAF_KEYS} from '@types';
 
 const actions: Array<{
@@ -39,6 +39,8 @@ export default class Child implements Leaf {
 	readonly options?: Array<Value>;
 	readonly predicate?: ChildCallback;
 	readonly onUpdate?: ChildCallback;
+	readonly listeners?: Listeners;
+	readonly get?: Getter;
 	
 	readonly forceValid: boolean;
 	lastAcceptedValue?: Value;
@@ -115,7 +117,7 @@ export default class Child implements Leaf {
 	}
 	
 	duplicate() {
-		return new Child(this.getJSON(), this.parent, this.getIndex() + 1);
+		return new Child(this.getSeedData(), this.parent, this.getIndex() + 1);
 	}
 	
 	unmount() {
@@ -132,7 +134,7 @@ export default class Child implements Leaf {
 		this.detach();
 	}
 	
-	getJSON(): _Child {
+	getSeedData(): _Child {
 		const data: any = {};
 		
 		for (const key of LEAF_KEYS) {
@@ -144,7 +146,7 @@ export default class Child implements Leaf {
 		return data;
 	}
 	
-	getSaveJSON(): _LeafArg {
+	getPredicateData(): _LeafArg {
 		const data: any = {};
 		
 		for (const key of SAVED_KEYS) {
@@ -154,5 +156,19 @@ export default class Child implements Leaf {
 		}
 		
 		return data;
+	}
+	
+	getSaveData(isActiveBranch: boolean) {
+		const tree = this.getPredicateData();
+		
+		if (isActiveBranch) {
+			return {
+				tree,
+				activeTree: tree,
+				configs: 'get' in this ? [this.get(tree, [])] : [],
+			};
+		}
+		
+		return {tree};
 	}
 }

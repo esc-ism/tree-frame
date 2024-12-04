@@ -11,7 +11,7 @@ import Root from './nodes/root';
 import {onMount as onMountHighlight} from '@nodes/actions/highlight';
 import {onMount as onMountActive} from '@nodes/actions/active';
 
-import type {Config, Root as _Root} from '@types';
+import type {Page, Root as _Root} from '@types';
 
 import {BUTTON_ACTIVE_CLASS} from '../consts';
 
@@ -51,7 +51,7 @@ export function generateTree(data: _Root, id: string): HTMLElement {
 	return root.element.elementContainer;
 }
 
-export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Config): HTMLElement {
+export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Page): HTMLElement {
 	resetTree = defaultTree;
 	
 	updateStylesheet(getActiveStyle(userStyles, defaultStyle));

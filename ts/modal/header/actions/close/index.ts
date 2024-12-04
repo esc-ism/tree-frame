@@ -4,7 +4,7 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {getRoot as getDataTree} from '@/modal/body/data';
+import {getSaveData} from '@/modal/body/data';
 import {getUserStyles} from '@/modal/body/style';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
@@ -31,10 +31,7 @@ function doAction() {
 	
 	scrollElement.scroll(0, 0);
 	
-	callback?.({
-		tree: getDataTree().getSaveJSON(),
-		styles: getUserStyles(),
-	});
+	callback?.({...getSaveData(), styles: getUserStyles()});
 	
 	callback = undefined;
 }

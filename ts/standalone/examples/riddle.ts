@@ -1,4 +1,4 @@
-import type {Config, Middle} from '@types';
+import type {Page, Middle} from '@types';
 
 const NAMES = ['Shield', 'Gladiator', 'Lion'];
 
@@ -16,7 +16,7 @@ function getRegister(children) {
 	return register;
 }
 
-const config: Config = {
+const config: Page = {
 	title: 'Move Everything to the Goal!',
 	defaultTree: {
 		children: [

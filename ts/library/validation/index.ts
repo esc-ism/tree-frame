@@ -1,5 +1,5 @@
-import type {Config} from './types';
-import {CONFIG_KEYS} from './types';
+import type {Page} from './types';
+import {PAGE_KEYS} from './types';
 import {TypeError, PropertyError, EmptyStringError, UnexpectedStateError} from './errors';
 
 import {isStyles} from './styles';
@@ -24,11 +24,11 @@ export function validateUnexpectedKeys(breadcrumbs: string[], object: object, ex
 
 // Guard
 
-function isConfig(candidate: unknown): candidate is Config {
+function isPage(candidate: unknown): candidate is Page {
 	if (typeof candidate !== 'object')
 		throw new TypeError([], typeof candidate, ['object']);
 	
-	validateUnexpectedKeys([], candidate, CONFIG_KEYS);
+	validateUnexpectedKeys([], candidate, PAGE_KEYS);
 	
 	// title
 	
@@ -91,7 +91,7 @@ function isConfig(candidate: unknown): candidate is Config {
 
 // Validator
 
-function validateConfig({title, defaultTree, userTree}: Config): Promise<unknown> {
+function validatePage({title, defaultTree, userTree}: Page): Promise<unknown> {
 	// title
 	
 	if (title.length === 0)
@@ -115,8 +115,8 @@ function validateConfig({title, defaultTree, userTree}: Config): Promise<unknown
 // API
 
 export default function (candidate: unknown): Promise<unknown> {
-	if (!isConfig(candidate))
+	if (!isPage(candidate))
 		throw new UnexpectedStateError();
 	
-	return validateConfig(candidate);
+	return validatePage(candidate);
 }

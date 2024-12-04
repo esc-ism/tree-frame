@@ -15,36 +15,8 @@ const STYLE_OUTER = {
 	width: '100vw',
 };
 
-const getStripped = (children) => {
-	const stripped = [];
-	
-	for (const child of children) {
-		if (child.isActive === false) {
-			continue;
-		}
-		
-		const data = {};
-		
-		if ('value' in child) {
-			data.value = child.value;
-		}
-		
-		if ('label' in child) {
-			data.label = child.label;
-		}
-		
-		if ('children' in child) {
-			data.children = getStripped(child.children);
-		}
-		
-		stripped.push(data);
-	}
-	
-	return stripped;
-};
-
 export default class $Config {
-	constructor(TITLE, KEY_TREE, TREE_DEFAULT, _getConfig, STYLE_INNER = {}, _STYLE_OUTER = {}) {
+	constructor(TITLE, KEY_TREE, TREE_DEFAULT, STYLE_INNER = {}, _STYLE_OUTER = {}) {
 		// PERMISSION CHECKS
 		
 		const getError = (reason, error) => {
@@ -79,8 +51,6 @@ export default class $Config {
 			...STYLE_OUTER,
 			..._STYLE_OUTER,
 		};
-		
-		const getConfig = ({children}) => _getConfig(getStripped(children));
 		
 		// PUBLIC
 		
@@ -202,14 +172,6 @@ export default class $Config {
 					throw getError('Missing GM.deleteValue permission.');
 				}
 				
-				try {
-					const config = getConfig(TREE_DEFAULT);
-					
-					this.get = () => config;
-				} catch (error) {
-					throw getError('Unable to parse default config.', error);
-				}
-				
 				await GM.deleteValue(KEY_TREE);
 				
 				// It may have previously been a rejected promise
@@ -230,58 +192,53 @@ export default class $Config {
 				
 				open();
 				
-				const {tree, styles} = await edit();
+				const {tree, config, styles} = await edit();
 				
 				GM.setValue(KEY_TREE, tree);
 				GM.setValue(KEY_STYLES, styles);
 				GM.setValue(KEY_VERSION, VERSION);
 				
-				const config = getConfig(tree);
-				
-				this.get = () => config;
+				this.get = ((config) => config).bind(null, Object.freeze(config));
 				
 				await open(false);
 			};
 			
 			// Pass data
 			
-			try {
-				const response = await init({
-					userStyles,
-					defaultTree: TREE_DEFAULT,
-					title: TITLE,
-					defaultStyle: STYLE_INNER,
-					...(userTree ? {userTree} : {}),
-				}, target.contentDocument.body);
-				
-				if (response.requireReset) {
+			const response = await init({
+				userStyles,
+				defaultTree: TREE_DEFAULT,
+				title: TITLE,
+				defaultStyle: STYLE_INNER,
+				...(userTree ? {userTree} : {}),
+			}, target.contentDocument.body)
+				.catch(async (error) => {
+					delete this.reset;
+					
+					await disconnect();
+					
+					this.ready = () => Promise.reject();
+					
 					throw getError(
 						'Your config is invalid.'
 						+ '\nThis could be due to a script update or your data being corrupted.'
-						+ `\n\nReason:\n${response.error.message.replaceAll(/\n+/g, '\n')}`,
-						response.error,
+						+ `\n\nReason:\n${error.message.replaceAll(/\n+/g, '\n')}`,
+						error,
 					);
-				}
-				
-				const config = getConfig(response.tree);
-				
-				this.get = () => config;
-				
-				this.ready = () => Promise.resolve();
-			} catch (error) {
-				delete this.reset;
-				
-				await disconnect();
-				
-				this.ready = () => Promise.reject();
-				
+				});
+			
+			this.get = ((config) => config).bind(null, Object.freeze(response.config));
+			
+			if (response.requireReset) {
 				throw getError(
 					'Your config is invalid.'
 					+ '\nThis could be due to a script update or your data being corrupted.'
-					+ `\n\nReason:\n${error.message.replaceAll(/\n+/g, '\n')}`,
-					error,
+					+ `\n\nReason:\n${response.error.message.replaceAll(/\n+/g, '\n')}`,
+					response.error,
 				);
 			}
+			
+			this.ready = () => Promise.resolve();
 		};
 	}
 }

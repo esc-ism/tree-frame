@@ -34,19 +34,19 @@ export class UnexpectedStateError extends Error {
 
 export class TypeError extends Error {
 	constructor(breadcrumbs: string[], found: string, expected: readonly string[]) {
-		super(`Found a value of type '${found}' at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
+		super(`Found a value of type "${found}" at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
 	}
 }
 
 export class PropertyError extends Error {
 	constructor(breadcrumbs: string[], property: string, shouldExist: boolean) {
-		super(`${shouldExist ? 'Missing' : 'Unexpected'} property '${property}' found at ${getPath(breadcrumbs)}.`);
+		super(`${shouldExist ? 'Missing' : 'Unexpected'} property "${property}" found at ${getPath(breadcrumbs)}.`);
 	}
 }
 
 export class ValueError extends Error {
 	constructor(breadcrumbs: string[], found: any, expected: readonly any[]) {
-		super(`Found a value of '${found}' at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
+		super(`Found a value of "${found}" at ${getPath(breadcrumbs)}. Expected ${getOptionString(expected)}.`);
 	}
 }
 
@@ -110,15 +110,9 @@ export class OptionMatchError extends Error {
 	}
 }
 
-export class HangingOptionsError extends Error {
-	constructor() {
-		super('Nodes without a value may not have options.');
-	}
-}
-
-export class HangingPredicateError extends Error {
-	constructor() {
-		super('Nodes without a value may not have a predicate.');
+export class DependenceError extends Error {
+	constructor(found, missing) {
+		super(`Nodes with a "${found}" entry must have a "${missing}" property.`);
 	}
 }
 
@@ -130,6 +124,6 @@ export class DeactivatedError extends Error {
 
 export class NoNodeColourError extends Error {
 	constructor() {
-		super('If the node color property is included, at least one value must be defined.');
+		super('nodeBase entries must define at least one value.');
 	}
 }
