@@ -102,14 +102,19 @@ function validatePage({title, defaultTree, userTree}: Page): Promise<unknown> {
 	validateSeeds(['defaultTree'], defaultTree);
 	validatePools(['defaultTree'], defaultTree);
 	
-	if (userTree) {
-		matchUserTreeParent(['defaultTree'], defaultTree, ['userTree'], userTree);
-		
-		// Has to be done after mutations since new pools may be created
-		validatePoolSizeMatch(defaultTree, userTree);
+	if (!userTree) {
+		return Promise.all(validatePredicates(['defaultTree'], defaultTree));
 	}
 	
-	return Promise.all(validatePredicates(['defaultTree'], defaultTree));
+	matchUserTreeParent(['defaultTree'], defaultTree, ['userTree'], userTree);
+	
+	// Has to be done after mutations since new pools may be created
+	validatePoolSizeMatch(defaultTree, userTree);
+	
+	return Promise.all([
+		...validatePredicates(['defaultTree'], defaultTree),
+		...validatePredicates(['userTree'], userTree),
+	]);
 }
 
 // API
