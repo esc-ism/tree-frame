@@ -23,9 +23,12 @@ export const CONTRAST_METHODS = ['Black / White', 'Invert'] as const;
 export type ContrastMethod = typeof CONTRAST_METHODS[number];
 
 export interface DefaultStyle {
-	fontSize?: number;
-	borderTooltip?: string;
+	width?: number;
+	height?: number;
 	
+	fontSize?: number;
+	
+	borderTooltip?: string;
 	borderModal?: string;
 	
 	headBase?: string;

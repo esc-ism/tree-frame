@@ -3,9 +3,12 @@ import {DefaultStyle} from '@types';
 export const ROOT_ID = 'root-style';
 
 export const DEFAULT_STYLE: DefaultStyle = {
-	fontSize: 18,
-	borderTooltip: '#570000',
+	width: 80,
+	height: 80,
 	
+	fontSize: 18,
+	
+	borderTooltip: '#570000',
 	borderModal: '#ffffff',
 	
 	headBase: '#000000',

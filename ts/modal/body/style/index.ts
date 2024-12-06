@@ -24,7 +24,7 @@ function getFilledStyle(style: DefaultStyle = {}): DefaultStyle {
 export function getActiveStyle(userStyles: Array<UserStyle>, devStyle?: DefaultStyle): DefaultStyle {
 	const activeUserStyle = userStyles.find(({isActive}) => isActive);
 	
-	return activeUserStyle ?? getFilledStyle(devStyle);
+	return getFilledStyle(activeUserStyle ? activeUserStyle : devStyle);
 }
 
 export function toJSON(style: UserStyle): _Middle {
@@ -43,10 +43,22 @@ export function toJSON(style: UserStyle): _Middle {
 				label: 'Modal',
 				children: [
 					{
+						label: 'Width (%)',
+						value: filledStyle.width,
+						predicate: (value: number): true | string =>
+							value > 0 || 'Width must be greater than zero',
+					},
+					{
+						label: 'Height (%)',
+						value: filledStyle.height,
+						predicate: (value: number): true | string =>
+							value > 0 || 'Height must be greater than zero',
+					},
+					{
 						label: 'Font Size (px)',
 						value: filledStyle.fontSize,
 						predicate: (value: number): true | string =>
-							value > 0 ? true : 'Font size must be greater than zero',
+							value > 0 || 'Font size must be greater than zero',
 					},
 					{
 						label: 'Border Color',
@@ -116,7 +128,7 @@ export function toJSON(style: UserStyle): _Middle {
 								seed: toDepthColour(DEFAULT_STYLE.nodeBase[0]),
 								children: filledStyle.nodeBase.map(toDepthColour),
 								childPredicate: (children: Array<object>): true | string =>
-									children.length > 0 ? true : 'At least one color must be provided.',
+									children.length > 0 || 'At least one color must be provided.',
 							},
 							{
 								label: 'Contrast Method',
@@ -187,8 +199,11 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 	const [bodyGeneral, bodyButtons, bodyMisc] = body.map(({children}) => children) as Array<Array<_Middle>>;
 	
 	return {
-		fontSize: modal[0].value as number,
-		borderModal: modal[1].value as string,
+		width: modal[0].value as number,
+		height: modal[1].value as number,
+		fontSize: modal[2].value as number,
+		
+		borderModal: modal[3].value as string,
 		
 		headBase: headerGeneral[0].value as string,
 		headContrast: headerGeneral[1].value as ContrastMethod,

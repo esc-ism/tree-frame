@@ -71,8 +71,10 @@ export default function generate() {
 	]);
 	
 	addRule(`#${MODAL_ID}`, [
-		['width', '80%'],
-		['height', '80%'],
+		['width', 'var(--width)'],
+		['height', 'var(--height)'],
+		
+		['font-size', 'var(--fontSize)'],
 		
 		['font-family', 'Tahoma, Geneva, sans-serif'],
 		['outline', 'var(--borderModal) solid 2px'],

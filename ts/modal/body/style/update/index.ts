@@ -32,27 +32,30 @@ function getContrast(hex: string, method: ContrastMethod): string {
 	return `#${toHexPart(r)}${toHexPart((g))}${toHexPart(b)}`;
 }
 
-export default function updateStylesheet({fontSize, headContrast, nodeBase, nodeContrast, ...colours}: DefaultStyle) {
+export default function updateStylesheet({fontSize, width, height, headContrast, nodeBase, nodeContrast, ...colours}: DefaultStyle) {
 	for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
 		styleNode.sheet.deleteRule(i);
 	}
 	
 	updateDepth(nodeBase.length);
 	
-	addRule('body', ['font-size', `${fontSize}px`], styleNode);
-	
-	const colourStyles: Styles = Object.entries(colours).map(
+	const variables: Styles = Object.entries(colours).map(
 		([property, value]: [string, string]): [string, string] => [`--${property}`, value],
+	);
+	
+	variables.push(
+		['--fontSize', `${fontSize}px`],
+		['--width', `${width}%`],
+		['--height', `${height}%`],
 	);
 	
 	for (const [depth, baseColour] of nodeBase.entries()) {
 		const contrastColour = getContrast(baseColour, nodeContrast);
 		
-		colourStyles.push([`--nodeBase${depth}`, baseColour]);
-		colourStyles.push([`--nodeContrast${depth}`, contrastColour]);
+		variables.push([`--nodeBase${depth}`, baseColour], [`--nodeContrast${depth}`, contrastColour]);
 	}
 	
-	colourStyles.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
+	variables.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
 	
-	addVariables(colourStyles, styleNode);
+	addVariables(variables, styleNode);
 }
