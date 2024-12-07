@@ -1,4 +1,4 @@
-import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from './consts';
+import {FOCUS_SOURCE_CLASS, FOCUS_CLASS, BACKGROUND_CLASS} from './consts';
 
 import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '@nodes/consts';
 
@@ -16,4 +16,20 @@ export default function generate() {
 	
 	// Makes it easy to focus down the tree
 	addRule(`.${FOCUS_SOURCE_CLASS} .${MIDDLE_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [['margin-left', '1.8em']]);
+	
+	addRule(`.${BACKGROUND_CLASS}`, ['background-color', 'var(--focusBackground)']);
+	
+	addRule(`.${BACKGROUND_CLASS}`, [
+		['transition-property', 'width, padding-left'],
+		['transition-duration', '500ms'],
+		['right', '0'],
+		['width', '0'],
+		['padding-left', '0'],
+	]);
+	
+	const headSelector = `.${FOCUS_SOURCE_CLASS}:not(:hover:not(:has( :hover))) > .${ELEMENT_CLASSES.HEAD_CONTAINER}:not(:focus):not(:hover)`;
+	
+	addRule(`${headSelector} .${BACKGROUND_CLASS}`, ['width', '100%']);
+	
+	addRule(`${headSelector} .${ELEMENT_CLASSES.BUTTON_CONTAINER}:not(:empty) + * .${BACKGROUND_CLASS}`, ['padding-left', '0.8em']);
 }

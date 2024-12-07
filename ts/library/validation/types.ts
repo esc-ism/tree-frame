@@ -51,6 +51,7 @@ export interface DefaultStyle {
 	
 	validBackground?: string;
 	invalidBackground?: string;
+	focusBackground?: string;
 }
 
 export interface UserStyle extends DefaultStyle {

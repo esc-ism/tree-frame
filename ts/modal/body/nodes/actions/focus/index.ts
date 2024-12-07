@@ -1,6 +1,6 @@
 import {
-	FOCUS_SOURCE_CLASS as SOURCE_CLASS,
-	FOCUS_CLASS as BRANCH_CLASS,
+	FOCUS_SOURCE_CLASS as SOURCE_CLASS, FOCUS_CLASS as BRANCH_CLASS,
+	BACKGROUND_CLASS,
 } from './consts';
 
 import {kill as killTooltip} from '../tooltip';
@@ -102,7 +102,15 @@ export function unmount(node) {
 }
 
 export function mount(node: Root | Child): void {
-	const {elementContainer, headContainer} = node.element;
+	const {elementContainer, headContainer, backgroundContainer} = node.element;
+	
+	backgroundContainer.append((() => {
+		const background = document.createElement('div');
+		
+		background.classList.add(BACKGROUND_CLASS);
+		
+		return background;
+	})());
 	
 	// Handle keyboard input
 	

@@ -175,6 +175,11 @@ export function toJSON(style: UserStyle): _Middle {
 								input: 'color',
 							},
 							{
+								label: 'Focus Color',
+								value: filledStyle.focusBackground,
+								input: 'color',
+							},
+							{
 								label: 'Tooltip Color',
 								value: filledStyle.borderTooltip,
 								input: 'color',
@@ -221,7 +226,8 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 		
 		validBackground: bodyMisc[0].value as string,
 		invalidBackground: bodyMisc[1].value as string,
-		borderTooltip: bodyMisc[2].value as string,
+		focusBackground: bodyMisc[2].value as string,
+		borderTooltip: bodyMisc[3].value as string,
 	};
 }
 

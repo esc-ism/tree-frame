@@ -31,4 +31,5 @@ export const DEFAULT_STYLE: DefaultStyle = {
 	
 	validBackground: '#d9ffc0',
 	invalidBackground: '#ffb4be',
+	focusBackground: '#e8e8e8',
 };

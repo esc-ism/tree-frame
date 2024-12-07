@@ -12,12 +12,6 @@ import {getSocket} from '@/modal';
 let sustainedNodes = [];
 let activeNode: Root | Child;
 
-export function focusHovered() {
-	if (activeNode) {
-		activeNode.element.headContainer.focus();
-	}
-}
-
 export function isActive(): boolean {
 	return Boolean(activeNode);
 }
@@ -84,7 +78,7 @@ export function mount(node: Root | Child) {
 	headContainer.addEventListener('mouseenter', (event) => {
 		event.stopPropagation();
 		
-		setActive(node, !(editIsActive() || focusIsActive() || positionIsActive()));
+		setActive(node, !editIsActive());
 	});
 	
 	elementContainer.addEventListener('mouseenter', (event) => {
