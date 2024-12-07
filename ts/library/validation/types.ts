@@ -87,6 +87,8 @@ export interface _Child extends _ChildArg {
 	listeners?: Listeners;
 	// Derives a config from the node
 	get?: Getter;
+	// Used by update functions to hide nodes
+	hideId?: string;
 }
 
 export interface _Parent extends _ParentArg {
@@ -117,7 +119,7 @@ export const ROOT_OTHER_KEYS = ['children', 'seed', 'poolId', 'get'] as const;
 // Node types
 
 // hacky code to avoid a duplicate "get" in MIDDLE_KEYS
-const _LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input', 'isActive', 'onUpdate', 'listeners', 'key'];
+const _LEAF_KEYS = ['label', 'value', 'predicate', 'options', 'input', 'isActive', 'onUpdate', 'listeners', 'hideId'];
 
 export const LEAF_KEYS = [..._LEAF_KEYS, 'get'] as const;
 export const ROOT_KEYS = [...ROOT_PREDICATE_KEYS, ...ROOT_UPDATE_KEYS, ...ROOT_OTHER_KEYS] as const;

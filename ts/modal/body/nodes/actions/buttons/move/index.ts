@@ -5,7 +5,7 @@ import {TEST_ADD_CLASS, TEST_REMOVE_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
-import {getSubPredicateResponses, triggerSubUpdateCallbacks} from '../../edit';
+import callbacks from '../../callbacks';
 import * as tooltip from '../../tooltip';
 
 import type Child from '@nodes/child';
@@ -50,7 +50,7 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 	
 	const ancestorBranches = getAncestorBranches(node, copy);
 	
-	Promise.all(ancestorBranches.map((branch) => Promise.all(getSubPredicateResponses(branch))))
+	Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
@@ -64,7 +64,7 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 			}
 			
 			for (const branch of ancestorBranches) {
-				triggerSubUpdateCallbacks(branch);
+				callbacks.update.triggerSub(branch);
 			}
 		})
 		.catch((reason) => {

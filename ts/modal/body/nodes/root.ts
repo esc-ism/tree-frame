@@ -42,6 +42,14 @@ function addChildren(children: _Child[]): void {
 }
 
 export function setup({children, ...data}: _Root): void {
+	for (const key of ROOT_OTHER_KEYS) {
+		if (key in data) {
+			this[key] = data[key];
+		}
+	}
+	
+	addChildren.call(this, children);
+	
 	for (const key of ROOT_PREDICATE_KEYS) {
 		if (key in data) {
 			this[key] = () => data[key](getChildPredicateData(this));
@@ -51,16 +59,10 @@ export function setup({children, ...data}: _Root): void {
 	for (const key of ROOT_UPDATE_KEYS) {
 		if (key in data) {
 			this[key] = () => onceVisualsUpdate(() => data[key](getChildPredicateData(this)));
+			
+			data[key](getChildPredicateData(this));
 		}
 	}
-	
-	for (const key of ROOT_OTHER_KEYS) {
-		if (key in data) {
-			this[key] = data[key];
-		}
-	}
-	
-	addChildren.call(this, children);
 }
 
 export function getPredicateData(): _Root {

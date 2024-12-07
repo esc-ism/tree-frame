@@ -4,7 +4,7 @@ import {BUTTON_DEFAULT as TEMPLATE_DEFAULT, BUTTON_ALT as TEMPLATE_ALT} from './
 import {addActionButton} from '../button';
 import {TEST_REMOVE_CLASS} from '../consts';
 
-import {getSubPredicateResponses, triggerSubUpdateCallbacks} from '../../edit';
+import callbacks from '../../callbacks';
 import * as tooltip from '../../tooltip';
 
 import type Child from '@nodes/child';
@@ -28,7 +28,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 		toggle(node);
 	}
 	
-	Promise.all(getSubPredicateResponses(node.getAncestors()))
+	Promise.all(callbacks.predicate.getSub(node.getAncestors()))
 		.then(() => {
 			const ancestors = node.getAncestors();
 			
@@ -39,7 +39,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 				updateButton(button, node.isActive);
 			}
 			
-			triggerSubUpdateCallbacks(ancestors);
+			callbacks.update.triggerSub(ancestors);
 		})
 		.catch((reason) => {
 			if (isAlt) {

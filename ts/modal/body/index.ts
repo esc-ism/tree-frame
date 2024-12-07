@@ -1,7 +1,7 @@
 import {MODAL_BODY_ID} from './consts';
 import generateCSS from './css';
 
-import generateStyleTree, {getActiveStyle} from './style';
+import generateStyleTree from './style';
 import generateDataTree, {setTree} from './data';
 
 import updateStylesheet from './style/update';
@@ -53,8 +53,6 @@ export function generateTree(data: _Root, id: string): HTMLElement {
 
 export default function generate({userTree, defaultTree, userStyles, defaultStyle}: Page): HTMLElement {
 	resetTree = defaultTree;
-	
-	updateStylesheet(getActiveStyle(userStyles, defaultStyle));
 	
 	generateCSS();
 	

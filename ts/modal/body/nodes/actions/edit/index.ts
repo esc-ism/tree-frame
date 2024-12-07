@@ -6,12 +6,11 @@ import {
 import * as option from './option';
 import * as tooltip from '../tooltip';
 import {addSustained, removeSustained} from '../highlight';
+import callbacks from '../callbacks';
 
 import type Child from '@nodes/child';
-import type Middle from '@nodes/middle';
-import type Root from '@nodes/root';
 
-import {getPredicatePromise, isUnresolved} from '@/predicate';
+import {isUnresolved} from '@/predicate';
 
 import type {Value} from '@types';
 
@@ -58,72 +57,6 @@ function getValue(node: Child): Value {
 	}
 }
 
-export function getSubPredicateResponses(ancestors: (Middle | Root)[] = activeNode.getAncestors()): Array<Promise<void>> {
-	const responses = [];
-	
-	if ('childPredicate' in ancestors[0]) {
-		responses.push(getPredicatePromise(ancestors[0].childPredicate()));
-	}
-	
-	for (const ancestor of ancestors) {
-		if ('descendantPredicate' in ancestor) {
-			responses.push(getPredicatePromise(ancestor.descendantPredicate()));
-		}
-	}
-	
-	return responses;
-}
-
-function getAllPredicateResponses(): Array<Promise<void>> {
-	if (activeNode.forceValid || ('options' in activeNode && activeNode.options.includes(activeNode.value))) {
-		return getSubPredicateResponses();
-	}
-	
-	if ('predicate' in activeNode) {
-		return [getPredicatePromise(activeNode.predicate(activeNode.value)), ...getSubPredicateResponses()];
-	}
-	
-	return [Promise.reject()];
-}
-
-export function triggerSubUpdateCallbacks(ancestors: (Middle | Root)[] = activeNode.getAncestors()) {
-	if ('onChildUpdate' in ancestors[0]) {
-		ancestors[0].onChildUpdate();
-	}
-	
-	for (const ancestor of ancestors) {
-		if ('onDescendantUpdate' in ancestor) {
-			ancestor.onDescendantUpdate();
-		}
-	}
-}
-
-function triggerAllUpdateCallbacks() {
-	if ('onUpdate' in activeNode) {
-		activeNode.onUpdate(activeNode.value);
-	}
-	
-	triggerSubUpdateCallbacks();
-}
-
-let awaitingCallback;
-
-export function awaitResolution(promise) {
-	awaitingCallback?.(false);
-	
-	const callback = new Promise((resolve) => {
-		awaitingCallback = resolve;
-	});
-	
-	return Promise.any([
-		callback,
-		// result of Promise.prototype.finally() gets ignored unless it's a rejection sigh
-		promise
-			.then(() => true)
-			.catch(() => true),
-	]);
-}
-
 export async function update() {
 	const value = getValue(activeNode);
 	
@@ -136,18 +69,12 @@ export async function update() {
 	activeNode.element.removeClass(INVALID_CLASS);
 	activeNode.element.removeClass(VALID_CLASS);
 	
-	const response = Promise.all(getAllPredicateResponses());
-	
 	tooltip.fade();
 	
-	if (!(await awaitResolution(response))) {
-		return;
-	}
-	
-	awaitingCallback = undefined;
-	
 	try {
-		await response;
+		if (!(await callbacks.predicate.getAll(activeNode))) {
+			return;
+		}
 	} catch (reason) {
 		activeNode.element.addClass(INVALID_CLASS);
 		
@@ -166,7 +93,7 @@ export async function update() {
 	
 	tooltip.hide();
 	
-	triggerAllUpdateCallbacks();
+	callbacks.update.triggerAll(activeNode);
 }
 
 export function unmount(node: Child) {

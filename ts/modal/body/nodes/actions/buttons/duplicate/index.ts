@@ -5,7 +5,7 @@ import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
-import {getSubPredicateResponses, triggerSubUpdateCallbacks} from '../../edit';
+import callbacks from '../../callbacks';
 import {show as showTooltip} from '../../tooltip';
 
 import type Child from '@nodes/child';
@@ -23,7 +23,7 @@ export function reset() {
 }
 
 function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = true) {
-	Promise.all(getSubPredicateResponses(copy.getAncestors()))
+	Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
 		.then(() => {
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
@@ -34,7 +34,7 @@ function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = tr
 				copy.element.scrollIntoView();
 			}
 			
-			triggerSubUpdateCallbacks(copy.getAncestors());
+			callbacks.update.triggerSub(copy.getAncestors());
 		})
 		.catch((reason) => {
 			copy.disconnect();

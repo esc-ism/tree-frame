@@ -5,6 +5,7 @@ import NodeElement from './element';
 import * as highlight from './actions/highlight';
 import * as edit from './actions/edit';
 import * as focus from './actions/focus';
+import * as hide from './actions/hide';
 
 import * as disable from './actions/buttons/disable';
 import * as move from './actions/buttons/move';
@@ -24,6 +25,7 @@ const actions: Array<{
 	highlight,
 	focus,
 	edit,
+	hide,
 	// Button
 	disable,
 	move,
@@ -41,6 +43,7 @@ export default class Child implements Leaf {
 	readonly onUpdate?: ChildCallback;
 	readonly listeners?: Listeners;
 	readonly get?: Getter;
+	readonly hideId?: string;
 	
 	readonly forceValid: boolean;
 	lastAcceptedValue?: Value;
@@ -68,6 +71,10 @@ export default class Child implements Leaf {
 			if (shouldMount(this)) {
 				mount(this);
 			}
+		}
+		
+		if ('onUpdate' in this) {
+			this.onUpdate(this.value);
 		}
 	}
 	

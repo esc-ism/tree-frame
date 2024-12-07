@@ -72,6 +72,9 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 	if (hasOwnProperty(candidate, 'get') && typeof candidate.get !== 'function')
 		throw new TypeError([...breadcrumbs, 'get'], typeof candidate.get, ['function']);
 	
+	if (hasOwnProperty(candidate, 'hideId') && typeof candidate.hideId !== 'string')
+		throw new TypeError([...breadcrumbs, 'hideId'], typeof candidate.hideId, ['string']);
+	
 	if (hasOwnProperty(candidate, 'isActive') && typeof candidate.isActive !== 'boolean')
 		throw new TypeError([...breadcrumbs, 'isActive'], typeof candidate.isActive, ['boolean']);
 	

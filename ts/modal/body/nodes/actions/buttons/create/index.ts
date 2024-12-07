@@ -5,7 +5,7 @@ import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
-import {getSubPredicateResponses, triggerSubUpdateCallbacks} from '../../edit';
+import callbacks from '../../callbacks';
 import {show as showTooltip} from '../../tooltip';
 
 import Middle from '@nodes/middle';
@@ -30,7 +30,7 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 	
 	child.move(parent, index);
 	
-	Promise.all(getSubPredicateResponses(child.getAncestors()))
+	Promise.all(callbacks.predicate.getSub(child.getAncestors()))
 		.then(() => {
 			child.element.removeClass(TEST_ADD_CLASS);
 			
@@ -43,7 +43,7 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 				child.element.scrollIntoView();
 			}
 			
-			triggerSubUpdateCallbacks(child.getAncestors());
+			callbacks.update.triggerSub(child.getAncestors());
 		})
 		.catch((reason) => {
 			child.disconnect();

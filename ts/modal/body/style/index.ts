@@ -21,12 +21,6 @@ function getFilledStyle(style: DefaultStyle = {}): DefaultStyle {
 	return {...DEFAULT_STYLE, ...style};
 }
 
-export function getActiveStyle(userStyles: Array<UserStyle>, devStyle?: DefaultStyle): DefaultStyle {
-	const activeUserStyle = userStyles.find(({isActive}) => isActive);
-	
-	return getFilledStyle(activeUserStyle ? activeUserStyle : devStyle);
-}
-
 export function toJSON(style: UserStyle): _Middle {
 	const filledStyle: UserStyle = {...DEFAULT_STYLE, ...style};
 	const toDepthColour: (string) => _Leaf = (value) => ({value, input: 'color'});
