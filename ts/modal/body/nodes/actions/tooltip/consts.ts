@@ -16,3 +16,11 @@ export const TOOLTIP_ANIMATION: [Array<Keyframe>, KeyframeAnimationOptions] = [
 		{opacity: 0},
 	], {duration: 2000},
 ];
+
+export const TOOLTIP_ANIMATION_FAST: [Array<Keyframe>, KeyframeAnimationOptions] = [
+	[
+		// keyframes
+		{opacity: 1},
+		{opacity: 0},
+	], {duration: 1000},
+];

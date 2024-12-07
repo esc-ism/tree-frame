@@ -106,6 +106,24 @@ function triggerAllUpdateCallbacks() {
 	triggerSubUpdateCallbacks();
 }
 
+let awaitingCallback;
+
+export function awaitResolution(promise) {
+	awaitingCallback?.(false);
+	
+	const callback = new Promise((resolve) => {
+		awaitingCallback = resolve;
+	});
+	
+	return Promise.any([
+		callback,
+		// result of Promise.prototype.finally() gets ignored unless it's a rejection sigh
+		promise
+			.then(() => true)
+			.catch(() => true),
+	]);
+}
+
 export async function update() {
 	const value = getValue(activeNode);
 	
@@ -118,19 +136,27 @@ export async function update() {
 	activeNode.element.removeClass(INVALID_CLASS);
 	activeNode.element.removeClass(VALID_CLASS);
 	
+	const response = Promise.all(getAllPredicateResponses());
+	
+	tooltip.fade();
+	
+	if (!(await awaitResolution(response))) {
+		return;
+	}
+	
+	awaitingCallback = undefined;
+	
 	try {
-		await Promise.all(getAllPredicateResponses());
+		await response;
 	} catch (reason) {
 		activeNode.element.addClass(INVALID_CLASS);
 		
 		if (reason) {
+			tooltip.kill();
+			
 			tooltip.show(reason);
 		}
 		
-		return;
-	}
-	
-	if (isUnresolved()) {
 		return;
 	}
 	

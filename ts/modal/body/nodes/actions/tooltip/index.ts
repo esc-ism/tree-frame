@@ -1,7 +1,7 @@
 import {
 	TOOLTIP_CLASS, TOOLTIP_CONTAINER_CLASS,
 	TOOLTIP_BOTTOM_CLASS, TOOLTIP_TOP_CLASS, TOOLTIP_REVERSE_CLASS,
-	TOOLTIP_ANIMATION,
+	TOOLTIP_ANIMATION, TOOLTIP_ANIMATION_FAST,
 } from './consts';
 
 import {isActive as forceAbove} from '../edit/option';
@@ -16,11 +16,7 @@ let activeParent;
 let animation: Animation;
 
 export function kill() {
-	if (animation) {
-		animation.finish();
-		
-		animation = undefined;
-	}
+	animation?.finish();
 }
 
 function isBelowCenter(element, yPosition = 0) {
@@ -52,33 +48,54 @@ function generate(parent: HTMLElement, doReverse: boolean = false) {
 	
 	parent.insertBefore(container, parent.firstChild);
 	
-	return [container, element];
+	return element;
 }
 
 function getAnimated(parent?: HTMLElement) {
 	if (!parent) {
-		const element = activeParent.querySelector(`.${TOOLTIP_CLASS}`);
-		
-		return [element.parentElement, element];
+		return activeParent.querySelector(`.${TOOLTIP_CLASS}`);
 	}
 	
-	const [container, element] = generate(parent);
+	const element = generate(parent);
 	
 	parent.parentElement.style.setProperty('z-index', '2');
 	
 	animation = element.animate(...TOOLTIP_ANIMATION);
 	
-	animation.onfinish = () => {
-		container.remove();
+	animation.onfinish = ({target}) => {
+		element.parentElement.remove();
 		
 		parent.parentElement.style.removeProperty('z-index');
+		
+		if (target === animation) {
+			animation = undefined;
+		}
 	};
 	
-	return [container, element];
+	return element;
+}
+
+export function fade() {
+	const element = getAnimated();
+	
+	if (!element || element.matches(':empty')) {
+		return;
+	}
+	
+	kill();
+	
+	animation = element.animate(...TOOLTIP_ANIMATION_FAST);
+	
+	animation.onfinish = ({target}) => {
+		if (target === animation) {
+			animation = undefined;
+		}
+	};
 }
 
 export function show(message: string, parent?: HTMLElement) {
-	const [container, element] = getAnimated(parent);
+	const element = getAnimated(parent);
+	const container = element.parentElement;
 	
 	if (forceAbove() || isBelowCenter(container)) {
 		container.classList.remove(TOOLTIP_BOTTOM_CLASS);
