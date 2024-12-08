@@ -1,7 +1,7 @@
 import {updateDepth} from './depth';
 
 import type {Styles} from '@/modal/css';
-import {addVariables, addRule, registerStyleNode} from '@/modal/css';
+import {addVariables, registerStyleNode} from '@/modal/css';
 
 import type {DefaultStyle, ContrastMethod} from '@types';
 

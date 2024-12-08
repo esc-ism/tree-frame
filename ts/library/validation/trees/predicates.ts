@@ -3,12 +3,12 @@ import {TypeError, JoinedError, NonIntegerError, OptionMatchError, PredicateErro
 
 import {getPredicatePromise} from '../../../predicate';
 
-function getBoundPredicatePromise(response, error: Error): Promise<void> {
+function getBoundPredicatePromise(response, error: Error): Promise<unknown> {
 	return getPredicatePromise(response)
 		.catch(() => Promise.reject(error));
 }
 
-function validateChild(breadcrumbs: Array<string>, child: Child): Promise<void> {
+function validateChild(breadcrumbs: Array<string>, child: Child): Promise<unknown> {
 	if (!('options' in child) && !('predicate' in child))
 		return Promise.resolve();
 	

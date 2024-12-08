@@ -9,7 +9,7 @@ registerStyleNode(styleNode);
 
 const callbacks = [];
 
-let currentClassCount;
+let currentClassCount = 1;
 
 export function getDepthClassCount() {
 	return currentClassCount;
@@ -28,6 +28,10 @@ export function addDepthChangeListener(callback: (depth: number, adder: (Selecto
 }
 
 export function updateDepth(depth: number) {
+	if (currentClassCount === depth) {
+		return;
+	}
+	
 	for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
 		styleNode.sheet.deleteRule(i);
 	}

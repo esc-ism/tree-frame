@@ -1,6 +1,7 @@
 import type Root from './root';
 import type Middle from './middle';
 import NodeElement from './element';
+import {onceVisualsUpdate} from './queue';
 
 import * as highlight from './actions/highlight';
 import * as edit from './actions/edit';
@@ -39,8 +40,8 @@ export default class Child implements Leaf {
 	readonly label?: string;
 	readonly input?: Input;
 	readonly options?: Array<Value>;
-	readonly predicate?: ChildCallback;
-	readonly onUpdate?: ChildCallback;
+	readonly predicate?: () => unknown;
+	readonly onUpdate?: () => unknown;
 	readonly listeners?: Listeners;
 	readonly get?: Getter;
 	readonly hideId?: string;
@@ -73,8 +74,14 @@ export default class Child implements Leaf {
 			}
 		}
 		
-		if ('onUpdate' in this) {
-			this.onUpdate(this.value);
+		if ('predicate' in data) {
+			this.predicate = () => data.predicate(this.value);
+		}
+		
+		if ('onUpdate' in data) {
+			this.onUpdate = () => onceVisualsUpdate(() => data.onUpdate(this.value));
+			
+			this.onUpdate();
 		}
 	}
 	

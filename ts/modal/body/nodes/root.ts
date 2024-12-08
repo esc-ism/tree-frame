@@ -60,7 +60,7 @@ export function setup({children, ...data}: _Root): void {
 		if (key in data) {
 			this[key] = () => onceVisualsUpdate(() => data[key](getChildPredicateData(this)));
 			
-			data[key](getChildPredicateData(this));
+			this[key]();
 		}
 	}
 }
@@ -94,8 +94,8 @@ export default class Root implements _Root {
 	readonly poolId?: number;
 	readonly childPredicate?: () => Promise<void>;
 	readonly descendantPredicate?: () => Promise<void>;
-	readonly onChildUpdate?: () => void;
-	readonly onDescendantUpdate?: () => void;
+	readonly onChildUpdate?: () => unknown;
+	readonly onDescendantUpdate?: () => unknown;
 	readonly get?: Getter;
 	
 	readonly depth: number = 0;

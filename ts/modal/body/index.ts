@@ -4,8 +4,6 @@ import generateCSS from './css';
 import generateStyleTree from './style';
 import generateDataTree, {setTree} from './data';
 
-import updateStylesheet from './style/update';
-
 import Root from './nodes/root';
 
 import {onMount as onMountHighlight} from '@nodes/actions/highlight';

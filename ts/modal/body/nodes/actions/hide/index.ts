@@ -1,16 +1,15 @@
 import {CLASS_PREFIX_READ, CLASS_PREFIX_WRITE} from './consts';
 
 import type Child from '@nodes/child';
-import type Middle from '@nodes/middle';
 import type Root from '@nodes/root';
 
 import {ROOT_CLASS} from '@nodes/consts';
 
 import {addRule} from '@/modal/css';
 
-const ids = new Set();
+const ids: Set<string> = new Set();
 
-export default function hide(node, id, doHide = true) {
+export default function hide(node: Child | Root, id: string, doHide = true) {
 	node.getRoot().element[`${doHide ? 'add' : 'remove'}Class`](`${CLASS_PREFIX_WRITE}${id}`);
 }
 

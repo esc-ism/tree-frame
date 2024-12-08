@@ -4,9 +4,9 @@ import type Root from '@nodes/root';
 
 import {getPredicatePromise as get} from '@/predicate';
 
-let ongoing: Function;
+let ongoing: (value: boolean) => void;
 
-async function handle(promises): Promise<boolean | Array<unknown>> {
+async function handle(promises: Array<Promise<unknown>>): Promise<boolean | Array<unknown>> {
 	ongoing?.(true);
 	
 	const callback = new Promise((resolve) => {
@@ -28,7 +28,7 @@ async function handle(promises): Promise<boolean | Array<unknown>> {
 	return await response;
 }
 
-export function getSub(ancestors: (Middle | Root)[]): Array<Promise<void>> {
+export function getSub(ancestors: (Middle | Root)[]): Array<Promise<unknown>> {
 	const responses = [];
 	
 	if ('childPredicate' in ancestors[0]) {
@@ -50,7 +50,7 @@ export function getAll(node: Child): Promise<boolean | Array<unknown>> {
 	}
 	
 	if ('predicate' in node) {
-		return handle([get(node.predicate(node.value)), ...getSub(node.getAncestors())]);
+		return handle([get(node.predicate()), ...getSub(node.getAncestors())]);
 	}
 	
 	throw new Error();

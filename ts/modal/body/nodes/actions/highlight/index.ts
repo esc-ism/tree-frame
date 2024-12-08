@@ -1,8 +1,6 @@
 import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 
 import {isActive as editIsActive} from '../edit';
-import {isActive as focusIsActive} from '../focus';
-import {isActive as positionIsActive} from '../buttons/position';
 
 import Root from '@nodes/root';
 import Child from '@nodes/child';

@@ -4,7 +4,7 @@ export function isUnresolved() {
 	return count > 0;
 }
 
-export async function getPredicatePromise(_response: any) {
+export async function getPredicatePromise(_response: any): Promise<unknown> {
 	count++;
 	
 	try {
