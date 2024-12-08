@@ -52,7 +52,7 @@ export default function generate(): HTMLElement {
 			
 			doAction(false);
 		}
-	});
+	}, true);
 	
 	return BUTTON;
 }
