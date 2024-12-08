@@ -2,9 +2,9 @@ import {EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS, HIGHLIGHT_CLASS} from './consts';
 
 import {BUTTON_CLASS, TEST_ADD_CLASS, TEST_REMOVE_CLASS} from '../buttons/consts';
 
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS} from '@nodes/consts';
+import {GROUP_CLASS_PREFIX, ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS} from '@nodes/consts';
 
-import {addDepthChangeListener} from '@/modal/body/style/update/depth';
+import {addGroupChangeListener} from '@/modal/body/style/update/depth';
 
 import {addRule} from '@/modal/css';
 
@@ -55,30 +55,30 @@ export default function generate() {
 		['padding-left', '0'],
 	]);
 	
-	addDepthChangeListener((depth, addRule) => {
-		const rootSelector = `.${DEPTH_CLASS_PREFIX}${depth}`;
+	addGroupChangeListener((group, addRule) => {
+		const rootSelector = `.${GROUP_CLASS_PREFIX}${group}`;
 		const headSelector = `${rootSelector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`;
 		
 		addRule(
 			`${headSelector} .${HIGHLIGHT_BACKGROUND_CLASS}`,
-			['background-color', `var(--nodeContrast${depth})`],
+			['background-color', `var(--nodeContrast${group})`],
 		);
 		
 		addRule(
 			`${headSelector} .${BUTTON_CLASS}`,
-			['background-color', `var(--nodeContrast${depth})`],
+			['background-color', `var(--nodeContrast${group})`],
 		);
 		
 		addRule([`${headSelector} .${BASE_CLASS}`], [
-			['color', `var(--nodeContrast${depth})`],
-			['background-color', `var(--nodeBase${depth})`],
+			['color', `var(--nodeContrast${group})`],
+			['background-color', `var(--nodeBase${group})`],
 		]);
 		
-		addRule([`${headSelector} .${CONTRAST_CLASS}`], [['color', `var(--nodeBase${depth})`]]);
+		addRule([`${headSelector} .${CONTRAST_CLASS}`], [['color', `var(--nodeBase${group})`]]);
 		
-		addRule(`${headSelector} .${BASE_CLASS} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [['background-image', `linear-gradient(to right, transparent, 1.9em, var(--nodeBase${depth}) 3.8em)`]]);
+		addRule(`${headSelector} .${BASE_CLASS} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [['background-image', `linear-gradient(to right, transparent, 1.9em, var(--nodeBase${group}) 3.8em)`]]);
 		
-		addRule(`${headSelector} .${CONTRAST_CLASS} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [['background-image', `linear-gradient(to right, transparent, 1.9em, var(--nodeContrast${depth}) 3.8em)`]]);
+		addRule(`${headSelector} .${CONTRAST_CLASS} > .${ELEMENT_CLASSES.LABEL_CONTAINER}`, [['background-image', `linear-gradient(to right, transparent, 1.9em, var(--nodeContrast${group}) 3.8em)`]]);
 	});
 	
 	addRule(`#${EAVE_ID}`, [

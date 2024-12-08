@@ -9,42 +9,42 @@ registerStyleNode(styleNode);
 
 const callbacks = [];
 
-let currentClassCount = 1;
+let currentGroupCount = 1;
 
-export function getDepthClassCount() {
-	return currentClassCount;
+export function getGroupCount() {
+	return currentGroupCount;
 }
 
 function addDepthRule(selectors: Selectors, styles: Styles) {
 	addRule(selectors, styles, styleNode);
 }
 
-export function addDepthChangeListener(callback: (depth: number, adder: (Selectors, Styles) => void) => void) {
-	callbacks.push((depth) => callback(depth, addDepthRule));
+export function addGroupChangeListener(callback: (group: number, adder: (Selectors, Styles) => void) => void) {
+	callbacks.push((group) => callback(group, addDepthRule));
 	
-	for (let i = 0; i < currentClassCount; ++i) {
+	for (let i = 0; i < currentGroupCount; ++i) {
 		callback(i, addDepthRule);
 	}
 }
 
-export function updateDepth(depth: number) {
-	if (currentClassCount === depth) {
+export function updateDepth(groupCount: number) {
+	if (currentGroupCount === groupCount) {
 		return;
 	}
+	
+	currentGroupCount = groupCount;
 	
 	for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
 		styleNode.sheet.deleteRule(i);
 	}
 	
 	for (const root of Object.values(ROOTS)) {
-		root.updateDepthClass(depth);
+		root.updateGroup();
 	}
 	
-	for (let i = 0; i < depth; ++i) {
+	for (let i = 0; i < groupCount; ++i) {
 		for (const callback of callbacks) {
-			callback(i, addDepthRule);
+			callback(i);
 		}
 	}
-	
-	currentClassCount = depth;
 }

@@ -1,8 +1,8 @@
-import {BASE_CLASS, DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, ROOT_CLASS, CHECKBOX_WRAPPER_CLASS} from './consts';
+import {BASE_CLASS, GROUP_CLASS_PREFIX, ELEMENT_CLASSES, ROOT_CLASS, CHECKBOX_WRAPPER_CLASS} from './consts';
 
 import {FOCUS_CLASS} from './actions/focus/consts';
 
-import {addDepthChangeListener} from '../style/update/depth';
+import {addGroupChangeListener} from '../style/update/depth';
 
 import {addRule} from '@/modal/css';
 
@@ -83,27 +83,26 @@ export default function generate() {
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
-		// Puts it above the backgrounds
-		['position', 'relative'],
+		['background-color', 'inherit'],
 		['user-select', 'none'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [['height', '100%']]);
 	
-	addDepthChangeListener((depth, addRule) => {
-		addRule(`.${DEPTH_CLASS_PREFIX}${depth}`, [
-			['color', `var(--nodeContrast${depth})`],
-			['background-color', `var(--nodeBase${depth})`],
+	addGroupChangeListener((group, addRule) => {
+		addRule(`.${GROUP_CLASS_PREFIX}${group}`, [
+			['color', `var(--nodeContrast${group})`],
+			['background-color', `var(--nodeBase${group})`],
 		]);
 		
 		addRule(
-			`.${DEPTH_CLASS_PREFIX}${depth}`,
-			['outline', `1px solid var(--nodeContrast${depth})`],
+			`.${GROUP_CLASS_PREFIX}${group}`,
+			['outline', `1px solid var(--nodeContrast${group})`],
 		);
 		
 		addRule(
-			`.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`,
-			['outline', `1px solid var(--nodeContrast${depth})`],
+			`.${GROUP_CLASS_PREFIX}${group} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`,
+			['outline', `1px solid var(--nodeContrast${group})`],
 		);
 	});
 }

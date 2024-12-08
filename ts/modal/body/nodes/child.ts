@@ -12,9 +12,7 @@ import * as disable from './actions/buttons/disable';
 import * as move from './actions/buttons/move';
 import * as duplicate from './actions/buttons/duplicate';
 
-import {getDepthClassCount} from '../style/update/depth';
-
-import type {Leaf, Child as _Child, Value, Input, ChildCallback, Listeners, Getter, LeafArg as _LeafArg} from '@types';
+import type {Leaf, Child as _Child, Value, Input, Listeners, Getter, LeafArg as _LeafArg} from '@types';
 import {SAVED_KEYS, LEAF_KEYS} from '@types';
 
 const actions: Array<{
@@ -56,7 +54,7 @@ export default class Child implements Leaf {
 	constructor(data: _Child, parent: Root | Middle, index?: number) {
 		this.depth = parent.depth + 1;
 		this.element = new NodeElement(data);
-		this.element.addDepthClass(this.depth % getDepthClassCount());
+		this.element.addDepthClass(this.depth);
 		
 		for (const key of LEAF_KEYS) {
 			if (key in data) {
@@ -104,8 +102,8 @@ export default class Child implements Leaf {
 		return [...siblings.slice(0, index), ...siblings.slice(index + 1)];
 	}
 	
-	updateDepthClass(classCount) {
-		this.element.addDepthClass(this.depth % classCount);
+	updateGroup() {
+		this.element.addDepthClass(this.depth);
 	}
 	
 	detach() {

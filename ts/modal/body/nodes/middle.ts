@@ -28,6 +28,8 @@ export default class Middle extends Child implements _Middle {
 	readonly onChildUpdate?: () => void;
 	readonly onDescendantUpdate?: () => void;
 	
+	readonly height: number = 1;
+	
 	constructor(data: _Middle, parent: Root | Middle, index?: number) {
 		super(data, parent, index);
 		
@@ -66,11 +68,11 @@ export default class Middle extends Child implements _Middle {
 		this.detach();
 	}
 	
-	updateDepthClass(classCount) {
-		super.updateDepthClass(classCount);
+	updateGroup() {
+		super.updateGroup();
 		
 		for (const child of this.children) {
-			child.updateDepthClass(classCount);
+			child.updateGroup();
 		}
 	}
 	

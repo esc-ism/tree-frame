@@ -1,4 +1,5 @@
 import generateCloser from './close';
+import generateStickyToggle from './sticky';
 import generateLabelToggle from './labels';
 import generateStyler from './style';
 import generateHider from './hide';
@@ -17,6 +18,7 @@ export default function generate(background: HTMLElement): HTMLElement {
 	element.append(
 		generateCloser(background),
 		generateStyler(),
+		generateStickyToggle(),
 		generateLabelToggle(),
 		generateHider(),
 		generateAltToggle(),

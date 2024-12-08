@@ -2,8 +2,13 @@ import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 
 import {isActive as editIsActive} from '../edit';
 
-import Root from '@nodes/root';
-import Child from '@nodes/child';
+import type Root from '@nodes/root';
+import type Middle from '@nodes/middle';
+import type Child from '@nodes/child';
+
+import {element as scrollElement} from '@/modal/body';
+
+import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
 import {getSocket} from '@/modal';
 
@@ -45,6 +50,26 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 	}
 }
 
+function getOffsetTop(node: Root | Middle, index: number = node.children.length, isFromParent = false) {
+	let offset = 0;
+	
+	for (const child of node.children.slice(0, index)) {
+		offset += 'children' in child ? getOffsetTop(child, undefined, true) : child.element.headContainer.clientHeight;
+	}
+	
+	if (!isFromParent && 'parent' in node) {
+		return getOffsetTop(node.parent, node.getIndex()) + offset;
+	}
+	
+	return offset + node.element.headContainer.clientHeight;
+}
+
+function scroll(node: Root | Child) {
+	scrollElement.scrollTop = !('parent' in node) ? 0 : getOffsetTop(node.parent, node.getIndex());
+}
+
+let isTab = false;
+
 export function mount(node: Root | Child) {
 	const {backgroundContainer, headContainer, elementContainer, infoContainer, base} = node.element;
 	
@@ -64,8 +89,20 @@ export function mount(node: Root | Child) {
 	
 	headContainer.setAttribute('tabIndex', '1');
 	
+	headContainer.addEventListener('keydown', (event) => {
+		isTab = event.key === 'Tab';
+	});
+	
 	headContainer.addEventListener('focusin', (event) => {
 		event.stopPropagation();
+		
+		if (isTab) {
+			if (isSticky()) {
+				scroll(node);
+			}
+			
+			isTab = false;
+		}
 		
 		// Filters out events fired from re-focusing the window
 		if (event.relatedTarget) {

@@ -15,6 +15,8 @@ export const ELEMENT_CLASSES = {
 	LABEL: 'node-label',
 };
 
+export const GROUP_CLASS_PREFIX = 'node-group-';
+
 export const DEPTH_CLASS_PREFIX = 'node-depth-';
 
 export const BASE_CLASS = 'node-base';

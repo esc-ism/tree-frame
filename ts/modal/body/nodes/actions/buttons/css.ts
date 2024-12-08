@@ -8,9 +8,9 @@ import generatePosition from './position/css';
 
 import {HIGHLIGHT_CLASS} from '../highlight/consts';
 
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
+import {GROUP_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
 
-import {addDepthChangeListener} from '@/modal/body/style/update/depth';
+import {addGroupChangeListener} from '@/modal/body/style/update/depth';
 
 import {ACTION_ID as ALT_ID} from '@/modal/header/actions/alternate/consts';
 
@@ -69,30 +69,30 @@ export default function generate() {
 	
 	addRule(`.${ALT_ID} button.${ALT_CLASS} + *`, ['display', 'none']);
 	
-	addDepthChangeListener((depth, addRule) => {
-		const depthSelector = `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}`;
+	addGroupChangeListener((group, addRule) => {
+		const depthSelector = `.${GROUP_CLASS_PREFIX}${group} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}`;
 		
 		addRule(
 			`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${HIGHLIGHT_CLASS}${depthSelector} > `
 			+ `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):not(:focus):not(:hover) > svg > g`,
-			['stroke', `var(--nodeBase${depth})`],
+			['stroke', `var(--nodeBase${group})`],
 		);
 		
-		addRule(`${depthSelector} > .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}:hover):not(.${BUTTON_ACTIVE_CLASS}:focus) > svg > circle`, ['stroke', `var(--nodeBase${depth})`]);
+		addRule(`${depthSelector} > .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}:hover):not(.${BUTTON_ACTIVE_CLASS}:focus) > svg > circle`, ['stroke', `var(--nodeBase${group})`]);
 		
 		addRule([
 			// Not active, focused
 			`${depthSelector} > .${BUTTON_CLASS}:focus > svg > g`,
 			`${depthSelector} > .${BUTTON_CLASS}:hover > svg > g`,
-		], [['stroke', `var(--nodeContrast${depth})`]]);
+		], [['stroke', `var(--nodeContrast${group})`]]);
 		
-		addRule([`${depthSelector} > .${BUTTON_ACTIVE_CLASS} > svg`], [['stroke', `var(--nodeBase${depth})`]]);
+		addRule([`${depthSelector} > .${BUTTON_ACTIVE_CLASS} > svg`], [['stroke', `var(--nodeBase${group})`]]);
 		
 		addRule([
 			// Not active, focused
 			`${depthSelector} > .${BUTTON_CLASS}:focus > svg`,
 			`${depthSelector} > .${BUTTON_CLASS}:hover > svg`,
 			`.${HIGHLIGHT_CLASS}${depthSelector} > .${BUTTON_ACTIVE_CLASS} > svg`,
-		], [['fill', `var(--nodeBase${depth})`]]);
+		], [['fill', `var(--nodeBase${group})`]]);
 	});
 }

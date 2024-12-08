@@ -5,9 +5,9 @@ import {
 
 import {ACTIVE_CLASS} from '../consts';
 
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
+import {GROUP_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
 
-import {addDepthChangeListener} from '@/modal/body/style/update/depth';
+import {addGroupChangeListener} from '@/modal/body/style/update/depth';
 
 import {addRule} from '@/modal/css';
 
@@ -38,20 +38,20 @@ export default function generate() {
 	
 	addRule(`.${OPTION_CONTAINER_CLASS} > *`, [['height', '1.4em']]);
 	
-	addDepthChangeListener((depth, addRule) => {
-		const headSelector = `.${DEPTH_CLASS_PREFIX}${depth} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`;
+	addGroupChangeListener((group, addRule) => {
+		const headSelector = `.${GROUP_CLASS_PREFIX}${group} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`;
 		
-		addRule(`${headSelector} .${OPTION_PARENT_CLASS}`, [['border', `1px solid var(--nodeBase${depth})`]]);
+		addRule(`${headSelector} .${OPTION_PARENT_CLASS}`, [['border', `1px solid var(--nodeBase${group})`]]);
 		
 		addRule(`${headSelector} .${OPTION_CONTAINER_CLASS}`, [
-			['background-color', `var(--nodeContrast${depth})`],
-			['color', `var(--nodeBase${depth})`],
-			['border', `1px solid var(--nodeBase${depth})`],
+			['background-color', `var(--nodeContrast${group})`],
+			['color', `var(--nodeBase${group})`],
+			['border', `1px solid var(--nodeBase${group})`],
 		]);
 		
-		addRule(`${headSelector} .${OPTION_BACKGROUND_CLASS}`, [['background-color', `var(--nodeBase${depth})`]]);
+		addRule(`${headSelector} .${OPTION_BACKGROUND_CLASS}`, [['background-color', `var(--nodeBase${group})`]]);
 		
-		addRule(`${headSelector} .${OPTION_ACTIVE_CLASS} .${OPTION_CLASS}`, [['color', `var(--nodeContrast${depth})`]]);
+		addRule(`${headSelector} .${OPTION_ACTIVE_CLASS} .${OPTION_CLASS}`, [['color', `var(--nodeContrast${group})`]]);
 		addRule(`${headSelector} .${OPTION_ACTIVE_CLASS} .${OPTION_BACKGROUND_CLASS}`, [['width', '100%']]);
 	});
 	

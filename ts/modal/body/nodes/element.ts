@@ -1,4 +1,9 @@
-import {DEPTH_CLASS_PREFIX, ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS, CHECKBOX_WRAPPER_CLASS} from './consts';
+import {
+	GROUP_CLASS_PREFIX, DEPTH_CLASS_PREFIX,
+	ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS, CHECKBOX_WRAPPER_CLASS,
+} from './consts';
+
+import {getGroupCount} from '../style/update/depth';
 
 import type {Child as _Child} from '@types';
 
@@ -23,7 +28,7 @@ export default class Element {
 	
 	readonly childContainer = document.createElement('div');
 	
-	depthClass: string;
+	groupClass: string;
 	
 	constructor(data: _Child) {
 		this.elementContainer.classList.add(ELEMENT_CLASSES.ELEMENT_CONTAINER);
@@ -139,15 +144,17 @@ export default class Element {
 	}
 	
 	addDepthClass(depth: number) {
-		if (this.depthClass) {
-			this.removeClass(this.depthClass);
+		if (this.groupClass) {
+			this.removeClass(this.groupClass);
+		} else {
+			this.addClass(`${DEPTH_CLASS_PREFIX}${depth}`);
 		}
 		
-		const depthClass = `${DEPTH_CLASS_PREFIX}${depth}`;
+		const groupClass = `${GROUP_CLASS_PREFIX}${depth % getGroupCount()}`;
 		
-		this.addClass(depthClass);
+		this.addClass(groupClass);
 		
-		this.depthClass = depthClass;
+		this.groupClass = groupClass;
 	}
 	
 	addChild(child: Element, index) {
