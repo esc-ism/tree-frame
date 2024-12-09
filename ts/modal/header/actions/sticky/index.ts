@@ -4,7 +4,7 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {ROOTS, setActive} from '@/modal/body';
+import {setActive} from '@/modal/body';
 
 let _isActive = false;
 
@@ -19,7 +19,7 @@ function doAction() {
 }
 
 export default function generate(): HTMLElement {
-	generateCSS(Math.max(...Object.values(ROOTS).map(({height}) => height)));
+	generateCSS();
 	
 	bindAction(BUTTON, doAction, HOTKEY);
 	
