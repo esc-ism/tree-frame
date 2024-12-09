@@ -13,7 +13,10 @@ export default function generate() {
 		['height', 'fit-content'],
 	]);
 	
-	addRule([`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`, `.${FOCUS_CLASS}`], ['margin-top', '0.6px']);
+	addRule([
+		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`,
+		`.${FOCUS_CLASS}:not(.${ROOT_CLASS})`,
+	], ['margin-top', '0.6px']);
 	
 	addRule(`:not(.${ROOT_CLASS}) > .${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-left', '1.8em']);
 	
