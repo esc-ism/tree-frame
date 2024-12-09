@@ -50,13 +50,7 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 	}
 }
 
-function scroll(node: Root | Child) {
-	if (!('parent' in node)) {
-		scrollElement.scrollTop = 0;
-		
-		return;
-	}
-	
+export function scroll(node: Root | Child) {
 	let scroll = 0;
 	let child;
 	
@@ -74,9 +68,7 @@ function scroll(node: Root | Child) {
 		scroll += top - base - height;
 	}
 	
-	const {height} = child.element.headContainer.getBoundingClientRect();
-	
-	scrollElement.scrollTop = scroll + height;
+	scrollElement.scrollTop = scroll;
 }
 
 let isTab = false;
