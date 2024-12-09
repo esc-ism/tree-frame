@@ -41,21 +41,42 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 	
 	activeNode = node;
 	
-	if (node) {
-		node.element.addClass(HIGHLIGHT_CLASS);
+	if (!node) {
+		return;
+	}
+	
+	node.element.addClass(HIGHLIGHT_CLASS);
+	
+	if (doFocus) {
+		node.element.headContainer.focus();
 		
-		if (doFocus) {
-			node.element.headContainer.focus();
+		// focus listeners don't seem to trigger if the document isn't focused
+		if (isSticky() && !document.hasFocus()) {
+			scroll(node, false);
 		}
 	}
 }
 
+function getLastDescendant(node: Root | Child): Child {
+	return 'children' in node ? getLastDescendant(node.children[node.children.length - 1]) : node;
+}
+
 // a scrollIntoView replacement for sticky positioning
 export function scroll(node: Root | Child, alignToTop: boolean = true) {
-	let scroll = 0;
-	let child;
+	if (!('parent' in node)) {
+		if (alignToTop) {
+			scrollElement.scrollTop = 0;
+		}
+		
+		return;
+	}
 	
-	for (child = node; 'parent' in child; child = (child as Child).parent) {
+	const {height} = node.element.headContainer.getBoundingClientRect();
+	const firstChild = alignToTop ? node : getLastDescendant(node);
+	
+	let scroll = 0;
+	
+	for (let child: any = firstChild; 'parent' in child; child = child.parent) {
 		const index = child.getIndex();
 		
 		if (index === 0) {
@@ -64,7 +85,6 @@ export function scroll(node: Root | Child, alignToTop: boolean = true) {
 		
 		const {top: base} = child.parent.element.elementContainer.getBoundingClientRect();
 		const {top} = child.element.elementContainer.getBoundingClientRect();
-		const {height} = child.element.headContainer.getBoundingClientRect();
 		
 		scroll += top - base - height;
 	}
@@ -72,6 +92,8 @@ export function scroll(node: Root | Child, alignToTop: boolean = true) {
 	if (alignToTop) {
 		scrollElement.scrollTop = scroll;
 	}
+	
+	scroll += height * (firstChild.depth - node.depth);
 	
 	if (scrollElement.scrollTop > scroll) {
 		scrollElement.scrollTop = scroll;
@@ -112,7 +134,7 @@ export function mount(node: Root | Child) {
 		if (event.relatedTarget) {
 			setActive(node);
 		}
-	});
+	}, true);
 	
 	headContainer.addEventListener('mouseenter', (event) => {
 		event.stopPropagation();
