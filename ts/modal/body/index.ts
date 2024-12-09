@@ -4,14 +4,17 @@ import generateCSS from './css';
 import generateStyleTree from './style';
 import generateDataTree, {setTree} from './data';
 
-import Root from './nodes/root';
-
 import {onMount as onMountHighlight} from '@nodes/actions/highlight';
 import {onMount as onMountActive} from '@nodes/actions/active';
 
-import type {Page, Root as _Root} from '@types';
+import Root from '@nodes/root';
 
+import {addVariables} from '../css';
 import {BUTTON_ACTIVE_CLASS} from '../consts';
+
+import generateStickyCSS from '../header/actions/sticky/css';
+
+import type {Page, Root as _Root} from '@types';
 
 interface RootRecord {
 	[id: string]: Root;
@@ -60,6 +63,11 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 		generateStyleTree(userStyles, defaultStyle),
 		generateDataTree(userTree ?? defaultTree),
 	);
+	
+	const maxHeight = Math.max(...Object.values(ROOTS).map(({height}) => height));
+	
+	addVariables([['--overlayIndex', `${maxHeight + 1}`]]);
+	generateStickyCSS(maxHeight);
 	
 	onMountHighlight();
 	onMountActive();

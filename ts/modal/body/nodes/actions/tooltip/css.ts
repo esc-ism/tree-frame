@@ -17,7 +17,7 @@ export default function generate() {
 		['position', 'absolute'],
 		['text-align', 'center'],
 		['padding', '0'],
-		['z-index', '2'],
+		['z-index', 'var(--overlayIndex)'],
 		['width', '100%'],
 		['pointer-events', 'none'],
 		['white-space', 'normal'],

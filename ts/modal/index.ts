@@ -29,7 +29,5 @@ export default function generate(config: Page, _socket: HTMLElement) {
 	background.append(foreground);
 	socket.append(background);
 	
-	foreground.append(generateBody(config), generateEave());
-	
-	foreground.insertBefore(generateHeader(config, background), foreground.firstChild);
+	foreground.append(generateHeader(config, background), generateBody(config), generateEave());
 }

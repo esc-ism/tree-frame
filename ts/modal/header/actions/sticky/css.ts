@@ -13,9 +13,7 @@ import {MODAL_BODY_ID} from '@/modal/body/consts';
 import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS, DEPTH_CLASS_PREFIX} from '@nodes/consts';
 import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from '@nodes/actions/focus/consts';
 
-export default function generate() {
-	const maxHeight = Math.max(...Object.values(ROOTS).map(({height}) => height));
-	
+export default function generate(maxHeight) {
 	addColourRule(ACTION_ID, '--headButtonSticky');
 	
 	for (let depth = 0; depth < maxHeight; ++depth) {

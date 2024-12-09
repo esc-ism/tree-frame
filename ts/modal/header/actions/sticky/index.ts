@@ -1,6 +1,5 @@
 import BUTTON from './button';
 import {ACTION_ID, HOTKEY} from './consts';
-import generateCSS from './css';
 
 import {bindAction} from '../button';
 
@@ -19,8 +18,6 @@ function doAction() {
 }
 
 export default function generate(): HTMLElement {
-	generateCSS();
-	
 	bindAction(BUTTON, doAction, HOTKEY);
 	
 	BUTTON.click();
