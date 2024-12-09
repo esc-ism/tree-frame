@@ -5,13 +5,12 @@ import {
 
 import {kill as killTooltip} from '../tooltip';
 import {isActive as positionIsActive} from '../buttons/position';
-import {addSustained, removeSustained, scroll} from '../highlight';
+import {addSustained, removeSustained} from '../highlight';
+import {scroll} from '../scroll';
 import * as active from '../active';
 
 import type Root from '@nodes/root';
 import type Child from '@nodes/child';
-
-import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
 let candidateNode: Root | Child;
 let activeNode: Root | Child;
@@ -64,11 +63,7 @@ export function reset(doScroll = true) {
 	setTabIndexes(false);
 	
 	if (doScroll) {
-		if (isSticky()) {
-			scroll(activeNode);
-		} else {
-			activeNode.element.scrollIntoView();
-		}
+		scroll(activeNode);
 	}
 	
 	activeNode = undefined;

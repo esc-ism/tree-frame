@@ -5,6 +5,7 @@ import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
+import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {show as showTooltip} from '../../tooltip';
 
@@ -40,7 +41,7 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 			
 			if (doScroll) {
 				// Show the new node
-				child.element.scrollIntoView();
+				scroll(child);
 			}
 			
 			callbacks.update.triggerSub(child.getAncestors());

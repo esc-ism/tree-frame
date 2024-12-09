@@ -5,6 +5,7 @@ import {TEST_ADD_CLASS, TEST_REMOVE_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
+import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import * as tooltip from '../../tooltip';
 
@@ -60,7 +61,7 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 			
 			if (doScroll) {
 				// Show where the node's been moved to
-				copy.element.scrollIntoView();
+				scroll(copy);
 			}
 			
 			for (const branch of ancestorBranches) {

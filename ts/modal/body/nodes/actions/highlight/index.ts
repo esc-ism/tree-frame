@@ -1,11 +1,10 @@
 import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 
 import {isActive as editIsActive} from '../edit';
+import {stickyScroll} from '../scroll';
 
 import type Root from '@nodes/root';
 import type Child from '@nodes/child';
-
-import {element as scrollElement} from '@/modal/body';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
@@ -52,55 +51,13 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 		
 		// focus listeners don't seem to trigger if the document isn't focused
 		if (isSticky() && !document.hasFocus()) {
-			scroll(node, false);
+			stickyScroll(node, false, false);
 		}
-	}
-}
-
-function getLastDescendant(node: Root | Child): Child {
-	return 'children' in node ? getLastDescendant(node.children[node.children.length - 1]) : node;
-}
-
-// a scrollIntoView replacement for sticky positioning
-export function scroll(node: Root | Child, alignToTop: boolean = true) {
-	if (!('parent' in node)) {
-		if (alignToTop) {
-			scrollElement.scrollTop = 0;
-		}
-		
-		return;
-	}
-	
-	const {height} = node.element.headContainer.getBoundingClientRect();
-	const firstChild = alignToTop ? node : getLastDescendant(node);
-	
-	let scroll = 0;
-	
-	for (let child: any = firstChild; 'parent' in child; child = child.parent) {
-		const index = child.getIndex();
-		
-		if (index === 0) {
-			continue;
-		}
-		
-		const {top: base} = child.parent.element.elementContainer.getBoundingClientRect();
-		const {top} = child.element.elementContainer.getBoundingClientRect();
-		
-		scroll += top - base - height;
-	}
-	
-	if (alignToTop) {
-		scrollElement.scrollTop = scroll;
-	}
-	
-	scroll += height * (firstChild.depth - node.depth);
-	
-	if (scrollElement.scrollTop > scroll) {
-		scrollElement.scrollTop = scroll;
 	}
 }
 
 let isTab = false;
+let isListening = false;
 
 export function mount(node: Root | Child) {
 	const {backgroundContainer, headContainer, elementContainer, infoContainer, base} = node.element;
@@ -125,10 +82,20 @@ export function mount(node: Root | Child) {
 		event.stopPropagation();
 		
 		if (isSticky()) {
-			scroll(node, isTab);
+			stickyScroll(node, false, isTab);
+		} else if (isTab) {
+			node.element.scrollIntoView({block: 'center', behavior: 'smooth'});
 		}
 		
-		isTab = false;
+		if (isTab && !isListening) {
+			isListening = true;
+			
+			window.addEventListener('mousemove', () => {
+				isTab = false;
+				
+				isListening = false;
+			}, {capture: true, once: true});
+		}
 		
 		// Filters out events fired from re-focusing the window
 		if (event.relatedTarget) {
@@ -139,17 +106,25 @@ export function mount(node: Root | Child) {
 	headContainer.addEventListener('mouseenter', (event) => {
 		event.stopPropagation();
 		
-		setActive(node, !editIsActive());
+		if (!isTab) {
+			setActive(node, !editIsActive());
+		}
 	});
 	
 	elementContainer.addEventListener('mouseenter', (event) => {
 		event.stopPropagation();
 		
-		setActive(node);
+		if (!isTab) {
+			setActive(node);
+		}
 	});
 	
 	elementContainer.addEventListener('mouseleave', (event) => {
 		event.stopPropagation();
+		
+		if (isTab) {
+			return;
+		}
 		
 		if ('parent' in node) {
 			setActive(node.parent);

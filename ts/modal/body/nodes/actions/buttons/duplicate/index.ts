@@ -5,6 +5,7 @@ import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
+import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {show as showTooltip} from '../../tooltip';
 
@@ -31,7 +32,7 @@ function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = tr
 			
 			if (doScroll) {
 				// Show the new node
-				copy.element.scrollIntoView();
+				scroll(copy);
 			}
 			
 			callbacks.update.triggerSub(copy.getAncestors());
