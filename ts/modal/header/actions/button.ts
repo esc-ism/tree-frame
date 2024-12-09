@@ -35,8 +35,7 @@ export const getNewButton = (function () {
 	const svgTemplate = document.createElementNS(SVG_NAMESPACE, 'svg');
 	
 	buttonTemplate.classList.add(BUTTON_CLASS);
-	// Prevent tabbing to buttons until node is focused
-	buttonTemplate.setAttribute('tabIndex', '2');
+	buttonTemplate.setAttribute('tabindex', '-1');
 	
 	svgTemplate.setAttribute('viewBox', `-70 -70 140 140`);
 	
