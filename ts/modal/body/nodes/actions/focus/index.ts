@@ -5,11 +5,13 @@ import {
 
 import {kill as killTooltip} from '../tooltip';
 import {isActive as positionIsActive} from '../buttons/position';
-import {addSustained, removeSustained} from '../highlight';
+import {addSustained, removeSustained, scroll} from '../highlight';
 import * as active from '../active';
 
 import type Root from '@nodes/root';
 import type Child from '@nodes/child';
+
+import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
 let candidateNode: Root | Child;
 let activeNode: Root | Child;
@@ -49,7 +51,7 @@ export function focusBranch(doFocus: boolean = true, node: Root | Child = active
 	}
 }
 
-export function reset() {
+export function reset(doScroll = true) {
 	if (!activeNode) {
 		return;
 	}
@@ -61,7 +63,13 @@ export function reset() {
 	
 	setTabIndexes(false);
 	
-	activeNode.element.scrollIntoView();
+	if (doScroll) {
+		if (isSticky()) {
+			scroll(activeNode);
+		} else {
+			activeNode.element.scrollIntoView();
+		}
+	}
 	
 	activeNode = undefined;
 }
@@ -71,12 +79,11 @@ export function doAction(node: Root | Child, doForce = false) {
 	
 	killTooltip();
 	
-	// Avoid changing the view when it's already been focused
 	if (positionIsActive() || (doForce && !toggleOn)) {
 		return;
 	}
 	
-	reset();
+	reset(!toggleOn);
 	
 	active.register();
 	
@@ -87,6 +94,8 @@ export function doAction(node: Root | Child, doForce = false) {
 		
 		focus();
 		focusBranch();
+		
+		node.element.scrollIntoView(false);
 		
 		addSustained(node);
 		

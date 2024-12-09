@@ -169,7 +169,7 @@ export default class Element {
 		this.elementContainer.remove();
 	}
 	
-	scrollIntoView() {
-		this.backgroundContainer.scrollIntoView({block: 'center'});
+	scrollIntoView(option: boolean | ScrollIntoViewOptions = {block: 'center'}) {
+		this.backgroundContainer.scrollIntoView(option);
 	}
 }
