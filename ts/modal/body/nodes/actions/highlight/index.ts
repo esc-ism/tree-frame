@@ -50,7 +50,8 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 	}
 }
 
-export function scroll(node: Root | Child) {
+// a scrollIntoView replacement for sticky positioning
+export function scroll(node: Root | Child, alignToTop: boolean = true) {
 	let scroll = 0;
 	let child;
 	
@@ -68,7 +69,13 @@ export function scroll(node: Root | Child) {
 		scroll += top - base - height;
 	}
 	
-	scrollElement.scrollTop = scroll;
+	if (alignToTop) {
+		scrollElement.scrollTop = scroll;
+	}
+	
+	if (scrollElement.scrollTop > scroll) {
+		scrollElement.scrollTop = scroll;
+	}
 }
 
 let isTab = false;
@@ -95,13 +102,11 @@ export function mount(node: Root | Child) {
 	headContainer.addEventListener('focusin', (event) => {
 		event.stopPropagation();
 		
-		if (isTab) {
-			if (isSticky()) {
-				scroll(node);
-			}
-			
-			isTab = false;
+		if (isSticky()) {
+			scroll(node, isTab);
 		}
+		
+		isTab = false;
 		
 		// Filters out events fired from re-focusing the window
 		if (event.relatedTarget) {
