@@ -3,7 +3,6 @@ import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
 import {isActive as editIsActive} from '../edit';
 
 import type Root from '@nodes/root';
-import type Middle from '@nodes/middle';
 import type Child from '@nodes/child';
 
 import {element as scrollElement} from '@/modal/body';
@@ -11,6 +10,7 @@ import {element as scrollElement} from '@/modal/body';
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
 import {getSocket} from '@/modal';
+import {ELEMENT_CLASSES} from '../../consts';
 
 let sustainedNodes = [];
 let activeNode: Root | Child;
@@ -50,22 +50,33 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 	}
 }
 
-function getOffsetTop(node: Root | Middle, index: number = node.children.length, isFromParent = false) {
-	let offset = 0;
-	
-	for (const child of node.children.slice(0, index)) {
-		offset += 'children' in child ? getOffsetTop(child, undefined, true) : child.element.headContainer.clientHeight;
-	}
-	
-	if (!isFromParent && 'parent' in node) {
-		return getOffsetTop(node.parent, node.getIndex()) + offset;
-	}
-	
-	return offset + node.element.headContainer.clientHeight;
-}
-
 function scroll(node: Root | Child) {
-	scrollElement.scrollTop = !('parent' in node) ? 0 : getOffsetTop(node.parent, node.getIndex());
+	if (!('parent' in node)) {
+		scrollElement.scrollTop = 0;
+		
+		return;
+	}
+	
+	let scroll = 0;
+	let child;
+	
+	for (child = node; 'parent' in child; child = (child as Child).parent) {
+		const index = child.getIndex();
+		
+		if (index === 0) {
+			continue;
+		}
+		
+		const {top: base} = child.parent.element.elementContainer.getBoundingClientRect();
+		const {top} = child.element.elementContainer.getBoundingClientRect();
+		const {height} = child.element.headContainer.getBoundingClientRect();
+		
+		scroll += top - base - height;
+	}
+	
+	const {height} = child.element.headContainer.getBoundingClientRect();
+	
+	scrollElement.scrollTop = scroll + height;
 }
 
 let isTab = false;
@@ -87,11 +98,7 @@ export function mount(node: Root | Child) {
 		return background;
 	})());
 	
-	headContainer.setAttribute('tabIndex', '1');
-	
-	headContainer.addEventListener('keydown', (event) => {
-		isTab = event.key === 'Tab';
-	});
+	headContainer.setAttribute('tabindex', '0');
 	
 	headContainer.addEventListener('focusin', (event) => {
 		event.stopPropagation();
@@ -143,7 +150,7 @@ export function generateEave(): HTMLElement {
 	
 	element.id = EAVE_ID;
 	
-	element.setAttribute('tabIndex', '3');
+	element.setAttribute('tabindex', '0');
 	
 	// Prevent tabbing away from the modal
 	element.addEventListener('keydown', (event) => {
@@ -162,14 +169,22 @@ export function reset() {
 	getSocket().focus();
 }
 
+// todo tab back from root goes to header buttons
+//  opening the modal focuses the
 export function onMount() {
 	const socket = getSocket();
 	
-	socket.setAttribute('tabIndex', '1');
+	socket.setAttribute('tabindex', '0');
 	
 	// Prevent tabbing away from the modal
 	socket.addEventListener('keydown', (event) => {
-		if (event.key === 'Tab' && event.shiftKey && socket.isSameNode(event.target as HTMLElement)) {
+		if (event.key !== 'Tab') {
+			return;
+		}
+		
+		isTab = (event.target as HTMLElement).classList.contains(ELEMENT_CLASSES.HEAD_CONTAINER);
+		
+		if (event.shiftKey && socket.isSameNode(event.target as HTMLElement)) {
 			event.preventDefault();
 		}
 	});
