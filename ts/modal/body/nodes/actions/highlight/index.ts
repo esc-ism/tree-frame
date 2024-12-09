@@ -169,8 +169,6 @@ export function reset() {
 	getSocket().focus();
 }
 
-// todo tab back from root goes to header buttons
-//  opening the modal focuses the
 export function onMount() {
 	const socket = getSocket();
 	
