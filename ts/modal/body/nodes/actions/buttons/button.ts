@@ -54,7 +54,7 @@ export const getNewButton = (function () {
 	
 	buttonTemplate.classList.add(BUTTON_CLASS);
 	// Prevent tabbing to buttons until node is focused
-	buttonTemplate.setAttribute('tabIndex', '-1');
+	buttonTemplate.setAttribute('tabindex', '-1');
 	
 	const svgTemplate = (() => {
 		const circle = document.createElementNS(SVG_NAMESPACE, 'circle');

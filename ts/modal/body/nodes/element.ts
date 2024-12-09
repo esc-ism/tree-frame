@@ -82,7 +82,7 @@ export default class Element {
 			field.valueElement = document.createElement('input');
 			
 			field.valueElement.classList.add(ELEMENT_CLASSES.VALUE);
-			field.valueElement.setAttribute('tabIndex', '-1');
+			field.valueElement.setAttribute('tabindex', '-1');
 			
 			if (typeof data.value === 'boolean') {
 				field.valueElement.type = 'checkbox';

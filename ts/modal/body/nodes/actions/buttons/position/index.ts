@@ -50,9 +50,9 @@ function setActive(doActivate: boolean = true) {
 	if (doActivate) {
 		setTabIndexes(false, origin.source);
 		
-		origin.button.setAttribute('tabIndex', '1');
+		origin.button.setAttribute('tabindex', '0');
 	} else {
-		origin.button.setAttribute('tabIndex', '-1');
+		origin.button.setAttribute('tabindex', '-1');
 	}
 	
 	origin.source.element.headContainer.focus();
@@ -88,7 +88,7 @@ export function getButton(node, actionId, onClick, isParent) {
 	button.classList.add(actionId);
 	button.classList.add(BUTTON_ACTIVE_CLASS);
 	
-	button.setAttribute('tabIndex', '1');
+	button.setAttribute('tabindex', '0');
 	
 	return button;
 }
