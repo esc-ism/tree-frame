@@ -23,5 +23,7 @@ export default function generate(): HTMLElement {
 	
 	bindAction(BUTTON, doAction, HOTKEY);
 	
+	BUTTON.click();
+	
 	return BUTTON;
 }
