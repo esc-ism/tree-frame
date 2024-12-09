@@ -53,5 +53,5 @@ export function getAll(node: Child): Promise<boolean | Array<unknown>> {
 		return handle([get(node.predicate()), ...getSub(node.getAncestors())]);
 	}
 	
-	throw new Error();
+	throw undefined;
 }
