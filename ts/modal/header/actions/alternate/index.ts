@@ -46,13 +46,13 @@ export default function generate(): HTMLElement {
 		}
 	});
 	
-	target.addEventListener('blur', () => {
+	window.addEventListener('focus', () => {
 		if (keyHeld) {
 			keyHeld = false;
 			
 			doAction(false);
 		}
-	}, true);
+	});
 	
 	return BUTTON;
 }
