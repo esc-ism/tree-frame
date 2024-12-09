@@ -4,7 +4,7 @@ import generateCSS from './css';
 
 import {bindAction} from '../button';
 
-import {setActive} from '@/modal/body';
+import {setActive, element as scrollElement} from '@/modal/body';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
 import {reset as resetEdit} from '@nodes/actions/edit';
@@ -16,6 +16,8 @@ function doAction() {
 	isActive = !isActive;
 	
 	setActive(BUTTON, ACTION_ID, isActive);
+	
+	scrollElement.scrollTop = 0;
 	
 	resetFocus();
 	resetEdit();
