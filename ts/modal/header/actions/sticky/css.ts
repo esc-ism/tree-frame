@@ -2,18 +2,12 @@ import {ACTION_ID} from './consts';
 
 import {addColourRule} from '../css';
 
-import {addRule, registerStyleNode} from '@/modal/css';
+import {addRule} from '@/modal/css';
 
-import {ROOTS, element as container} from '@/modal/body';
+import {ROOTS} from '@/modal/body';
 import {MODAL_BODY_ID} from '@/modal/body/consts';
 
 import {ELEMENT_CLASSES, MIDDLE_CLASS, DEPTH_CLASS_PREFIX} from '@nodes/consts';
-
-import {onceVisualsUpdate} from '@nodes/queue';
-
-const styleNode = document.createElement('style');
-
-registerStyleNode(styleNode);
 
 export default function generate() {
 	const maxHeight = Math.max(...Object.values(ROOTS).map(({height}) => height));
@@ -30,23 +24,18 @@ export default function generate() {
 		]);
 	}
 	
-	function onResize() {
-		for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
-			styleNode.sheet.deleteRule(i);
-		}
+	for (const [id, root] of Object.entries(ROOTS)) {
+		let branchSelector = `#${MODAL_BODY_ID}.${ACTION_ID}:has(> #${id} > .${ELEMENT_CLASSES.CHILD_CONTAINER}`;
 		
-		for (const [id, root] of Object.entries(ROOTS)) {
-			let branchSelector = `#${MODAL_BODY_ID}.${ACTION_ID} > #${id} > .${ELEMENT_CLASSES.CHILD_CONTAINER}`;
+		for (let depth = 0; depth <= root.height; ++depth) {
+			addRule(`${branchSelector}:empty)::after`, [
+				['content', '\'\''],
+				['display', 'block'],
+				['visibility', 'hidden'],
+				['height', `calc(100% - ${depth * 0.6}px - ${depth * 1.6}em)`],
+			]);
 			
-			for (let depth = 0; depth <= root.height; ++depth) {
-				addRule(`${branchSelector}:empty`, ['height', `calc(${container.clientHeight}px - ${depth * 1.6}em)`], styleNode);
-				
-				branchSelector += ` > :last-child > .${ELEMENT_CLASSES.CHILD_CONTAINER}`;
-			}
+			branchSelector += ` > :last-child > .${ELEMENT_CLASSES.CHILD_CONTAINER}`;
 		}
 	}
-	
-	onceVisualsUpdate(onResize);
-	
-	window.addEventListener('resize', onResize);
 }
