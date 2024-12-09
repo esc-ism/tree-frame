@@ -4,13 +4,13 @@ import type {Page} from '@types';
 
 import start, {getSocket} from '../modal';
 
-import {reset} from '../modal/body';
-
 import {getSaveData} from '../modal/body/data';
 
 import {setCallback as setOnClose} from '../modal/header/actions/close';
 
-async function init(page: unknown, socket: HTMLElement) {
+export {reset} from '../modal/body';
+
+export async function init(page: unknown, socket: HTMLElement) {
 	const response: any = {};
 	
 	try {
@@ -39,12 +39,10 @@ async function init(page: unknown, socket: HTMLElement) {
 	return {...response, ...getSaveData()};
 }
 
-function edit() {
+export function edit() {
 	getSocket().focus();
 	
 	return new Promise((resolve) => {
 		setOnClose(resolve);
 	});
 }
-
-export {init, reset, edit};
