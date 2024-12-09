@@ -15,5 +15,6 @@ export default function generate() {
 		['overscroll-behavior', 'contain'],
 		['background-color', 'var(--nodeBase0)'],
 		['flex-grow', '1'],
+		['scroll-behavior', 'smooth'],
 	]);
 }
