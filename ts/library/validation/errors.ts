@@ -74,6 +74,12 @@ export class PredicateError extends Error {
 	}
 }
 
+export class OptionError extends Error {
+	constructor() {
+		super('Node value not found in its options.');
+	}
+}
+
 export class SeedMatchError extends Error {
 	constructor() {
 		super('All children must be structurally similar to their parent\'s seed.');

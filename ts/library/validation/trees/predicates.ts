@@ -1,5 +1,8 @@
 import type {Child, Parent} from '../types';
-import {TypeError, JoinedError, NonIntegerError, OptionMatchError, PredicateError} from '../errors';
+import {
+	TypeError, NonIntegerError, PredicateError, ValueError,
+	JoinedError, OptionMatchError, OptionError,
+} from '../errors';
 
 import {getPredicatePromise} from '../../../predicate';
 
@@ -34,7 +37,10 @@ function validateChild(breadcrumbs: Array<string>, child: Child): Promise<unknow
 	if ('predicate' in child)
 		return getBoundPredicatePromise(child.predicate(child.value), new PredicateError([...breadcrumbs, 'predicate']));
 	
-	return Promise.reject();
+	throw new JoinedError(
+		new OptionError(),
+		new ValueError([...breadcrumbs, 'value'], child.value, child.options),
+	);
 }
 
 export function validateParent(breadcrumbs: string[], parent: Parent) {
