@@ -6,11 +6,17 @@ import type Root from '@nodes/root';
 
 type Callback = (isOutdated: boolean) => void;
 
-const ongoingSelf: Map<Child, Callback> = new Map();
-const ongoingChild: Map<Middle | Root, Callback> = new Map();
-const ongoingDescendant: Map<Middle | Root, Callback> = new Map();
+type Node = Middle | Root | Child;
+type NodeMap = Map<Node, Callback>;
+type NodeMaps = Record<'onUpdate' | 'onChildUpdate' | 'onDescendantUpdate', NodeMap>;
 
-async function isOutdated<Node extends Child | Root>(response: unknown, map: Map<Node, Callback>, node: Node): Promise<boolean> {
+const maps: NodeMaps = {
+	onUpdate: new Map(),
+	onChildUpdate: new Map(),
+	onDescendantUpdate: new Map(),
+};
+
+async function isOutdated(response: unknown, map: NodeMap, node: Node): Promise<boolean> {
 	if (map.has(node)) {
 		map.get(node)(false);
 	}
@@ -33,8 +39,8 @@ async function isOutdated<Node extends Child | Root>(response: unknown, map: Map
 	return true;
 }
 
-async function handle<Node extends Child | Root>(_response: unknown, map: Map<Node, Callback>, node: Node) {
-	if (await isOutdated(_response, map, node)) {
+export async function handle<Node extends Child | Root>(_response: unknown, property: keyof NodeMaps, node: Node) {
+	if (await isOutdated(_response, maps[property], node)) {
 		return;
 	}
 	
@@ -53,22 +59,22 @@ async function handle<Node extends Child | Root>(_response: unknown, map: Map<No
 	}
 }
 
-export function triggerSub(ancestors: (Middle | Root)[]) {
-	if ('onChildUpdate' in ancestors[0]) {
-		handle(ancestors[0].onChildUpdate(), ongoingChild, ancestors[0]);
+function trigger(node: Node, property: keyof NodeMaps) {
+	if (property in node) {
+		handle(node[property](), property, node);
 	}
+}
+
+export function triggerSub(ancestors: Array<Middle | Root>) {
+	trigger(ancestors[0], 'onChildUpdate');
 	
 	for (const ancestor of ancestors) {
-		if ('onDescendantUpdate' in ancestor) {
-			handle(ancestor.onDescendantUpdate(), ongoingDescendant, ancestor);
-		}
+		trigger(ancestor, 'onDescendantUpdate');
 	}
 }
 
 export function triggerAll(node: Child) {
-	if ('onUpdate' in node) {
-		handle(node.onUpdate(), ongoingSelf, node);
-	}
+	trigger(node, 'onUpdate');
 	
 	triggerSub(node.getAncestors());
 }

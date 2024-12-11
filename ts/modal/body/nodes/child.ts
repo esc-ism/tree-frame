@@ -7,6 +7,7 @@ import * as highlight from './actions/highlight';
 import * as edit from './actions/edit';
 import * as focus from './actions/focus';
 import * as hide from './actions/hide';
+import {handle as handleUpdate} from './actions/callbacks/update';
 
 import * as disable from './actions/buttons/disable';
 import * as move from './actions/buttons/move';
@@ -76,7 +77,7 @@ export default class Child implements Leaf {
 		if ('onUpdate' in data) {
 			this.onUpdate = () => onceVisualsUpdate(() => data.onUpdate(this.value));
 			
-			this.onUpdate();
+			handleUpdate(this.onUpdate(), 'onUpdate', this);
 		}
 	}
 	

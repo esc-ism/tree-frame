@@ -7,6 +7,7 @@ import {onceVisualsUpdate} from './queue';
 import * as highlight from './actions/highlight';
 import * as focus from './actions/focus';
 import * as create from './actions/buttons/create';
+import {handle as handleUpdate} from './actions/callbacks/update';
 
 import {TEST_REMOVE_CLASS, TEST_ADD_CLASS} from './actions/buttons/consts';
 
@@ -60,7 +61,7 @@ export function setup({children, ...data}: _Root): void {
 		if (key in data) {
 			this[key] = () => onceVisualsUpdate(() => data[key](getChildPredicateData(this)));
 			
-			this[key]();
+			handleUpdate(this[key](), key, this);
 		}
 	}
 }
