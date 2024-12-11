@@ -12,8 +12,6 @@ import {reset as resetEdit} from '@nodes/actions/edit';
 import {reset as resetMove} from '@nodes/actions/buttons/move';
 import {reset as resetHighlight} from '@nodes/actions/highlight';
 
-import {element as scrollElement} from '@/modal/body';
-
 let callback: Function;
 
 export function setCallback(_callback: Function) {
@@ -28,8 +26,6 @@ function doAction() {
 	resetEdit();
 	resetMove();
 	resetHighlight();
-	
-	scrollElement.scroll(0, 0);
 	
 	callback?.({...getSaveData(), styles: getUserStyles()});
 	
