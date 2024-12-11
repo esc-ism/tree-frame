@@ -3,7 +3,7 @@ const queue = [];
 // No idea if this works on all machines/browsers
 export function onceVisualsUpdate(_callback) {
 	return new Promise((resolve) => {
-		const callback = resolve(_callback());
+		const callback = () => resolve(_callback());
 		
 		if (queue.push(callback) > 1) {
 			return;
