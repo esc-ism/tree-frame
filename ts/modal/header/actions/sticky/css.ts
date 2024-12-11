@@ -3,25 +3,52 @@ import {ACTION_ID as STYLE_ACTION_ID} from '../style/consts';
 
 import {addColourRule} from '../css';
 
-import {addRule} from '@/modal/css';
+import {addRule, addVariables} from '@/modal/css';
 
 import {ROOT_ID as DATA_ID} from '@/modal/body/data/consts';
 import {ROOT_ID as STYLE_ID} from '@/modal/body/style/consts';
 import {ROOTS} from '@/modal/body';
 import {MODAL_BODY_ID} from '@/modal/body/consts';
 
-import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS, DEPTH_CLASS_PREFIX} from '@nodes/consts';
+import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '@nodes/consts';
 import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from '@nodes/actions/focus/consts';
 
-export default function generate(maxHeight) {
+import type {Root as _ROOT, Middle as _MIDDLE, Leaf as _LEAF} from '@types';
+
+function getHeight(node: _ROOT | _MIDDLE | _LEAF): number {
+	if ('seed' in node) {
+		return getHeight(node.seed) + 1;
+	}
+	
+	if ('children' in node) {
+		return node.children.reduce((height, child) => Math.max(getHeight(child), height), 0) + 1;
+	}
+	
+	return 0;
+}
+
+export default function generate() {
+	const heights = {
+		[DATA_ID]: getHeight(ROOTS[DATA_ID]),
+		[STYLE_ID]: getHeight(ROOTS[STYLE_ID]),
+	};
+	
+	const maxHeight = Math.max(heights[DATA_ID], heights[STYLE_ID]);
+	
+	addVariables([['--overlayIndex', `${maxHeight + 1}`]]);
+	
 	addColourRule(ACTION_ID, '--headButtonSticky');
 	
+	let nodeSelector = `#${MODAL_BODY_ID}.${ACTION_ID} > .${ELEMENT_CLASSES.ELEMENT_CONTAINER}`;
+	
 	for (let depth = 0; depth < maxHeight; ++depth) {
-		addRule(`#${MODAL_BODY_ID}.${ACTION_ID} .${DEPTH_CLASS_PREFIX}${depth}:where(.${MIDDLE_CLASS}, .${ROOT_CLASS}) > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
+		addRule(`${nodeSelector}:where(.${MIDDLE_CLASS}, .${ROOT_CLASS}) > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
 			['position', 'sticky'],
 			['top', `calc(${depth * 1.6}em + ${depth * 0.6}px)`],
-			['z-index', `${(maxHeight - depth) + 3}`],
+			['z-index', `${maxHeight - depth}`],
 		]);
+		
+		nodeSelector += ` > .${ELEMENT_CLASSES.CHILD_CONTAINER} > .${ELEMENT_CLASSES.ELEMENT_CONTAINER}`;
 	}
 	
 	addRule(`#${MODAL_BODY_ID}.${ACTION_ID}::after`, [
@@ -41,11 +68,10 @@ export default function generate(maxHeight) {
 		},
 	};
 	
-	for (const [id, root] of Object.entries(ROOTS)) {
-		for (let depth = 1; depth <= root.height + 1; ++depth) {
-			// -1px is for this bizarre 1px scroll up that happens sometimes when mousing over a node at max scrollTop
-			addRule(`${selectors.basic[id]}:empty)::after`, ['height', `calc(100% - ${depth * 0.6 - 1}px - ${depth * 1.6}em)`]);
-			addRule(`${selectors.focus[id]}.${FOCUS_SOURCE_CLASS})::after`, ['height', `calc(100% - ${(depth + 1) * 0.6 - 1}px - ${(depth + 1) * 1.6}em)`]);
+	for (const [id, height] of Object.entries(heights)) {
+		for (let depth = 1; depth <= height + 1; ++depth) {
+			addRule(`${selectors.basic[id]}:empty)::after`, ['height', `calc(100% - ${(depth - 1) * 0.6}px - ${depth * 1.6}em + 1px)`]);
+			addRule(`${selectors.focus[id]}.${FOCUS_SOURCE_CLASS})::after`, ['height', `calc(100% - ${depth * 0.6}px - ${(depth + 1) * 1.6}em + 1px)`]);
 			
 			selectors.basic[id] += ` > :last-child > .${ELEMENT_CLASSES.CHILD_CONTAINER}`;
 			selectors.focus[id] += ` > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *`;

@@ -9,10 +9,9 @@ import {onMount as onMountActive} from '@nodes/actions/active';
 
 import Root from '@nodes/root';
 
-import {addVariables} from '../css';
 import {BUTTON_ACTIVE_CLASS} from '../consts';
 
-import generateStickyCSS from '../header/actions/sticky/css';
+import generateStickyCSS from '@/modal/header/actions/sticky/css';
 
 import type {Page, Root as _Root} from '@types';
 
@@ -64,13 +63,10 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 		generateDataTree(userTree ?? defaultTree),
 	);
 	
-	const maxHeight = Math.max(...Object.values(ROOTS).map(({height}) => height));
-	
-	addVariables([['--overlayIndex', `${maxHeight + 1}`]]);
-	generateStickyCSS(maxHeight);
-	
 	onMountHighlight();
 	onMountActive();
+	
+	generateStickyCSS();
 	
 	return element;
 }

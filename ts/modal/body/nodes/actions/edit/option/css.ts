@@ -5,9 +5,7 @@ import {
 
 import {ACTIVE_CLASS} from '../consts';
 
-import {GROUP_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
-
-import {addGroupChangeListener} from '@/modal/body/style/update/depth';
+import {ELEMENT_CLASSES, NODE_COLOURS} from '@nodes/consts';
 
 import {addRule} from '@/modal/css';
 
@@ -38,22 +36,20 @@ export default function generate() {
 	
 	addRule(`.${OPTION_CONTAINER_CLASS} > *`, [['height', '1.4em']]);
 	
-	addGroupChangeListener((group, addRule) => {
-		const headSelector = `.${GROUP_CLASS_PREFIX}${group} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`;
+	for (const [selector, base, contrast] of NODE_COLOURS) {
+		addRule(`${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${OPTION_PARENT_CLASS}`, ['border', `1px solid ${base}`]);
 		
-		addRule(`${headSelector} .${OPTION_PARENT_CLASS}`, [['border', `1px solid var(--nodeBase${group})`]]);
-		
-		addRule(`${headSelector} .${OPTION_CONTAINER_CLASS}`, [
-			['background-color', `var(--nodeContrast${group})`],
-			['color', `var(--nodeBase${group})`],
-			['border', `1px solid var(--nodeBase${group})`],
+		addRule(`${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER} .${OPTION_CONTAINER_CLASS}`, [
+			['background-color', contrast],
+			['color', base],
+			['border', `1px solid ${base}`],
 		]);
 		
-		addRule(`${headSelector} .${OPTION_BACKGROUND_CLASS}`, [['background-color', `var(--nodeBase${group})`]]);
+		addRule(`${selector} .${OPTION_BACKGROUND_CLASS}`, [['background-color', base]]);
 		
-		addRule(`${headSelector} .${OPTION_ACTIVE_CLASS} .${OPTION_CLASS}`, [['color', `var(--nodeContrast${group})`]]);
-		addRule(`${headSelector} .${OPTION_ACTIVE_CLASS} .${OPTION_BACKGROUND_CLASS}`, [['width', '100%']]);
-	});
+		addRule(`${selector} .${OPTION_ACTIVE_CLASS} .${OPTION_CLASS}`, [['color', contrast]]);
+		addRule(`${selector} .${OPTION_ACTIVE_CLASS} .${OPTION_BACKGROUND_CLASS}`, [['width', '100%']]);
+	}
 	
 	addRule(`.${OPTION_CLASS}`, [
 		['position', 'relative'], // Keeps text above background somehow

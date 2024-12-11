@@ -139,7 +139,7 @@ const config: Page = {
 	userStyles: [],
 	defaultStyle: {
 		borderTooltip: '#7f0000',
-		nodeBase: ['#000000', '#0a2400', '#0c3700', '#0d4800'],
+		nodeValueBase: '#0d4800',
 	},
 };
 

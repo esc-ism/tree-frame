@@ -1,5 +1,5 @@
 import {
-	EDITABLE_CLASS, INVALID_CLASS, VALID_CLASS, ACTIVE_CLASS,
+	INVALID_CLASS, VALID_CLASS, ACTIVE_CLASS,
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
 } from './consts';
 
@@ -7,6 +7,8 @@ import * as option from './option';
 import * as tooltip from '../tooltip';
 import {addSustained, removeSustained} from '../highlight';
 import callbacks from '../callbacks';
+
+import {EDITABLE_CLASS} from '../../consts';
 
 import type Child from '@nodes/child';
 
@@ -158,7 +160,7 @@ export function mount(node: Child): void {
 	
 	// Start
 	
-	valueElement.addEventListener('focus', (event) => {
+	valueElement.addEventListener('focusin', (event) => {
 		event.stopPropagation();
 		
 		if (event.relatedTarget) {

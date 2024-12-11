@@ -1,7 +1,4 @@
-import {
-	ValueError, TypeError,
-	JoinedError, EmptyArrayError, NoNodeColourError,
-} from './errors';
+import {ValueError, TypeError} from './errors';
 import {CONTRAST_METHODS} from './types';
 
 export function isStyles(breadcrumbs: string[], candidate: unknown): candidate is object {
@@ -19,19 +16,27 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
 			case 'headButtonExit':
 			case 'headButtonLabel':
 			case 'headButtonStyle':
+			case 'headButtonSticky':
+			case 'nodeHeaderBase':
+			case 'nodeBlendBase':
+			case 'nodeValueBase':
 			case 'nodeButtonRemove':
 			case 'nodeButtonCreate':
 			case 'nodeButtonMove':
 			case 'nodeButtonDisable':
 			case 'validBackground':
 			case 'invalidBackground':
+			case 'focusBackground':
 			case 'tooltipOutline':
 				if (typeof value !== 'string')
 					throw new TypeError([...breadcrumbs, key], typeof value, ['string']);
 				
 				break;
+				
 				// Numbers
 			case 'fontSize':
+			case 'width':
+			case 'height':
 				if (typeof value !== 'number')
 					throw new TypeError([...breadcrumbs, key], typeof value, ['number']);
 				
@@ -54,23 +59,6 @@ export function isStyles(breadcrumbs: string[], candidate: unknown): candidate i
 			case 'borderNode':
 				if (typeof value !== 'boolean')
 					throw new TypeError([...breadcrumbs, key], typeof value, ['boolean']);
-				
-				break;
-			
-			case 'nodeBase':
-				if (!Array.isArray(value))
-					throw new TypeError([...breadcrumbs, key], typeof value, ['array']);
-				
-				if (value.length === 0)
-					throw new JoinedError(
-						new NoNodeColourError(),
-						new EmptyArrayError([...breadcrumbs, key]),
-					);
-				
-				for (const [i, subValue] of value.entries()) {
-					if (typeof subValue !== 'string')
-						throw new TypeError([...breadcrumbs, key, i.toString()], typeof subValue, ['string']);
-				}
 				
 				break;
 		}

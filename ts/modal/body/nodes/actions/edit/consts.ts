@@ -1,5 +1,3 @@
-export const EDITABLE_CLASS = 'editable';
-
 export const ACTIVE_CLASS = 'edit-active';
 
 export const VALID_CLASS = 'edit-valid';

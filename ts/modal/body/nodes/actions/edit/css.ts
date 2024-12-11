@@ -1,13 +1,22 @@
 import {
-	EDITABLE_CLASS, ACTIVE_CLASS, VALID_CLASS, INVALID_CLASS,
+	ACTIVE_CLASS, VALID_CLASS, INVALID_CLASS,
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
 } from './consts';
 
-import {ELEMENT_CLASSES} from '@nodes/consts';
+import {ELEMENT_CLASSES, NODE_COLOURS, EDITABLE_CLASS} from '@nodes/consts';
 
 import {addRule} from '@/modal/css';
 
 export default function generate() {
+	for (const [selector, base, contrast] of NODE_COLOURS) {
+		addRule(selector, [
+			['color', base],
+			['background-color', base],
+		]);
+		
+		addRule(`${selector}, ${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, ['outline', `1px solid ${contrast}`]);
+	}
+	
 	// Use pointer when the node has a value and isn't being edited
 	addRule(`.${EDITABLE_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, ['cursor', 'pointer']);
 	

@@ -8,9 +8,7 @@ import generatePosition from './position/css';
 
 import {HIGHLIGHT_CLASS} from '../highlight/consts';
 
-import {GROUP_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
-
-import {addGroupChangeListener} from '@/modal/body/style/update/depth';
+import {ELEMENT_CLASSES, NODE_COLOURS} from '@nodes/consts';
 
 import {ACTION_ID as ALT_ID} from '@/modal/header/actions/alternate/consts';
 
@@ -19,20 +17,20 @@ import {addRule} from '@/modal/css';
 
 export function addColourRule(actionId: string, strokeVar: string) {
 	addRule([
-		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_CLASS}) > `
-		+ `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} > `
-		+ `.${BUTTON_CLASS}.${actionId} > svg`,
+	`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${HIGHLIGHT_CLASS}) > `
+	+ `.${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} > `
+	+ `.${BUTTON_CLASS}.${actionId} > svg`,
 	], ['fill', `var(${strokeVar})`]);
 	
 	addRule(
-		`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} > `
-		+ `.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS} > svg > g`,
-		['stroke', `var(${strokeVar})`],
+	`.${HIGHLIGHT_CLASS} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER} > `
+	+ `.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS} > svg > g`,
+	['stroke', `var(${strokeVar})`],
 	);
 	
 	addRule([
-		`.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS}:hover > svg > circle`,
-		`.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS}:focus > svg > circle`,
+	`.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS}:hover > svg > circle`,
+	`.${BUTTON_CLASS}.${actionId}.${BUTTON_ACTIVE_CLASS}:focus > svg > circle`,
 	], ['stroke', `var(${strokeVar})`]);
 }
 
@@ -60,8 +58,8 @@ export default function generate() {
 	
 	// Hide prospective nodes
 	addRule([
-		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${TEST_ADD_CLASS}`,
-		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${TEST_REMOVE_CLASS}`,
+	`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${TEST_ADD_CLASS}`,
+	`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${TEST_REMOVE_CLASS}`,
 	], [['pointer-events', 'none']]);
 	
 	// Hide alt icon components
@@ -69,30 +67,29 @@ export default function generate() {
 	
 	addRule(`.${ALT_ID} button.${ALT_CLASS} + *`, ['display', 'none']);
 	
-	addGroupChangeListener((group, addRule) => {
-		const depthSelector = `.${GROUP_CLASS_PREFIX}${group} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}`;
+	for (const [selector, base, contrast] of NODE_COLOURS) {
+		const buttonSelector = `${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER} > .${ELEMENT_CLASSES.BUTTON_CONTAINER}`;
 		
 		addRule(
-			`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}.${HIGHLIGHT_CLASS}${depthSelector} > `
-			+ `.${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):not(:focus):not(:hover) > svg > g`,
-			['stroke', `var(--nodeBase${group})`],
+			`.${HIGHLIGHT_CLASS}${buttonSelector} > .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}):not(:focus):not(:hover) > svg > g`,
+			['stroke', base],
 		);
 		
-		addRule(`${depthSelector} > .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}:hover):not(.${BUTTON_ACTIVE_CLASS}:focus) > svg > circle`, ['stroke', `var(--nodeBase${group})`]);
+		addRule(`${buttonSelector} > .${BUTTON_CLASS}:not(.${BUTTON_ACTIVE_CLASS}:hover):not(.${BUTTON_ACTIVE_CLASS}:focus) > svg > circle`, ['stroke', base]);
 		
 		addRule([
 			// Not active, focused
-			`${depthSelector} > .${BUTTON_CLASS}:focus > svg > g`,
-			`${depthSelector} > .${BUTTON_CLASS}:hover > svg > g`,
-		], [['stroke', `var(--nodeContrast${group})`]]);
+			`${buttonSelector} > .${BUTTON_CLASS}:focus > svg > g`,
+			`${buttonSelector} > .${BUTTON_CLASS}:hover > svg > g`,
+		], [['stroke', contrast]]);
 		
-		addRule([`${depthSelector} > .${BUTTON_ACTIVE_CLASS} > svg`], [['stroke', `var(--nodeBase${group})`]]);
+		addRule([`${buttonSelector} > .${BUTTON_ACTIVE_CLASS} > svg`], [['stroke', base]]);
 		
 		addRule([
 			// Not active, focused
-			`${depthSelector} > .${BUTTON_CLASS}:focus > svg`,
-			`${depthSelector} > .${BUTTON_CLASS}:hover > svg`,
-			`.${HIGHLIGHT_CLASS}${depthSelector} > .${BUTTON_ACTIVE_CLASS} > svg`,
-		], [['fill', `var(--nodeBase${group})`]]);
-	});
+			`${buttonSelector} > .${BUTTON_CLASS}:focus > svg`,
+			`${buttonSelector} > .${BUTTON_CLASS}:hover > svg`,
+			`.${HIGHLIGHT_CLASS}${buttonSelector} > .${BUTTON_ACTIVE_CLASS} > svg`,
+		], [['fill', base]]);
+	}
 }

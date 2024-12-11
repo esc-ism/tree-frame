@@ -9,8 +9,12 @@ import {element as scrollElement} from '@/modal/body';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
-function getLastDescendant(node: Child | Middle, isFocus = _isFocus()): Child | Middle {
-	return ('children' in node && (!isFocus || node.element.hasClass(FOCUS_CLASS))) ? getLastDescendant(node.children[node.children.length - 1], isFocus) : node;
+function getLastDescendant(node: Child | Middle, isFocus = _isFocus(), depth = 0): [Child | Middle, number] {
+	if ('children' in node && (!isFocus || node.element.hasClass(FOCUS_CLASS))) {
+		return getLastDescendant(node.children[node.children.length - 1], isFocus, depth + 1);
+	}
+	
+	return [node, depth];
 }
 
 // a scrollIntoView replacement for sticky positioning
@@ -24,7 +28,7 @@ export function stickyScroll(node: Root | Child, doSnap: boolean = true, alignTo
 	}
 	
 	const {height} = node.element.headContainer.getBoundingClientRect();
-	const firstChild = alignToTop ? node : getLastDescendant(node);
+	const [firstChild, depth] = alignToTop ? [node, 0] : getLastDescendant(node);
 	
 	let scroll = 0;
 	
@@ -40,15 +44,15 @@ export function stickyScroll(node: Root | Child, doSnap: boolean = true, alignTo
 	}
 	
 	if (alignToTop) {
-		scrollElement.scrollTo({top: Math.ceil(scroll + 1), behavior: doSnap ? 'auto' : 'smooth'});
+		scrollElement.scrollTo({top: scroll, behavior: doSnap ? 'auto' : 'smooth'});
 		
 		return;
 	}
 	
-	scroll += height * (firstChild.depth - node.depth);
+	scroll += (height - 0.6) * depth;
 	
 	if (scrollElement.scrollTop > scroll) {
-		scrollElement.scrollTop = Math.ceil(scroll + 1);
+		scrollElement.scrollTop = scroll;
 	}
 }
 

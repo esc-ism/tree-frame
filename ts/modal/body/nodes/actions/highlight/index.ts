@@ -8,7 +8,7 @@ import type Child from '@nodes/child';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
-import {getSocket} from '@/modal';
+import {getSocket, getDocument, getWindow} from '@/modal';
 import {ELEMENT_CLASSES} from '../../consts';
 
 let sustainedNodes = [];
@@ -90,7 +90,7 @@ export function mount(node: Root | Child) {
 		if (isTab && !isListening) {
 			isListening = true;
 			
-			window.addEventListener('mousemove', () => {
+			getDocument().addEventListener('mousemove', () => {
 				isTab = false;
 				
 				isListening = false;
@@ -101,7 +101,7 @@ export function mount(node: Root | Child) {
 		if (event.relatedTarget) {
 			setActive(node);
 		}
-	}, true);
+	});
 	
 	headContainer.addEventListener('mouseenter', (event) => {
 		event.stopPropagation();
@@ -181,7 +181,7 @@ export function onMount() {
 		}
 	});
 	
-	socket.addEventListener('focusin', () => {
+	getWindow().addEventListener('blur', () => {
 		setActive();
 	});
 }

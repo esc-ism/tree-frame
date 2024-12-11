@@ -31,30 +31,10 @@ function getChildSaveData({children}: Root | Middle, isActiveBranch: boolean = t
 		.map((child) => child.getSaveData(isActive(child) && isActiveBranch));
 }
 
-function getHeight(node: _Child): number {
-	if ('seed' in node) {
-		return getHeight(node.seed) + 1;
-	}
-	
-	if ('children' in node) {
-		return Math.max(...node.children.map((child) => getHeight(child))) + 1;
-	}
-	
-	return 1;
-}
-
-function addChildren(children: _Child[], seed?: _Child): void {
-	if (children.length === 0) {
-		if (seed) {
-			this.height = getHeight(seed);
-		}
-		
-		return;
-	}
-	
+function addChildren(children: _Child[]): void {
 	for (const child of children) {
 		if ('children' in child) {
-			this.height = Math.max(this.height, (new Middle(child, this)).height + 1);
+			new Middle(child, this);
 		} else {
 			new Child(child, this);
 		}
@@ -68,7 +48,7 @@ export function setup({children, ...data}: _Root): void {
 		}
 	}
 	
-	addChildren.call(this, children, data.seed);
+	addChildren.call(this, children);
 	
 	for (const key of ROOT_PREDICATE_KEYS) {
 		if (key in data) {
@@ -118,8 +98,6 @@ export default class Root implements _Root {
 	readonly onDescendantUpdate?: () => unknown;
 	readonly get?: Getter;
 	
-	readonly depth: number = 0;
-	readonly height: number = 1;
 	readonly element: NodeElement;
 	
 	readonly addChildren = addChildren;
@@ -128,7 +106,6 @@ export default class Root implements _Root {
 	constructor(data: _Root) {
 		this.element = new NodeElement({});
 		this.element.addClass(ROOT_CLASS);
-		this.element.addDepthClass(0);
 		
 		setup.call(this, data);
 		
@@ -145,12 +122,6 @@ export default class Root implements _Root {
 	
 	getAncestors() {
 		return [];
-	}
-	
-	updateGroup() {
-		for (const child of this.children) {
-			child.updateGroup();
-		}
 	}
 	
 	getSaveData() {

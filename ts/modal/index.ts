@@ -9,13 +9,25 @@ import {generateEave} from '@nodes/actions/highlight';
 import {Page} from '@types';
 
 let socket: HTMLElement;
+let ownerDocument: Document;
+let ownerWindow: Window;
 
 export function getSocket(): HTMLElement {
 	return socket;
 }
 
-export default function generate(config: Page, _socket: HTMLElement) {
+export function getDocument(): Document {
+	return ownerDocument;
+}
+
+export function getWindow(): Window {
+	return ownerWindow;
+}
+
+export default function generate(config: Page, _socket: HTMLElement, _window: Window) {
 	socket = _socket;
+	ownerDocument = socket.ownerDocument;
+	ownerWindow = _window;
 	
 	generateCSS();
 	

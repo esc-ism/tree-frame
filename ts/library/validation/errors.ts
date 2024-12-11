@@ -127,9 +127,3 @@ export class DeactivatedError extends Error {
 		super('Nodes can\'t be deactivated unless their parent has a seed.');
 	}
 }
-
-export class NoNodeColourError extends Error {
-	constructor() {
-		super('nodeBase entries must define at least one value.');
-	}
-}

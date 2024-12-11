@@ -1,5 +1,3 @@
-import {updateDepth} from './depth';
-
 import type {Styles} from '@/modal/css';
 import {addVariables, registerStyleNode} from '@/modal/css';
 
@@ -32,12 +30,10 @@ function getContrast(hex: string, method: ContrastMethod): string {
 	return `#${toHexPart(r)}${toHexPart((g))}${toHexPart(b)}`;
 }
 
-export default function updateStylesheet({fontSize, width, height, headContrast, nodeBase, nodeContrast, ...colours}: DefaultStyle) {
+export default function updateStylesheet({fontSize, width, height, headContrast, nodeContrast, ...colours}: DefaultStyle) {
 	for (let i = styleNode.sheet.cssRules.length - 1; i >= 0; --i) {
 		styleNode.sheet.deleteRule(i);
 	}
-	
-	updateDepth(nodeBase.length);
 	
 	const variables: Styles = Object.entries(colours).map(
 		([property, value]: [string, string]): [string, string] => [`--${property}`, value],
@@ -49,12 +45,9 @@ export default function updateStylesheet({fontSize, width, height, headContrast,
 		['--height', `${height}%`],
 	);
 	
-	for (const [depth, baseColour] of nodeBase.entries()) {
-		const contrastColour = getContrast(baseColour, nodeContrast);
-		
-		variables.push([`--nodeBase${depth}`, baseColour], [`--nodeContrast${depth}`, contrastColour]);
-	}
-	
+	variables.push(['--nodeHeaderContrast', getContrast(colours.nodeHeaderBase, nodeContrast)]);
+	variables.push(['--nodeBlendContrast', getContrast(colours.nodeBlendBase, nodeContrast)]);
+	variables.push(['--nodeValueContrast', getContrast(colours.nodeValueBase, nodeContrast)]);
 	variables.push(['--headContrast', getContrast(colours.headBase, headContrast)]);
 	
 	addVariables(variables, styleNode);

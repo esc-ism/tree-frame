@@ -23,7 +23,6 @@ function getFilledStyle(style: DefaultStyle = {}): DefaultStyle {
 
 export function toJSON(style: UserStyle): _Middle {
 	const filledStyle: UserStyle = {...DEFAULT_STYLE, ...style};
-	const toDepthColour: (string) => _Leaf = (value) => ({value, input: 'color'});
 	
 	return {
 		label: 'Name',
@@ -123,11 +122,19 @@ export function toJSON(style: UserStyle): _Middle {
 						label: 'General',
 						children: [
 							{
-								label: 'Depth Base Colors',
-								seed: toDepthColour(DEFAULT_STYLE.nodeBase[0]),
-								children: filledStyle.nodeBase.map(toDepthColour),
-								childPredicate: (children: Array<object>): true | string =>
-									children.length > 0 || 'At least one color must be provided.',
+								label: 'Header Node Color',
+								value: DEFAULT_STYLE.nodeHeaderBase,
+								input: 'color',
+							},
+							{
+								label: 'Blend Node Color',
+								value: DEFAULT_STYLE.nodeBlendBase,
+								input: 'color',
+							},
+							{
+								label: 'Value Node Color',
+								value: DEFAULT_STYLE.nodeValueBase,
+								input: 'color',
 							},
 							{
 								label: 'Contrast Method',
@@ -219,10 +226,10 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 		headButtonHide: headerButtons[4].value as string,
 		headButtonAlt: headerButtons[5].value as string,
 		
-		nodeBase: bodyGeneral[0].children
-			.filter(({isActive}) => isActive)
-			.map((child) => child.value as string),
-		nodeContrast: bodyGeneral[1].value as ContrastMethod,
+		nodeHeaderBase: bodyGeneral[0].value as string,
+		nodeBlendBase: bodyGeneral[1].value as string,
+		nodeValueBase: bodyGeneral[2].value as string,
+		nodeContrast: bodyGeneral[3].value as ContrastMethod,
 		
 		nodeButtonCreate: bodyButtons[0].value as string,
 		nodeButtonDuplicate: bodyButtons[1].value as string,

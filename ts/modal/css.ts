@@ -1,5 +1,5 @@
 import {MODAL_BACKGROUND_ID, MODAL_ID} from './consts';
-import {getSocket} from './index';
+import {getDocument} from './index';
 
 type Selector = string;
 export type Selectors = Selector | Array<Selector>;
@@ -16,7 +16,7 @@ export function registerStyleNode(node: HTMLStyleElement) {
 }
 
 function mountStyleNodes() {
-	const {head} = getSocket().ownerDocument;
+	const {head} = getDocument();
 	
 	for (const node of undockedStyleNodes) {
 		head.appendChild(node);

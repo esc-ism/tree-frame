@@ -1,8 +1,6 @@
-import {BASE_CLASS, GROUP_CLASS_PREFIX, ELEMENT_CLASSES, ROOT_CLASS, CHECKBOX_WRAPPER_CLASS} from './consts';
+import {BASE_CLASS, ELEMENT_CLASSES, CHECKBOX_WRAPPER_CLASS, ROOT_CLASS} from './consts';
 
 import {FOCUS_CLASS} from './actions/focus/consts';
-
-import {addGroupChangeListener} from '../style/update/depth';
 
 import {addRule} from '@/modal/css';
 
@@ -90,22 +88,5 @@ export default function generate() {
 		['user-select', 'none'],
 	]);
 	
-	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, [['height', '100%']]);
-	
-	addGroupChangeListener((group, addRule) => {
-		addRule(`.${GROUP_CLASS_PREFIX}${group}`, [
-			['color', `var(--nodeContrast${group})`],
-			['background-color', `var(--nodeBase${group})`],
-		]);
-		
-		addRule(
-			`.${GROUP_CLASS_PREFIX}${group}`,
-			['outline', `1px solid var(--nodeContrast${group})`],
-		);
-		
-		addRule(
-			`.${GROUP_CLASS_PREFIX}${group} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`,
-			['outline', `1px solid var(--nodeContrast${group})`],
-		);
-	});
+	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, ['height', '100%']);
 }

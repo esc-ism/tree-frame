@@ -41,7 +41,9 @@ export interface DefaultStyle {
 	headButtonHide?: string;
 	headButtonAlt?: string;
 	
-	nodeBase?: Array<string>;
+	nodeHeaderBase?: string;
+	nodeBlendBase?: string;
+	nodeValueBase?: string;
 	nodeContrast?: ContrastMethod;
 	
 	nodeButtonCreate?: string;

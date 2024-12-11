@@ -4,9 +4,7 @@ import {
 	TOOLTIP_REVERSE_CLASS,
 } from './consts';
 
-import {GROUP_CLASS_PREFIX, ELEMENT_CLASSES} from '@nodes/consts';
-
-import {addGroupChangeListener} from '@/modal/body/style/update/depth';
+import {ELEMENT_CLASSES, NODE_COLOURS} from '@nodes/consts';
 
 import {addRule} from '@/modal/css';
 
@@ -41,12 +39,12 @@ export default function generate() {
 		['outline', 'solid 3px var(--borderTooltip)'],
 	]);
 	
-	addGroupChangeListener((group, addRule) => {
-		addRule(`.${GROUP_CLASS_PREFIX}${group} > :not(.${ELEMENT_CLASSES.CHILD_CONTAINER}) .${TOOLTIP_CLASS}`, [
-			['background-color', `var(--nodeBase${group})`],
-			['color', `var(--nodeContrast${group})`],
+	for (const [selector, base, contrast] of NODE_COLOURS) {
+		addRule(`${selector} > :not(.${ELEMENT_CLASSES.CHILD_CONTAINER}) .${TOOLTIP_CLASS}`, [
+			['background-color', base],
+			['color', contrast],
 		]);
-	});
+	}
 	
 	// Don't show when there's no hint to give
 	addRule(

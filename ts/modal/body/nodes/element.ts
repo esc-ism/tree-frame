@@ -1,9 +1,4 @@
-import {
-	GROUP_CLASS_PREFIX, DEPTH_CLASS_PREFIX,
-	ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS, CHECKBOX_WRAPPER_CLASS,
-} from './consts';
-
-import {getGroupCount} from '../style/update/depth';
+import {ELEMENT_CLASSES, BASE_CLASS, CONTRAST_CLASS, CHECKBOX_WRAPPER_CLASS} from './consts';
 
 import type {Child as _Child} from '@types';
 
@@ -141,20 +136,6 @@ export default class Element {
 		for (const name of names) {
 			this.elementContainer.classList.remove(name);
 		}
-	}
-	
-	addDepthClass(depth: number) {
-		if (this.groupClass) {
-			this.removeClass(this.groupClass);
-		} else {
-			this.addClass(`${DEPTH_CLASS_PREFIX}${depth}`);
-		}
-		
-		const groupClass = `${GROUP_CLASS_PREFIX}${depth % getGroupCount()}`;
-		
-		this.addClass(groupClass);
-		
-		this.groupClass = groupClass;
 	}
 	
 	addChild(child: Element, index) {

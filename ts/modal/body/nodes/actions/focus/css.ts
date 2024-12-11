@@ -27,7 +27,7 @@ export default function generate() {
 		['padding-left', '0'],
 	]);
 	
-	const headSelector = `.${FOCUS_SOURCE_CLASS}:not(:hover:not(:has( :hover))) > .${ELEMENT_CLASSES.HEAD_CONTAINER}:not(:focus):not(:hover)`;
+	const headSelector = `.${FOCUS_SOURCE_CLASS}:not(:hover:not(:has(> .${ELEMENT_CLASSES.CHILD_CONTAINER}:hover))) > .${ELEMENT_CLASSES.HEAD_CONTAINER}:not(:focus):not(:hover)`;
 	
 	addRule(`${headSelector} .${BACKGROUND_CLASS}`, ['width', '100%']);
 	

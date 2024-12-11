@@ -13,7 +13,7 @@ export default function generate() {
 		['overflow-y', 'auto'],
 		['overflow-x', 'hidden'],
 		['overscroll-behavior', 'contain'],
-		['background-color', 'var(--nodeBase0)'],
+		['background-color', 'var(--nodeValueBase)'],
 		['flex-grow', '1'],
 	]);
 }

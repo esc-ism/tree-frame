@@ -48,13 +48,10 @@ export default class Child implements Leaf {
 	lastAcceptedValue?: Value;
 	
 	parent: Root | Middle;
-	readonly depth: number;
 	readonly element: NodeElement;
 	
 	constructor(data: _Child, parent: Root | Middle, index?: number) {
-		this.depth = parent.depth + 1;
 		this.element = new NodeElement(data);
-		this.element.addDepthClass(this.depth);
 		
 		for (const key of LEAF_KEYS) {
 			if (key in data) {
@@ -100,10 +97,6 @@ export default class Child implements Leaf {
 		const siblings = this.parent.children;
 		
 		return [...siblings.slice(0, index), ...siblings.slice(index + 1)];
-	}
-	
-	updateGroup() {
-		this.element.addDepthClass(this.depth);
 	}
 	
 	detach() {

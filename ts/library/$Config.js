@@ -211,7 +211,7 @@ export default class $Config {
 				title: TITLE,
 				defaultStyle: STYLE_INNER,
 				...(userTree ? {userTree} : {}),
-			}, target.contentDocument.body)
+			}, target.contentDocument.body, target.contentWindow)
 				.catch(async (error) => {
 					delete this.reset;
 					

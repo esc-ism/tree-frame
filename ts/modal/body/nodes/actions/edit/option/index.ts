@@ -58,7 +58,7 @@ export function update(value: Value) {
 	let hasVisibleChild = false;
 	
 	for (const {parentElement, innerText} of activeOptions) {
-		if (stringValue.length < innerText.length && regExp.test(innerText)) {
+		if (stringValue.length <= innerText.length && regExp.test(innerText)) {
 			parentElement.classList.add(OPTION_SHOW_CLASS);
 			
 			hasVisibleChild = true;

@@ -21,7 +21,9 @@ export const DEFAULT_STYLE: DefaultStyle = {
 	headButtonHide: '#00749a',
 	headButtonAlt: '#838f00',
 	
-	nodeBase: ['#000000'],
+	nodeHeaderBase: '#101010',
+	nodeBlendBase: '#101010',
+	nodeValueBase: '#303030',
 	nodeContrast: 'Black / White',
 	
 	nodeButtonCreate: '#40ff40',

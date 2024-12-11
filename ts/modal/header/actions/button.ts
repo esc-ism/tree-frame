@@ -2,7 +2,7 @@ import {BUTTON_CLASS} from './consts';
 
 import {SVG_NAMESPACE} from '../../consts';
 
-import {getSocket} from '@/modal';
+import {getDocument} from '@/modal';
 
 // Adds the template to the DOM
 export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey?: string): Function {
@@ -19,7 +19,7 @@ export function bindAction(button: HTMLButtonElement, doAction: Function, hotkey
 	if (hotkey) {
 		button.title += ` (Alt+${hotkey})`;
 		
-		getSocket().ownerDocument.addEventListener('keydown', (event) => {
+		getDocument().addEventListener('keydown', (event) => {
 			if (event.altKey && event.key.toUpperCase() === hotkey) {
 				bound(event);
 			}
