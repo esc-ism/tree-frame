@@ -83,5 +83,6 @@ export default function generate() {
 		['bottom', '0'],
 		['width', '100%'],
 		['height', '1px'],
+		['z-index', 'var(--overlayIndex)'],
 	]);
 }
