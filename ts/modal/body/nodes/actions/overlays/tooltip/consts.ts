@@ -1,6 +1,8 @@
-export const TOOLTIP_CLASS = 'tooltip';
-
 export const TOOLTIP_CONTAINER_CLASS = 'tooltip-container';
+
+export const TOOLTIP_ARROW_CLASS = 'modal-arrow-wrapper';
+
+export const TOOLTIP_BOX_CLASS = 'tooltip';
 
 export const TOOLTIP_TOP_CLASS = 'tooltip-above';
 
@@ -24,3 +26,5 @@ export const TOOLTIP_ANIMATION_FAST: [Array<Keyframe>, KeyframeAnimationOptions]
 		{opacity: 0},
 	], {duration: 1000},
 ];
+
+export const MESSAGE_UNRESOLVED = 'Please wait for validation';

@@ -1,8 +1,46 @@
 import {BASE_CLASS, ELEMENT_CLASSES, CHECKBOX_WRAPPER_CLASS, ROOT_CLASS} from './consts';
 
-import {FOCUS_CLASS} from './actions/focus/consts';
+import {FOCUS_SOURCE_CLASS} from './actions/focus/consts';
+import {CLASS_PREFIX_READ, CLASS_PREFIX_WRITE} from './actions/hide/consts';
+import {DISABLED_CLASS} from './actions/buttons/disable/consts';
+
+import {ACTION_ID as CLASS_DISABLED_HIDE} from '@/modal/header/actions/hide/consts';
 
 import {addRule} from '@/modal/css';
+
+function getHideIdSet(node, set = new Set()) {
+	if ('hideId' in node) {
+		set.add(node.hideId);
+	}
+	
+	if ('seed' in node) {
+		getHideIdSet(node.seed, set);
+		
+		if (!('poolId' in node)) {
+			return set;
+		}
+	}
+	
+	if ('children' in node) {
+		for (const child of node.children) {
+			getHideIdSet(child, set);
+		}
+	}
+	
+	return set;
+}
+
+export function generateHiddenCSS(roots) {
+	for (const [id, root] of Object.entries(roots)) {
+		let visibleChildSelector = `:not(.${DISABLED_CLASS}:not(.${CLASS_DISABLED_HIDE} *))`;
+		
+		for (const hideId of getHideIdSet(root).values()) {
+			visibleChildSelector += `:not(.${CLASS_PREFIX_WRITE}${hideId} .${CLASS_PREFIX_READ}${hideId})`;
+		}
+		
+		addRule(`#${id} .${ELEMENT_CLASSES.CHILD_CONTAINER}:not(.${FOCUS_SOURCE_CLASS} > * *):has(> ${visibleChildSelector})`, ['margin-top', '0.6px']);
+	}
+}
 
 export default function generate() {
 	addRule(`.${ROOT_CLASS}`, [
@@ -11,21 +49,14 @@ export default function generate() {
 		['height', 'fit-content'],
 	]);
 	
-	addRule([
-		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS}):first-child`,
-		`.${FOCUS_CLASS}:not(.${ROOT_CLASS})`,
-	], ['margin-top', '0.6px']);
+	addRule(`.${ELEMENT_CLASSES.CHILD_CONTAINER}:empty`, ['display', 'none']);
 	
 	addRule(`:not(.${ROOT_CLASS}) > .${ELEMENT_CLASSES.CHILD_CONTAINER}`, ['margin-left', '1.8em']);
 	
-	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, ['position', 'relative']);
-	
-	addRule(
-		`.${ELEMENT_CLASSES.ELEMENT_CONTAINER} > :not(.${ELEMENT_CLASSES.CHILD_CONTAINER})`,
-		['height', '1.6em'],
-	);
-	
-	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, [['user-select', 'none']]);
+	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, [
+		['user-select', 'none'],
+		['position', 'relative'],
+	]);
 	
 	addRule([`.${ELEMENT_CLASSES.INFO_CONTAINER} > *`], [
 		['position', 'absolute'],
@@ -86,6 +117,7 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
 		['background-color', 'inherit'],
 		['user-select', 'none'],
+		['height', '1.6em'],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, ['height', '100%']);

@@ -2,56 +2,45 @@ import {FOCUS_CLASS} from './focus/consts';
 import {isActive as _isFocus} from './focus';
 
 import type Root from '@nodes/root';
-import type Middle from '@nodes/middle';
 import type Child from '@nodes/child';
 
 import {element as scrollElement} from '@/modal/body';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
-function getLastDescendant(node: Child | Middle, isFocus = _isFocus(), depth = 0): [Child | Middle, number] {
-	if ('children' in node && (!isFocus || node.element.hasClass(FOCUS_CLASS))) {
-		return getLastDescendant(node.children[node.children.length - 1], isFocus, depth + 1);
+function getLastDescendant(node: Root | Child, isFocus = _isFocus()): Child {
+	if ('children' in node && node.children.length > 0 && (!isFocus || node.element.hasClass(FOCUS_CLASS))) {
+		return getLastDescendant(node.children[node.children.length - 1], isFocus);
 	}
 	
-	return [node, depth];
+	return node as Child;
 }
 
 // a scrollIntoView replacement for sticky positioning
-export function stickyScroll(node: Root | Child, doSnap: boolean = true, alignToTop: boolean = true) {
-	if (!('parent' in node)) {
-		if (alignToTop) {
-			scrollElement.scrollTop = 0;
-		}
-		
-		return;
-	}
-	
+export function getStickyScroll(node: Root | Child, alignToTop: boolean = true): number {
+	const firstChild: Root | Child = alignToTop ? node : getLastDescendant(node);
 	const {height} = node.element.headContainer.getBoundingClientRect();
-	const [firstChild, depth] = alignToTop ? [node, 0] : getLastDescendant(node);
 	
-	let scroll = 0;
+	let root: Root | Child = node;
+	let depth = 0;
 	
-	for (let child: any = firstChild; 'parent' in child; child = child.parent) {
-		if (child.element.hasClass(FOCUS_CLASS) || child === child.parent.children[0]) {
-			continue;
-		}
-		
-		const {top: base} = child.parent.element.elementContainer.getBoundingClientRect();
-		const {top} = child.element.elementContainer.getBoundingClientRect();
-		
-		scroll += top - base - height;
+	while ('parent' in root) {
+		root = root.parent;
+		depth++;
 	}
+	
+	return Math.ceil(firstChild.element.headContainer.getBoundingClientRect().top
+		- root.element.headContainer.getBoundingClientRect().top
+		+ scrollElement.scrollTop
+		- (height + 0.6) * depth);
+}
+
+export function stickyScroll(node: Root | Child, doSnap: boolean = true, alignToTop: boolean = true) {
+	const scroll = getStickyScroll(node, alignToTop);
 	
 	if (alignToTop) {
 		scrollElement.scrollTo({top: scroll, behavior: doSnap ? 'auto' : 'smooth'});
-		
-		return;
-	}
-	
-	scroll += (height - 0.6) * depth;
-	
-	if (scrollElement.scrollTop > scroll) {
+	} else if (scrollElement.scrollTop > scroll) {
 		scrollElement.scrollTop = scroll;
 	}
 }

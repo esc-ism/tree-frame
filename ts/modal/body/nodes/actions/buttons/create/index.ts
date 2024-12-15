@@ -7,7 +7,7 @@ import * as position from '../position';
 
 import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
-import {show as showTooltip} from '../../tooltip';
+import {showTooltip} from '../../overlays';
 
 import Middle from '@nodes/middle';
 import Child from '@nodes/child';
@@ -50,7 +50,7 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 			child.disconnect();
 			
 			if (reason) {
-				showTooltip(reason, button);
+				showTooltip(reason, child, button.querySelector('circle'));
 			}
 		});
 }

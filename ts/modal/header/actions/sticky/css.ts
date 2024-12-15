@@ -7,7 +7,6 @@ import {addRule, addVariables} from '@/modal/css';
 
 import {ROOT_ID as DATA_ID} from '@/modal/body/data/consts';
 import {ROOT_ID as STYLE_ID} from '@/modal/body/style/consts';
-import {ROOTS} from '@/modal/body';
 import {MODAL_BODY_ID} from '@/modal/body/consts';
 
 import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '@nodes/consts';
@@ -15,6 +14,7 @@ import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from '@nodes/actions/focus/consts';
 
 import type {Root as _ROOT, Middle as _MIDDLE, Leaf as _LEAF} from '@types';
 
+// todo isn't considering things being moved via poolId
 function getHeight(node: _ROOT | _MIDDLE | _LEAF): number {
 	if ('seed' in node) {
 		return getHeight(node.seed) + 1;
@@ -27,10 +27,10 @@ function getHeight(node: _ROOT | _MIDDLE | _LEAF): number {
 	return 0;
 }
 
-export default function generate() {
+export default function generate(roots) {
 	const heights = {
-		[DATA_ID]: getHeight(ROOTS[DATA_ID]),
-		[STYLE_ID]: getHeight(ROOTS[STYLE_ID]),
+		[DATA_ID]: getHeight(roots[DATA_ID]),
+		[STYLE_ID]: getHeight(roots[STYLE_ID]),
 	};
 	
 	const maxHeight = Math.max(heights[DATA_ID], heights[STYLE_ID]);
@@ -41,8 +41,8 @@ export default function generate() {
 	
 	let nodeSelector = `#${MODAL_BODY_ID}.${ACTION_ID} > .${ELEMENT_CLASSES.ELEMENT_CONTAINER}`;
 	
-	for (let depth = 0; depth < maxHeight; ++depth) {
-		addRule(`${nodeSelector}:where(.${MIDDLE_CLASS}, .${ROOT_CLASS}) > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
+	for (let depth = 0; depth <= maxHeight; ++depth) {
+		addRule(`${nodeSelector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
 			['position', 'sticky'],
 			['top', `calc(${depth * 1.6}em + ${depth * 0.6}px)`],
 			['z-index', `${maxHeight - depth}`],

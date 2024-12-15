@@ -3,10 +3,10 @@ import {
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
 } from './consts';
 
-import * as option from './option';
-import * as tooltip from '../tooltip';
+import * as overlays from '../overlays';
 import {addSustained, removeSustained} from '../highlight';
 import callbacks from '../callbacks';
+import {MESSAGE_UNRESOLVED} from '../overlays/tooltip/consts';
 
 import {EDITABLE_CLASS} from '../../consts';
 
@@ -38,8 +38,7 @@ export function reset() {
 	
 	element.removeClass(ACTIVE_CLASS);
 	
-	tooltip.reset();
-	option.reset();
+	overlays.reset();
 	
 	removeSustained(activeNode);
 	
@@ -64,14 +63,10 @@ export async function update() {
 	
 	activeNode.value = value;
 	
-	if ('options' in activeNode) {
-		option.update(activeNode.value);
-	}
-	
 	activeNode.element.removeClass(INVALID_CLASS);
 	activeNode.element.removeClass(VALID_CLASS);
 	
-	tooltip.fade();
+	overlays.update();
 	
 	try {
 		if (!(await callbacks.predicate.getAll(activeNode))) {
@@ -81,9 +76,9 @@ export async function update() {
 		activeNode.element.addClass(INVALID_CLASS);
 		
 		if (reason) {
-			tooltip.kill();
+			overlays.tooltip.kill();
 			
-			tooltip.show(reason);
+			overlays.showTooltip(reason, activeNode);
 		}
 		
 		return;
@@ -93,7 +88,7 @@ export async function update() {
 	
 	activeNode.element.addClass(VALID_CLASS);
 	
-	tooltip.hide();
+	overlays.hideTooltip();
 	
 	callbacks.update.triggerAll(activeNode);
 }
@@ -105,9 +100,12 @@ export function unmount(node: Child) {
 }
 
 export function doAction(node: Child) {
+	// todo is the first condition necessary?
+	//  if so, probably shouldn't be calling showUnresolved
 	if (activeNode === node || isUnresolved()) {
-		tooltip.showUnresolved(node.element.contrast.container);
+		overlays.showTooltip(MESSAGE_UNRESOLVED, node, node.element.contrast.valueContainer);
 		
+		// todo remove?
 		node.element.headContainer.focus();
 		
 		return;
@@ -115,18 +113,14 @@ export function doAction(node: Child) {
 	
 	reset();
 	
-	tooltip.kill();
+	overlays.tooltip.kill();
 	
 	activeNode = node;
 	
-	activeNode.element.addClass(ACTIVE_CLASS);
-	activeNode.element.addClass(VALID_CLASS);
+	node.element.addClass(ACTIVE_CLASS);
+	node.element.addClass(VALID_CLASS);
 	
-	tooltip.setNode(node);
-	
-	if ('options' in node) {
-		option.setNode(node);
-	}
+	overlays.setNode(node);
 	
 	if (node.input === 'color') {
 		node.element.contrast.valueElement.click();
@@ -221,10 +215,6 @@ export function mount(node: Child): void {
 			
 			update();
 		});
-	}
-	
-	if ('options' in node) {
-		option.generate(node);
 	}
 	
 	valueElement.addEventListener('keydown', (event) => {

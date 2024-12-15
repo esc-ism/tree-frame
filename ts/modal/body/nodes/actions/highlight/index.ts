@@ -103,7 +103,7 @@ export function mount(node: Root | Child) {
 		}
 	});
 	
-	headContainer.addEventListener('mouseenter', (event) => {
+	headContainer.addEventListener('mouseover', (event) => {
 		event.stopPropagation();
 		
 		if (!isTab) {
@@ -111,7 +111,7 @@ export function mount(node: Root | Child) {
 		}
 	});
 	
-	elementContainer.addEventListener('mouseenter', (event) => {
+	elementContainer.addEventListener('mouseover', (event) => {
 		event.stopPropagation();
 		
 		if (!isTab) {
@@ -119,16 +119,10 @@ export function mount(node: Root | Child) {
 		}
 	});
 	
-	elementContainer.addEventListener('mouseleave', (event) => {
+	elementContainer.addEventListener('mouseout', (event) => {
 		event.stopPropagation();
 		
-		if (isTab) {
-			return;
-		}
-		
-		if ('parent' in node) {
-			setActive(node.parent);
-		} else {
+		if (!isTab) {
 			setActive();
 		}
 	});

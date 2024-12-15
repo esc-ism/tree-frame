@@ -10,8 +10,8 @@ import {addRule} from '@/modal/css';
 export default function generate() {
 	for (const [selector, base, contrast] of NODE_COLOURS) {
 		addRule(selector, [
-			['color', base],
 			['background-color', base],
+			['color', contrast],
 		]);
 		
 		addRule(`${selector}, ${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, ['outline', `1px solid ${contrast}`]);

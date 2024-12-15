@@ -121,7 +121,7 @@ export default class Root implements _Root {
 		return this;
 	}
 	
-	getAncestors() {
+	getAncestors(): Array<Root | Middle> {
 		return [];
 	}
 	

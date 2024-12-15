@@ -9,13 +9,13 @@ import {setActive} from '@/modal/body';
 import {getDocument, getWindow} from '@/modal';
 
 let _isActive = false;
-let keyHeld = false;
+let toggledOn = false;
 
 export function isActive() {
 	return _isActive;
 }
 
-function doAction(doActivate = !_isActive) {
+export function doAction(doActivate = !_isActive) {
 	setActive(BUTTON, ACTION_ID, doActivate);
 	
 	_isActive = doActivate;
@@ -24,32 +24,30 @@ function doAction(doActivate = !_isActive) {
 export default function generate(): HTMLElement {
 	generateCSS();
 	
-	bindAction(BUTTON, doAction);
+	bindAction(BUTTON, () => {
+		toggledOn = !toggledOn;
+		
+		doAction(toggledOn);
+	});
 	
 	BUTTON.title += ' (Ctrl)';
 	
 	const target = getDocument();
 	
 	target.addEventListener('keydown', (event) => {
-		if (event.key === 'Control') {
-			keyHeld = true;
-			
+		if (event.key === 'Control' && !toggledOn) {
 			doAction(true);
 		}
 	});
 	
 	target.addEventListener('keyup', (event) => {
-		if (event.key === 'Control') {
-			keyHeld = false;
-			
+		if (event.key === 'Control' && !toggledOn) {
 			doAction(false);
 		}
 	});
 	
 	getWindow().addEventListener('blur', () => {
-		if (keyHeld) {
-			keyHeld = false;
-			
+		if (!toggledOn) {
 			doAction(false);
 		}
 	});

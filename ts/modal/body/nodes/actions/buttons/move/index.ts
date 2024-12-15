@@ -7,7 +7,7 @@ import * as position from '../position';
 
 import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
-import * as tooltip from '../../tooltip';
+import {showTooltip} from '../../overlays';
 
 import type Child from '@nodes/child';
 
@@ -76,7 +76,7 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 			copy.disconnect();
 			
 			if (reason) {
-				tooltip.show(reason, button);
+				showTooltip(reason, node, button.querySelector('circle'));
 			}
 		});
 }
@@ -92,7 +92,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 		if (newIndex < node.parent.children.length + 1) {
 			doAction(node, node.parent, newIndex, button, false);
 		} else {
-			tooltip.show('Node can not be moved down.', button);
+			showTooltip('Node can not be moved down.', node, button.querySelector('circle'));
 		}
 	} else if (!previousNode || node !== previousNode) {
 		// If the only valid target is the current parent
@@ -101,7 +101,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 			
 			position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction, false);
 		} else {
-			tooltip.show('No other valid locations found.', button);
+			showTooltip('No other valid locations found.', node, button.querySelector('circle'));
 		}
 	}
 }

@@ -7,7 +7,7 @@ import * as position from '../position';
 
 import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
-import {show as showTooltip} from '../../tooltip';
+import {showTooltip} from '../../overlays';
 
 import type Child from '@nodes/child';
 
@@ -23,7 +23,7 @@ export function reset() {
 	activeNode = undefined;
 }
 
-function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = true) {
+function validate(copy: Child, button: HTMLButtonElement, node: Child, doScroll: boolean = true) {
 	Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
 		.then(() => {
 			copy.element.removeClass(TEST_ADD_CLASS);
@@ -41,7 +41,7 @@ function validate(copy: Child, button: HTMLButtonElement, doScroll: boolean = tr
 			copy.disconnect();
 			
 			if (reason) {
-				showTooltip(reason, button);
+				showTooltip(reason, node, button.querySelector('circle'));
 			}
 		});
 }
@@ -59,7 +59,7 @@ function doAction(node: Child, parent, index: number, button: HTMLButtonElement)
 	
 	copy.move(parent, index);
 	
-	validate(copy, button);
+	validate(copy, button, node);
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
@@ -68,7 +68,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 	reset();
 	
 	if (!isAlt) {
-		validate(getCopy(node), button, false);
+		validate(getCopy(node), button, node, false);
 	} else if (!previousNode || node !== previousNode) {
 		activeNode = node;
 		

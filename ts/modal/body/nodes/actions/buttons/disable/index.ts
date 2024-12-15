@@ -5,7 +5,7 @@ import {addActionButton} from '../button';
 import {TEST_REMOVE_CLASS} from '../consts';
 
 import callbacks from '../../callbacks';
-import * as tooltip from '../../tooltip';
+import {showTooltip} from '../../overlays';
 
 import type Child from '@nodes/child';
 
@@ -49,7 +49,7 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 			}
 			
 			if (typeof reason === 'string') {
-				tooltip.show(reason, button);
+				showTooltip(reason, node, button.querySelector('circle'));
 			}
 		});
 }

@@ -4,14 +4,15 @@ import generateCSS from './css';
 import generateStyleTree from './style';
 import generateDataTree, {setTree} from './data';
 
-import {onMount as onMountHighlight} from '@nodes/actions/highlight';
-import {onMount as onMountActive} from '@nodes/actions/active';
+import {onMount as onMountHighlight} from './nodes/actions/highlight';
+import {onMount as onMountActive} from './nodes/actions/active';
 
-import Root from '@nodes/root';
+import Root from './nodes/root';
 
 import {BUTTON_ACTIVE_CLASS} from '../consts';
 
 import generateStickyCSS from '@/modal/header/actions/sticky/css';
+import {generateHiddenCSS} from './nodes/css';
 
 import type {Page, Root as _Root} from '@types';
 
@@ -58,6 +59,12 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 	
 	element.id = MODAL_BODY_ID;
 	
+	// avoid blurring an input when dragging the scrollbar
+	element.addEventListener('mousedown', (event) => {
+		event.stopPropagation();
+		event.preventDefault();
+	});
+	
 	element.append(
 		generateStyleTree(userStyles, defaultStyle),
 		generateDataTree(userTree ?? defaultTree),
@@ -66,7 +73,8 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 	onMountHighlight();
 	onMountActive();
 	
-	generateStickyCSS();
+	generateStickyCSS(ROOTS);
+	generateHiddenCSS(ROOTS);
 	
 	return element;
 }

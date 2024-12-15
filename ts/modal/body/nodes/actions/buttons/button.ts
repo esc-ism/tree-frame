@@ -1,14 +1,16 @@
 import {BUTTON_CLASS} from './consts';
 
 import * as active from '../active';
-import {kill as killTooltip, showUnresolved} from '../tooltip';
+import {kill as killTooltip} from '../overlays/tooltip';
+import {showTooltip} from '../overlays';
+import {MESSAGE_UNRESOLVED} from '../overlays/tooltip/consts';
 
 import type Root from '../../root';
 import type Child from '../../child';
 
 import {SVG_NAMESPACE} from '@/modal/consts';
 
-import {isActive as isAlt} from '@/modal/header/actions/alternate';
+import {isActive as isAlt, doAction as setAlternate} from '@/modal/header/actions/alternate';
 
 import {isUnresolved} from '@/predicate';
 
@@ -20,7 +22,7 @@ export function addActionButton(template: HTMLButtonElement, onClick: Function, 
 		event.stopPropagation();
 		
 		if (isUnresolved()) {
-			showUnresolved(button);
+			showTooltip(MESSAGE_UNRESOLVED, node, button.querySelector('circle'));
 			
 			return;
 		}
@@ -29,7 +31,13 @@ export function addActionButton(template: HTMLButtonElement, onClick: Function, 
 		
 		killTooltip();
 		
-		onClick(node, button, isAlt());
+		if (event.ctrlKey) {
+			setAlternate(true);
+			
+			onClick(node, button, isAlt());
+		} else {
+			onClick(node, button, isAlt());
+		}
 	});
 	
 	button.addEventListener('keydown', (event) => {

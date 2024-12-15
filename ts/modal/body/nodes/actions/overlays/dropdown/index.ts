@@ -1,35 +1,27 @@
 import {
-	OPTION_CLASS, OPTION_CONTAINER_CLASS, OPTION_PARENT_CLASS, OPTION_WRAPPER_CLASS,
-	OPTION_BACKGROUND_CLASS, OPTION_SHOW_CLASS, OPTION_ACTIVE_CLASS,
+	DROPDOWN_CLASS, DROPDOWN_CONTAINER_CLASS, DROPDOWN_PARENT_CLASS, DROPDOWN_WRAPPER_CLASS,
+	DROPDOWN_BACKGROUND_CLASS, DROPDOWN_SHOW_CLASS, DROPDOWN_ACTIVE_CLASS,
 } from './consts';
 
-import {update as notify} from '../index';
+import {update as notify} from '../../edit';
 
 import type Child from '@nodes/child';
-
-import {ROOT_CLASS} from '@nodes/consts';
 
 import {element as scrollElement} from '@/modal/body';
 
 import type {Value} from '@types';
 
 const activeOptions: HTMLElement[] = [];
+const resetCallbacks: Array<() => void> = [];
 
 let activeIndex: number = -1;
 
-export function isActive(): boolean {
-	return activeOptions.some(({parentElement}) => parentElement.classList.contains(OPTION_SHOW_CLASS));
-}
-
-function getTotalOffsetTop(from: HTMLElement): number {
-	let offsetTop = 2;
-	let node;
+function getTotalOffsetTop(target: HTMLElement, includeHeight = true): number {
+	const scrollRect = scrollElement.getBoundingClientRect();
+	const targetRect = target.getBoundingClientRect();
 	
-	for (node = from; !node.classList.contains(ROOT_CLASS); node = node.offsetParent) {
-		offsetTop += node.offsetTop;
-	}
-	
-	return offsetTop;
+	// todo this had a `+2` before; may be necessary
+	return targetRect.top - scrollRect.top + scrollElement.scrollTop + (includeHeight ? targetRect.height : 0);
 }
 
 // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions#escaping
@@ -38,7 +30,7 @@ function escapeRegExp(string): string {
 }
 
 function setActive(option: HTMLElement, isActive: boolean = true) {
-	option.classList[isActive ? 'add' : 'remove'](OPTION_ACTIVE_CLASS);
+	option.classList[isActive ? 'add' : 'remove'](DROPDOWN_ACTIVE_CLASS);
 }
 
 function deselect() {
@@ -52,68 +44,72 @@ function deselect() {
 }
 
 export function update(value: Value) {
-	const stringValue = `${value}`;
-	const regExp = new RegExp(escapeRegExp(stringValue), 'i');
-	
-	let hasVisibleChild = false;
-	
-	for (const {parentElement, innerText} of activeOptions) {
-		if (stringValue.length <= innerText.length && regExp.test(innerText)) {
-			parentElement.classList.add(OPTION_SHOW_CLASS);
-			
-			hasVisibleChild = true;
-		} else {
-			parentElement.classList.remove(OPTION_SHOW_CLASS);
-		}
-	}
-	
-	const wrapper = activeOptions[0].parentElement.parentElement;
-	
-	if (!hasVisibleChild) {
-		wrapper.style.setProperty('display', 'none');
-		
+	// equivalent to `if (!('options' in node))`
+	if (activeOptions.length === 0) {
 		return;
 	}
 	
-	wrapper.style.removeProperty('display');
+	const stringValue = `${value}`;
+	const regExp = new RegExp(escapeRegExp(stringValue), 'i');
 	
+	for (const {parentElement, innerText} of activeOptions) {
+		if (stringValue.length <= innerText.length && regExp.test(innerText)) {
+			parentElement.classList.add(DROPDOWN_SHOW_CLASS);
+		} else {
+			parentElement.classList.remove(DROPDOWN_SHOW_CLASS);
+		}
+	}
+	
+	const [{parentElement: {parentElement: wrapper}}] = activeOptions;
 	const totalOffsetTop = getTotalOffsetTop(wrapper);
 	
-	if (scrollElement.scrollTop + scrollElement.clientHeight < totalOffsetTop + wrapper.clientHeight) {
-		scrollElement.scrollTop = totalOffsetTop + wrapper.clientHeight - scrollElement.clientHeight;
+	// todo remove? seems pointless
+	if (scrollElement.scrollTop + scrollElement.clientHeight < totalOffsetTop) {
+		scrollElement.scrollTop = totalOffsetTop - scrollElement.clientHeight;
 	}
 	
 	deselect();
 }
 
-function setValue(node: Child, value: string) {
+async function setValue(node: Child, value: string) {
 	node.element.contrast.valueElement.value = value;
 	
-	notify();
-	
 	deselect();
+	
+	await notify();
 }
 
 export function reset() {
-	for (const {parentElement} of activeOptions) {
-		parentElement.classList.remove(OPTION_SHOW_CLASS);
+	while (resetCallbacks.length > 0) {
+		resetCallbacks.pop()();
 	}
-	
-	deselect();
 	
 	activeOptions.length = 0;
 }
 
-export function setNode(node: Child) {
-	// Using Array.from so typescript doesn't complain
-	activeOptions.push(...Array.from(node.element.contrast.valueContainer.querySelectorAll(`.${OPTION_CLASS}`) as NodeListOf<HTMLElement>));
+function addListener(target: HTMLElement, type: string, listener: (event: Event) => void, useCapture = false) {
+	target.addEventListener(type, listener, useCapture);
 	
-	update(node.value);
+	resetCallbacks.push(() => target.removeEventListener(type, listener, useCapture));
 }
 
 export function generate(node: Child) {
 	const wrapper = document.createElement('div');
 	const parent = document.createElement('div');
+	
+	wrapper.style.width = `${node.element.contrast.valueContainer.clientWidth}px`;
+	
+	// avoid blurring an input when dragging the scrollbar
+	addListener(wrapper, 'mousedown', (event) => {
+		event.stopPropagation();
+		event.preventDefault();
+	});
+	
+	for (const type of ['mouseover', 'mouseout', 'mouseup']) {
+		addListener(wrapper, type, (event) => {
+			event.stopPropagation();
+		});
+	}
 	
 	for (const value of node.options as Array<string>) {
 		const container = document.createElement('div');
@@ -122,38 +118,42 @@ export function generate(node: Child) {
 		
 		option.innerText = value;
 		
-		container.classList.add(OPTION_CONTAINER_CLASS);
-		option.classList.add(OPTION_CLASS);
-		background.classList.add(OPTION_BACKGROUND_CLASS);
+		container.classList.add(DROPDOWN_CONTAINER_CLASS);
+		option.classList.add(DROPDOWN_CLASS);
+		background.classList.add(DROPDOWN_BACKGROUND_CLASS);
 		
 		container.append(background, option);
 		parent.appendChild(container);
 		
-		container.addEventListener('mousedown', (event) => {
+		activeOptions.push(option);
+		
+		addListener(container, 'mousedown', (event) => {
 			event.stopPropagation();
 			event.preventDefault();
 		});
 		
-		container.addEventListener('click', (event) => {
+		addListener(container, 'click', async (event) => {
 			event.stopPropagation();
 			
-			setValue(node, value);
+			await setValue(node, value);
+			
+			node.element.headContainer.focus();
 		});
 		
-		container.addEventListener('mouseenter', (event) => {
+		addListener(container, 'mouseenter', (event) => {
 			event.stopPropagation();
 			
 			setActive(container);
 		});
 		
-		container.addEventListener('mouseleave', (event) => {
+		addListener(container, 'mouseleave', (event) => {
 			event.stopPropagation();
 			
 			setActive(container, false);
 		});
 	}
 	
-	node.element.contrast.valueElement.addEventListener('keydown', (event) => {
+	addListener(node.element.contrast.valueElement, 'keydown', (event: KeyboardEvent) => {
 		const priorIndex = activeIndex;
 		
 		let hasChanged = false;
@@ -162,8 +162,8 @@ export function generate(node: Child) {
 			case 'Tab':
 			case 'Enter':
 				if (activeIndex >= 0) {
-					event.stopImmediatePropagation();
-					event.preventDefault();
+					// event.stopImmediatePropagation();
+					// event.preventDefault();
 					
 					setValue(node, activeOptions[activeIndex].innerText);
 				}
@@ -173,7 +173,7 @@ export function generate(node: Child) {
 				for (let i = activeIndex + 1; i < activeOptions.length; ++i) {
 					const {parentElement} = activeOptions[i];
 					
-					if (parentElement.classList.contains(OPTION_SHOW_CLASS)) {
+					if (parentElement.classList.contains(DROPDOWN_SHOW_CLASS)) {
 						activeIndex = i;
 						hasChanged = true;
 						
@@ -185,8 +185,8 @@ export function generate(node: Child) {
 						
 						const totalOffsetTop = getTotalOffsetTop(parentElement);
 						
-						if (scrollElement.scrollTop + scrollElement.clientHeight < totalOffsetTop + parentElement.clientHeight - parentElement.parentElement.scrollTop) {
-							scrollElement.scrollTop = totalOffsetTop + parentElement.clientHeight - scrollElement.clientHeight - parentElement.parentElement.scrollTop;
+						if (scrollElement.scrollTop + scrollElement.clientHeight < totalOffsetTop - parentElement.parentElement.scrollTop) {
+							scrollElement.scrollTop = totalOffsetTop - scrollElement.clientHeight - parentElement.parentElement.scrollTop;
 						}
 						
 						break;
@@ -198,7 +198,7 @@ export function generate(node: Child) {
 				for (let i = activeIndex - 1; i >= 0; --i) {
 					const {parentElement} = activeOptions[i];
 					
-					if (parentElement.classList.contains(OPTION_SHOW_CLASS)) {
+					if (parentElement.classList.contains(DROPDOWN_SHOW_CLASS)) {
 						activeIndex = i;
 						hasChanged = true;
 						
@@ -207,7 +207,7 @@ export function generate(node: Child) {
 							parentElement.parentElement.scrollTop = parentElement.offsetTop;
 						}
 						
-						const totalOffsetTop = getTotalOffsetTop(parentElement);
+						const totalOffsetTop = getTotalOffsetTop(parentElement, false);
 						
 						// Scroll modal body if necessary
 						if (scrollElement.scrollTop > totalOffsetTop - parentElement.parentElement.scrollTop) {
@@ -244,12 +244,12 @@ export function generate(node: Child) {
 		const {parentElement} = activeOptions[activeIndex];
 		
 		setActive(parentElement);
-	});
+	}, true);
 	
-	wrapper.classList.add(OPTION_WRAPPER_CLASS);
-	parent.classList.add(OPTION_PARENT_CLASS);
+	wrapper.classList.add(DROPDOWN_WRAPPER_CLASS);
+	parent.classList.add(DROPDOWN_PARENT_CLASS);
 	
 	wrapper.appendChild(parent);
 	
-	node.element.contrast.valueContainer.appendChild(wrapper);
+	return wrapper;
 }

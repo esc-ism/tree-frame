@@ -3,7 +3,7 @@ import {
 	BACKGROUND_CLASS,
 } from './consts';
 
-import {kill as killTooltip} from '../tooltip';
+import {kill as killTooltip} from '../overlays/tooltip';
 import {isActive as positionIsActive} from '../buttons/position';
 import {addSustained, removeSustained} from '../highlight';
 import {scroll} from '../scroll';
