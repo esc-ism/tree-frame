@@ -108,6 +108,7 @@ function applyPosition(basicPositions, stickyPositions, nodeHeight, isAbove, con
 	let target;
 	
 	if (isAbove) {
+		tooltipElement.style.removeProperty('transform');
 		tooltipElement.style.top = `${scrollElement.clientHeight - tooltipElement.clientHeight}px`;
 		
 		basicPositions[0].container.appendChild(tooltipElement);
@@ -147,6 +148,10 @@ function applyPosition(basicPositions, stickyPositions, nodeHeight, isAbove, con
 		stickyPositions[index].container.append(target, tooltipElement);
 		
 		return [stickyPositions[index].container];
+	}
+	
+	if (stickyPositions[1].start < scrollElement.scrollTop) {
+		tooltipElement.style.transform = `translateY(${(scrollElement.scrollTop - stickyPositions[1].start)}px)`;
 	}
 	
 	stickyPositions[index].container.appendChild(target);
