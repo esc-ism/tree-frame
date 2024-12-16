@@ -107,8 +107,9 @@ function applyPosition(basicPositions, stickyPositions, nodeHeight, isAbove, con
 	const containers = [];
 	let target;
 	
+	tooltipElement.style.removeProperty('transform');
+	
 	if (isAbove) {
-		tooltipElement.style.removeProperty('transform');
 		tooltipElement.style.top = `${scrollElement.clientHeight - tooltipElement.clientHeight}px`;
 		
 		basicPositions[0].container.appendChild(tooltipElement);
@@ -150,7 +151,7 @@ function applyPosition(basicPositions, stickyPositions, nodeHeight, isAbove, con
 		return [stickyPositions[index].container];
 	}
 	
-	if (stickyPositions[1].start < scrollElement.scrollTop) {
+	if (dropdownElement && stickyPositions[1].start < scrollElement.scrollTop) {
 		tooltipElement.style.transform = `translateY(${(scrollElement.scrollTop - stickyPositions[1].start)}px)`;
 	}
 	
