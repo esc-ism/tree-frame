@@ -19,6 +19,7 @@ export default function generate() {
 		['overflow-x', 'scroll'],
 		['scrollbar-width', 'none'],
 		['overscroll-behavior', 'contain'],
+		['border-left', '2px solid var(--headContrast)'],
 	]);
 	
 	addRule([
@@ -27,7 +28,7 @@ export default function generate() {
 		`${ACTIVE_SELECTOR} > svg`,
 	], ['background-color', `var(--headContrast)`]);
 	
-	addRule(`.${BUTTON_CLASS}`, ['border-left', '2px solid var(--headContrast)']);
+	addRule(`.${BUTTON_CLASS}:not(:last-child)`, ['border-left', '2px solid var(--headContrast)']);
 	
 	addRule([
 		`.${BUTTON_CLASS}:not(:first-child):focus`,
