@@ -16,7 +16,7 @@ const resetCallbacks: Array<() => void> = [];
 
 let activeIndex: number = -1;
 
-function getTotalOffsetTop(target: HTMLElement, includeHeight = true): number {
+function getTop(target: HTMLElement, includeHeight = true): number {
 	const scrollRect = scrollElement.getBoundingClientRect();
 	const targetRect = target.getBoundingClientRect();
 	
@@ -61,11 +61,11 @@ export function update(value: Value) {
 	}
 	
 	const [{parentElement: {parentElement: wrapper}}] = activeOptions;
-	const totalOffsetTop = getTotalOffsetTop(wrapper);
+	const top = getTop(wrapper);
 	
 	// todo remove? seems pointless
-	if (scrollElement.scrollTop + scrollElement.clientHeight < totalOffsetTop) {
-		scrollElement.scrollTop = totalOffsetTop - scrollElement.clientHeight;
+	if (scrollElement.scrollTop + scrollElement.clientHeight < top) {
+		scrollElement.scrollTop = top - scrollElement.clientHeight;
 	}
 	
 	deselect();
@@ -162,10 +162,11 @@ export function generate(node: Child) {
 			case 'Tab':
 			case 'Enter':
 				if (activeIndex >= 0) {
-					// event.stopImmediatePropagation();
-					// event.preventDefault();
+					event.stopPropagation();
+					event.preventDefault();
 					
-					setValue(node, activeOptions[activeIndex].innerText);
+					setValue(node, activeOptions[activeIndex].innerText)
+						.then(() => node.element.headContainer.focus());
 				}
 				
 				return;
@@ -183,10 +184,10 @@ export function generate(node: Child) {
 							parentElement.parentElement.scrollTop = optionBottom - parentElement.parentElement.clientHeight;
 						}
 						
-						const totalOffsetTop = getTotalOffsetTop(parentElement);
+						const top = getTop(parentElement);
 						
-						if (scrollElement.scrollTop + scrollElement.clientHeight < totalOffsetTop - parentElement.parentElement.scrollTop) {
-							scrollElement.scrollTop = totalOffsetTop - scrollElement.clientHeight - parentElement.parentElement.scrollTop;
+						if (scrollElement.scrollTop + scrollElement.clientHeight < top - parentElement.parentElement.scrollTop) {
+							scrollElement.scrollTop = top - scrollElement.clientHeight - parentElement.parentElement.scrollTop;
 						}
 						
 						break;
@@ -207,11 +208,11 @@ export function generate(node: Child) {
 							parentElement.parentElement.scrollTop = parentElement.offsetTop;
 						}
 						
-						const totalOffsetTop = getTotalOffsetTop(parentElement, false);
+						const top = getTop(parentElement, false);
 						
 						// Scroll modal body if necessary
-						if (scrollElement.scrollTop > totalOffsetTop - parentElement.parentElement.scrollTop) {
-							scrollElement.scrollTop = totalOffsetTop - parentElement.parentElement.scrollTop;
+						if (scrollElement.scrollTop > top - parentElement.parentElement.scrollTop) {
+							scrollElement.scrollTop = top - parentElement.parentElement.scrollTop;
 						}
 						
 						break;
