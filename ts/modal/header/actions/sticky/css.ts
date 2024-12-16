@@ -9,22 +9,41 @@ import {ROOT_ID as DATA_ID} from '@/modal/body/data/consts';
 import {ROOT_ID as STYLE_ID} from '@/modal/body/style/consts';
 import {MODAL_BODY_ID} from '@/modal/body/consts';
 
-import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '@nodes/consts';
+import {ELEMENT_CLASSES} from '@nodes/consts';
 import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from '@nodes/actions/focus/consts';
 
 import type {Root as _ROOT, Middle as _MIDDLE, Leaf as _LEAF} from '@types';
 
-// todo isn't considering things being moved via poolId
-function getHeight(node: _ROOT | _MIDDLE | _LEAF): number {
+function _getHeight(node: _ROOT | _MIDDLE | _LEAF, pools, depth = 0) {
+	if ('poolId' in node) {
+		if (!pools[node.poolId]) {
+			pools[node.poolId] = [depth, 1];
+		} else {
+			pools[node.poolId][0] = Math.max(pools[node.poolId][0], depth);
+		}
+		
+		pools[node.poolId][1] = [...node.children, ...('seed' in node ? [node.seed] : [])]
+			.reduce((height, child) => Math.max(_getHeight(child, pools, 1), height), pools[node.poolId][1]);
+		
+		return 0;
+	}
+	
 	if ('seed' in node) {
-		return getHeight(node.seed) + 1;
+		return _getHeight(node.seed, pools, depth + 1);
 	}
 	
 	if ('children' in node) {
-		return node.children.reduce((height, child) => Math.max(getHeight(child), height), 0) + 1;
+		return node.children.reduce((height, child) => Math.max(_getHeight(child, pools, depth + 1), height), depth + 1);
 	}
 	
-	return 0;
+	return depth;
+}
+
+function getHeight(node: _ROOT | _MIDDLE | _LEAF): number {
+	const pools = [];
+	const height = _getHeight(node, pools);
+	
+	return pools.reduce((max, [poolDepth, poolHeight]) => Math.max(max, poolDepth + poolHeight), height);
 }
 
 export default function generate(roots) {
