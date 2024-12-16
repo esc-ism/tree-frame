@@ -8,7 +8,7 @@ import type {
 	ContrastMethod,
 	DefaultStyle, UserStyle,
 	// TODO Change all type imports to this format
-	Leaf as _Leaf, Middle as _Middle,
+	Middle as _Middle,
 } from '@types';
 import {CONTRAST_METHODS} from '@types';
 
