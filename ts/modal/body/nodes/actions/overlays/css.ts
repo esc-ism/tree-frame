@@ -19,7 +19,6 @@ export default function generate() {
 	addRule(`.${CONTAINER_CLASS} > *`, [
 		['position', 'absolute'],
 		['width', 'inherit'],
-		['outline', '2px solid yellow'],
 		['display', 'flex'],
 		['flex-direction', 'column'],
 		['align-items', 'center'],
