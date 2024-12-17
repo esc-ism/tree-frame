@@ -1,46 +1,10 @@
-import {BASE_CLASS, ELEMENT_CLASSES, CHECKBOX_WRAPPER_CLASS, ROOT_CLASS} from './consts';
-
-import {FOCUS_SOURCE_CLASS} from './actions/focus/consts';
-import {CLASS_PREFIX_READ, CLASS_PREFIX_WRITE} from './actions/hide/consts';
-import {DISABLED_CLASS} from './actions/buttons/disable/consts';
-
-import {ACTION_ID as CLASS_DISABLED_HIDE} from '@/modal/header/actions/hide/consts';
+import {NODE_HEIGHT} from '@/modal/consts';
+import {
+	BASE_CLASS, CHECKBOX_WRAPPER_CLASS, ROOT_CLASS, MIDDLE_CLASS,
+	ELEMENT_CLASSES, NODE_COLOURS,
+} from './consts';
 
 import {addRule} from '@/modal/css';
-
-function getHideIdSet(node, set = new Set()) {
-	if ('hideId' in node) {
-		set.add(node.hideId);
-	}
-	
-	if ('seed' in node) {
-		getHideIdSet(node.seed, set);
-		
-		if (!('poolId' in node)) {
-			return set;
-		}
-	}
-	
-	if ('children' in node) {
-		for (const child of node.children) {
-			getHideIdSet(child, set);
-		}
-	}
-	
-	return set;
-}
-
-export function generateHiddenCSS(roots) {
-	for (const [id, root] of Object.entries(roots)) {
-		let visibleChildSelector = `:not(.${DISABLED_CLASS}:not(.${CLASS_DISABLED_HIDE} *))`;
-		
-		for (const hideId of getHideIdSet(root).values()) {
-			visibleChildSelector += `:not(.${CLASS_PREFIX_WRITE}${hideId} .${CLASS_PREFIX_READ}${hideId})`;
-		}
-		
-		addRule(`#${id} .${ELEMENT_CLASSES.CHILD_CONTAINER}:not(.${FOCUS_SOURCE_CLASS} > * *):has(> ${visibleChildSelector})`, ['margin-top', '0.6px']);
-	}
-}
 
 export default function generate() {
 	addRule(`.${ROOT_CLASS}`, [
@@ -117,8 +81,21 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
 		['background-color', 'inherit'],
 		['user-select', 'none'],
-		['height', '1.6em'],
+		['height', `${NODE_HEIGHT}em`],
 	]);
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, ['height', '100%']);
+	
+	for (const [selector, base, contrast] of NODE_COLOURS) {
+		addRule(selector, [
+			['background-color', base],
+			['color', contrast],
+		]);
+		
+		addRule(`${selector}:not(.${ROOT_CLASS})`, ['border-top', `1px solid ${contrast}`]);
+		addRule(`.${MIDDLE_CLASS} ${selector}`, ['border-left', `1px solid ${contrast}`]);
+		addRule(`${selector}.${ROOT_CLASS}`, ['border-bottom', `1px solid ${contrast}`]);
+		
+		addRule(`${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, ['outline', `1px solid ${contrast}`]);
+	}
 }

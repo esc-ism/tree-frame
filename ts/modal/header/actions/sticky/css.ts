@@ -12,6 +12,8 @@ import {MODAL_BODY_ID} from '@/modal/body/consts';
 import {ELEMENT_CLASSES} from '@nodes/consts';
 import {FOCUS_SOURCE_CLASS, FOCUS_CLASS} from '@nodes/actions/focus/consts';
 
+import {NODE_HEIGHT, SUB_PIXEL_BS} from '@/modal/consts';
+
 import type {Root as _ROOT, Middle as _MIDDLE, Leaf as _LEAF} from '@types';
 
 function _getHeight(node: _ROOT | _MIDDLE | _LEAF, pools, depth = 0) {
@@ -63,7 +65,7 @@ export default function generate(roots) {
 	for (let depth = 0; depth <= maxHeight; ++depth) {
 		addRule(`${nodeSelector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, [
 			['position', 'sticky'],
-			['top', `calc(${depth * 1.6}em + ${depth * 0.6}px)`],
+			['top', `calc(${depth * NODE_HEIGHT}em + ${depth * SUB_PIXEL_BS}px)`],
 			['z-index', `${maxHeight - depth}`],
 		]);
 		
@@ -89,8 +91,8 @@ export default function generate(roots) {
 	
 	for (const [id, height] of Object.entries(heights)) {
 		for (let depth = 1; depth <= height + 1; ++depth) {
-			addRule(`${selectors.basic[id]}:empty)::after`, ['height', `calc(100% - ${(depth - 1) * 0.6}px - ${depth * 1.6}em + 1px)`]);
-			addRule(`${selectors.focus[id]}.${FOCUS_SOURCE_CLASS})::after`, ['height', `calc(100% - ${depth * 0.6}px - ${(depth + 1) * 1.6}em + 1px)`]);
+			addRule(`${selectors.basic[id]}:empty)::after`, ['height', `calc(100% - ${(depth) * SUB_PIXEL_BS}px - ${depth * NODE_HEIGHT}em)`]);
+			addRule(`${selectors.focus[id]}.${FOCUS_SOURCE_CLASS})::after`, ['height', `calc(100% - ${(depth + 1) * SUB_PIXEL_BS}px - ${(depth + 1) * NODE_HEIGHT}em)`]);
 			
 			selectors.basic[id] += ` > :last-child > .${ELEMENT_CLASSES.CHILD_CONTAINER}`;
 			selectors.focus[id] += ` > .${ELEMENT_CLASSES.CHILD_CONTAINER} > *`;

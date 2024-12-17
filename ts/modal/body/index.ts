@@ -12,7 +12,6 @@ import Root from './nodes/root';
 import {BUTTON_ACTIVE_CLASS} from '../consts';
 
 import generateStickyCSS from '@/modal/header/actions/sticky/css';
-import {generateHiddenCSS} from './nodes/css';
 
 import type {Page, Root as _Root} from '@types';
 
@@ -74,7 +73,6 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 	onMountActive();
 	
 	generateStickyCSS(ROOTS);
-	generateHiddenCSS(ROOTS);
 	
 	return element;
 }

@@ -8,6 +8,8 @@ import {element as scrollElement} from '@/modal/body';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
+import {SUB_PIXEL_BS} from '@/modal/consts';
+
 function getLastDescendant(node: Root | Child, isFocus = _isFocus()): Child {
 	if ('children' in node && node.children.length > 0 && (!isFocus || node.element.hasClass(FOCUS_CLASS))) {
 		return getLastDescendant(node.children[node.children.length - 1], isFocus);
@@ -32,7 +34,7 @@ export function getStickyScroll(node: Root | Child, alignToTop: boolean = true):
 	return Math.ceil(firstChild.element.headContainer.getBoundingClientRect().top
 		- root.element.headContainer.getBoundingClientRect().top
 		+ scrollElement.scrollTop
-		- (height + 0.6) * depth);
+		- (height + SUB_PIXEL_BS) * depth);
 }
 
 export function stickyScroll(node: Root | Child, doSnap: boolean = true, alignToTop: boolean = true) {
