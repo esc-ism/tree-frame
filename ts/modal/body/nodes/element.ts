@@ -5,7 +5,7 @@ import type {Child as _Child} from '@types';
 type ValueElements = {
 	readonly container: HTMLElement;
 	readonly valueContainer?: HTMLElement;
-	readonly valueElement?: HTMLInputElement;
+	valueElement?: HTMLInputElement;
 };
 
 export default class Element {

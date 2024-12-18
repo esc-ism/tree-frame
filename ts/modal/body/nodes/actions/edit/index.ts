@@ -22,12 +22,23 @@ export function isActive(): boolean {
 	return Boolean(activeNode);
 }
 
+function clearUndoStack() {
+	const elements = activeNode.element.contrast;
+	const copy = elements.valueElement.cloneNode(true) as HTMLInputElement;
+	
+	elements.valueElement.replaceWith(copy);
+	
+	elements.valueElement = copy;
+}
+
 export function reset() {
 	if (!activeNode) {
 		return;
 	}
 	
 	const {element} = activeNode;
+	
+	clearUndoStack();
 	
 	activeNode.value = activeNode.lastAcceptedValue;
 	
