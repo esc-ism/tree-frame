@@ -56,6 +56,16 @@ export default function generate() {
 	for (const [selector, base, contrast] of NODE_COLOURS) {
 		const headSelector = `${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`;
 		
+		// focus indicator
+		addRule(`:not(.${HIGHLIGHT_CLASS})${headSelector}:focus::after`, [
+			['content', '\'\''],
+			['position', 'absolute'],
+			['right', '0'],
+			['height', '100%'],
+			['width', '4px'],
+			['background-color', contrast],
+		]);
+		
 		addRule(
 			`${headSelector} .${HIGHLIGHT_BACKGROUND_CLASS}`,
 			['background-color', contrast],
