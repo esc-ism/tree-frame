@@ -3,7 +3,7 @@ import {BUTTON_PARENT, BUTTON_SIBLING} from './button';
 
 import {addActionButton} from '../button';
 
-import {focus, focusBranch, reset as resetFocus, setTabIndexes} from '../../focus';
+import {focus, focusBranch, reset as resetFocus} from '../../focus';
 import {addSustained, removeSustained} from '../../highlight';
 
 import type Root from '@nodes/root';
@@ -47,13 +47,7 @@ function setActive(doActivate: boolean = true) {
 	focus(doActivate, origin.source, false);
 	focusBranch(doActivate, origin.source, doActivate);
 	
-	if (doActivate) {
-		setTabIndexes(false, origin.source);
-		
-		origin.button.setAttribute('tabindex', '0');
-	} else {
-		origin.button.setAttribute('tabindex', '-1');
-	}
+	origin.button.setAttribute('tabindex', doActivate ? '0' : '-1');
 	
 	origin.source.element.headContainer.focus();
 }
@@ -171,11 +165,11 @@ export function mount(source: Child | Root, child: _Child, parent: Root | Middle
 		actionId,
 	};
 	
+	setActive();
+	
 	addButtons(parent.getRoot(), actionId, callback.bind(null, source), includeSelf);
 	
 	addSustained(source);
-	
-	setActive();
 	
 	return destinations.length;
 }

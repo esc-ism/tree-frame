@@ -13,8 +13,12 @@ import Middle from '@nodes/middle';
 import Child from '@nodes/child';
 import type Root from '@nodes/root';
 
-function reset() {
+let activeNode;
+
+export function reset() {
 	position.reset();
+	
+	activeNode = undefined;
 }
 
 function getChild(node: Root | Middle): Child {
@@ -56,12 +60,20 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 }
 
 function onClick(node: Root | Middle, button: HTMLButtonElement, isAlt: boolean) {
+	if (activeNode === node) {
+		reset();
+		
+		return;
+	}
+	
 	reset();
 	
-	if (!isAlt) {
-		doAction(node, node, 0, button, false);
-	} else {
+	if (isAlt) {
+		activeNode = node;
+		
 		position.mount(node, node.seed, node, node.children, ACTION_ID, button, doAction, false);
+	} else {
+		doAction(node, node, 0, button, false);
 	}
 }
 

@@ -8,7 +8,7 @@ import {setActive, element as scrollElement} from '@/modal/body';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
 import {reset as resetEdit} from '@nodes/actions/edit';
-import {reset as resetMove} from '@nodes/actions/buttons/move';
+import {reset as resetButtons} from '@nodes/actions/buttons';
 
 let isActive = false;
 
@@ -21,10 +21,10 @@ function doAction() {
 	
 	resetFocus();
 	resetEdit();
-	resetMove();
+	resetButtons();
 	
-	// Reset tab index
-	document.body.focus();
+	// Reset tab index & highlight
+	scrollElement.focus();
 }
 
 export default function generate(): HTMLElement {

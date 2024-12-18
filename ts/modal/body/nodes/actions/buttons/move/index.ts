@@ -14,10 +14,6 @@ import type Child from '@nodes/child';
 let activeNode: Child;
 
 export function reset() {
-	if (!activeNode) {
-		return;
-	}
-	
 	position.reset();
 	
 	activeNode = undefined;
@@ -82,19 +78,15 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	const previousNode = activeNode;
+	if (activeNode === node) {
+		reset();
+		
+		return;
+	}
 	
 	reset();
 	
-	if (!isAlt) {
-		const newIndex = node.getIndex() + 2;
-		
-		if (newIndex < node.parent.children.length + 1) {
-			doAction(node, node.parent, newIndex, button, false);
-		} else {
-			showTooltip('Node can not be moved down.', node, button.querySelector('circle'));
-		}
-	} else if (!previousNode || node !== previousNode) {
+	if (isAlt) {
 		// If the only valid target is the current parent
 		if (position.hasDestinations(node)) {
 			activeNode = node;
@@ -102,6 +94,14 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 			position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction, false);
 		} else {
 			showTooltip('No other valid locations found.', node, button.querySelector('circle'));
+		}
+	} else {
+		const newIndex = node.getIndex() + 2;
+		
+		if (newIndex < node.parent.children.length + 1) {
+			doAction(node, node.parent, newIndex, button, false);
+		} else {
+			showTooltip('Node can not be moved down.', node, button.querySelector('circle'));
 		}
 	}
 }

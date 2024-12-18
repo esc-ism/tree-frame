@@ -8,7 +8,7 @@ import {getSaveData} from '@/modal/body/data';
 import {getUserStyles} from '@/modal/body/style';
 
 import {reset as resetEdit} from '@nodes/actions/edit';
-import {reset as resetPosition} from '@nodes/actions/buttons/position';
+import {reset as resetButtons} from '@nodes/actions/buttons';
 import {reset as resetHighlight} from '@nodes/actions/highlight';
 
 let callback: Function;
@@ -22,7 +22,7 @@ export function setCallback(_callback: Function) {
 //  Prevent interaction during loading by adding a stopPropagation click listener to the foreground.
 function doAction() {
 	resetEdit();
-	resetPosition();
+	resetButtons();
 	resetHighlight();
 	
 	callback?.({...getSaveData(), styles: getUserStyles()});

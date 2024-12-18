@@ -14,10 +14,6 @@ import type Child from '@nodes/child';
 let activeNode: Child;
 
 export function reset() {
-	if (!activeNode) {
-		return;
-	}
-	
 	position.reset();
 	
 	activeNode = undefined;
@@ -63,16 +59,20 @@ function doAction(node: Child, parent, index: number, button: HTMLButtonElement)
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	const previousNode = activeNode;
+	if (activeNode === node) {
+		reset();
+		
+		return;
+	}
 	
 	reset();
 	
-	if (!isAlt) {
-		validate(getCopy(node), button, node, false);
-	} else if (!previousNode || node !== previousNode) {
+	if (isAlt) {
 		activeNode = node;
 		
 		position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction);
+	} else {
+		validate(getCopy(node), button, node, false);
 	}
 }
 
