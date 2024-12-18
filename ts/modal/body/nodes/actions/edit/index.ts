@@ -218,11 +218,11 @@ export function mount(node: Child): void {
 	}
 	
 	valueElement.addEventListener('keydown', (event) => {
+		event.stopPropagation();
+		
 		switch (event.key) {
 			case 'Enter':
 			case 'Escape':
-				event.stopPropagation();
-				
 				if (isUnresolved()) {
 					event.preventDefault();
 				} else {
