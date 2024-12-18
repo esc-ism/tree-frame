@@ -7,9 +7,8 @@ import {bindAction} from '../button';
 import {getSaveData} from '@/modal/body/data';
 import {getUserStyles} from '@/modal/body/style';
 
-import {reset as resetFocus} from '@nodes/actions/focus';
 import {reset as resetEdit} from '@nodes/actions/edit';
-import {reset as resetMove} from '@nodes/actions/buttons/move';
+import {reset as resetPosition} from '@nodes/actions/buttons/position';
 import {reset as resetHighlight} from '@nodes/actions/highlight';
 
 let callback: Function;
@@ -22,9 +21,8 @@ export function setCallback(_callback: Function) {
 //  Do the same when waiting for a config.
 //  Prevent interaction during loading by adding a stopPropagation click listener to the foreground.
 function doAction() {
-	resetFocus();
 	resetEdit();
-	resetMove();
+	resetPosition();
 	resetHighlight();
 	
 	callback?.({...getSaveData(), styles: getUserStyles()});
