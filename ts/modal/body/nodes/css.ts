@@ -1,8 +1,9 @@
-import {NODE_HEIGHT} from '@/modal/consts';
 import {
 	BASE_CLASS, CHECKBOX_WRAPPER_CLASS, ROOT_CLASS, MIDDLE_CLASS,
 	ELEMENT_CLASSES, NODE_COLOURS,
 } from './consts';
+
+import {NODE_HEIGHT, SUB_PIXEL_BS} from '@/modal/consts';
 
 import {addRule} from '@/modal/css';
 
@@ -20,6 +21,7 @@ export default function generate() {
 	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, [
 		['user-select', 'none'],
 		['position', 'relative'],
+		['border-width', `${SUB_PIXEL_BS}px`],
 	]);
 	
 	addRule([`.${ELEMENT_CLASSES.INFO_CONTAINER} > *`], [
@@ -33,7 +35,7 @@ export default function generate() {
 		['white-space', 'nowrap'],
 	]);
 	
-	addRule(`.${ELEMENT_CLASSES.INFO_CONTAINER}`, [['position', 'relative']]);
+	addRule(`.${ELEMENT_CLASSES.INFO_CONTAINER}`, ['position', 'relative']);
 	
 	addRule([`.${BASE_CLASS} > .${ELEMENT_CLASSES.VALUE_CONTAINER}`], [
 		['position', 'absolute'],
@@ -86,15 +88,17 @@ export default function generate() {
 	
 	addRule(`.${ELEMENT_CLASSES.HEAD_CONTAINER} > *`, ['height', '100%']);
 	
+	addRule(`.${ELEMENT_CLASSES.ELEMENT_CONTAINER}:not(.${ROOT_CLASS})`, ['border-top-style', 'solid']);
+	addRule(`.${MIDDLE_CLASS} .${ELEMENT_CLASSES.ELEMENT_CONTAINER}`, ['border-left-style', 'solid']);
+	addRule(`.${ROOT_CLASS}`, ['border-bottom-style', 'solid']);
+	
 	for (const [selector, base, contrast] of NODE_COLOURS) {
 		addRule(selector, [
 			['background-color', base],
 			['color', contrast],
 		]);
 		
-		addRule(`${selector}:not(.${ROOT_CLASS})`, ['border-top', `1px solid ${contrast}`]);
-		addRule(`.${MIDDLE_CLASS} ${selector}`, ['border-left', `1px solid ${contrast}`]);
-		addRule(`${selector}.${ROOT_CLASS}`, ['border-bottom', `1px solid ${contrast}`]);
+		addRule(`${selector}`, ['border-color', contrast]);
 		
 		addRule(`${selector} > .${ELEMENT_CLASSES.HEAD_CONTAINER}`, ['outline', `1px solid ${contrast}`]);
 	}
