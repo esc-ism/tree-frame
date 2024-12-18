@@ -8,8 +8,11 @@ import type Child from '@nodes/child';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
+import {element as scrollElement} from '@/modal/body';
+
+import {ELEMENT_CLASSES} from '@nodes/consts';
+
 import {getSocket, getDocument, getWindow} from '@/modal';
-import {ELEMENT_CLASSES} from '../../consts';
 
 let sustainedNodes = [];
 let activeNode: Root | Child;
@@ -142,14 +145,11 @@ function setEdge(element: HTMLElement, isStart: boolean) {
 		}
 	});
 	
-	element.addEventListener('focusin', (event) => {
-		event.stopPropagation();
-		
+	element.addEventListener('focusin', () => {
 		setActive();
 	});
 }
 
-// Prevents zipping to the end of the tree when mousing over the bottom pixel
 export function generateEave(socket: HTMLElement): HTMLElement {
 	const element = document.createElement('div');
 	
@@ -158,14 +158,35 @@ export function generateEave(socket: HTMLElement): HTMLElement {
 	setEdge(socket, true);
 	setEdge(element, false);
 	
+	socket.addEventListener('keydown', (event) => {
+		switch (event.key) {
+			case 'Home':
+				socket.focus();
+				scrollElement.scrollTop = 0;
+				break;
+			
+			case 'End':
+				element.focus();
+				scrollElement.scrollTop = scrollElement.scrollHeight;
+				break;
+			
+			case 'Backspace':
+				setActive();
+				break;
+			
+			default:
+				return;
+		}
+		
+		event.preventDefault();
+	});
+	
 	return element;
 }
 
 // Blur focused node & reset focus index
 export function reset() {
 	setActive();
-	
-	getSocket().focus();
 }
 
 export function onMount() {
@@ -187,6 +208,10 @@ export function onMount() {
 	});
 	
 	getWindow().addEventListener('blur', () => {
+		setActive();
+	});
+	
+	scrollElement.addEventListener('wheel', () => {
 		setActive();
 	});
 }
