@@ -132,20 +132,31 @@ export function shouldMount(): boolean {
 	return true;
 }
 
-// Prevents zipping to the end of the tree when mousing over the bottom pixel
-export function generateEave(): HTMLElement {
-	const element = document.createElement('div');
-	
-	element.id = EAVE_ID;
-	
+function setEdge(element: HTMLElement, isStart: boolean) {
 	element.setAttribute('tabindex', '0');
 	
 	// Prevent tabbing away from the modal
 	element.addEventListener('keydown', (event) => {
-		if (event.key === 'Tab' && !event.shiftKey && element.isSameNode(event.target as HTMLElement)) {
+		if (event.key === 'Tab' && (event.shiftKey === isStart) && element.isSameNode(event.target as HTMLElement)) {
 			event.preventDefault();
 		}
 	});
+	
+	element.addEventListener('focusin', (event) => {
+		event.stopPropagation();
+		
+		setActive();
+	});
+}
+
+// Prevents zipping to the end of the tree when mousing over the bottom pixel
+export function generateEave(socket: HTMLElement): HTMLElement {
+	const element = document.createElement('div');
+	
+	element.id = EAVE_ID;
+	
+	setEdge(socket, true);
+	setEdge(element, false);
 	
 	return element;
 }

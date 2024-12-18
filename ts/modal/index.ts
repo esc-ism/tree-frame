@@ -41,5 +41,5 @@ export default function generate(config: Page, _socket: HTMLElement, _window: Wi
 	background.append(foreground);
 	socket.append(background);
 	
-	foreground.append(generateHeader(config, background), generateBody(config), generateEave());
+	foreground.append(generateHeader(config, background), generateBody(config), generateEave(socket));
 }

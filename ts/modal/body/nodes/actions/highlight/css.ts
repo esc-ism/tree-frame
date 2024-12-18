@@ -82,6 +82,7 @@ export default function generate() {
 		['position', 'absolute'],
 		['bottom', '0'],
 		['width', '100%'],
+		// Prevents zipping to the end of the tree when mousing over the bottom pixel
 		['height', '1px'],
 		['z-index', 'var(--overlayIndex)'],
 	]);
