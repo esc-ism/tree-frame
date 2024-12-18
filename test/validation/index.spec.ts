@@ -4,7 +4,7 @@ import {VALID, INVALID} from './consts';
 
 import validate from '../../ts/library/validation';
 
-import type {Config} from '../../ts/library/validation/types';
+import type {Page} from '../../ts/library/validation/types';
 
 describe('Validation', function () {
 	// Tests pass if `validate` doesn't throw an error
@@ -23,7 +23,7 @@ describe('Validation', function () {
 	});
 	
 	describe('INVALID', function () {
-		const validConfig: Config = {
+		const validConfig: Page = {
 			title: VALID.TITLES[0],
 			defaultTree: VALID.TREES[0],
 			userStyles: VALID.USER_STYLES[0],
