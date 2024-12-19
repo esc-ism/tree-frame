@@ -23,16 +23,14 @@ export function getStickyScroll(node: Root | Child, alignToTop: boolean = true):
 	const firstChild: Root | Child = alignToTop ? node : getLastDescendant(node);
 	const {height} = node.element.headContainer.getBoundingClientRect();
 	
-	let root: Root | Child = node;
 	let depth = 0;
 	
-	while ('parent' in root) {
-		root = root.parent;
+	for (let root = node; 'parent' in root; root = root.parent) {
 		depth++;
 	}
 	
 	return Math.ceil(firstChild.element.headContainer.getBoundingClientRect().top
-		- root.element.headContainer.getBoundingClientRect().top
+		- scrollElement.getBoundingClientRect().top
 		+ scrollElement.scrollTop
 		- (height + SUB_PIXEL_BS) * depth);
 }
