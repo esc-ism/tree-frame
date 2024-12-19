@@ -63,6 +63,12 @@ export default [
 			'@stylistic/no-trailing-spaces': ['error', {skipBlankLines: true}],
 			'@stylistic/array-bracket-newline': ['error', {multiline: true}],
 			'@stylistic/array-element-newline': ['error', 'consistent'],
+			'@stylistic/padding-line-between-statements': [
+				'error',
+				{blankLine: 'always', prev: 'block-like', next: '*'},
+				{blankLine: 'always', prev: '*', next: 'block-like'},
+				{blankLine: 'any', prev: 'case', next: 'case'},
+			],
 			'indent-empty-lines/indent-empty-lines': ['error', 'tab'],
 			'no-unused-vars': 'off',
 			'@typescript-eslint/no-unused-vars': ['warn'],
