@@ -24,6 +24,64 @@ export function isActive(): boolean {
 	return Boolean(activeNode);
 }
 
+function addInputListeners(node = activeNode) {
+	const {headContainer, contrast: {valueElement}} = node.element;
+	
+	if ('listeners' in node) {
+		for (const [event, callback] of Object.entries(node.listeners)) {
+			valueElement.addEventListener(event, callback);
+		}
+	}
+	
+	if (typeof node.value === 'boolean') {
+		valueElement.addEventListener('click', (event) => {
+			event.stopPropagation();
+			
+			update();
+		});
+	} else {
+		valueElement.addEventListener('input', (event) => {
+			event.stopPropagation();
+			
+			update();
+		});
+	}
+	
+	valueElement.addEventListener('focusin', (event) => {
+		event.stopPropagation();
+		
+		if (event.relatedTarget) {
+			doAction(node);
+		}
+	});
+	
+	valueElement.addEventListener('blur', (event) => {
+		event.stopPropagation();
+		
+		if (isUnresolved()) {
+			valueElement.focus();
+			
+			return;
+		}
+		
+		reset();
+	});
+	
+	valueElement.addEventListener('keydown', (event) => {
+		event.stopPropagation();
+		
+		switch (event.key) {
+			case 'Enter':
+			case 'Escape':
+				if (isUnresolved()) {
+					event.preventDefault();
+				} else {
+					headContainer.focus();
+				}
+		}
+	});
+}
+
 function clearUndoStack() {
 	const elements = activeNode.element.contrast;
 	const copy = elements.valueElement.cloneNode(true) as HTMLInputElement;
@@ -31,6 +89,8 @@ function clearUndoStack() {
 	elements.valueElement.replaceWith(copy);
 	
 	elements.valueElement = copy;
+	
+	addInputListeners();
 }
 
 function setValue(node, value) {
@@ -138,6 +198,7 @@ export function doAction(node: Child) {
 	overlays.tooltip.kill();
 	
 	activeNode = node;
+	priorValue = node.value;
 	
 	node.element.addClass(ACTIVE_CLASS);
 	node.element.addClass(VALID_CLASS);
@@ -158,7 +219,7 @@ export function doAction(node: Child) {
 }
 
 export function mount(node: Child): void {
-	const {backgroundContainer, contrast: {valueElement, valueContainer}, headContainer} = node.element;
+	const {backgroundContainer, contrast, headContainer} = node.element;
 	
 	node.lastAcceptedValue = node.value;
 	
@@ -176,39 +237,13 @@ export function mount(node: Child): void {
 	
 	// Start
 	
-	valueElement.addEventListener('focusin', (event) => {
-		event.stopPropagation();
-		
-		if (event.relatedTarget) {
-			doAction(node);
-		}
-	});
-	
-	valueElement.addEventListener('blur', (event) => {
-		event.stopPropagation();
-		
-		if (isUnresolved()) {
-			valueElement.focus();
-			
-			return;
-		}
-		
-		reset();
-	});
-	
 	headContainer.addEventListener('click', (event) => {
 		event.stopPropagation();
 		
-		valueElement.focus();
+		contrast.valueElement.focus();
 	});
 	
 	// Process new value
-	
-	if ('listeners' in node) {
-		for (const [event, callback] of Object.entries(node.listeners)) {
-			valueElement.addEventListener(event, callback);
-		}
-	}
 	
 	if (typeof node.value === 'boolean') {
 		headContainer.addEventListener('mousedown', (event) => {
@@ -217,41 +252,17 @@ export function mount(node: Child): void {
 		});
 		
 		headContainer.addEventListener('click', () => {
-			valueElement.checked = !valueElement.checked;
+			contrast.valueElement.checked = !contrast.valueElement.checked;
 			
 			update();
 		});
 		
-		valueContainer.addEventListener('click', (event) => {
+		contrast.valueContainer.addEventListener('click', (event) => {
 			event.stopPropagation();
-		});
-		
-		valueElement.addEventListener('click', (event) => {
-			event.stopPropagation();
-			
-			update();
-		});
-	} else {
-		valueElement.addEventListener('input', (event) => {
-			event.stopPropagation();
-			
-			update();
 		});
 	}
 	
-	valueElement.addEventListener('keydown', (event) => {
-		event.stopPropagation();
-		
-		switch (event.key) {
-			case 'Enter':
-			case 'Escape':
-				if (isUnresolved()) {
-					event.preventDefault();
-				} else {
-					headContainer.focus();
-				}
-		}
-	});
+	addInputListeners(node);
 }
 
 export function shouldMount(node: Child): boolean {
