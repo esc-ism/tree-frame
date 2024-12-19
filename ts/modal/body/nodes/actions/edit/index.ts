@@ -108,7 +108,9 @@ export function reset() {
 	
 	clearUndoStack();
 	
-	if (priorValue !== activeNode.lastAcceptedValue) {
+	if (priorValue === activeNode.lastAcceptedValue) {
+		setValue(activeNode, activeNode.lastAcceptedValue);
+	} else {
 		history.register(
 			activeNode,
 			setValue.bind(null, activeNode, priorValue),
