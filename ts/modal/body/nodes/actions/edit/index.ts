@@ -182,12 +182,9 @@ export function unmount(node: Child) {
 }
 
 export function doAction(node: Child) {
-	// todo is the first condition necessary?
-	//  if so, probably shouldn't be calling showUnresolved
-	if (activeNode === node || isUnresolved()) {
+	if (isUnresolved()) {
 		overlays.showTooltip(MESSAGE_UNRESOLVED, node, node.element.contrast.valueContainer);
 		
-		// todo remove?
 		node.element.headContainer.focus();
 		
 		return;
