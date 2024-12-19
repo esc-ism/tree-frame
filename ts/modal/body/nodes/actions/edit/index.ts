@@ -108,11 +108,13 @@ export function reset() {
 	
 	clearUndoStack();
 	
-	history.register(
-		activeNode,
-		setValue.bind(null, activeNode, priorValue),
-		setValue.bind(null, activeNode, activeNode.lastAcceptedValue),
-	);
+	if (priorValue !== activeNode.lastAcceptedValue) {
+		history.register(
+			activeNode,
+			setValue.bind(null, activeNode, priorValue),
+			setValue.bind(null, activeNode, activeNode.lastAcceptedValue),
+		);
+	}
 	
 	element.removeClass(VALID_CLASS);
 	element.removeClass(INVALID_CLASS);

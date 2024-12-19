@@ -39,6 +39,16 @@ function getAncestorBranches(node: Child, copy: Child) {
 }
 
 function doAction(node: Child, newParent, index, button, doScroll: boolean = true) {
+	const priorIndex = node.getIndex();
+	
+	if (index === priorIndex) {
+		reset();
+		
+		scroll(node);
+		
+		return;
+	}
+	
 	const copy = node.duplicate();
 	
 	node.element.addClass(TEST_REMOVE_CLASS);
@@ -50,7 +60,7 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 	
 	Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
-			history.register(copy, copy.move.bind(copy, node.parent, node.getIndex()), () => copy.move(newParent, index));
+			history.register(copy, copy.move.bind(copy, node.parent, priorIndex), () => copy.move(newParent, index));
 			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
