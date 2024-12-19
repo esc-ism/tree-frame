@@ -214,21 +214,33 @@ export function update() {
 	activeListener();
 }
 
+function setTooltipMessage(message, tooltipElement = activeTooltip, container = activeContainer, isRight = true) {
+	const box = tooltipElement.querySelector(`.${TOOLTIP_BOX_CLASS}`) as HTMLElement;
+	
+	box.innerText = message;
+	
+	if (isRight) {
+		box.style.right = `${Math.max(0, box.offsetWidth / 2 - scrollElement.clientWidth + container.offsetLeft + container.clientWidth / 2)}px`;
+	} else {
+		box.style.left = `${Math.max(0, box.offsetWidth / 2 - container.offsetLeft - container.clientWidth / 2)}px`;
+	}
+}
+
 export async function showTooltip(message: string, node: Root | Child, target?: Element) {
 	if (node === activeNode) {
-		(activeTooltip.querySelector(`.${TOOLTIP_BOX_CLASS}`) as HTMLElement).innerText = message;
-		
 		// handle possible tooltip height change
 		activeListener();
+		
+		// handle possible width change
+		setTooltipMessage(message);
 		
 		return;
 	}
 	
 	const tooltipElement = tooltip.getAnimated();
-	
-	(tooltipElement.querySelector(`.${TOOLTIP_BOX_CLASS}`) as HTMLElement).innerText = message;
-	
 	const [container, listener] = generate(node, target, tooltipElement);
+	
+	setTooltipMessage(message, tooltipElement, container, false);
 	
 	await tooltip.animationEnd();
 	
