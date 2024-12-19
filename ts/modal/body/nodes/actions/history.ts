@@ -2,8 +2,6 @@ import {getStickyScroll} from './scroll';
 import {reset as resetFocus} from './focus';
 import {setActive as highlight} from './highlight';
 
-import {onceVisualsUpdate} from '../queue';
-
 import {element as scrollElement} from '@/modal/body';
 
 import {isActive as isSticky} from '@/modal/header/actions/sticky';
@@ -33,8 +31,6 @@ function show(node) {
 	}
 	
 	target.focus({preventScroll: true});
-	
-	highlight(node);
 	
 	const targetRect = target.getBoundingClientRect();
 	const scrollRect = scrollElement.getBoundingClientRect();
@@ -69,15 +65,13 @@ function act(from, to, property) {
 		
 		action[property].act();
 		
-		onceVisualsUpdate(() => {
-			show(target);
-		});
+		show(target);
 	} else {
 		action[property].act();
 		
-		onceVisualsUpdate(() => {
-			show(action.target);
-		});
+		highlight(action.target);
+		
+		show(action.target);
 	}
 	
 	to.push(action);
