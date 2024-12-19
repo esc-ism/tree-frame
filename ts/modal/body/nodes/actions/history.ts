@@ -79,9 +79,9 @@ function act(from, to, property) {
 
 export function onMount() {
 	getSocket().addEventListener('keydown', (event) => {
-		if (event.key === 'Undo' || (event.code === 'KeyZ' && event.ctrlKey)) {
+		if (event.key === 'Undo' || (event.key.toLowerCase() === 'z' && event.ctrlKey && !event.shiftKey)) {
 			act(undoStack, redoStack, 'undo');
-		} else if (event.key === 'Redo' || (event.code === 'KeyY' && event.ctrlKey)) {
+		} else if (event.key === 'Redo' || (event.key.toLowerCase() === 'y' && event.ctrlKey && !event.shiftKey)) {
 			act(redoStack, undoStack, 'redo');
 		}
 	});
