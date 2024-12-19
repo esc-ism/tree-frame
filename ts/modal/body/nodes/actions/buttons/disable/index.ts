@@ -4,6 +4,7 @@ import {BUTTON_DEFAULT as TEMPLATE_DEFAULT, BUTTON_ALT as TEMPLATE_ALT} from './
 import {addActionButton} from '../button';
 import {TEST_REMOVE_CLASS} from '../consts';
 
+import * as history from '../../history';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
@@ -32,10 +33,19 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 		.then(() => {
 			const ancestors = node.getAncestors();
 			
+			node.element.removeClass(TEST_REMOVE_CLASS);
+			
 			if (isAlt) {
-				// TODO set up a way to confirm (tooltip + yes/no buttons? require extra button click?)
-				node.disconnect();
+				history.register(node, node.attach.bind(node, node.parent, node.getIndex()), () => node.disconnect(), true, false, true);
 			} else {
+				const act = () => {
+					toggle(node);
+					
+					updateButton(button, node.isActive);
+				};
+				
+				history.register(node, act, act, false);
+				
 				updateButton(button, node.isActive);
 			}
 			

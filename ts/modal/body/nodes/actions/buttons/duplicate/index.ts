@@ -5,6 +5,7 @@ import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
+import * as history from '../../history';
 import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
@@ -22,6 +23,8 @@ export function reset() {
 function validate(copy: Child, button: HTMLButtonElement, node: Child, doScroll: boolean = true) {
 	Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
 		.then(() => {
+			history.register(copy, () => copy.disconnect(), () => copy.attach.bind(copy, copy.getIndex()), false, true);
+			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
 			reset();

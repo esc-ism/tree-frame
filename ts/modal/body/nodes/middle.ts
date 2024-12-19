@@ -54,14 +54,14 @@ export default class Middle extends Child implements _Middle {
 				action.unmount(this);
 			}
 		}
+		
+		for (const child of this.children) {
+			child.unmount();
+		}
 	}
 	
 	disconnect() {
 		this.unmount();
-		
-		for (const child of this.children) {
-			child.disconnect();
-		}
 		
 		this.detach();
 	}

@@ -5,6 +5,7 @@ import {TEST_ADD_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
+import * as history from '../../history';
 import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
@@ -37,6 +38,8 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 	
 	Promise.all(callbacks.predicate.getSub(child.getAncestors()))
 		.then(() => {
+			history.register(child, () => child.disconnect(), () => child.attach(parent, index), false, true);
+			
 			child.element.removeClass(TEST_ADD_CLASS);
 			
 			child.isActive = true;

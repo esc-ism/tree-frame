@@ -5,6 +5,7 @@ import {TEST_ADD_CLASS, TEST_REMOVE_CLASS} from '../consts';
 import {addActionButton} from '../button';
 import * as position from '../position';
 
+import * as history from '../../history';
 import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
@@ -49,6 +50,8 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 	
 	Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
+			history.register(copy, copy.move.bind(copy, node.parent, node.getIndex()), () => copy.move(newParent, index));
+			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
 			node.disconnect();

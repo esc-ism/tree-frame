@@ -6,6 +6,7 @@ import generateDataTree, {setTree} from './data';
 
 import {onMount as onMountHighlight} from './nodes/actions/highlight';
 import {onMount as onMountActive} from './nodes/actions/active';
+import {onMount as onMountHistory} from './nodes/actions/history';
 
 import Root from './nodes/root';
 
@@ -71,6 +72,7 @@ export default function generate({userTree, defaultTree, userStyles, defaultStyl
 	
 	onMountHighlight();
 	onMountActive();
+	onMountHistory();
 	
 	generateStickyCSS(ROOTS);
 	

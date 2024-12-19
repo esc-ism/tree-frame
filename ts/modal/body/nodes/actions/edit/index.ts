@@ -3,6 +3,7 @@ import {
 	VALID_BACKGROUND_CLASS, INVALID_BACKGROUND_CLASS,
 } from './consts';
 
+import * as history from '../history';
 import * as overlays from '../overlays';
 import {addSustained, removeSustained} from '../highlight';
 import callbacks from '../callbacks';
@@ -17,6 +18,7 @@ import {isUnresolved} from '@/predicate';
 import type {Value} from '@types';
 
 let activeNode: Child;
+let priorValue: Value;
 
 export function isActive(): boolean {
 	return Boolean(activeNode);
@@ -31,6 +33,12 @@ function clearUndoStack() {
 	elements.valueElement = copy;
 }
 
+function setValue(node, value) {
+	node.value = value;
+	
+	node.element.render(value);
+}
+
 export function reset() {
 	if (!activeNode) {
 		return;
@@ -40,9 +48,11 @@ export function reset() {
 	
 	clearUndoStack();
 	
-	activeNode.value = activeNode.lastAcceptedValue;
-	
-	element.render(activeNode.value);
+	history.register(
+		activeNode,
+		setValue.bind(null, activeNode, priorValue),
+		setValue.bind(null, activeNode, activeNode.lastAcceptedValue),
+	);
 	
 	element.removeClass(VALID_CLASS);
 	element.removeClass(INVALID_CLASS);
@@ -54,6 +64,7 @@ export function reset() {
 	removeSustained(activeNode);
 	
 	activeNode = undefined;
+	priorValue = undefined;
 }
 
 function getValue(node: Child): Value {

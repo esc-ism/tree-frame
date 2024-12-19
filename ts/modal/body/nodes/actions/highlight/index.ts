@@ -36,7 +36,7 @@ export function addSustained(node: Root | Child) {
 	sustainedNodes.push(node);
 }
 
-function setActive(node?: Root | Child, doFocus: boolean = false) {
+export function setActive(node?: Root | Child, doFocus: boolean = false) {
 	if (activeNode && !sustainedNodes.includes(activeNode)) {
 		activeNode.element.removeClass(HIGHLIGHT_CLASS);
 	}
@@ -56,6 +56,12 @@ function setActive(node?: Root | Child, doFocus: boolean = false) {
 		if (isSticky() && !document.hasFocus()) {
 			stickyScroll(node, false, false);
 		}
+	}
+}
+
+export function unmount(node) {
+	if (node === activeNode) {
+		node.element.headContainer.blur();
 	}
 }
 
