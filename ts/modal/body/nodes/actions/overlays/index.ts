@@ -27,6 +27,12 @@ export function reset() {
 	scrollElement.removeEventListener('scroll', activeListener);
 	
 	activeContainer.remove();
+	
+	activeContainer = undefined;
+	activeTooltip = undefined;
+	activeDropdown = undefined;
+	activeNode = undefined;
+	activeListener = undefined;
 }
 
 export function hideTooltip() {
