@@ -10,9 +10,14 @@ import {isActive as isSticky} from '@/modal/header/actions/sticky';
 
 import {SUB_PIXEL_BS} from '@/modal/consts';
 
+// specifically returns the last *visible* descendant
 function getLastDescendant(node: Root | Child, isFocus = _isFocus()): Child {
 	if ('children' in node && node.children.length > 0 && (!isFocus || node.element.hasClass(FOCUS_CLASS))) {
-		return getLastDescendant(node.children[node.children.length - 1], isFocus);
+		for (let i = node.children.length - 1; i >= 0; --i) {
+			if (node.children[i].element.elementContainer.clientHeight > 0) {
+				return getLastDescendant(node.children[i], isFocus);
+			}
+		}
 	}
 	
 	return node as Child;
