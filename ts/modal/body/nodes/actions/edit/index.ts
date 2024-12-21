@@ -68,8 +68,6 @@ function addInputListeners(node = activeNode) {
 	});
 	
 	valueElement.addEventListener('keydown', (event) => {
-		event.stopPropagation();
-		
 		switch (event.key) {
 			case 'Enter':
 			case 'Escape':
@@ -78,6 +76,12 @@ function addInputListeners(node = activeNode) {
 				} else {
 					headContainer.focus();
 				}
+			// see socket keydown listener in highlight
+			// eslint-disable-next-line no-fallthrough
+			case 'Home':
+			case 'End':
+			case 'Backspace':
+				event.stopPropagation();
 		}
 	});
 }
