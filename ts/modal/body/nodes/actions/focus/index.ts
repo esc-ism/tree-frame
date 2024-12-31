@@ -80,8 +80,6 @@ export function doAction(node: Root | Child, doForce = false) {
 	
 	reset(!toggleOn);
 	
-	active.register();
-	
 	if (toggleOn) {
 		activeNode = node;
 		

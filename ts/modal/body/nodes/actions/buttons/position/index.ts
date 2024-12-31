@@ -4,7 +4,8 @@ import {BUTTON_PARENT, BUTTON_SIBLING} from './button';
 import {addActionButton} from '../button';
 
 import {focus, focusBranch, reset as resetFocus} from '../../focus';
-import {addSustained, removeSustained} from '../../highlight';
+import {addSustained, removeSustained, setActive as highlight} from '../../highlight';
+import {scroll} from '../../scroll';
 
 import type Root from '@nodes/root';
 import type Middle from '@nodes/middle';
@@ -48,11 +49,9 @@ function setActive(doActivate: boolean = true) {
 	focusBranch(doActivate, origin.source, doActivate);
 	
 	origin.button.setAttribute('tabindex', doActivate ? '0' : '-1');
-	
-	origin.source.element.headContainer.focus();
 }
 
-export function reset() {
+export function reset(scrollTarget?: Child | Root) {
 	if (!origin) {
 		return;
 	}
@@ -68,6 +67,10 @@ export function reset() {
 	removeSustained(origin.source);
 	
 	setActive(false);
+	
+	scroll(scrollTarget ?? origin.source);
+	
+	highlight(scrollTarget ?? origin.source, true);
 	
 	origin = undefined;
 }
@@ -88,7 +91,13 @@ export function getButton(node, actionId, onClick, isParent) {
 }
 
 function getBoundCallback(callback, parent, index) {
-	return (_, button) => callback(parent, index, button);
+	return async (_, button) => {
+		const target = await callback(parent, index, button);
+		
+		if (target) {
+			reset(target);
+		}
+	};
 }
 
 function addButtons(parent: Root | Middle, actionId: string, callback: Function, includeSelf: boolean) {
@@ -172,4 +181,10 @@ export function mount(source: Child | Root, child: _Child, parent: Root | Middle
 	addSustained(source);
 	
 	return destinations.length;
+}
+
+export function unmount(node: Child | Root) {
+	if (origin && node === origin.source) {
+		reset();
+	}
 }

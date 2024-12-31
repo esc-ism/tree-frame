@@ -7,8 +7,7 @@ import {bindAction} from '../button';
 import {setActive, element as scrollElement} from '@/modal/body';
 
 import {reset as resetFocus} from '@nodes/actions/focus';
-import {reset as resetEdit} from '@nodes/actions/edit';
-import {reset as resetButtons} from '@nodes/actions/buttons';
+import {reset as resetButtons} from '@nodes/actions/buttons/position';
 
 let isActive = false;
 
@@ -20,7 +19,6 @@ function doAction() {
 	scrollElement.scrollTop = 0;
 	
 	resetFocus();
-	resetEdit();
 	resetButtons();
 	
 	// Reset tab index & highlight

@@ -6,19 +6,10 @@ import {addActionButton} from '../button';
 import * as position from '../position';
 
 import * as history from '../../history';
-import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
 import type Child from '@nodes/child';
-
-let activeNode: Child;
-
-export function reset() {
-	position.reset();
-	
-	activeNode = undefined;
-}
 
 function getAncestorBranches(node: Child, copy: Child) {
 	if (node.parent === copy.parent) {
@@ -38,15 +29,11 @@ function getAncestorBranches(node: Child, copy: Child) {
 	return [oldAncestors.slice(0, -1), newAncestors];
 }
 
-function doAction(node: Child, newParent, index, button, doScroll: boolean = true) {
+function doAction(node: Child, newParent, index, button) {
 	const priorIndex = node.getIndex();
 	
 	if (index === priorIndex) {
-		reset();
-		
-		scroll(node);
-		
-		return;
+		return node;
 	}
 	
 	const copy = node.duplicate();
@@ -58,7 +45,7 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 	
 	const ancestorBranches = getAncestorBranches(node, copy);
 	
-	Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
+	return Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
 			history.register(copy, copy.move.bind(copy, node.parent, priorIndex), () => copy.move(newParent, index));
 			
@@ -66,16 +53,11 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 			
 			node.disconnect();
 			
-			reset();
-			
-			if (doScroll) {
-				// Show where the node's been moved to
-				scroll(copy);
-			}
-			
 			for (const branch of ancestorBranches) {
 				callbacks.update.triggerSub(branch);
 			}
+			
+			return copy;
 		})
 		.catch((reason) => {
 			node.element.removeClass(TEST_REMOVE_CLASS);
@@ -91,38 +73,29 @@ function doAction(node: Child, newParent, index, button, doScroll: boolean = tru
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	if (activeNode === node) {
-		reset();
+	if (isAlt && position.hasDestinations(node)) {
+		position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction, false);
 		
 		return;
 	}
 	
-	reset();
+	position.reset(node);
 	
 	if (isAlt) {
-		// If the only valid target is the current parent
-		if (position.hasDestinations(node)) {
-			activeNode = node;
-			
-			position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction, false);
-		} else {
-			showTooltip('No other valid locations found.', node, button.querySelector('circle'));
-		}
+		showTooltip('No other valid locations found.', node, button.querySelector('circle'));
+	}
+	
+	const newIndex = node.getIndex() + 2;
+	
+	if (newIndex < node.parent.children.length + 1) {
+		doAction(node, node.parent, newIndex, button);
 	} else {
-		const newIndex = node.getIndex() + 2;
-		
-		if (newIndex < node.parent.children.length + 1) {
-			doAction(node, node.parent, newIndex, button, false);
-		} else {
-			showTooltip('Node can not be moved down.', node, button.querySelector('circle'));
-		}
+		showTooltip('Node can not be moved down.', node, button.querySelector('circle'));
 	}
 }
 
 export function unmount(node) {
-	if (activeNode && node === activeNode) {
-		reset();
-	}
+	position.unmount(node);
 }
 
 export function mount(node: Child): void {

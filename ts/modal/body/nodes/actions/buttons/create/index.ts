@@ -6,21 +6,12 @@ import {addActionButton} from '../button';
 import * as position from '../position';
 
 import * as history from '../../history';
-import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
 import Middle from '@nodes/middle';
 import Child from '@nodes/child';
 import type Root from '@nodes/root';
-
-let activeNode;
-
-export function reset() {
-	position.reset();
-	
-	activeNode = undefined;
-}
 
 function getChild(node: Root | Middle): Child {
 	const {seed} = node;
@@ -31,12 +22,12 @@ function getChild(node: Root | Middle): Child {
 	return child;
 }
 
-function doAction(source: Middle | Root, parent: Middle | Root, index: number, button: HTMLButtonElement, doScroll: boolean = true) {
+function doAction(source: Middle | Root, parent: Middle | Root, index: number, button: HTMLButtonElement) {
 	const child = getChild(source);
 	
 	child.move(parent, index);
 	
-	Promise.all(callbacks.predicate.getSub(child.getAncestors()))
+	return Promise.all(callbacks.predicate.getSub(child.getAncestors()))
 		.then(() => {
 			history.register(child, () => child.disconnect(), () => child.attach(parent, index), false, true);
 			
@@ -44,14 +35,9 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 			
 			child.isActive = true;
 			
-			reset();
-			
-			if (doScroll) {
-				// Show the new node
-				scroll(child);
-			}
-			
 			callbacks.update.triggerSub(child.getAncestors());
+			
+			return child;
 		})
 		.catch((reason) => {
 			child.disconnect();
@@ -63,21 +49,17 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 }
 
 function onClick(node: Root | Middle, button: HTMLButtonElement, isAlt: boolean) {
-	if (activeNode === node) {
-		reset();
-		
-		return;
-	}
-	
-	reset();
-	
 	if (isAlt) {
-		activeNode = node;
-		
 		position.mount(node, node.seed, node, node.children, ACTION_ID, button, doAction, false);
 	} else {
-		doAction(node, node, 0, button, false);
+		position.reset(node);
+		
+		doAction(node, node, 0, button);
 	}
+}
+
+export function unmount(node) {
+	position.unmount(node);
 }
 
 export function mount(node: Root | Middle): void {

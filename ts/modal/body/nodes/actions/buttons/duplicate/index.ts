@@ -6,35 +6,21 @@ import {addActionButton} from '../button';
 import * as position from '../position';
 
 import * as history from '../../history';
-import {scroll} from '../../scroll';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
 import type Child from '@nodes/child';
 
-let activeNode: Child;
-
-export function reset() {
-	position.reset();
-	
-	activeNode = undefined;
-}
-
-function validate(copy: Child, button: HTMLButtonElement, node: Child, doScroll: boolean = true) {
-	Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
+function validate(copy: Child, button: HTMLButtonElement, node: Child) {
+	return Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
 		.then(() => {
 			history.register(copy, () => copy.disconnect(), () => copy.attach.bind(copy, copy.getIndex()), false, true);
 			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
-			reset();
-			
-			if (doScroll) {
-				// Show the new node
-				scroll(copy);
-			}
-			
 			callbacks.update.triggerSub(copy.getAncestors());
+			
+			return copy;
 		})
 		.catch((reason) => {
 			copy.disconnect();
@@ -62,20 +48,12 @@ function doAction(node: Child, parent, index: number, button: HTMLButtonElement)
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	if (activeNode === node) {
-		reset();
-		
-		return;
-	}
-	
-	reset();
-	
 	if (isAlt) {
-		activeNode = node;
-		
 		position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction);
 	} else {
-		validate(getCopy(node), button, node, false);
+		position.reset(node);
+		
+		validate(getCopy(node), button, node);
 	}
 }
 

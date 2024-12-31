@@ -27,8 +27,6 @@ export function addActionButton(template: HTMLButtonElement, onClick: Function, 
 			return;
 		}
 		
-		active.register();
-		
 		killTooltip();
 		
 		if (event.ctrlKey) {
