@@ -38,7 +38,7 @@ function show(node) {
 	const top = isSticky() ? getStickyScroll(node) : (targetRect.top - scrollRect.top + scrollElement.scrollTop);
 	
 	if (top < scrollElement.scrollTop) {
-		scrollElement.scrollTo({top: top, behavior: 'smooth'});
+		scrollElement.scrollTo({top: top});
 		
 		return;
 	}
@@ -46,7 +46,7 @@ function show(node) {
 	const bottom = targetRect.top - scrollRect.top + scrollElement.scrollTop + targetRect.height - scrollElement.clientHeight;
 	
 	if (bottom > scrollElement.scrollTop) {
-		scrollElement.scrollTo({top: bottom, behavior: 'smooth'});
+		scrollElement.scrollTo({top: bottom});
 	}
 }
 
