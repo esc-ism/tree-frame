@@ -58,10 +58,6 @@ function onClick(node: Root | Middle, button: HTMLButtonElement, isAlt: boolean)
 	}
 }
 
-export function unmount(node) {
-	position.unmount(node);
-}
-
 export function mount(node: Root | Middle): void {
 	addActionButton(TEMPLATE, onClick, node);
 }

@@ -94,10 +94,6 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 	}
 }
 
-export function unmount(node) {
-	position.unmount(node);
-}
-
 export function mount(node: Child): void {
 	addActionButton(BUTTON, onClick, node);
 }

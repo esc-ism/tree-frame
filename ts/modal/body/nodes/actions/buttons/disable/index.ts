@@ -3,6 +3,7 @@ import {BUTTON_DEFAULT as TEMPLATE_DEFAULT, BUTTON_ALT as TEMPLATE_ALT} from './
 
 import {addActionButton} from '../button';
 import {TEST_REMOVE_CLASS} from '../consts';
+import * as position from '../position';
 
 import * as history from '../../history';
 import callbacks from '../../callbacks';
@@ -25,6 +26,8 @@ function toggle(node: Child) {
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 	if (isAlt) {
 		node.element.addClass(TEST_REMOVE_CLASS);
+		
+		position.reset(node);
 	} else {
 		toggle(node);
 	}

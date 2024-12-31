@@ -182,9 +182,3 @@ export function mount(source: Child | Root, child: _Child, parent: Root | Middle
 	
 	return destinations.length;
 }
-
-export function unmount(node: Child | Root) {
-	if (origin && node === origin.source) {
-		reset();
-	}
-}
