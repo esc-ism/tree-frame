@@ -69,6 +69,16 @@ function addInputListeners(node = activeNode) {
 	
 	valueElement.addEventListener('keydown', (event) => {
 		switch (event.key) {
+			// see socket keydown listener in history
+			case 'z':
+			case 'Z':
+			case 'y':
+			case 'Y':
+				if (event.ctrlKey && !event.shiftKey) {
+					event.stopPropagation();
+				}
+				
+				return;
 			case 'Enter':
 			case 'Escape':
 				if (isUnresolved()) {
@@ -76,6 +86,9 @@ function addInputListeners(node = activeNode) {
 				} else {
 					headContainer.focus();
 				}
+			// eslint-disable-next-line no-fallthrough
+			case 'Undo':
+			case 'Redo':
 			// see socket keydown listener in highlight
 			// eslint-disable-next-line no-fallthrough
 			case 'Home':
