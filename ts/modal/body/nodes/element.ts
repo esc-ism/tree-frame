@@ -77,6 +77,13 @@ export default class Element {
 			field.valueElement = document.createElement('input');
 			
 			field.valueElement.classList.add(ELEMENT_CLASSES.VALUE);
+			
+			if ('inputAttributes' in data) {
+				for (const [key, value] of Object.entries(data.inputAttributes)) {
+					field.valueElement.setAttribute(key, value);
+				}
+			}
+			
 			field.valueElement.setAttribute('tabindex', '-1');
 			
 			if (typeof data.value === 'boolean') {

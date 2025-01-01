@@ -69,6 +69,9 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 			throw new ValueError([...breadcrumbs, 'input'], candidate.input, INPUT_FORMATS);
 	}
 	
+	if (hasDependee(breadcrumbs, candidate, 'inputAttributes', 'value') && typeof candidate.inputAttributes !== 'object')
+		throw new TypeError([...breadcrumbs, 'inputAttributes'], typeof candidate.inputAttributes, ['object']);
+	
 	if (hasOwnProperty(candidate, 'get') && typeof candidate.get !== 'function')
 		throw new TypeError([...breadcrumbs, 'get'], typeof candidate.get, ['function']);
 	
