@@ -1,6 +1,5 @@
 import {BUTTON_CLASS} from './consts';
 
-import * as active from '../active';
 import {kill as killTooltip} from '../overlays/tooltip';
 import {showTooltip} from '../overlays';
 import {MESSAGE_UNRESOLVED} from '../overlays/tooltip/consts';

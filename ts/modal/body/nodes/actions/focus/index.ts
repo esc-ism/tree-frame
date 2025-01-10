@@ -7,7 +7,6 @@ import {kill as killTooltip} from '../overlays/tooltip';
 import {isActive as positionIsActive} from '../buttons/position';
 import {addSustained, removeSustained} from '../highlight';
 import {scroll} from '../scroll';
-import * as active from '../active';
 
 import type Root from '@nodes/root';
 import type Child from '@nodes/child';
