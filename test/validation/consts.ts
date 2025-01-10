@@ -196,25 +196,7 @@ export const VALID: Configs = {
 		})(),
 	],
 	USER_STYLES: [[]],
-	DEV_STYLES: [
-		{
-			fontSize: 18,
-			headBase: '#ff0000',
-			headButtonExit: '#000000',
-			headButtonLabel: '#2432ff',
-			headButtonStyle: '#ffd500',
-			headContrast: 'Black / White',
-			validBackground: '#d9ffc0',
-			invalidBackground: '#ffb4be',
-			borderModal: '#ffffff',
-			nodeBase: ['#e8e8e8', '#ffffff'],
-			nodeButtonCreate: '#a000cc',
-			nodeButtonMove: '#00a0d1',
-			nodeButtonDelete: '#d10000',
-			nodeContrast: 'Black / White',
-			borderTooltip: '#570000',
-		},
-	],
+	DEV_STYLES: [],
 };
 
 for (const {title, defaultTree, defaultStyle} of [CONFIG_0, CONFIG_1, CONFIG_2]) {
