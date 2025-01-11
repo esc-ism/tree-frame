@@ -21,7 +21,7 @@ const outline = document.createElementNS(SVG_NAMESPACE, 'path');
 
 outline.setAttribute('stroke-linecap', 'round');
 outline.setAttribute('stroke-width', '7');
-outline.setAttribute('d', points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x},${y}`).join());
+outline.setAttribute('d', points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`).join(' '));
 
 const g = document.createElementNS(SVG_NAMESPACE, 'g');
 

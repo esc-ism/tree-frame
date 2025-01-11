@@ -9,8 +9,8 @@ const edgeTop = document.createElementNS(SVG_NAMESPACE, 'path');
 edgeTop.setAttribute('stroke-linecap', 'round');
 edgeTop.setAttribute('stroke-width', '7');
 edgeTop.setAttribute('d',
-	'M -55, 0'
-	+ 'Q 0,60 55,0',
+	'M -55 0'
+	+ ' Q 0 60 55 0',
 );
 edgeTop.setAttribute('fill', 'none');
 

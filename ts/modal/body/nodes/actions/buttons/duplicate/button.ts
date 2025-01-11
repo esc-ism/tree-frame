@@ -15,11 +15,11 @@ outline0.setAttribute('stroke-width', '8');
 outline0.setAttribute('fill', 'none');
 outline0.setAttribute('d',
 	`M ${WIDTH / 2 + RADIUS} ${-HEIGHT / 2}`
-	+ `q 0,-${RADIUS} -${RADIUS},-${RADIUS}`
+	+ `q 0 -${RADIUS} -${RADIUS} -${RADIUS}`
 	+ `h -${WIDTH}`
-	+ `q -${RADIUS},0 -${RADIUS},${RADIUS}`
+	+ `q -${RADIUS} 0 -${RADIUS} ${RADIUS}`
 	+ `v ${HEIGHT}`
-	+ `q 0,${RADIUS} ${RADIUS},${RADIUS}`,
+	+ `q 0 ${RADIUS} ${RADIUS} ${RADIUS}`,
 );
 outline0.setAttribute('transform', `translate(-${RADIUS / 2}, -${RADIUS / 2})`);
 
@@ -30,13 +30,13 @@ outline1.setAttribute('stroke-width', '8');
 outline1.setAttribute('fill', 'none');
 outline1.setAttribute('d',
 	`M ${WIDTH / 2 + RADIUS} ${-HEIGHT / 2}`
-	+ `q 0,-${RADIUS} -${RADIUS},-${RADIUS}`
+	+ `q 0 -${RADIUS} -${RADIUS} -${RADIUS}`
 	+ `h -${WIDTH}`
-	+ `q -${RADIUS},0 -${RADIUS},${RADIUS}`
+	+ `q -${RADIUS} 0 -${RADIUS} ${RADIUS}`
 	+ `v ${HEIGHT}`
-	+ `q 0,${RADIUS} ${RADIUS},${RADIUS}`
+	+ `q 0 ${RADIUS} ${RADIUS} ${RADIUS}`
 	+ `h ${WIDTH}`
-	+ `q ${RADIUS},0 ${RADIUS},-${RADIUS}`
+	+ `q ${RADIUS} 0 ${RADIUS} -${RADIUS}`
 	+ `v -${HEIGHT}`,
 );
 outline1.setAttribute('transform', `translate(${RADIUS / 2}, ${RADIUS / 2})`);

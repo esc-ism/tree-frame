@@ -20,11 +20,11 @@ frame.setAttribute('fill', 'none');
 frame.setAttribute('stroke-linecap', 'round');
 frame.setAttribute('stroke-width', '3');
 frame.setAttribute('d',
-	'M 2.5,15'
-	+ 'L 2.5,0'
-	+ 'L -36,-15'
-	+ 'L -36,-35'
-	+ 'L -30,-35',
+	'M 2.5 15'
+	+ ' L 2.5 0'
+	+ ' L -36 -15'
+	+ ' L -36 -35'
+	+ ' L -30 -35',
 );
 
 const curveLeft = document.createElementNS(SVG_NAMESPACE, 'path');
@@ -34,7 +34,7 @@ curveLeft.setAttribute('stroke-linecap', 'round');
 curveLeft.setAttribute('stroke-width', '6');
 curveLeft.setAttribute('d',
 	'M -25 -30'
-	+ 'Q -30,-35 -25,-40',
+	+ ' Q -30 -35 -25 -40',
 );
 
 const curveRight = curveLeft.cloneNode(true) as SVGLineElement;
