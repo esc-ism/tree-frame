@@ -10,11 +10,12 @@ import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
 import type Child from '@nodes/child';
+import type Middle from '@nodes/middle';
 
-function validate(copy: Child, button: HTMLButtonElement, node: Child) {
+function validate(copy: Child, target: Child, button: HTMLButtonElement, index: number) {
 	return Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
 		.then(() => {
-			history.register(copy, () => copy.disconnect(), () => copy.attach.bind(copy, copy.getIndex()), false, true);
+			history.register(copy, () => copy.disconnect(), () => copy.attach.bind(copy, index), false, true);
 			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
@@ -26,7 +27,7 @@ function validate(copy: Child, button: HTMLButtonElement, node: Child) {
 			copy.disconnect();
 			
 			if (reason) {
-				showTooltip(reason, node, button.querySelector('circle'));
+				showTooltip(reason, target, button.querySelector('circle'));
 			}
 		});
 }
@@ -39,22 +40,30 @@ function getCopy(node: Child): Child {
 	return copy;
 }
 
-function doAction(node: Child, parent, index: number, button: HTMLButtonElement) {
-	const copy = getCopy(node);
+function doAction(source: Child, target: Child, button: HTMLButtonElement, index: number) {
+	const copy = getCopy(source);
 	
-	copy.move(parent, index);
+	copy.move(index === 0 ? target as Middle : target.parent, index);
 	
-	validate(copy, button, node);
+	return validate(copy, target, button, index);
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	if (isAlt) {
-		position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction);
-	} else {
+	if (position.isToggle(node, ACTION_ID)) {
 		position.reset(node);
 		
-		validate(getCopy(node), button, node);
+		return;
 	}
+	
+	if (isAlt) {
+		position.mount(node, node, node.parent, ACTION_ID, button, doAction);
+		
+		return;
+	}
+	
+	const copy = getCopy(node);
+	
+	validate(copy, node, button, copy.getIndex());
 }
 
 export function mount(node: Child): void {

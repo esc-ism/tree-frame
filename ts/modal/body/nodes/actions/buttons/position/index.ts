@@ -7,6 +7,8 @@ import {focus, focusBranch, reset as resetFocus} from '../../focus';
 import {addSustained, removeSustained, setActive as highlight} from '../../highlight';
 import {scroll} from '../../scroll';
 
+import {get as getPools} from '@nodes/pools';
+
 import type Root from '@nodes/root';
 import type Middle from '@nodes/middle';
 import type Child from '@nodes/child';
@@ -28,9 +30,7 @@ const destinations: Array<Destination> = [];
 interface Origin {
 	source: Child | Root;
 	child: _Child;
-	siblings: Child[];
 	parent: Middle | Root;
-	isPooled: boolean;
 	actionId: string;
 	button: HTMLButtonElement;
 }
@@ -39,6 +39,10 @@ let origin: Origin;
 
 export function isActive(): boolean {
 	return Boolean(origin);
+}
+
+export function isToggle(source: Child | Root, id: string): boolean {
+	return isActive() && origin.source === source && origin.actionId === id;
 }
 
 function setActive(doActivate: boolean = true) {
@@ -82,101 +86,67 @@ export function getButton(node, actionId, onClick, isParent) {
 		node,
 	);
 	
-	button.classList.add(actionId);
-	button.classList.add(BUTTON_ACTIVE_CLASS);
+	button.classList.add(actionId, BUTTON_ACTIVE_CLASS);
 	
 	button.setAttribute('tabindex', '0');
 	
 	return button;
 }
 
-function getBoundCallback(callback, parent, index) {
+function getBoundCallback(callback, target, index) {
 	return async (_, button) => {
-		const target = await callback(parent, index, button);
+		const node = await callback(origin.source, target, button, index);
 		
-		if (target) {
-			reset(target);
+		if (node) {
+			reset(node);
 		}
 	};
 }
 
-function addButtons(parent: Root | Middle, actionId: string, callback: Function, includeSelf: boolean) {
-	const isCurrentParent = parent === origin.parent;
+function addButtons(parent: Root | Middle, actionId: string, callback: Function) {
+	focusBranch(true, parent);
 	
-	if (isCurrentParent || (origin.isPooled && parent.poolId === origin.parent.poolId)) {
+	destinations.push({
+		node: parent,
+		isParent: true,
+		button: getButton(parent, actionId, getBoundCallback(callback, parent, 0), true),
+	});
+	
+	for (const [i, target] of parent.children.entries()) {
+		if (target === origin.source) {
+			continue;
+		}
+		
+		focusBranch(true, target, false);
+		
 		destinations.push({
-			node: parent,
-			isParent: true,
-			button: getButton(parent, actionId, getBoundCallback(callback, parent, 0), true),
+			node: target,
+			isParent: false,
+			button: getButton(target, actionId, getBoundCallback(callback, target, i + 1), false),
 		});
-		
-		focusBranch(true, parent);
-		
-		for (const target of (!includeSelf && isCurrentParent) ? origin.siblings : parent.children) {
-			focusBranch(true, target, false);
-			
-			destinations.push({
-				node: target,
-				isParent: false,
-				button: getButton(target, actionId, getBoundCallback(callback, target.parent, target.getIndex() + 1), false),
-			});
-		}
-	}
-	
-	// Nodes can't be their own descendants
-	if (!isCurrentParent) {
-		for (const child of parent.children) {
-			if ('children' in child) {
-				addButtons(child, actionId, callback, includeSelf);
-			}
-		}
 	}
 }
 
-export function hasDestinations(node: Child) {
-	if (node.parent.children.length > 1) {
-		return true;
-	}
-	
-	if (!('poolId' in node.parent)) {
-		return false;
-	}
-	
-	const hasMatchingPool = (parent: Root | Middle, poolId: number) => {
-		if (parent !== node.parent) {
-			if (parent.poolId === poolId) {
-				return true;
-			}
-			
-			for (const child of parent.children) {
-				if ('children' in child && hasMatchingPool(child, poolId)) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	};
-	
-	return hasMatchingPool(node.getRoot(), node.parent.poolId);
-}
-
-export function mount(source: Child | Root, child: _Child, parent: Root | Middle, siblings: Child[], actionId: string, button, callback: Function, includeSelf: boolean = true): number {
+export function mount(source: Child | Root, child: _Child, parent: Root | Middle, actionId: string, button, callback: Function): number {
 	reset();
 	
 	origin = {
 		source,
 		child,
-		siblings,
 		parent,
-		isPooled: 'poolId' in parent,
 		button,
 		actionId,
 	};
 	
 	setActive();
 	
-	addButtons(parent.getRoot(), actionId, callback.bind(null, source), includeSelf);
+	addButtons(parent, actionId, callback);
+	
+	if ('poolId' in parent) {
+		for (const pool of getPools(parent.poolId)) {
+			addButtons(pool, actionId, callback);
+		}
+	}
 	
 	addSustained(source);
 	

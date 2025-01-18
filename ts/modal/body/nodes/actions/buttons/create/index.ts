@@ -9,8 +9,8 @@ import * as history from '../../history';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
-import Middle from '@nodes/middle';
 import Child from '@nodes/child';
+import Middle from '@nodes/middle';
 import type Root from '@nodes/root';
 
 function getChild(node: Root | Middle): Child {
@@ -22,14 +22,10 @@ function getChild(node: Root | Middle): Child {
 	return child;
 }
 
-function doAction(source: Middle | Root, parent: Middle | Root, index: number, button: HTMLButtonElement) {
-	const child = getChild(source);
-	
-	child.move(parent, index);
-	
+function validate(child: Middle | Child, target: Root | Child, button: HTMLButtonElement, index: number) {
 	return Promise.all(callbacks.predicate.getSub(child.getAncestors()))
 		.then(() => {
-			history.register(child, () => child.disconnect(), () => child.attach(parent, index), false, true);
+			history.register(child, child.disconnect.bind(child), child.attach.bind(child, child.parent, index), false, true);
 			
 			child.element.removeClass(TEST_ADD_CLASS);
 			
@@ -43,19 +39,33 @@ function doAction(source: Middle | Root, parent: Middle | Root, index: number, b
 			child.disconnect();
 			
 			if (reason) {
-				showTooltip(reason, child, button.querySelector('circle'));
+				showTooltip(reason, target, button.querySelector('circle'));
 			}
 		});
 }
 
+function doAction(source: Middle | Root, target: Root | Child, button: HTMLButtonElement, index: number) {
+	const child = getChild(source);
+	
+	child.move(index === 0 ? (target as Middle | Root) : (target as Child).parent, index);
+	
+	return validate(child, target, button, index);
+}
+
 function onClick(node: Root | Middle, button: HTMLButtonElement, isAlt: boolean) {
-	if (isAlt) {
-		position.mount(node, node.seed, node, node.children, ACTION_ID, button, doAction, false);
-	} else {
+	if (position.isToggle(node, ACTION_ID)) {
 		position.reset(node);
 		
-		doAction(node, node, 0, button);
+		return;
 	}
+	
+	if (isAlt) {
+		position.mount(node, node.seed, node, ACTION_ID, button, doAction);
+		
+		return;
+	}
+	
+	validate(getChild(node), node, button, 0);
 }
 
 export function mount(node: Root | Middle): void {

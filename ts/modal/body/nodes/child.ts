@@ -93,13 +93,6 @@ export default class Child implements Leaf {
 		return this.parent.children.indexOf(this);
 	}
 	
-	getSiblings(): Array<Child> {
-		const index = this.getIndex();
-		const siblings = this.parent.children;
-		
-		return [...siblings.slice(0, index), ...siblings.slice(index + 1)];
-	}
-	
 	detach() {
 		this.parent.children.splice(this.getIndex(), 1);
 		

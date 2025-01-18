@@ -3,6 +3,7 @@ import Child from './child';
 import NodeElement from './element';
 import {ROOT_CLASS} from './consts';
 import {onceVisualsUpdate} from './queue';
+import {add as addPool} from './pools';
 
 import * as highlight from './actions/highlight';
 import * as focus from './actions/focus';
@@ -63,6 +64,10 @@ export function setup({children, ...data}: _Root): void {
 			
 			handleUpdate(this[key](), key, this);
 		}
+	}
+	
+	if ('poolId' in data) {
+		addPool(data.poolId, this);
 	}
 }
 

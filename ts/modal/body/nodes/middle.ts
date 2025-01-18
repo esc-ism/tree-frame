@@ -3,6 +3,7 @@ import {MIDDLE_CLASS} from './consts';
 import type Root from './root';
 import {setup, getPredicateData, getSaveData} from './root';
 import Child from './child';
+import {remove as removePool} from './pools';
 
 import * as create from './actions/buttons/create';
 
@@ -53,6 +54,10 @@ export default class Middle extends Child implements _Middle {
 			if ('unmount' in action) {
 				action.unmount(this);
 			}
+		}
+		
+		if ('poolId' in this) {
+			removePool(this.poolId, this);
 		}
 		
 		for (const child of this.children) {

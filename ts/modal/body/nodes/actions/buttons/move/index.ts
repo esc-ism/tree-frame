@@ -9,7 +9,11 @@ import * as history from '../../history';
 import callbacks from '../../callbacks';
 import {showTooltip} from '../../overlays';
 
+import {get as getPools} from '@nodes/pools';
+
 import type Child from '@nodes/child';
+import type Middle from '@nodes/middle';
+import type Root from '@nodes/root';
 
 function getAncestorBranches(node: Child, copy: Child) {
 	if (node.parent === copy.parent) {
@@ -29,29 +33,29 @@ function getAncestorBranches(node: Child, copy: Child) {
 	return [oldAncestors.slice(0, -1), newAncestors];
 }
 
-function doAction(node: Child, newParent, index, button) {
-	const priorIndex = node.getIndex();
+function doAction(source: Child, target: Root | Child, button: HTMLButtonElement, index: number) {
+	const priorIndex = source.getIndex();
 	
 	if (index === priorIndex) {
-		return node;
+		return source;
 	}
 	
-	const copy = node.duplicate();
+	const copy = source.duplicate();
 	
-	node.element.addClass(TEST_REMOVE_CLASS);
+	source.element.addClass(TEST_REMOVE_CLASS);
 	copy.element.addClass(TEST_ADD_CLASS);
 	
-	copy.move(newParent, index);
+	copy.move(index === 0 ? (target as Middle | Root) : (target as Child).parent, index);
 	
-	const ancestorBranches = getAncestorBranches(node, copy);
+	const ancestorBranches = getAncestorBranches(source, copy);
 	
 	return Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
-			history.register(copy, copy.move.bind(copy, node.parent, priorIndex), () => copy.move(newParent, index));
+			history.register(copy, copy.move.bind(copy, source.parent, priorIndex), copy.move.bind(copy, copy.parent, index));
 			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
-			node.disconnect();
+			source.disconnect();
 			
 			for (const branch of ancestorBranches) {
 				callbacks.update.triggerSub(branch);
@@ -60,35 +64,47 @@ function doAction(node: Child, newParent, index, button) {
 			return copy;
 		})
 		.catch((reason) => {
-			node.element.removeClass(TEST_REMOVE_CLASS);
+			source.element.removeClass(TEST_REMOVE_CLASS);
 			
-			node.isActive = copy.isActive;
+			source.isActive = copy.isActive;
 			
 			copy.disconnect();
 			
 			if (reason) {
-				showTooltip(reason, node, button.querySelector('circle'));
+				showTooltip(reason, source, button.querySelector('circle'));
 			}
 		});
 }
 
+export function hasDestinations(node: Child) {
+	if (node.parent.children.length > 1) {
+		return true;
+	}
+	
+	return ('poolId' in node.parent) && (getPools(node.parent.poolId).length > 1);
+}
+
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
-	if (isAlt && position.hasDestinations(node)) {
-		position.mount(node, node, node.parent, node.getSiblings(), ACTION_ID, button, doAction, false);
+	if (position.isToggle(node, ACTION_ID)) {
+		position.reset(node);
 		
 		return;
 	}
 	
-	position.reset(node);
-	
 	if (isAlt) {
-		showTooltip('No other valid locations found.', node, button.querySelector('circle'));
+		if (hasDestinations(node)) {
+			position.mount(node, node, node.parent, ACTION_ID, button, doAction);
+		} else {
+			showTooltip('No other valid locations found.', node, button.querySelector('circle'));
+		}
+		
+		return;
 	}
 	
 	const newIndex = node.getIndex() + 2;
 	
 	if (newIndex < node.parent.children.length + 1) {
-		doAction(node, node.parent, newIndex, button);
+		doAction(node, node, button, newIndex);
 	} else {
 		showTooltip('Node can not be moved down.', node, button.querySelector('circle'));
 	}
