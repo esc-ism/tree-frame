@@ -40,39 +40,36 @@ function doAction(source: Child, target: Root | Child, button: HTMLButtonElement
 		return source;
 	}
 	
-	const copy = source.duplicate();
+	const temp = source.duplicate();
 	
 	source.element.addClass(TEST_REMOVE_CLASS);
-	copy.element.addClass(TEST_ADD_CLASS);
+	temp.element.addClass(TEST_ADD_CLASS);
 	
-	copy.move(index === 0 ? (target as Middle | Root) : (target as Child).parent, index);
+	temp.move(index === 0 ? (target as Middle | Root) : (target as Child).parent, index);
 	
-	const ancestorBranches = getAncestorBranches(source, copy);
+	const ancestorBranches = getAncestorBranches(source, temp);
 	
 	return Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
-			history.register(copy, copy.move.bind(copy, source.parent, priorIndex), copy.move.bind(copy, copy.parent, index));
+			source.move(index === 0 ? (target as Middle | Root) : (target as Child).parent, index);
 			
-			copy.element.removeClass(TEST_ADD_CLASS);
-			
-			source.disconnect();
+			history.register(source, source.move.bind(source, source.parent, priorIndex), source.move.bind(source, source.parent, index));
 			
 			for (const branch of ancestorBranches) {
 				callbacks.update.triggerSub(branch);
 			}
 			
-			return copy;
+			return source;
 		})
 		.catch((reason) => {
-			source.element.removeClass(TEST_REMOVE_CLASS);
-			
-			source.isActive = copy.isActive;
-			
-			copy.disconnect();
-			
 			if (reason) {
 				showTooltip(reason, source, button.querySelector('circle'));
 			}
+		})
+		.finally(() => {
+			temp.disconnect();
+			
+			source.element.removeClass(TEST_REMOVE_CLASS);
 		});
 }
 
