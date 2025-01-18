@@ -1,4 +1,4 @@
-import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS} from './consts';
+import {HIGHLIGHT_CLASS, EAVE_ID, HIGHLIGHT_BACKGROUND_CLASS, TAB_CLASS} from './consts';
 
 import {isActive as editIsActive} from '../edit';
 import {stickyScroll} from '../scroll';
@@ -68,6 +68,12 @@ export function unmount(node) {
 let isTab = false;
 let isListening = false;
 
+function setTab(value: boolean = true) {
+	isTab = value;
+	
+	scrollElement.classList[isTab ? 'add' : 'remove'](TAB_CLASS);
+}
+
 export function mount(node: Root | Child) {
 	const {backgroundContainer, headContainer, elementContainer, infoContainer, base} = node.element;
 	
@@ -100,7 +106,7 @@ export function mount(node: Root | Child) {
 			isListening = true;
 			
 			getDocument().addEventListener('mousemove', () => {
-				isTab = false;
+				setTab(false);
 				
 				isListening = false;
 			}, {capture: true, once: true});
@@ -206,7 +212,7 @@ export function onMount() {
 			return;
 		}
 		
-		isTab = (event.target as HTMLElement).classList.contains(ELEMENT_CLASSES.HEAD_CONTAINER);
+		setTab();
 		
 		if (event.shiftKey && socket.isSameNode(event.target as HTMLElement)) {
 			event.preventDefault();

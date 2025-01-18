@@ -1,5 +1,7 @@
 import {FOCUS_SOURCE_CLASS, FOCUS_CLASS, BACKGROUND_CLASS} from './consts';
 
+import {TAB_CLASS} from '../highlight/consts';
+
 import {ELEMENT_CLASSES, MIDDLE_CLASS, ROOT_CLASS} from '@nodes/consts';
 
 import {addRule} from '@/modal/css';
@@ -27,7 +29,7 @@ export default function generate() {
 		['padding-left', '0'],
 	]);
 	
-	const headSelector = `.${FOCUS_SOURCE_CLASS}:not(:hover:not(:has(> .${ELEMENT_CLASSES.CHILD_CONTAINER}:hover))) > .${ELEMENT_CLASSES.HEAD_CONTAINER}:not(:focus):not(:hover)`;
+	const headSelector = `.${FOCUS_SOURCE_CLASS}:not(:hover:not(:has(> .${ELEMENT_CLASSES.CHILD_CONTAINER}:hover))) > .${ELEMENT_CLASSES.HEAD_CONTAINER}:not(.${TAB_CLASS} :focus):not(:hover)`;
 	
 	addRule(`${headSelector} .${BACKGROUND_CLASS}`, ['width', '100%']);
 	
