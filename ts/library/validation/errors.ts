@@ -50,9 +50,9 @@ export class ValueError extends Error {
 	}
 }
 
-export class NonIntegerError extends Error {
-	constructor(breadcrumbs: string[]) {
-		super(`Found illegal non-integer at ${getPath(breadcrumbs)}.`);
+export class NonPosIntError extends Error {
+	constructor(breadcrumbs: string[], value: number) {
+		super(`Found a value of "${value}" at ${getPath(breadcrumbs)}. Expected a positive integer.`);
 	}
 }
 

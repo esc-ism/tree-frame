@@ -92,7 +92,7 @@ export interface _Child extends _ChildArg {
 	// Derives a config from the node
 	get?: Getter;
 	// Used by update functions to hide nodes
-	hideId?: string;
+	hideId?: number;
 	// Attributes applied to the input element
 	inputAttributes?: object;
 }

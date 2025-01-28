@@ -140,12 +140,8 @@ export function mount(source: Child | Root, child: _Child, parent: Root | Middle
 	
 	setActive();
 	
-	addButtons(parent, actionId, callback);
-	
-	if ('poolId' in parent) {
-		for (const pool of getPools(parent.poolId)) {
-			addButtons(pool, actionId, callback);
-		}
+	for (const pool of getPools(parent)) {
+		addButtons(pool, actionId, callback);
 	}
 	
 	addSustained(source);

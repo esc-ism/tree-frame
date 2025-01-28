@@ -52,7 +52,7 @@ export async function handle<Node extends Child | Root>(_response: unknown, prop
 	
 	if ('hide' in response && typeof response.hide === 'object') {
 		for (const [id, doHide] of Object.entries(response.hide)) {
-			if (typeof id === 'string' && typeof doHide === 'boolean') {
+			if (typeof doHide === 'boolean') {
 				hide(node, id, doHide);
 			}
 		}

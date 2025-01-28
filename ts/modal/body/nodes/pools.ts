@@ -1,7 +1,7 @@
-const pools = {};
+const pools = [];
 
-export function get(id: number) {
-	return [...pools[id]];
+export function get(node) {
+	return [...(pools[node.poolId] ?? [node])];
 }
 
 export function add(id, node) {

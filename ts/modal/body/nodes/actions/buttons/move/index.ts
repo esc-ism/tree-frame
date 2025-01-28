@@ -73,12 +73,8 @@ function doAction(source: Child, target: Root | Child, button: HTMLButtonElement
 		});
 }
 
-export function hasDestinations(node: Child) {
-	if (node.parent.children.length > 1) {
-		return true;
-	}
-	
-	return ('poolId' in node.parent) && (getPools(node.parent.poolId).length > 1);
+function hasDestinations(node: Child) {
+	return node.parent.children.length > 1 || getPools(node.parent).length > 1;
 }
 
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {

@@ -1,9 +1,12 @@
 import type {Child, Parent, Root} from '../types';
 import {LEAF_KEYS, MIDDLE_KEYS, ROOT_KEYS, VALUE_TYPES, INPUT_FORMATS, SAVED_KEYS} from '../types';
-import {TypeError, ValueError, PropertyError, UnexpectedStateError, JoinedError, DependenceError} from '../errors';
+import {
+	TypeError, ValueError, PropertyError, NonPosIntError,
+	UnexpectedStateError, JoinedError, DependenceError,
+} from '../errors';
 import {hasOwnProperty, validateUnexpectedKeys} from '../index';
 
-function hasDependee<X extends {}, Y extends PropertyKey>(breadcrumbs: string[], candidate: unknown, property: Y, dependence: string): candidate is X & Record<Y, unknown> {
+function hasDependee<X extends {}, Y extends string>(breadcrumbs: string[], candidate: X, property: Y, dependence: string): candidate is X & Record<Y, unknown> {
 	if (!hasOwnProperty(candidate, property)) {
 		return false;
 	}
@@ -13,8 +16,22 @@ function hasDependee<X extends {}, Y extends PropertyKey>(breadcrumbs: string[],
 	
 	throw new JoinedError(
 		new DependenceError(property, dependence),
-		new PropertyError([...breadcrumbs], dependence, true),
+		new PropertyError(breadcrumbs, dependence, true),
 	);
+}
+
+function hasId<X extends {}, Y extends string>(breadcrumbs: string[], candidate: X, property: Y): candidate is X & Record<Y, number> {
+	if (!hasOwnProperty(candidate, property)) {
+		return false;
+	}
+	
+	if (typeof candidate[property] !== 'number')
+		throw new TypeError([...breadcrumbs, property], typeof candidate[property], ['number']);
+	
+	if (Object.is((candidate[property] as number) % 1, 0))
+		return true;
+	
+	throw new NonPosIntError([...breadcrumbs, property], candidate[property] as number);
 }
 
 // Type predicates
@@ -75,8 +92,7 @@ function isChild(breadcrumbs: string[], candidate: unknown, isUserTree: boolean 
 	if (hasOwnProperty(candidate, 'get') && typeof candidate.get !== 'function')
 		throw new TypeError([...breadcrumbs, 'get'], typeof candidate.get, ['function']);
 	
-	if (hasOwnProperty(candidate, 'hideId') && typeof candidate.hideId !== 'string')
-		throw new TypeError([...breadcrumbs, 'hideId'], typeof candidate.hideId, ['string']);
+	hasId(breadcrumbs, candidate, 'hideId');
 	
 	if (hasOwnProperty(candidate, 'isActive') && typeof candidate.isActive !== 'boolean')
 		throw new TypeError([...breadcrumbs, 'isActive'], typeof candidate.isActive, ['boolean']);
@@ -97,8 +113,7 @@ export function isParent(breadcrumbs: string[], candidate: object, isUserTree: b
 	if (hasOwnProperty(candidate, 'seed') && !isChild([...breadcrumbs, 'seed'], candidate.seed))
 		throw new UnexpectedStateError();
 	
-	if (hasOwnProperty(candidate, 'poolId') && typeof candidate.poolId !== 'number')
-		throw new TypeError([...breadcrumbs, 'poolId'], typeof candidate.poolId, ['number']);
+	hasId(breadcrumbs, candidate, 'poolId');
 	
 	if (hasOwnProperty(candidate, 'childPredicate') && typeof candidate.childPredicate !== 'function')
 		throw new TypeError([...breadcrumbs, 'childPredicate'], typeof candidate.childPredicate, ['function']);

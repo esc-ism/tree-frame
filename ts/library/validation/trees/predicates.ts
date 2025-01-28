@@ -1,6 +1,6 @@
 import type {Child, Parent} from '../types';
 import {
-	TypeError, NonIntegerError, PredicateError, ValueError,
+	TypeError, PredicateError, ValueError,
 	JoinedError, OptionMatchError, OptionError,
 } from '../errors';
 
@@ -57,9 +57,6 @@ export function validateParent(breadcrumbs: string[], parent: Parent) {
 	}
 	
 	const {children} = parent;
-	
-	if ('poolId' in parent && Math.floor(parent.poolId) !== parent.poolId)
-		throw new NonIntegerError([...breadcrumbs, 'poolId']);
 	
 	if ('childPredicate' in parent) {
 		promises.push(getBoundPredicatePromise(

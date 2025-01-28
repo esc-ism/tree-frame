@@ -43,7 +43,7 @@ export default class Child implements Leaf {
 	readonly onUpdate?: () => unknown;
 	readonly listeners?: Listeners;
 	readonly get?: Getter;
-	readonly hideId?: string;
+	readonly hideId?: number;
 	
 	readonly forceValid: boolean;
 	lastAcceptedValue?: Value;
