@@ -79,7 +79,9 @@ export function mount(node: Root | Child) {
 	
 	if (base.valueContainer) {
 		(new ResizeObserver(() => {
-			base.valueContainer.style.setProperty('width', `${infoContainer.clientWidth}px`);
+			if (infoContainer.clientWidth > 0) {
+				base.valueContainer.style.setProperty('width', `${infoContainer.clientWidth}px`);
+			}
 		})).observe(infoContainer);
 	}
 	
