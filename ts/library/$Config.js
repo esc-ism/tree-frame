@@ -11,6 +11,7 @@ const KEY_STYLES = 'TREE_FRAME_USER_STYLES';
 
 const STYLE_OUTER = {
 	position: 'fixed',
+	top: '0',
 	height: '100vh',
 	width: '100vw',
 };
