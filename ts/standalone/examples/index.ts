@@ -1,3 +1,3 @@
 export default function getConfig() {
-	return import('./places');
+	return import('./viewfind');
 }
