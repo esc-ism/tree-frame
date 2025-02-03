@@ -6,10 +6,9 @@ import {reset} from '../modal/body';
 const VERSION = 1;
 
 const KEY_VERSION = 'TREE_FRAME_VERSION';
-
 const KEY_STYLES = 'TREE_FRAME_USER_STYLES';
 
-const STYLE_OUTER = {
+const STYLE_OUTER_DEFAULTS = {
 	position: 'fixed',
 	top: '0',
 	height: '100vh',
@@ -17,7 +16,7 @@ const STYLE_OUTER = {
 };
 
 export default class $Config {
-	constructor(KEY_TREE, TREE_DEFAULT, STYLE_INNER = {}, _STYLE_OUTER = {}) {
+	constructor(treeKey, defaultTree, defaultStyle = {}, outerStyle = {}) {
 		// PERMISSION CHECKS
 		
 		const getError = (reason, error) => {
@@ -40,16 +39,13 @@ export default class $Config {
 			throw getError('Missing GM.setValue permission.');
 		}
 		
-		if (typeof KEY_TREE !== 'string' || !(/^[a-z_][a-z0-9_]*$/i.test(KEY_TREE))) {
-			throw getError(`'${KEY_TREE}' is not a valid storage key.`);
+		if (typeof treeKey !== 'string' || !(/^[a-z_][a-z0-9_]*$/i.test(treeKey))) {
+			throw getError(`'${treeKey}' is not a valid storage key.`);
 		}
 		
 		// PRIVATE
 		
-		const styleOuter = {
-			...STYLE_OUTER,
-			..._STYLE_OUTER,
-		};
+		const displayStyle = outerStyle.display ?? 'initial';
 		
 		const target = (() => {
 			let targetWindow = window;
@@ -58,7 +54,7 @@ export default class $Config {
 				targetWindow = window.parent;
 			}
 			
-			const id = `${SOCKET_ID}-${KEY_TREE}`;
+			const id = `${SOCKET_ID}-${treeKey}`;
 			
 			for (const child of targetWindow.document.body.children) {
 				if (child.id === id) {
@@ -72,7 +68,7 @@ export default class $Config {
 			
 			target.id = id;
 			
-			for (const [property, value] of Object.entries(styleOuter)) {
+			for (const [property, value] of Object.entries({...STYLE_OUTER_DEFAULTS, ...outerStyle})) {
 				target.style[property] = value;
 			}
 			
@@ -88,7 +84,7 @@ export default class $Config {
 		const open = (doOpen = true) => new Promise((resolve) => {
 			isOpen = doOpen;
 			
-			target.style.display = doOpen ? (styleOuter.display ?? 'initial') : 'none';
+			target.style.display = doOpen ? displayStyle : 'none';
 			
 			// Delay script execution until visual update
 			setTimeout(resolve, 0);
@@ -106,7 +102,7 @@ export default class $Config {
 		// PUBLIC
 		
 		this.ready = Promise.all([
-			GM.getValue(KEY_TREE),
+			GM.getValue(treeKey),
 			GM.getValue(KEY_STYLES, []),
 			GM.getValue(KEY_VERSION, -1),
 		])
@@ -168,7 +164,7 @@ export default class $Config {
 						throw getError('Missing GM.deleteValue permission.');
 					}
 					
-					await GM.deleteValue(KEY_TREE);
+					await GM.deleteValue(treeKey);
 					
 					// It may have previously been a rejected promise
 					this.ready = () => Promise.resolve();
@@ -190,7 +186,7 @@ export default class $Config {
 					
 					const {tree, config, styles} = await edit();
 					
-					GM.setValue(KEY_TREE, tree);
+					GM.setValue(treeKey, tree);
 					GM.setValue(KEY_STYLES, styles);
 					GM.setValue(KEY_VERSION, VERSION);
 					
@@ -203,9 +199,9 @@ export default class $Config {
 				
 				return init({
 					userStyles,
-					defaultTree: TREE_DEFAULT,
+					defaultTree,
 					title: GM.info.script.name,
-					defaultStyle: STYLE_INNER,
+					defaultStyle,
 					...(userTree ? {userTree} : {}),
 				}, target.contentDocument.body, target.contentWindow);
 			})
