@@ -15,6 +15,8 @@ export default function generate(background: HTMLElement): HTMLElement {
 	
 	element.id = BUTTON_CONTAINER_ID;
 	
+	element.setAttribute('tabindex', '-1');
+	
 	element.append(
 		generateCloser(background),
 		generateStyler(),
