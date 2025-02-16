@@ -22,16 +22,30 @@ function getChild(node: Root | Middle): Child {
 	return child;
 }
 
+function redo(child, ancestors) {
+	child.disconnect();
+	
+	callbacks.update.triggerSub(ancestors);
+}
+
+function undo(child, parent, index, ancestors) {
+	child.attach(child, parent, index);
+	
+	callbacks.update.triggerSub(ancestors);
+}
+
 function validate(child: Middle | Child, target: Root | Child, button: HTMLButtonElement, index: number) {
-	return Promise.all(callbacks.predicate.getSub(child.getAncestors()))
+	const ancestors = child.getAncestors();
+	
+	return Promise.all(callbacks.predicate.getSub(ancestors))
 		.then(() => {
-			history.register(child, child.disconnect.bind(child), child.attach.bind(child, child.parent, index), false, true);
+			history.register(child, redo.bind(null, child, ancestors), undo.bind(null, child, child.parent, index, ancestors), false, true);
 			
 			child.element.removeClass(TEST_ADD_CLASS);
 			
 			child.isActive = true;
 			
-			callbacks.update.triggerSub(child.getAncestors());
+			callbacks.update.triggerSub(ancestors);
 			
 			return child;
 		})

@@ -12,14 +12,28 @@ import {showTooltip} from '../../overlays';
 import type Child from '@nodes/child';
 import type Middle from '@nodes/middle';
 
+function undo(node, ancestors) {
+	node.disconnect();
+	
+	callbacks.update.triggerSub(ancestors);
+}
+
+function redo(node, parent, index, ancestors) {
+	node.attach(parent, index);
+	
+	callbacks.update.triggerSub(ancestors);
+}
+
 function validate(copy: Child, target: Child, button: HTMLButtonElement, index: number) {
-	return Promise.all(callbacks.predicate.getSub(copy.getAncestors()))
+	const ancestors = copy.getAncestors();
+	
+	return Promise.all(callbacks.predicate.getSub(ancestors))
 		.then(() => {
-			history.register(copy, () => copy.disconnect(), () => copy.attach.bind(copy, index), false, true);
+			history.register(copy, undo.bind(null, copy, ancestors), redo.bind(null, copy, copy.parent, index, ancestors), false, true);
 			
 			copy.element.removeClass(TEST_ADD_CLASS);
 			
-			callbacks.update.triggerSub(copy.getAncestors());
+			callbacks.update.triggerSub(ancestors);
 			
 			return copy;
 		})

@@ -15,13 +15,13 @@ import type Child from '@nodes/child';
 import type Middle from '@nodes/middle';
 import type Root from '@nodes/root';
 
-function getAncestorBranches(node: Child, copy: Child) {
-	if (node.parent === copy.parent) {
+function getAncestorBranches(node: Child, temp: Child) {
+	if (node.parent === temp.parent) {
 		return [node.getAncestors()];
 	}
 	
 	const oldAncestors = node.getAncestors();
-	const newAncestors = copy.getAncestors();
+	const newAncestors = temp.getAncestors();
 	
 	for (let i = Math.min(oldAncestors.length, newAncestors.length) - 1; i > 1; --i) {
 		if (oldAncestors[oldAncestors.length - i] === newAncestors[newAncestors.length - i]) {
@@ -31,6 +31,14 @@ function getAncestorBranches(node: Child, copy: Child) {
 	
 	// Branch is from the root
 	return [oldAncestors.slice(0, -1), newAncestors];
+}
+
+function act(node, to, index, ancestorBranches) {
+	node.move(to, index);
+	
+	for (const branch of ancestorBranches) {
+		callbacks.update.triggerSub(branch);
+	}
 }
 
 function doAction(source: Child, target: Root | Child, button: HTMLButtonElement, index: number) {
@@ -51,9 +59,11 @@ function doAction(source: Child, target: Root | Child, button: HTMLButtonElement
 	
 	return Promise.all(ancestorBranches.map((branch) => Promise.all(callbacks.predicate.getSub(branch))))
 		.then(() => {
+			const priorParent = source.parent;
+			
 			source.move(index === 0 ? (target as Middle | Root) : (target as Child).parent, index);
 			
-			history.register(source, source.move.bind(source, source.parent, priorIndex), source.move.bind(source, source.parent, index));
+			history.register(source, act.bind(null, source, priorParent, priorIndex, ancestorBranches), act.bind(null, source, source.parent, index, ancestorBranches));
 			
 			for (const branch of ancestorBranches) {
 				callbacks.update.triggerSub(branch);

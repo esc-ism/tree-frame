@@ -114,6 +114,8 @@ function setValue(node, value) {
 	node.value = value;
 	
 	node.element.render(value);
+	
+	callbacks.update.triggerAll(node);
 }
 
 export function reset() {
@@ -126,7 +128,9 @@ export function reset() {
 	clearUndoStack();
 	
 	if (priorValue === activeNode.lastAcceptedValue) {
-		setValue(activeNode, activeNode.lastAcceptedValue);
+		activeNode.value = activeNode.lastAcceptedValue;
+		
+		activeNode.element.render(activeNode.lastAcceptedValue);
 	} else {
 		history.register(
 			activeNode,

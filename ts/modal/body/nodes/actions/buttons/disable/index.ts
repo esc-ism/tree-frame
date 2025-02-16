@@ -23,6 +23,18 @@ function toggle(node: Child) {
 	node.isActive = !node.isActive;
 }
 
+function undo(node, parent, index, ancestors) {
+	node.attach(parent, index);
+	
+	callbacks.update.triggerSub(ancestors);
+}
+
+function redo(node, ancestors) {
+	node.disconnect();
+	
+	callbacks.update.triggerSub(ancestors);
+}
+
 function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 	if (isAlt) {
 		node.element.addClass(TEST_REMOVE_CLASS);
@@ -32,19 +44,21 @@ function onClick(node: Child, button: HTMLButtonElement, isAlt: boolean) {
 		toggle(node);
 	}
 	
-	Promise.all(callbacks.predicate.getSub(node.getAncestors()))
+	const ancestors = node.getAncestors();
+	
+	Promise.all(callbacks.predicate.getSub(ancestors))
 		.then(() => {
-			const ancestors = node.getAncestors();
-			
 			node.element.removeClass(TEST_REMOVE_CLASS);
 			
 			if (isAlt) {
-				history.register(node, node.attach.bind(node, node.parent, node.getIndex()), () => node.disconnect(), true, false, true);
+				history.register(node, undo.bind(null, node, node.parent, node.getIndex(), ancestors), redo.bind(null, node, ancestors), true, false, true);
 			} else {
 				const act = () => {
 					toggle(node);
 					
 					updateButton(button, node.isActive);
+					
+					callbacks.update.triggerSub(ancestors);
 				};
 				
 				history.register(node, act, act, false);
