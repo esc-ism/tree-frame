@@ -27,7 +27,7 @@ const STYLE_OUTER_DEFAULTS = {
 };
 
 export default class $Config {
-	constructor(treeKey, defaultTree, {defaultStyle = {}, outerStyle = {}, patches = []}) {
+	constructor(treeKey, defaultTree, {defaultStyle = {}, outerStyle = {}, patches = []} = {}) {
 		// PERMISSION CHECKS
 		
 		const getError = (reason, error) => {
