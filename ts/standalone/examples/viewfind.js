@@ -1,4 +1,5 @@
 const LIMITS = {none: 'None', static: 'Static', fit: 'Fit'};
+const VAR_ZOOM = '--viewfind-zoom';
 
 const config = {
 	title: 'YouTube Viewfinding',
@@ -56,8 +57,6 @@ const config = {
 							},
 							get: (_, configs) => ({keys: Object.assign(...configs)}),
 							children: (() => {
-								const shift = navigator.userAgent.includes('Firefox') ? 'IntlBackslash' : 'ShiftLeft';
-								
 								const seed = {
 									value: '',
 									listeners: {
@@ -102,9 +101,9 @@ const config = {
 												get: ({value}) => value,
 											},
 											...[
-												['Pan / Zoom', ['ControlLeft'], 'pan'],
-												['Rotate', [shift], 'rotate'],
-												['Crop', ['ControlLeft', shift], 'crop'],
+												['Pan / Zoom', ['KeyZ'], 'pan'],
+												['Rotate', ['IntlBackslash'], 'rotate'],
+												['Crop', ['KeyZ', 'IntlBackslash'], 'crop'],
 											].map(([label, keys, id]) => getNode(label, keys, ({children}) => ({id, keys: getKeys(children)}))),
 										],
 									},
@@ -223,7 +222,7 @@ const config = {
 							];
 						})(),
 						{
-							label: 'Active Effects',
+							label: 'While Viewfinding',
 							get: (_, configs) => {
 								const {overlayKill, overlayHide, ...config} = Object.assign(...configs);
 								
