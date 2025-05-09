@@ -3,9 +3,20 @@ import {SOCKET_ID} from '../consts';
 import {init, edit} from './index';
 import {reset} from '../modal/body';
 
-const VERSION = 1;
+const PATCHES = [
+	(node) => {
+		delete node.predicate;
+		delete node.childPredicate;
+		delete node.descendantPredicate;
+		delete node.seed;
+	},
+	(node) => {
+		delete node.input;
+	},
+];
 
-const KEY_VERSION = 'TREE_FRAME_VERSION';
+const KEY_VERSION_CONFIG = 'TREE_FRAME_VERSION';
+const KEY_VERSION_SCRIPT = 'SCRIPT_VERSION';
 const KEY_STYLES = 'TREE_FRAME_USER_STYLES';
 
 const STYLE_OUTER_DEFAULTS = {
@@ -16,7 +27,7 @@ const STYLE_OUTER_DEFAULTS = {
 };
 
 export default class $Config {
-	constructor(treeKey, defaultTree, defaultStyle = {}, outerStyle = {}) {
+	constructor(treeKey, defaultTree, {defaultStyle = {}, outerStyle = {}, patches = []}) {
 		// PERMISSION CHECKS
 		
 		const getError = (reason, error) => {
@@ -104,49 +115,41 @@ export default class $Config {
 		this.ready = Promise.all([
 			GM.getValue(treeKey),
 			GM.getValue(KEY_STYLES, []),
-			GM.getValue(KEY_VERSION, -1),
+			GM.getValue(KEY_VERSION_CONFIG, -1),
+			GM.getValue(KEY_VERSION_SCRIPT, 0),
 		])
 			// Retrieve data
-			.then(([userTree, userStyles, version]) => {
-			// Patch to current version
+			.then(([userTree, userStyles, configVersion, scriptVersion]) => {
+				// Patch to current version
 				
 				(() => {
 					if (!userTree) {
 						return;
 					}
 					
-					switch (version) {
-						case -1: {
-							const patch = (node) => {
-								delete node.predicate;
-								delete node.childPredicate;
-								delete node.descendantPredicate;
-								delete node.seed;
-								
-								if ('children' in node) {
-									for (const child of node.children) {
-										patch(child);
-									}
-								}
-							};
+					// patch to make configVersion start from 0 instead of -1
+					if (configVersion < 2) {
+						configVersion++;
+					}
+					
+					if (configVersion < PATCHES.length) {
+						const patchAllNodes = (doPatch, node = userTree) => {
+							doPatch(node);
 							
-							patch(userTree);
-						}
+							if ('children' in node) {
+								for (const child of node.children) {
+									patchAllNodes(doPatch, child);
+								}
+							}
+						};
 						
-						// eslint-disable-next-line no-fallthrough
-						case 0: {
-							const patch = (node) => {
-								delete node.input;
-								
-								if ('children' in node) {
-									for (const child of node.children) {
-										patch(child);
-									}
-								}
-							};
-							
-							patch(userTree);
+						for (let i = configVersion; i < PATCHES.length; ++i) {
+							patchAllNodes(PATCHES[i]);
 						}
+					}
+					
+					for (let i = scriptVersion; i < patches.length; ++i) {
+						patches[i](userTree);
 					}
 				})();
 				
@@ -188,7 +191,8 @@ export default class $Config {
 					
 					GM.setValue(treeKey, tree);
 					GM.setValue(KEY_STYLES, styles);
-					GM.setValue(KEY_VERSION, VERSION);
+					GM.setValue(KEY_VERSION_CONFIG, PATCHES.length);
+					GM.setValue(KEY_VERSION_SCRIPT, patches.length);
 					
 					this.get = ((config) => config).bind(null, Object.freeze(config));
 					
