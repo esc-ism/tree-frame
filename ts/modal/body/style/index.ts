@@ -30,7 +30,7 @@ export function toJSON(style: UserStyle): _Middle {
 		children: [
 			{
 				label: 'Style Is Active?',
-				value: filledStyle.isActive,
+				value: filledStyle.isActive ?? true,
 			},
 			{
 				label: 'Modal',
@@ -247,17 +247,12 @@ export function toRawStyle(json: _Middle): DefaultStyle {
 // For returning updated styles to the userscript
 export function getUserStyles(): Array<UserStyle> {
 	const {tree: {'children': styleNodes}} = getRoot().getSaveData();
-	const styles: Array<UserStyle> = [];
 	
-	for (const json of styleNodes as Array<_Middle>) {
-		styles.push({
-			name: json.value as string,
-			isActive: json.children[0].value as boolean,
-			...toRawStyle(json),
-		});
-	}
-	
-	return styles;
+	return styleNodes.map((json) => ({
+		name: json.value as string,
+		...(json.children[0].value ? {} : {isActive: false}),
+		...toRawStyle(json),
+	}));
 }
 
 export default function generate(userStyles: Array<UserStyle>, devStyle?: DefaultStyle): HTMLElement {
@@ -275,7 +270,7 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
 		descendantPredicate: (styles: Array<_Middle>): true | string => {
 			let count = 0;
 			
-			for (const {isActive, children: [{value}]} of styles) {
+			for (const {isActive = true, children: [{value}]} of styles) {
 				if (isActive && value && ++count > 1) {
 					return 'Only one color scheme may be active at a time.';
 				}
@@ -283,9 +278,11 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
 			
 			return true;
 		},
-		onDescendantUpdate: (styles) => {
-			for (const style of (styles as Array<_Middle>)) {
-				if (style.isActive && style.children[0].value) {
+		onDescendantUpdate: (styles: Array<_Middle>) => {
+			for (const style of styles) {
+				const {isActive = true, children: [{value}]} = style;
+				
+				if (isActive && value) {
 					updateStylesheet(toRawStyle(style));
 					
 					return;

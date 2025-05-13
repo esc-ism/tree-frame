@@ -59,7 +59,7 @@ export interface DefaultStyle {
 
 export interface UserStyle extends DefaultStyle {
 	name: string;
-	isActive: boolean;
+	isActive?: boolean;
 }
 
 // Group types

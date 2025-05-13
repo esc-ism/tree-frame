@@ -154,6 +154,10 @@ export default class Child implements Leaf {
 			}
 		}
 		
+		if (data.isActive) {
+			delete data.isActive;
+		}
+		
 		return data;
 	}
 	

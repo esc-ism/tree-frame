@@ -69,10 +69,7 @@ function isPage(candidate: unknown): candidate is Page {
 		if (typeof style.name !== 'string')
 			throw new TypeError(['userStyles', i.toString(), 'name'], typeof style.name, ['string']);
 		
-		if (!hasOwnProperty(style, 'isActive'))
-			throw new PropertyError(['userStyles', i.toString()], 'isActive', true);
-		
-		if (typeof style.isActive !== 'boolean')
+		if (hasOwnProperty(style, 'isActive') && typeof style.isActive !== 'boolean')
 			throw new TypeError(['userStyles', i.toString(), 'isActive'], typeof style.isActive, ['boolean']);
 	}
 	
