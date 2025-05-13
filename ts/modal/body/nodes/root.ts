@@ -134,9 +134,9 @@ export default class Root implements _Root {
 		const {tree, activeTree, configs} = getSaveData.call(this);
 		
 		if ('get' in this) {
-			return {tree, activeTree, config: this.get(activeTree, configs)};
+			return {tree, config: this.get(activeTree, configs)};
 		}
 		
-		return {tree, activeTree, config: configs.length === 1 ? configs[0] : configs};
+		return {tree, config: configs.length === 1 ? configs[0] : configs};
 	}
 }
