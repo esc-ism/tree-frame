@@ -43,8 +43,6 @@ function validate(child: Middle | Child, target: Root | Child, button: HTMLButto
 			
 			child.element.removeClass(TEST_ADD_CLASS);
 			
-			child.isActive = true;
-			
 			callbacks.update.triggerSub(ancestors);
 			
 			return child;

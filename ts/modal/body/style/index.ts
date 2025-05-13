@@ -27,11 +27,8 @@ export function toJSON(style: UserStyle): _Middle {
 	return {
 		label: 'Name',
 		value: filledStyle.name,
+		isActive: filledStyle.isActive ?? true,
 		children: [
-			{
-				label: 'Style Is Active?',
-				value: filledStyle.isActive ?? true,
-			},
 			{
 				label: 'Modal',
 				children: [
@@ -205,7 +202,7 @@ export function toJSON(style: UserStyle): _Middle {
 }
 
 export function toRawStyle(json: _Middle): DefaultStyle {
-	const [, modal, header, body] = (json.children as Array<_Middle>).map(({children}) => children) as Array<Array<_Middle>>;
+	const [modal, header, body] = (json.children as Array<_Middle>).map(({children}) => children) as Array<Array<_Middle>>;
 	const [headerGeneral, headerButtons] = header.map(({children}) => children) as Array<Array<_Middle>>;
 	const [bodyGeneral, bodyButtons, bodyMisc] = body.map(({children}) => children) as Array<Array<_Middle>>;
 	
@@ -250,7 +247,7 @@ export function getUserStyles(): Array<UserStyle> {
 	
 	return styleNodes.map((json) => ({
 		name: json.value as string,
-		...(json.children[0].value ? {} : {isActive: false}),
+		...((json.isActive ?? true) ? {} : {isActive: false}),
 		...toRawStyle(json),
 	}));
 }
@@ -267,29 +264,9 @@ export default function generate(userStyles: Array<UserStyle>, devStyle?: Defaul
 			isActive: false,
 			...defaultStyle,
 		}),
-		descendantPredicate: (styles: Array<_Middle>): true | string => {
-			let count = 0;
-			
-			for (const {isActive = true, children: [{value}]} of styles) {
-				if (isActive && value && ++count > 1) {
-					return 'Only one color scheme may be active at a time.';
-				}
-			}
-			
-			return true;
-		},
+		descendantPredicate: (styles: Array<_Middle>): true | string => styles.length <= 1 || 'Only one style may be active at a time.',
 		onDescendantUpdate: (styles: Array<_Middle>) => {
-			for (const style of styles) {
-				const {isActive = true, children: [{value}]} = style;
-				
-				if (isActive && value) {
-					updateStylesheet(toRawStyle(style));
-					
-					return;
-				}
-			}
-			
-			updateStylesheet(defaultStyle);
+			updateStylesheet(styles.length === 0 ? defaultStyle : toRawStyle(styles[0]));
 		},
 	}, ROOT_ID);
 }
