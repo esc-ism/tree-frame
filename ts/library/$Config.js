@@ -58,7 +58,7 @@ export default class $Config {
 		
 		const displayStyle = outerStyle.display ?? 'initial';
 		
-		const target = (() => {
+		const [target, targetLoad] = (() => {
 			let targetWindow = window;
 			
 			while (targetWindow.frameElement) {
@@ -77,6 +77,8 @@ export default class $Config {
 			
 			const target = document.createElement('iframe');
 			
+			const load = new Promise((resolve) => target.addEventListener('load', resolve, {once: true}));
+			
 			target.id = id;
 			
 			for (const [property, value] of Object.entries({...STYLE_OUTER_DEFAULTS, ...outerStyle})) {
@@ -87,7 +89,7 @@ export default class $Config {
 			
 			targetWindow.document.body.appendChild(target);
 			
-			return target;
+			return [target, load];
 		})();
 		
 		let isOpen = false;
@@ -117,6 +119,7 @@ export default class $Config {
 			GM.getValue(KEY_STYLES, []),
 			GM.getValue(KEY_VERSION_CONFIG, -1),
 			GM.getValue(KEY_VERSION_SCRIPT, 0),
+			targetLoad,
 		])
 			// Retrieve data
 			.then(([userTree, userStyles, configVersion, scriptVersion]) => {
