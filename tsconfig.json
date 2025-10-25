@@ -10,9 +10,9 @@
 		"sourceMap": false,
 		"baseUrl": "ts",
 		"paths": {
-		"@/*": ["./*"],
-		"@types": ["./library/validation/types"],
-		"@nodes/*": ["./modal/body/nodes/*"],
+			"@/*": ["./*"],
+			"@types": ["./library/validation/types"],
+			"@nodes/*": ["./modal/body/nodes/*"],
 		}
 	},
 	"ts-node": {
